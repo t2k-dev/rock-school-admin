@@ -1,5 +1,7 @@
 import React from "react";
 import { Form, Row, Col, Button, Container } from 'react-bootstrap';
+import axios from "axios";
+import { useParams } from 'react-router-dom';
 
 class TeachersForm extends React.Component{
     constructor(props)
@@ -9,34 +11,52 @@ class TeachersForm extends React.Component{
             firstName: "",
             lastName: "",
             middleName: "",
-            birthDate: "2000-01-01",
+            birthDate: "",
             userId: 1,
-            disciplines:[]
+            isDrums: false,
+            isGuitar: false,
+            isVocal: false
         }
     
         this.handleSave = this.handleSave.bind(this);
         this.handleChange = this.handleChange.bind(this);
     }
     
-    handleSave = () =>{
-        console.log(this.state);
+    componentDidMount = () =>{
+        const { id } = useParams();
+        console.log("--")
+        console.log(id)
+    }
+
+    handleSave = (e) =>{
+        let disciplines = [];
+        if (this.state.isDrums)
+            disciplines.push(1)
+        if (this.state.isGuitar)
+            disciplines.push(3)
+        if (this.state.isVocal)
+            disciplines.push(4)
+
+            
+        const requestBody ={
+            firstName: this.state.firstName,
+            lastName: this.state.lastName,
+            middleName: this.state.middleName,
+            birthDate: this.state.birthDate,
+            userId: this.state.userId,
+            disciplines: disciplines
+        }
+        console.log(requestBody);
+        axios.post('https://localhost:44358/api/teacher', requestBody)
+            .then(alert(response => alert(response)));
+        
     }
 
     handleChange = e =>{
         const {id, value} = e.target
         this.setState({[id] : value})
     }
-    /*
-    {
-    "firstName": "Сергей",
-    "lastName": "Каргаполов",
-    "middleName": "Middle",
-    "birthDate": "2000-01-01",
-    "userId": 1,
-    "disciplines":[1]
-}
-    */
-    
+
     render(){
         return(
             <Container>
@@ -59,7 +79,7 @@ class TeachersForm extends React.Component{
                                 <Form.Control onChange={this.handleChange} placeholder="введите отчество..." />
                             </Form.Group>
 
-                            <Form.Group className="mb-3" controlId="middleName">
+                            <Form.Group className="mb-3" controlId="birthDate">
                                 <Form.Label>Дата рождения</Form.Label>
                                 <Form.Control onChange={this.handleChange} placeholder="введите дату..." />
                             </Form.Group>                            
@@ -68,34 +88,30 @@ class TeachersForm extends React.Component{
                                 <Form.Label onClick={this.handleSave}>Телефон</Form.Label>
                                 <Form.Control onChange={this.handleChange} placeholder="введите телефон..." />
                             </Form.Group>
-                            
-                            <Form.Group className="mb-3" controlId="isActive">
-                                <Form.Check 
-                                    type="switch"
-                                    id="custom-switch"
-                                    label="Активный"
-                                />
-                            </Form.Group>
+
                             <hr></hr>
-                            <Form.Group className="mb-3" controlId="phone">
+                            <Form.Group className="mb-3">
                                 Дисциплины
                                 <Form.Check 
                                     style={{marginTop:"20px"}}
                                     type="checkbox"
-                                    id="drums"
+                                    id="isDrums"
                                     label="Барабаны"
+                                    onChange={this.handleChange}
                                 />
                                 <Form.Check 
                                     style={{marginTop:"20px"}}
                                     type="checkbox"
-                                    id="guitar"
+                                    id="isGuitar"
                                     label="Гитара"
+                                    onChange={this.handleChange}
                                 />
                                 <Form.Check 
                                     style={{marginTop:"20px"}}
                                     type="checkbox"
-                                    id="vocal"
+                                    id="isVocal"
                                     label="Вокал"
+                                    onChange={this.handleChange}
                                 />
 
                             </Form.Group>

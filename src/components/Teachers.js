@@ -34,7 +34,7 @@ class Teachers extends React.Component{
                 <Row style={{marginTop:'20px'}}>
                     <Col>
                         {this.state.teachers.map(({ firstName, lastName, teacherId }) => (
-                            <TeacherCard teacherId={teacherId} firstName={firstName} lastName={lastName} />
+                            <TeacherCard key={teacherId} teacherId={teacherId} firstName={firstName} lastName={lastName} />
                         ))}
                     </Col>
                 </Row>
