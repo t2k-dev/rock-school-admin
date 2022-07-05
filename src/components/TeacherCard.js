@@ -14,19 +14,21 @@ class TeacherCard extends React.Component{
                             <Image src={noImage} className='img-preview' fluid='true'/>
                             </Col>
                             <Col>
-                                <h3>{this.props.firstName} {this.props.lastName}</h3>
+                                <h3>{this.props.item.firstName} {this.props.item.lastName}</h3>
                                 <div>
                                     Дисциплины
                                     <ul>
-                                        <li>Гитара</li>
-                                        <li>Барабаны</li>
+                                        {
+                                            this.props.item.disciplines.map((item, index) => {
+                                                return(<li key={index}>{item.disciplineName}</li>)
+                                        })}
                                     </ul>
                                 </div>
                             </Col>
                         </Row>
                         <Row>
                             <Col style={{textAlign:'right'}}>
-                                <Link to="/teachers/edit/2"><Button variant="primary">Редактировать</Button></Link>
+                                <Link to={`/teachers/edit/${this.props.item.teacherId}`} ><Button variant="primary">Редактировать</Button></Link>
                             </Col>
                         </Row>
                         

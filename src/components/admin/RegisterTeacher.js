@@ -3,64 +3,103 @@ import { Form, Container, Row, Col, Table, Button } from 'react-bootstrap';
 import axios from "axios";
 import { Link } from "react-router-dom";
 
-class RegisterTeacher extends React.Component{
+export class RegisterTeacher extends React.Component{
     constructor(props)
     {
         super(props);
+        
+        console.log(props);
         this.state= {
+            isNew: props.type == 'New',
+
             email: "",
             firstName: "",
             lastName: "",
+            middleName: "",
             birthDate: "",
             phone: 0,
             userId: 1,
-            WorkingPeriods:[
-                {
-                    Day: 1,
-                    StartTime: "09-00",
-                    EndTime: "11-00",
-                },
-                {
-                    Day: 1,
-                    StartTime: "13-00",
-                    EndTime: "18-00",
-                },
-                {
-                    Day: 2,
-                    StartTime: "13-00",
-                    EndTime: "18-00",
-                },
-                {
-                    Day: 5,
-                    StartTime: "13-00",
-                    EndTime: "18-00",
-                },
-                {
-                    Day: 7,
-                    StartTime: "13-00",
-                    EndTime: "18-00",
-                }],
+            WorkingPeriods:[],
+            disciplines:[],
 
             periodDay: 0,
             periodStart: "",
             periodEnd: "",
+            isViolin: false,
+            isGuitar: false,
+            isElectricGuitar: false, 
+            isBassGuitar: false, 
+            isUkulele: false, 
+            isDrums: false, 
+            isVocal: false, 
+            isFortepiano: false, 
+            isViolin: false
         }
     
         this.handleSave = this.handleSave.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleSexClick = this.handleSexClick.bind(this);
         this.getDayName = this.getDayName.bind(this);
+        this.getValueOrEmptyString = this.getValueOrEmptyString.bind(this);
         this.addWorkingPeriod = this.addWorkingPeriod.bind(this);
         this.deleteWorkingPeriod = this.deleteWorkingPeriod.bind(this);
     }
-    
+
+    componentDidMount(){
+        console.log("--")
+        console.log(this.props.match)
+        this.onFormLoad();
+    }
+
+    async onFormLoad(){
+        if (this.state.isNew)
+        {
+            return;
+        }
+        const id = this.props.match.params.id;
+
+        const response = await axios("https://localhost:44358/api/teacher/"+id);
+        console.log(response.data.disciplines.includes(8));
+        this.setState({
+            email: response.data.email,
+            firstName: response.data.firstName,
+            lastName: response.data.lastName,
+            middleName: this.getValueOrEmptyString(response.data.middleName),
+            birthDate: response.data.birthDate,
+            phone: response.data.phone,
+
+            isGuitar: response.data.disciplines.includes(1),
+            isElectricGuitar: response.data.disciplines.includes(2),
+            isBassGuitar: response.data.disciplines.includes(3),
+            isUkulele: response.data.disciplines.includes(4),
+            isVocal: response.data.disciplines.includes(5),
+            isDrums: response.data.disciplines.includes(6),
+            isFortepiano: response.data.disciplines.includes(7),
+            isViolin: response.data.disciplines.includes(8),
+            WorkingPeriods: response.data.workingHours.workingPeriods,
+        })
+        console.log('Working')
+        console.log(this.state);
+        const periods = response.data.workingHours.workingPeriods;
+        
+        //this.setState({teachers: response.data})
+    }
+
+    getValueOrEmptyString = (str) =>{
+        if (typeof str !== 'undefined' && str){
+            return str;
+        }
+
+        return '';
+    }
+
     handleSave = (e) =>{
         e.preventDefault();
 
         let disciplines = [];
         if (this.state.isGuitar)
             disciplines.push(1)
-        if (this.state.isElectroGuitar)
+        if (this.state.isElectricGuitar)
             disciplines.push(2)
         if (this.state.isBassGuitar)
             disciplines.push(3)
@@ -90,8 +129,13 @@ class RegisterTeacher extends React.Component{
         }
 
         console.log(requestBody);
-        axios.post('https://localhost:44358/api/account/registerTeacher', requestBody)
+        if (this.state.isNew){
+            axios.post('https://localhost:44358/api/account/registerTeacher', requestBody)
             .then(alert(response => alert(response)));
+        }
+        else{
+            console.log('Not implemented');
+        }
     }
 
     handleChange = (e) =>{
@@ -116,9 +160,9 @@ class RegisterTeacher extends React.Component{
             WorkingPeriods: [
                 ...prevState.WorkingPeriods, 
                 {
-                    Day: parseInt(this.state.periodDay),
-                    StartTime: this.state.periodStart,
-                    EndTime: this.state.periodEnd
+                    day: parseInt(this.state.periodDay),
+                    startTime: this.state.periodStart,
+                    endTime: this.state.periodEnd
                 }]
           }))
     }
@@ -152,41 +196,42 @@ class RegisterTeacher extends React.Component{
     }
 
     render(){
+        const {email, firstName, lastName, middleName, birthDate, phone, isGuitar, isElectricGuitar, isBassGuitar, isUkulele, isDrums, isVocal, isFortepiano, isViolin} = this.state;
         return(
             <Container style={{marginTop: "40px"}}>
                 <Row>
                     <Col md="4"></Col>
                     <Col md="4">
-                        <h2 style={{textAlign:"center"}}>Новый преподаватель</h2>
+                        <h2 style={{textAlign:"center"}}>{this.state.isNew?'Новый преподаватель':'Редактировать преподавателя'}</h2>
                         <Form>
                             <Form.Group className="mb-3" controlId="email">
                                 <Form.Label>Email</Form.Label>
-                                <Form.Control onChange={this.handleChange} placeholder="введите email..." autoComplete="off"/>
+                                <Form.Control onChange={this.handleChange} value={email} placeholder="введите email..." autoComplete="off"/>
                             </Form.Group>
 
                             <Form.Group className="mb-3" controlId="firstName">
                                 <Form.Label>Имя</Form.Label>
-                                <Form.Control onChange={this.handleChange} placeholder="введите имя..." autoComplete="off"/>
+                                <Form.Control onChange={this.handleChange} value={firstName} placeholder="введите имя..." autoComplete="off"/>
                             </Form.Group>
 
                             <Form.Group className="mb-3" controlId="lastName">
                                 <Form.Label>Фамилия</Form.Label>
-                                <Form.Control onChange={this.handleChange} placeholder="введите фамилию..." />
+                                <Form.Control onChange={this.handleChange} value={lastName} placeholder="введите фамилию..."/>
                             </Form.Group>
 
                             <Form.Group className="mb-3" controlId="middleName">
                                 <Form.Label>Отчество</Form.Label>
-                                <Form.Control onChange={this.handleChange} placeholder="введите отчество..." />
+                                <Form.Control onChange={this.handleChange} value={middleName} placeholder="введите отчество..." />
                             </Form.Group>
 
                             <Form.Group className="mb-3" controlId="birthDate">
                                 <Form.Label>Дата рождения</Form.Label>
-                                <Form.Control onChange={this.handleChange} placeholder="введите дату..." />
+                                <Form.Control onChange={this.handleChange} value={birthDate} placeholder="введите дату..." />
                             </Form.Group>
                             
                             <Form.Group className="mb-3" controlId="phone">
                                 <Form.Label onClick={this.handleSave}>Телефон</Form.Label>
-                                <Form.Control onChange={this.handleChange} placeholder="введите телефон..." />
+                                <Form.Control onChange={this.handleChange} value={phone} placeholder="введите телефон..." />
                             </Form.Group>
                             
                             <hr></hr>
@@ -201,13 +246,15 @@ class RegisterTeacher extends React.Component{
                                             id="isGuitar"
                                             label="Гитара"
                                             onChange={this.handleChange}
+                                            checked={isGuitar}
                                         />
                                         <Form.Check 
                                             style={{marginTop:"20px"}}
                                             type="checkbox"
-                                            id="isElectroGuitar"
+                                            id="isElectricGuitar"
                                             label="Электрогитара"
                                             onChange={this.handleChange}
+                                            checked={isElectricGuitar}
                                         />
                                         <Form.Check 
                                             style={{marginTop:"20px"}}
@@ -215,6 +262,7 @@ class RegisterTeacher extends React.Component{
                                             id="isBassGuitar"
                                             label="Бас-гитара"
                                             onChange={this.handleChange}
+                                            checked={isBassGuitar}
                                         />
                                         <Form.Check 
                                             style={{marginTop:"20px"}}
@@ -222,6 +270,7 @@ class RegisterTeacher extends React.Component{
                                             id="isUkulele"
                                             label="Укулеле"
                                             onChange={this.handleChange}
+                                            checked={isUkulele}
                                         />
                                     </Col>
                                     <Col>
@@ -231,6 +280,7 @@ class RegisterTeacher extends React.Component{
                                             id="isVocal"
                                             label="Вокал"
                                             onChange={this.handleChange}
+                                            checked={isVocal}
                                         />
                                         <Form.Check 
                                             style={{marginTop:"20px"}}
@@ -238,6 +288,7 @@ class RegisterTeacher extends React.Component{
                                             id="isDrums"
                                             label="Ударные"
                                             onChange={this.handleChange}
+                                            checked={isDrums}
                                         />
                                         <Form.Check 
                                             style={{marginTop:"20px"}}
@@ -245,6 +296,7 @@ class RegisterTeacher extends React.Component{
                                             id="isFortepiano"
                                             label="Фортепиано"
                                             onChange={this.handleChange}
+                                            checked={isFortepiano}
                                         />
                                         <Form.Check 
                                             style={{marginTop:"20px"}}
@@ -252,6 +304,7 @@ class RegisterTeacher extends React.Component{
                                             id="isViolin"
                                             label="Скрипка"
                                             onChange={this.handleChange}
+                                            checked={isViolin}
                                         />
                                     </Col>
                                 </Row>
@@ -318,9 +371,9 @@ class RegisterTeacher extends React.Component{
                                             {this.state.WorkingPeriods.map((item, index) => (
                                                 <tr key={index}>
                                                     <td>{index + 1}</td>
-                                                    <td>{this.getDayName(item.Day)}</td>
-                                                    <td>{item.StartTime}</td>
-                                                    <td>{item.EndTime}</td>
+                                                    <td>{this.getDayName(item.day)}</td>
+                                                    <td>{item.startTime}</td>
+                                                    <td>{item.endTime}</td>
                                                     <td>
                                                         <Button onClick={()=> this.deleteWorkingPeriod(index)}>
                                                             <i>-</i>
@@ -344,5 +397,3 @@ class RegisterTeacher extends React.Component{
         )
     }
 }
-
-export default RegisterTeacher;
