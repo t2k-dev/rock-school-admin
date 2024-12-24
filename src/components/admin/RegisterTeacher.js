@@ -1,7 +1,6 @@
 import React from "react";
 import { Form, Container, Row, Col, Table, Button } from 'react-bootstrap';
-import axios from "axios";
-import { Link } from "react-router-dom";
+import { getTeacher, registerTeacher } from "../../services/apiTeacherService";
 
 export class RegisterTeacher extends React.Component{
     constructor(props)
@@ -58,7 +57,7 @@ export class RegisterTeacher extends React.Component{
         }
         const id = this.props.match.params.id;
 
-        const response = await axios("https://localhost:44358/api/teacher/"+id);
+        const response = getTeacher(id);
         console.log(response.data.disciplines.includes(8));
         this.setState({
             email: response.data.email,
@@ -130,8 +129,8 @@ export class RegisterTeacher extends React.Component{
 
         console.log(requestBody);
         if (this.state.isNew){
-            axios.post('https://localhost:44358/api/account/registerTeacher', requestBody)
-            .then(alert(response => alert(response)));
+            const response = registerTeacher(requestBody);
+            alert(response => alert(response));
         }
         else{
             console.log('Not implemented');

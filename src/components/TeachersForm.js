@@ -1,6 +1,6 @@
 import React from "react";
 import { Form, Row, Col, Button, Container } from 'react-bootstrap';
-import axios from "axios";
+import { postTeacher } from "../services/apiTeacherService";
 import { useParams } from 'react-router-dom';
 
 class TeachersForm extends React.Component{
@@ -47,8 +47,9 @@ class TeachersForm extends React.Component{
             disciplines: disciplines
         }
         console.log(requestBody);
-        axios.post('https://localhost:44358/api/teacher', requestBody)
-            .then(alert(response => alert(response)));
+        
+        const response = postTeacher(requestBody);
+        alert(response => alert(response));
         
     }
 

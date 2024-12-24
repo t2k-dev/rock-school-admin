@@ -1,6 +1,6 @@
 import React from "react";
-import axios from "axios";
-import { Card, Row, Col, Button } from 'react-bootstrap';
+import { getTeachers } from "../services/apiTeacherService"
+import { Row, Col, Button } from 'react-bootstrap';
 import { Link } from "react-router-dom";
 import TeacherCard from "./TeacherCard";
 
@@ -13,11 +13,10 @@ class Teachers extends React.Component{
     }
 
     async onFormLoad(){
-        const response = await axios("https://localhost:44358/api/teacher");
+        const response = await getTeachers();
         this.setState({teachers: response.data})
         console.log(this.state.teachers);
     }
-
 
     render(){
 
