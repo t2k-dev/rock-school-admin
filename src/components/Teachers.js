@@ -13,8 +13,8 @@ class Teachers extends React.Component{
     }
 
     async onFormLoad(){
-        const response = await getTeachers();
-        this.setState({teachers: response.data})
+        const returnedTeachers = await getTeachers();
+        this.setState({teachers: returnedTeachers});
         console.log(this.state.teachers);
     }
 

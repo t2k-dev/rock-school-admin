@@ -57,29 +57,29 @@ export class RegisterTeacher extends React.Component{
         }
         const id = this.props.match.params.id;
 
-        const response = getTeacher(id);
-        console.log(response.data.disciplines.includes(8));
+        const teacher = await getTeacher(id);
+        console.log(teacher);
         this.setState({
-            email: response.data.email,
-            firstName: response.data.firstName,
-            lastName: response.data.lastName,
-            middleName: this.getValueOrEmptyString(response.data.middleName),
-            birthDate: response.data.birthDate,
-            phone: response.data.phone,
+            email: teacher.email,
+            firstName: teacher.firstName,
+            lastName: teacher.lastName,
+            middleName: this.getValueOrEmptyString(teacher.middleName),
+            birthDate: teacher.birthDate,
+            phone: teacher.phone,
 
-            isGuitar: response.data.disciplines.includes(1),
-            isElectricGuitar: response.data.disciplines.includes(2),
-            isBassGuitar: response.data.disciplines.includes(3),
-            isUkulele: response.data.disciplines.includes(4),
-            isVocal: response.data.disciplines.includes(5),
-            isDrums: response.data.disciplines.includes(6),
-            isFortepiano: response.data.disciplines.includes(7),
-            isViolin: response.data.disciplines.includes(8),
-            WorkingPeriods: response.data.workingHours.workingPeriods,
+            isGuitar: teacher.disciplines.includes(1),
+            isElectricGuitar: teacher.disciplines.includes(2),
+            isBassGuitar: teacher.disciplines.includes(3),
+            isUkulele: teacher.disciplines.includes(4),
+            isVocal: teacher.disciplines.includes(5),
+            isDrums: teacher.disciplines.includes(6),
+            isFortepiano: teacher.disciplines.includes(7),
+            isViolin: teacher.disciplines.includes(8),
+            //WorkingPeriods: teacher.workingHours.workingPeriods,
         })
         console.log('Working')
         console.log(this.state);
-        const periods = response.data.workingHours.workingPeriods;
+        //const periods = teacher.workingHours.workingPeriods;
         
         //this.setState({teachers: response.data})
     }
