@@ -1,5 +1,14 @@
 import apiClient from "./apiClient";
 
+export const getStudents = async () => {
+  try {
+    const response = await apiClient.get('/student');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+};
+
 export const getStudent = async (id) => {
     try {
       const response = await apiClient.get('/students/' + id);
