@@ -12,11 +12,12 @@ const MyNavbar = () =>{
                 <Nav className="me-auto">
                     <Nav.Link href="#home">Home</Nav.Link>
                     <NavDropdown title="Администратор" id="basic-nav-dropdown">
-                    <NavDropdown.Item href="#action/2.1"><Link to="/students">Список учеников</Link></NavDropdown.Item>
-                    <NavDropdown.Item href="#action/2.2"><Link to="/admin/registerStudent">Новый ученик</Link></NavDropdown.Item>
+                    <NavDropdown.Item href="/students"><Link to="/students">Список учеников</Link></NavDropdown.Item>
+                    <NavDropdown.Item href="/admin/registerStudent"><Link to="/admin/registerStudent">Новый ученик</Link></NavDropdown.Item>
+                    <NavDropdown.Item href="/admin/addSubscription"><Link to="/admin/addSubscription">Новый абонемент</Link></NavDropdown.Item>
                     <NavDropdown.Divider />
-                    <NavDropdown.Item href="#action/3.1"><Link to="/teachers">Список преподавателей</Link></NavDropdown.Item>
-                    <NavDropdown.Item href="#action/3.2"><Link to="/admin/registerTeacher">Новый преподаватель</Link></NavDropdown.Item>
+                    <NavDropdown.Item href="/teachers"><Link to="/teachers">Список преподавателей</Link></NavDropdown.Item>
+                    <NavDropdown.Item href="/admin/registerTeacher"><Link to="/admin/registerTeacher">Новый преподаватель</Link></NavDropdown.Item>
 
                     </NavDropdown>
                 </Nav>

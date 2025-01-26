@@ -19,9 +19,9 @@ class StudentCard extends React.Component{
                                     Дисциплины
                                     <ul>
                                         {
-                                            //this.props.item.disciplines.map((item, index) => {
-                                                //return(<li key={index}>{item.disciplineName}</li>)
-                                        //})
+                                            /*this.props.item.disciplines.map((item, index) => {
+                                                return(<li key={index}>{item.disciplineName}</li>)
+                                        })*/
                                         }
                                     </ul>
                                 </div>

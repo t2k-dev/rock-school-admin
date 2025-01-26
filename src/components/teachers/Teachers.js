@@ -1,5 +1,5 @@
 import React from "react";
-import { getTeachers } from "../services/apiTeacherService"
+import { getTeachers } from "../../services/apiTeacherService"
 import { Row, Col, Button } from 'react-bootstrap';
 import { Link } from "react-router-dom";
 import TeacherCard from "./TeacherCard";

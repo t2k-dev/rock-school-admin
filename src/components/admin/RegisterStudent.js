@@ -2,12 +2,15 @@ import React from "react";
 import { Form, Container, Row, Col, Image, Button } from 'react-bootstrap';
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { getStudent, registerStudent } from "../../services/apiStudentService";
 
 class RegisterStudent extends React.Component{
     constructor(props)
     {
         super(props);
         this.state= {
+            isNew: props.type == 'New',
+            
             email: "",
             firstName: "",
             lastName: "",
@@ -33,8 +36,8 @@ class RegisterStudent extends React.Component{
             phone: parseInt(this.state.phone)
         }
         console.log(requestBody);
-        axios.post('https://localhost:44358/api/account/registerStudent', requestBody)
-            .then(alert(response => alert(response)));
+        const response = registerStudent(requestBody);
+        alert(response => alert(response))
         
     }
 
@@ -51,33 +54,63 @@ class RegisterStudent extends React.Component{
         if (e.target.id === 'rb_female')
             this.setState({sex: 2})
     }
+    
+    componentDidMount(){
+        console.log("--")
+        console.log(this.props.match)
+        this.onFormLoad();
+    }
+
+    async onFormLoad(){
+        if (this.state.isNew)
+        {
+            return;
+        }
+
+        const id = this.props.match.params.id;
+        const student = await getStudent(id);
+        
+        console.log( student);
+
+        this.setState({
+            email: student.data.email,
+            firstName: student.data.firstName,
+            lastName: student.data.lastName,
+            birthDate: student.data.birthDate,
+            phone: student.data.phone,
+        })
+
+        console.log(this.state);
+    }
 
     render(){
+        const {email, firstName, lastName, birthDate, phone} = this.state;
         return(
+            
             <Container style={{marginTop: "40px"}}>
                 <Row>
                     <Col md="4"></Col>
                     <Col md="4">
-                        <h2 style={{textAlign:"center"}}>Новый студент</h2>
+                        <h2 style={{textAlign:"center"}}>{this.state.isNew?'Новый ученик':'Редактировать ученика'}</h2>
                         <Form>
                             <Form.Group className="mb-3" controlId="email">
                                 <Form.Label>Email</Form.Label>
-                                <Form.Control onChange={this.handleChange} placeholder="введите email..." autoComplete="off"/>
+                                <Form.Control onChange={this.handleChange} value={email} placeholder="введите email..." autoComplete="off"/>
                             </Form.Group>
 
                             <Form.Group className="mb-3" controlId="firstName">
                                 <Form.Label>Имя</Form.Label>
-                                <Form.Control onChange={this.handleChange} placeholder="введите имя..." autoComplete="off"/>
+                                <Form.Control onChange={this.handleChange} value={firstName} placeholder="введите имя..." autoComplete="off"/>
                             </Form.Group>
 
                             <Form.Group className="mb-3" controlId="lastName">
                                 <Form.Label>Фамилия</Form.Label>
-                                <Form.Control onChange={this.handleChange} placeholder="введите фамилию..." />
+                                <Form.Control onChange={this.handleChange} value={lastName} placeholder="введите фамилию..." />
                             </Form.Group>
 
                             <Form.Group className="mb-3" controlId="birthDate">
                                 <Form.Label>Дата рождения</Form.Label>
-                                <Form.Control onChange={this.handleChange} placeholder="введите дату..." />
+                                <Form.Control onChange={this.handleChange} value={birthDate} placeholder="введите дату..." />
                             </Form.Group>
                             
                             <Form.Group className="mb-3" controlId="sex">
@@ -103,16 +136,21 @@ class RegisterStudent extends React.Component{
                             </Form.Group>
 
                             <Form.Group className="mb-3" controlId="phone">
-                                <Form.Label onClick={this.handleSave}>Телефон</Form.Label>
-                                <Form.Control onChange={this.handleChange} placeholder="введите телефон..." />
+                                <Form.Label>Телефон</Form.Label>
+                                <Form.Control onChange={this.handleChange} value={phone} placeholder="введите телефон..." />
                             </Form.Group>
 
                             <hr></hr>
-                            
 
                             <Button variant="primary" type="null" onClick={this.handleSave}>
                                 Сохранить
                             </Button>
+                            <hr></hr>
+
+                            <Button variant="info" type="null" onClick={this.handleSave}>
+                                <Link to="/admin/addSubscription">Добавить абонемент</Link>
+                            </Button>
+
                         </Form>
                     </Col>
                 </Row>

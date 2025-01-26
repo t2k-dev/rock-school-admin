@@ -1,6 +1,6 @@
 import React from "react";
 import { Card, Row, Col, Image, Button } from 'react-bootstrap';
-import noImage from '../images/user.jpg';
+import noImage from '../../images/user.jpg';
 import { Link } from "react-router-dom";
 
 class TeacherCard extends React.Component{
