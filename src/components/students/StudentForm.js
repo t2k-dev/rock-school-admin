@@ -1,27 +1,27 @@
 import React from "react";
 import { Form, Container, Row, Col, Image, Button } from 'react-bootstrap';
-import axios from "axios";
 import { Link } from "react-router-dom";
 import { getStudent, registerStudent } from "../../services/apiStudentService";
+import { SexControl } from "../common/SexControl";
 
-class RegisterStudent extends React.Component{
+
+class StudentForm extends React.Component{
     constructor(props)
     {
         super(props);
         this.state= {
             isNew: props.type == 'New',
-            
             email: "",
             firstName: "",
             lastName: "",
             birthDate: "",
             phone: 0,
             userId: 1,
+            Level: 0,
         }
     
         this.handleSave = this.handleSave.bind(this);
         this.handleChange = this.handleChange.bind(this);
-        this.handleSexClick = this.handleSexClick.bind(this);
     }
     
     handleSave = (e) =>{
@@ -35,10 +35,9 @@ class RegisterStudent extends React.Component{
             sex: this.state.sex,
             phone: parseInt(this.state.phone)
         }
-        console.log(requestBody);
+        
         const response = registerStudent(requestBody);
         alert(response => alert(response))
-        
     }
 
     handleChange = (e) =>{
@@ -46,15 +45,12 @@ class RegisterStudent extends React.Component{
         this.setState({[id] : value})
     }
 
-    handleSexClick = (e) =>{
-        const {id} = e.target
-        if (e.target.id === 'rb_male')
-            this.setState({sex: 1})
+    handleSexChange = (isChecked) =>{
+        this.setState({
+            sex: isChecked,
+        })
+      }
 
-        if (e.target.id === 'rb_female')
-            this.setState({sex: 2})
-    }
-    
     componentDidMount(){
         console.log("--")
         console.log(this.props.match)
@@ -84,7 +80,7 @@ class RegisterStudent extends React.Component{
     }
 
     render(){
-        const {email, firstName, lastName, birthDate, phone} = this.state;
+        const {email, firstName, lastName, birthDate, phone, level} = this.state;
         return(
             
             <Container style={{marginTop: "40px"}}>
@@ -93,11 +89,6 @@ class RegisterStudent extends React.Component{
                     <Col md="4">
                         <h2 style={{textAlign:"center"}}>{this.state.isNew?'Новый ученик':'Редактировать ученика'}</h2>
                         <Form>
-                            <Form.Group className="mb-3" controlId="email">
-                                <Form.Label>Email</Form.Label>
-                                <Form.Control onChange={this.handleChange} value={email} placeholder="введите email..." autoComplete="off"/>
-                            </Form.Group>
-
                             <Form.Group className="mb-3" controlId="firstName">
                                 <Form.Label>Имя</Form.Label>
                                 <Form.Control onChange={this.handleChange} value={firstName} placeholder="введите имя..." autoComplete="off"/>
@@ -112,27 +103,12 @@ class RegisterStudent extends React.Component{
                                 <Form.Label>Дата рождения</Form.Label>
                                 <Form.Control onChange={this.handleChange} value={birthDate} placeholder="введите дату..." />
                             </Form.Group>
-                            
-                            <Form.Group className="mb-3" controlId="sex">
-                                <Form.Label>Пол</Form.Label>
-                                <div className="mb-3">
-                                    <Form.Check
-                                        inline
-                                        label="Мужской"
-                                        name="group1"
-                                        type="radio"
-                                        id="rb_male"
-                                        onChange={this.handleSexClick}
-                                    />
-                                    <Form.Check
-                                        inline
-                                        label="Женский"
-                                        name="group1"
-                                        type="radio"
-                                        id="rb_female"
-                                        onChange={this.handleSexClick}
-                                    />
-                                </div>
+
+                            <SexControl onChange={this.handleSexChange}></SexControl>
+
+                            <Form.Group className="mb-3" controlId="email">
+                                <Form.Label>Email</Form.Label>
+                                <Form.Control onChange={this.handleChange} value={email} placeholder="введите email..." autoComplete="off"/>
                             </Form.Group>
 
                             <Form.Group className="mb-3" controlId="phone">
@@ -142,6 +118,22 @@ class RegisterStudent extends React.Component{
 
                             <hr></hr>
 
+                            <Form.Group className="mb-3" controlId="discipline">
+                                <Form.Label>Уровень</Form.Label>
+                                <Form.Select 
+                                    aria-label="Веберите..."
+                                    value={level}
+                                    onChange={e => this.setState({ level: e.target.value })}
+                                    >
+                                    <option>выберите...</option>
+                                    <option value="1">Начинающий</option>
+                                    <option value="2">Продолжающий</option>
+                                    <option value="3">Продвинутый</option>
+                                </Form.Select>
+                            </Form.Group>
+                            
+                            <hr></hr>
+                            
                             <Button variant="primary" type="null" onClick={this.handleSave}>
                                 Сохранить
                             </Button>
@@ -159,4 +151,4 @@ class RegisterStudent extends React.Component{
     }
 }
 
-export default RegisterStudent;
+export default StudentForm;

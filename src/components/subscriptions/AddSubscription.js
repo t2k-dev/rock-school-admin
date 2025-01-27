@@ -14,13 +14,20 @@ class AddSubscription extends React.Component{
             birthDate: "",
             phone: 0,
             userId: 1,
+
+            generatedSchedule: "",
         }
-    
+        this.generateSchedule = this.generateSchedule.bind(this);
         this.handleSave = this.handleSave.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleSexClick = this.handleSexClick.bind(this);
     }
     
+    generateSchedule = (e) =>{
+        console.log("generateSchedule");
+        this.setState({generatedSchedule:"Сергей: Пн: 13:00 - 18:00 \nСергей: Ср: 13:00 - 18:00"});
+    }
+
     handleSave = (e) =>{
         e.preventDefault();
 
@@ -53,6 +60,7 @@ class AddSubscription extends React.Component{
     }
 
     render(){
+        const {generatedSchedule} = this.state
         return(
             <Container style={{marginTop: "40px"}}>
                 <Row>
@@ -79,7 +87,14 @@ class AddSubscription extends React.Component{
                                     <option value="9">Экстрим вокал</option>
                                 </Form.Select>
                             </Form.Group>
-
+                            <Form.Group className="mb-3" controlId="GenerteSchedule">
+                                <Form.Label>Расписание</Form.Label>
+                                <Form.Control as="textarea" value={generatedSchedule} onChange={this.handleChange} placeholder="" />
+                                <Form.Label onClick={this.generateSchedule} style={{marginTop:"20px", color:"green"}}>
+                                    Сгенерировать
+                                </Form.Label>
+                            </Form.Group>
+                            <hr></hr>
                             <Form.Group className="mb-3" controlId="Schedule">
                                 <Form.Label>Расписание</Form.Label>
                                 <Form.Control onChange={this.handleChange} placeholder="" />

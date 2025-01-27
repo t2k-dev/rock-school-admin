@@ -1,9 +1,9 @@
 import React from "react";
-import { getStudents } from "../services/apiStudentService"
+import { getStudents } from "../../services/apiStudentService"
 import { Row, Col, Button } from 'react-bootstrap';
 import { Link } from "react-router-dom";
-import StudentCard from "./StudentCard";
 
+import StudentCard from "./StudentCard";
 
 class Students extends React.Component{
     state = {teachers: []}

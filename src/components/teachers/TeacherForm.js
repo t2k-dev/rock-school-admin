@@ -5,7 +5,7 @@ import { SexControl } from "../common/SexControl";
 
 import { getTeacher, registerTeacher } from "../../services/apiTeacherService";
 
-export class TeacherForm extends React.Component {
+class TeacherForm extends React.Component{
   constructor(props) {
     super(props);
 
@@ -366,3 +366,5 @@ return;
     );
   }
 }
+
+export default TeacherForm;
