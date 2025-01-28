@@ -3,13 +3,13 @@ import { getStudents } from "../../services/apiStudentService";
 import { Row, Col, Container, Form, Button, Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
-class StudentScreen extends React.Component {
+class TeacherScreen extends React.Component {
   render() {
     return (
       <Container style={{ marginTop: "40px" }}>
         <Row>
           <Col md="4">
-            <h2 style={{ textAlign: "center" }}>Ученик</h2>
+            <h2 style={{ textAlign: "center" }}>Преподаватель</h2>
             <Form.Group className="mb-3" controlId="firstName">
               <Form.Label>Имя</Form.Label>
               <Form.Control onChange={this.handleChange} value="Сергей Петров" placeholder="введите имя..." autoComplete="off"/>
@@ -24,7 +24,7 @@ class StudentScreen extends React.Component {
         </Row>
         <Row>
             <Col>
-                <Link to="/students/edit/1">
+                <Link to="/teachers/edit/1">
                     <Button variant="secondary" type="null" onClick={this.handleSave}>
                         Редактировать
                     </Button>
@@ -81,4 +81,4 @@ class StudentScreen extends React.Component {
   }
 }
 
-export default StudentScreen;
+export default TeacherScreen;

@@ -137,12 +137,6 @@ class StudentForm extends React.Component{
                             <Button variant="primary" type="null" onClick={this.handleSave}>
                                 Сохранить
                             </Button>
-                            <hr></hr>
-
-                            <Button variant="info" type="null" onClick={this.handleSave}>
-                                <Link to="/admin/addSubscription">Добавить абонемент</Link>
-                            </Button>
-
                         </Form>
                     </Col>
                 </Row>

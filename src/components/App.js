@@ -15,6 +15,7 @@ import StudentScreen from "./students/StudentScreen";
 import StudentForm from "./students/StudentForm";
 import NewStudentForm from "./students/NewStudentForm";
 
+import TeacherScreen from "./teachers/TeacherScreen"
 import TeacherForm from "./teachers/TeacherForm";
 import AddSubscription from "./subscriptions/AddSubscription";
 
@@ -23,13 +24,17 @@ function App() {
     <BrowserRouter>
       <MyNavbar />
       <Route exact path="/home"><HomeScreen /></Route>
+      
       <Route exact path="/teachers"><Teachers /></Route>
+      <Route exact path="/teacher/:id"><TeacherScreen /></Route>
       <Route exact path="/teachers/edit/:id" render={(props) => <TeacherForm type="Edit" {...props} />}/>
       <Route exact path="/admin/registerTeacher" render={(props) => <TeacherForm type="New" {...props} />}/>
+      
       <Route exact path="/students"><Students /></Route>
       <Route exact path="/student/:id"><StudentScreen /></Route>
       <Route exact path="/students/edit/:id" render={(props) => <StudentForm type="Edit" {...props} />}/>
-      <Route exact path="/admin/registerStudent" render={(props) => <NewStudentForm type="New" {...props} />}/>
+      <Route exact path="/admin/registerStudent" render={(props) => <NewStudentForm {...props} />}/>
+      
       <Route exact path="/admin/addSubscription" render={(props) => <AddSubscription type="New" {...props} />}/>
       <Route path="/about" element={<About />} />
       <Route path="/contact" element={<Contact />} />

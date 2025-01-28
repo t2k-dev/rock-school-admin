@@ -3,6 +3,8 @@ import { Form, Container, Row, Col, Table, FormCheck, Button } from "react-boots
 import { DisciplinesControl } from "../common/DisciplinesControl";
 import { SexControl } from "../common/SexControl";
 
+import WorkingPeriods from "./WorkingPeriods";
+
 import { getTeacher, registerTeacher } from "../../services/apiTeacherService";
 
 class TeacherForm extends React.Component{
@@ -18,8 +20,8 @@ class TeacherForm extends React.Component{
       birthDate: "",
       phone: 0,
       userId: 1,
-      WorkingPeriods: [],
       disciplines: [],
+      workingPeriods: [],
 
       periodDay: 0,
       periodStart: "",
@@ -58,11 +60,8 @@ class TeacherForm extends React.Component{
       phone: teacher.phone,
       disciplines: teacher.disciplines,
       sex: teacher.sex,
-      //WorkingPeriods: teacher.workingHours.workingPeriods,
+      workingPeriods: [], // DEV
     });
-    //const periods = teacher.workingHours.workingPeriods;
-
-    //this.setState({teachers: response.data})
   }
 
   getValueOrEmptyString = (str) => {
@@ -89,7 +88,6 @@ return;
       disciplines: this.state.disciplines,
       workingHours: {
         workingPeriods: this.state.WorkingPeriods,
-        breaks: null,
       },
     };
 
@@ -113,6 +111,10 @@ return;
     })
   }
   
+  handlePeriodsChange = () =>{
+
+  }
+
   handleDisciplineCheck = (id, isChecked) => {
     this.setState((prevState) => {
       let newDisciplines = [...prevState.disciplines];
@@ -267,6 +269,8 @@ return;
               <DisciplinesControl onCheck={this.handleDisciplineCheck} disciplines={disciplines}></DisciplinesControl>
 
               <hr></hr>
+              
+
               <Form.Group className="mb-3">
                 <b>Расписание</b>
                 <Row style={{ marginTop: "20px" }}>
@@ -290,9 +294,7 @@ return;
                   </Col>
                   <Col>
                     <Row>
-                      <Form.Label column md={1}>
-                        с
-                      </Form.Label>
+                      <Form.Label column md={1}>с</Form.Label>
                       <Col md={4}>
                         <Form.Control
                           placeholder="чч:мм"
@@ -335,7 +337,7 @@ return;
                       </tr>
                     </thead>
                     <tbody>
-                      {this.state.WorkingPeriods.map((item, index) => (
+                      {this.state.workingPeriods.map((item, index) => (
                         <tr key={index}>
                           <td>{index + 1}</td>
                           <td>{this.getDayName(item.day)}</td>

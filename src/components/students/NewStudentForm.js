@@ -5,13 +5,14 @@ import { getStudent, registerStudent } from "../../services/apiStudentService";
 import { SexControl } from "../common/SexControl";
 
 
-class StudentForm extends React.Component{
+class NewStudentForm extends React.Component{
     constructor(props)
     {
         super(props);
         this.state= {
             firstName: "",
             birthDate: "",
+            sex: 0,
             phone: 0,
             Level: 0,
             branchId: 0,
@@ -81,8 +82,22 @@ class StudentForm extends React.Component{
 
                             <hr></hr>
 
-                            <Form.Group className="mb-3" controlId="discipline">
+                            <Form.Group className="mb-3" controlId="level">
                                 <Form.Label>Уровень</Form.Label>
+                                <Form.Select 
+                                    aria-label="Веберите..."
+                                    value={level}
+                                    onChange={e => this.setState({ level: e.target.value })}
+                                    >
+                                    <option>выберите...</option>
+                                    <option value="1">Начинающий</option>
+                                    <option value="2">Продолжающий</option>
+                                    <option value="3">Продвинутый</option>
+                                </Form.Select>
+                            </Form.Group>
+
+                            <Form.Group className="mb-3" controlId="branchId">
+                                <Form.Label>Филиал</Form.Label>
                                 <Form.Select 
                                     aria-label="Веберите..."
                                     value={level}
@@ -107,4 +122,4 @@ class StudentForm extends React.Component{
     }
 }
 
-export default StudentForm;
+export default NewStudentForm;
