@@ -18,6 +18,7 @@ import NewStudentForm from "./students/NewStudentForm";
 import TeacherScreen from "./teachers/TeacherScreen"
 import TeacherForm from "./teachers/TeacherForm";
 import AddSubscription from "./subscriptions/AddSubscription";
+import NoteForm from "./notes/NoteForm";
 
 function App() {
   return (
@@ -38,6 +39,9 @@ function App() {
       <Route exact path="/admin/addSubscription" render={(props) => <AddSubscription type="New" {...props} />}/>
       <Route path="/about" element={<About />} />
       <Route path="/contact" element={<Contact />} />
+
+      <Route exact path="/notes/addNote" render={(props) => <NoteForm {...props} />}/>
+
     </BrowserRouter>
   );
 }

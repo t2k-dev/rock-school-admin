@@ -1,7 +1,7 @@
 import React from "react";
 import { Form, Container, Row, Col, Image, Button } from 'react-bootstrap';
 import { Link, useHistory } from "react-router-dom";
-import { getStudent, registerStudent } from "../../services/apiStudentService";
+import { getStudent, addStudent } from "../../services/apiStudentService";
 import { SexControl } from "../common/SexControl";
 
 
@@ -13,7 +13,7 @@ class NewStudentForm extends React.Component{
             firstName: "",
             birthDate: "",
             sex: 0,
-            phone: 0,
+            phone: "",
             Level: 0,
             branchId: 0,
         }
@@ -22,20 +22,22 @@ class NewStudentForm extends React.Component{
         this.handleChange = this.handleChange.bind(this);
     }
     
-    handleSave = (e) =>{
+    handleSave = async (e) =>{
         e.preventDefault();
 
         const requestBody ={
-            login: this.state.email,
             firstName: this.state.firstName,
-            lastName: this.state.lastName,
             birthDate: this.state.birthDate,
             sex: this.state.sex,
-            phone: parseInt(this.state.phone)
+            phone: parseInt(this.state.phone),
+            level: this.state.level,
+            branchId: this.state.branchId,
         }
-        console.log(requestBody)
-        //const response = registerStudent(requestBody);
-        this.props.history.push('/student/1');
+
+        const response = await addStudent(requestBody)
+        const newStudentId = response.data;
+
+        this.props.history.push('/student/'+ newStudentId);
     }
 
     handleChange = (e) =>{
@@ -49,12 +51,9 @@ class NewStudentForm extends React.Component{
         })
       }
 
-    componentDidMount(){
-    }
-
 
     render(){
-        const {email, firstName, lastName, birthDate, phone, level} = this.state;
+        const {firstName, branchId, birthDate, phone, level} = this.state;
         return(
             
             <Container style={{marginTop: "40px"}}>
@@ -100,13 +99,12 @@ class NewStudentForm extends React.Component{
                                 <Form.Label>Филиал</Form.Label>
                                 <Form.Select 
                                     aria-label="Веберите..."
-                                    value={level}
-                                    onChange={e => this.setState({ level: e.target.value })}
+                                    value={branchId}
+                                    onChange={e => this.setState({ branchId: e.target.value })}
                                     >
                                     <option>выберите...</option>
-                                    <option value="1">Начинающий</option>
-                                    <option value="2">Продолжающий</option>
-                                    <option value="3">Продвинутый</option>
+                                    <option value="1">На Абая</option>
+                                    <option value="2">На Аль-Фараби</option>
                                 </Form.Select>
                             </Form.Group>
 

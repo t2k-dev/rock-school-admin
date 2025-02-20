@@ -1,10 +1,36 @@
 import React from "react";
-import { getStudents } from "../../services/apiStudentService";
+import { getStudentScreenDetails } from "../../services/apiStudentService";
 import { Row, Col, Container, Form, Button, Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 class StudentScreen extends React.Component {
+  constructor(props)
+  {
+      super(props);
+      this.state = {
+          student: null,
+      }
+  
+  }
+
+  componentDidMount() {
+    this.onFormLoad();
+  }
+
+  async onFormLoad() {
+    const student = getStudentScreenDetails(this.props.match.params.id)
+  }
+
   render() {
+
+
+    const subscriptions = [
+      {
+        "descipline": "Vocal",
+        "status": "Активный",
+        "description": ""
+      }
+    ];
     return (
       <Container style={{ marginTop: "40px" }}>
         <Row>
@@ -61,14 +87,14 @@ class StudentScreen extends React.Component {
             <Row>
                 <Col>
                     <Link to="/admin/addSubscription">
-                        <Button variant="warning" type="null" onClick={this.handleSave}>Добавить абонемент</Button>
+                        <Button variant="warning" type="null" size="sm" onClick={this.handleSave}>Добавить абонемент</Button>
                     </Link>
                 </Col>
             </Row>
             <Row>
                 <Col>
                     <Link to="/admin/addSubscription">
-                        <Button variant="info" type="null" onClick={this.handleSave}>
+                        <Button variant="info" type="null" size="sm" onClick={this.handleSave}>
                             Добавить пробное занятие
                         </Button>
                     </Link>

@@ -6,25 +6,31 @@ import { Link } from "react-router-dom";
 import StudentCard from "./StudentCard";
 
 class Students extends React.Component{
-    state = {teachers: []}
+    state = {students: []}
     
     componentDidMount(){
         this.onFormLoad();
     }
 
     async onFormLoad(){
-        const returnedTeachers = await getStudents();
-        this.setState({teachers: returnedTeachers});
-        console.log(this.state.teachers);
+        const returnedStudents = await getStudents();
+        this.setState({students: returnedStudents});
+        console.log(this.state.students);
     }
 
     render(){
+        let studentsList;
+        if (this.state.students){
+            studentsList = this.state.students.map((item, index) => (
+                <StudentCard key={index}  item={item} />
+            ));
+        }
+        else{
+            studentsList = <Col>Нет записей</Col>
+        }
 
         return(
-            <div 
-                className="ui raised very padded text container segment"
-                style={{marginTop:'80px'}}
-            >
+            <div className="ui raised very padded text container segment" style={{marginTop:'80px'}}>
                 <Row>
                     <Col md="8"><h3 className="ui header">Студенты</h3></Col>
                     <Col style={{textAlign:'right'}}>
@@ -33,9 +39,7 @@ class Students extends React.Component{
                 </Row>
                 <Row style={{marginTop:'20px'}}>
                     <Col>
-                        {this.state.teachers.map((item, index) => (
-                            <StudentCard key={index}  item={item} />
-                        ))}
+                        {studentsList}
                     </Col>
                 </Row>
             </div>

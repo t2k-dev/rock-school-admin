@@ -1,7 +1,7 @@
 import React from "react";
 import { Form, Container, Row, Col, Image, Button } from 'react-bootstrap';
 import { Link } from "react-router-dom";
-import { getStudent, registerStudent } from "../../services/apiStudentService";
+import { getStudent, addStudent } from "../../services/apiStudentService";
 import { SexControl } from "../common/SexControl";
 
 
@@ -36,7 +36,7 @@ class StudentForm extends React.Component{
             phone: parseInt(this.state.phone)
         }
         
-        const response = registerStudent(requestBody);
+        const response = addStudent(requestBody);
         alert(response => alert(response))
     }
 

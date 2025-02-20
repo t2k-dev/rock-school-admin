@@ -1,10 +1,57 @@
 import React from "react";
-import { Form, Container, Row, Col, Table, Button } from 'react-bootstrap';
+import { Form, Container, Row, Col, Table, Card, Button, FormCheck } from 'react-bootstrap';
 import axios from "axios";
 import { Link } from "react-router-dom";
 
 class HomeScreen extends React.Component{
+
+
     render(){
+        const notes = [
+          {
+            "description": "Пробный урок в 12:00",
+            "status": 1,
+          },
+          {
+            "description": "Написать +77012031456 когда будут свободные окна у Аружан в 18.00",
+            "status": 2,
+          },
+        ] ;
+
+        const rooms = [
+          {
+            "name": "Барабанная",
+            "status": "Занятие до 12:00",
+            "teacher": "Сергей",
+            "student": "Пушкин",
+          },
+          {
+            "name": "Вокальная",
+            "status": "Свободно",
+            "teacher": "",
+            "student": "",
+          },
+          {
+            "name": "Гитарная",
+            "status": "Репетиция до 14:00",
+            "teacher": "Михаил",
+            "student": "",
+          },
+          {
+            "name": "Жёлтая",
+            "status": "Свободно",
+            "teacher": "",
+            "student": "",
+          },
+          {
+            "name": "Зелёная",
+            "status": "Свободно",
+            "teacher": "",
+            "student": "",
+          },
+
+        ];
+
         return(
             <Container style={{marginTop: "40px"}}>
                 <Row>
@@ -16,82 +63,52 @@ class HomeScreen extends React.Component{
                     <Table striped bordered hover style={{ marginTop: "20px" }}>
                     <thead>
                       <tr>
-                        <th>#</th>
                         <th>Комната</th>
-                        <th>Статус</th>
                         <th>Преподаватель</th>
                         <th>Ученик</th>
-                        <th></th>
+                        <th>Статус</th>
                       </tr>
                     </thead>
                     <tbody>
-                        <tr key={1}>
-                          <td>1</td>
-                          <td>Жёлтая</td>
-                          <td>Вокал</td>
-                          <td>Сергей</td>
-                          <td>Пушкин</td>
-                          <td>
-                            <Button>
-                              <i>-</i>
-                            </Button>
-                          </td>
-                          </tr>
-                          <tr key={2}>
-                          <td>2</td>
-                          <td>Красная</td>
-                          <td>Свободно</td>
-                          <td></td>
-                          <td></td>
-                          <td>
-                            <Button>
-                              <i>-</i>
-                            </Button>
-                          </td>
-
+                      {rooms.map((item, index) => (
+                        <tr key={index}>
+                          <td>{item.name}</td>
+                          <td>{item.teacher}</td>
+                          <td>{item.student}</td>
+                          <td>{item.status}</td>
                         </tr>
+                      ))
+                      }
                     </tbody>
                   </Table>
                     </Col>
                 </Row>
                 <Row>
-                    <Col><h3>Активности на сегодня</h3>
+                    <Col style={{ marginTop: "40px" }}><h3>Активности на сегодня</h3>
                     </Col>
+                </Row>
+                <Row style={{ marginTop: "10px" }}>
+                {notes.map((item, index) => (
+                  <Card key={index} className="mb-2">
+                    <Card.Body>
+                      <Card.Text>
+                        <Row>
+                        <Col md="11">
+                          {item.description}
+                        </Col>
+                        <Col md="1">
+                        <Button variant="primary" size="sm">Сделано</Button>
+                        </Col>
+                        </Row>
+                      </Card.Text>
+                      
+                    </Card.Body>
+                  </Card>
+                        ))}
                 </Row>
                 <Row>
-                    <Col>
-                    <Table striped bordered hover style={{ marginTop: "20px" }}>
-                    <thead>
-                      <tr>
-                        <th></th>
-                        <th></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                        <tr key={1}>
-                          <td>Пробный урок в 12:00</td>
-                          <td></td>
-                          <td>
-                            <Button>
-                              <i>-</i>
-                            </Button>
-                          </td>
-                          </tr>
-                          <tr key={2}>
-                          <td>Заправить что-то</td>
-                          <td></td>
-                          <td>
-                            <Button>
-                              <i>-</i>
-                            </Button>
-                          </td>
-
-                        </tr>
-                    </tbody>
-                  </Table>
-                    </Col>
+                <Link to="/notes/addNote"><Button variant="success" size="sm">Добавить</Button></Link>
                 </Row>
-
             </Container>
         )
     }
