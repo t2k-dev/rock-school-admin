@@ -8,9 +8,21 @@ class StudentScreen extends React.Component {
   {
       super(props);
       this.state = {
-          student: null,
-      }
-  
+          student: {
+            firstName : "",
+            phone : "",
+          },
+          subscriptions: [
+            {
+              descipline: "Vocal",
+              status: "Активный",
+              description: "С 01-04-2025 до 01-05-2025",
+          }
+        ]
+      };
+
+      this.handleChange = this.handleChange.bind(this);
+      this.handleEditClick = this.handleEditClick.bind(this);
   }
 
   componentDidMount() {
@@ -18,19 +30,45 @@ class StudentScreen extends React.Component {
   }
 
   async onFormLoad() {
-    const student = getStudentScreenDetails(this.props.match.params.id)
+    const details = await getStudentScreenDetails(this.props.match.params.id);
+
+    this.setState({student : details.student});
+    //console.log(response.data.student);
+    console.log(this.state.student.firstName);
+  }
+
+  handleChange = (e) =>{
+      const {id, value} = e.target
+      this.setState({[id] : value})
+  }
+
+  handleEditClick = (e) =>{
+    e.preventDefault();
+    console.log("22");
+    this.props.history.push('/students/edit/'+ this.props.match.params.id);
   }
 
   render() {
+    const {firstName, phone} = this.state.student;
 
+    let subscriptionsList;
+    if (this.state.subscriptions){
+      subscriptionsList = this.state.subscriptions.map((item, index) => (
+        <tr key={index}>
+          <td>{item.description}</td>
+          <td>{item.descipline}</td>
+          <td>{item.status}</td>
+        </tr>
+        ));
+    }
+    else{
+      subscriptionsList = <tr key={1}>
+        <td></td>
+        <td>Нет записей</td>
+        <td></td>
+      </tr>
+    }
 
-    const subscriptions = [
-      {
-        "descipline": "Vocal",
-        "status": "Активный",
-        "description": ""
-      }
-    ];
     return (
       <Container style={{ marginTop: "40px" }}>
         <Row>
@@ -38,23 +76,21 @@ class StudentScreen extends React.Component {
             <h2 style={{ textAlign: "center" }}>Ученик</h2>
             <Form.Group className="mb-3" controlId="firstName">
               <Form.Label>Имя</Form.Label>
-              <Form.Control onChange={this.handleChange} value="Сергей Петров" placeholder="введите имя..." autoComplete="off"/>
+              <Form.Control onChange={this.handleChange} value={firstName} placeholder="введите имя..." autoComplete="off"/>
             </Form.Group>
 
             <Form.Group className="mb-3" controlId="phone">
               <Form.Label>Телефон</Form.Label>
-              <Form.Control onChange={this.handleChange} value='+7 7773705795' placeholder="введите телефон..."/>
+              <Form.Control onChange={this.handleChange} value={phone} placeholder="введите телефон..."/>
             </Form.Group>
           </Col>
           <Col md="4"></Col>
         </Row>
         <Row>
             <Col>
-                <Link to="/students/edit/1">
-                    <Button variant="secondary" type="null" onClick={this.handleSave}>
-                        Редактировать
-                    </Button>
-                </Link>
+                <Button variant="secondary" type="null" onClick={this.handleEditClick}>
+                    Редактировать
+                </Button>
             </Col>
         </Row>
         <Row>
@@ -62,23 +98,13 @@ class StudentScreen extends React.Component {
             <Table striped bordered hover style={{ marginTop: "20px" }}>
                     <thead>
                       <tr>
-                        <th>#</th>
                         <th>Абонементы</th>
+                        <th>Дисциплина</th>
                         <th>Статус</th>
-                        <th></th>
                       </tr>
                     </thead>
                     <tbody>
-                        <tr key={1}>
-                          <td>1</td>
-                          <td>ФЫВфыв</td>
-                          <td>1</td>
-                          <td>
-                            <Button>
-                              <i>-</i>
-                            </Button>
-                          </td>
-                        </tr>
+                      {subscriptionsList}
                     </tbody>
                   </Table>
 

@@ -28,7 +28,7 @@ export const postStudent = async (data) =>{
 export const getStudentScreenDetails = async (id) => {
   try {
     const response = await apiClient.get('/student/getStudentScreenDetails/' + id);
-    return response;
+    return response.data;
   } 
   catch (error) {
     console.error('Error fetching data:', error);
@@ -37,8 +37,6 @@ export const getStudentScreenDetails = async (id) => {
 
 export const addStudent = async (data) =>{
     const response = await apiClient.post('/student/addStudent', data)
-    console.log(1)
-    console.log(response)
     return response;
 }
 
