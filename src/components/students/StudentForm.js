@@ -1,7 +1,7 @@
 import React from "react";
 import { Form, Container, Row, Col, Image, Button } from 'react-bootstrap';
 import { Link } from "react-router-dom";
-import { getStudent, addStudent } from "../../services/apiStudentService";
+import { getStudent, saveStudent } from "../../services/apiStudentService";
 import { SexControl } from "../common/SexControl";
 
 
@@ -16,15 +16,16 @@ class StudentForm extends React.Component{
             lastName: "",
             birthDate: "",
             phone: 0,
-            userId: 1,
+            userId: "",
             Level: 0,
+            sex: 1,
         }
     
         this.handleSave = this.handleSave.bind(this);
         this.handleChange = this.handleChange.bind(this);
     }
     
-    handleSave = (e) =>{
+    handleSave = async (e) =>{
         e.preventDefault();
 
         const requestBody ={
@@ -36,8 +37,7 @@ class StudentForm extends React.Component{
             phone: parseInt(this.state.phone)
         }
         
-        const response = addStudent(requestBody);
-        alert(response => alert(response))
+        const response = await saveStudent(requestBody);
     }
 
     handleChange = (e) =>{
@@ -74,13 +74,14 @@ class StudentForm extends React.Component{
             lastName: student.data.lastName,
             birthDate: student.data.birthDate,
             phone: student.data.phone,
+            sex: student.data.sex,
         })
 
         console.log(this.state);
     }
 
     render(){
-        const {email, firstName, lastName, birthDate, phone, level} = this.state;
+        const {email, firstName, lastName, birthDate, phone, level, sex} = this.state;
         return(
             
             <Container style={{marginTop: "40px"}}>
@@ -104,7 +105,7 @@ class StudentForm extends React.Component{
                                 <Form.Control onChange={this.handleChange} value={birthDate} placeholder="введите дату..." />
                             </Form.Group>
 
-                            <SexControl onChange={this.handleSexChange}></SexControl>
+                            <SexControl value={sex} onChange={this.handleSexChange}></SexControl>
 
                             <Form.Group className="mb-3" controlId="email">
                                 <Form.Label>Email</Form.Label>

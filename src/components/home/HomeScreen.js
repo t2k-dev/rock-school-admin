@@ -2,55 +2,81 @@ import React from "react";
 import { Form, Container, Row, Col, Table, Card, Button, FormCheck } from 'react-bootstrap';
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { getHomeScreenDetails } from "../../services/apiHomeService";
 
 class HomeScreen extends React.Component{
+  constructor(props) {
+    super(props);
+    this.state={
+      Rooms : [],
+      Notes : []
+    }
+  }
 
+  componentDidMount(){
+          console.log(this.props.match)
+          this.onFormLoad();
+  }
+
+  async onFormLoad(){
+    const details = await getHomeScreenDetails();
+    
+    console.log(  details);
+
+    this.setState({
+      Rooms : details.rooms,
+      Notes : details.notes,
+    })
+
+    console.log(this.state);
+  }
 
     render(){
-        const notes = [
-          {
-            "description": "Пробный урок в 12:00",
-            "status": 1,
-          },
-          {
-            "description": "Написать +77012031456 когда будут свободные окна у Аружан в 18.00",
-            "status": 2,
-          },
-        ] ;
+      const {rooms, notes} = this.state;
+      let roomsList;
+      if (this.state.rooms){
+        roomsList = this.state.rooms.map((item, index) => (
+          <tr key={index}>
+            <td>{item.roomName}</td>
+            <td>{item.teacherName}</td>
+            <td>{item.studentName}</td>
+            <td>{item.status}</td>
+          </tr>
+          ));
+      }
+      else{
+        roomsList = <tr key={1}>
+          <td></td>
+          <td>Нет записей</td>
+          <td></td>
+          <td></td>
+        </tr>
+      }
 
-        const rooms = [
-          {
-            "name": "Барабанная",
-            "status": "Занятие до 12:00",
-            "teacher": "Сергей",
-            "student": "Пушкин",
-          },
-          {
-            "name": "Вокальная",
-            "status": "Свободно",
-            "teacher": "",
-            "student": "",
-          },
-          {
-            "name": "Гитарная",
-            "status": "Репетиция до 14:00",
-            "teacher": "Михаил",
-            "student": "",
-          },
-          {
-            "name": "Жёлтая",
-            "status": "Свободно",
-            "teacher": "",
-            "student": "",
-          },
-          {
-            "name": "Зелёная",
-            "status": "Свободно",
-            "teacher": "",
-            "student": "",
-          },
-
-        ];
+      let notesList;
+      if (this.state.notes){
+        notesList = this.state.notes.map((item, index) => (
+          <Card key={index} className="mb-2">
+          <Card.Body>
+            <Card.Text>
+              <Row>
+              <Col md="11">
+                {item.description}
+              </Col>
+              <Col md="1">
+              <Button variant="primary" size="sm">Сделано</Button>
+              </Col>
+              </Row>
+            </Card.Text>
+            
+          </Card.Body>
+        </Card>
+        ));
+      }
+      else{
+        notesList =
+          <h4>Нет записей</h4>
+      }
 
         return(
             <Container style={{marginTop: "40px"}}>
@@ -70,15 +96,7 @@ class HomeScreen extends React.Component{
                       </tr>
                     </thead>
                     <tbody>
-                      {rooms.map((item, index) => (
-                        <tr key={index}>
-                          <td>{item.name}</td>
-                          <td>{item.teacher}</td>
-                          <td>{item.student}</td>
-                          <td>{item.status}</td>
-                        </tr>
-                      ))
-                      }
+                      {roomsList}
                     </tbody>
                   </Table>
                     </Col>
@@ -88,23 +106,7 @@ class HomeScreen extends React.Component{
                     </Col>
                 </Row>
                 <Row style={{ marginTop: "10px" }}>
-                {notes.map((item, index) => (
-                  <Card key={index} className="mb-2">
-                    <Card.Body>
-                      <Card.Text>
-                        <Row>
-                        <Col md="11">
-                          {item.description}
-                        </Col>
-                        <Col md="1">
-                        <Button variant="primary" size="sm">Сделано</Button>
-                        </Col>
-                        </Row>
-                      </Card.Text>
-                      
-                    </Card.Body>
-                  </Card>
-                        ))}
+                  {notesList}
                 </Row>
                 <Row>
                 <Link to="/notes/addNote"><Button variant="success" size="sm">Добавить</Button></Link>

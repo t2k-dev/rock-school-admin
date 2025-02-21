@@ -13,6 +13,8 @@ export class SexControl extends React.Component {
   };
 
   render() {
+    const isMale = this.props.value === 1;
+    const isFemale = this.props.value === 2;
     return (
       <Form.Group className="mb-3" controlId="sex">
         <Form.Label>Пол</Form.Label>
@@ -23,6 +25,7 @@ export class SexControl extends React.Component {
             name="group1"
             type="radio"
             id="rb_male"
+            checked={isMale}
             onChange={this.handleSexClick}
           />
           <Form.Check
@@ -31,6 +34,7 @@ export class SexControl extends React.Component {
             name="group1"
             type="radio"
             id="rb_female"
+            checked={isFemale}
             onChange={this.handleSexClick}
           />
         </div>

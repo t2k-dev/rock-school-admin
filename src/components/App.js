@@ -17,7 +17,7 @@ import NewStudentForm from "./students/NewStudentForm";
 
 import TeacherScreen from "./teachers/TeacherScreen"
 import TeacherForm from "./teachers/TeacherForm";
-import AddSubscription from "./subscriptions/AddSubscription";
+import SubscriptionForm from "./subscriptions/SubscriptionForm";
 import NoteForm from "./notes/NoteForm";
 
 function App() {
@@ -36,7 +36,7 @@ function App() {
       <Route exact path="/students/edit/:id" render={(props) => <StudentForm type="Edit" {...props} />}/>
       <Route exact path="/admin/registerStudent" render={(props) => <NewStudentForm {...props} />}/>
       
-      <Route exact path="/admin/addSubscription" render={(props) => <AddSubscription type="New" {...props} />}/>
+      <Route exact path="/admin/subscriptionForm" render={(props) => <SubscriptionForm type="New" {...props} />}/>
       <Route path="/about" element={<About />} />
       <Route path="/contact" element={<Contact />} />
 

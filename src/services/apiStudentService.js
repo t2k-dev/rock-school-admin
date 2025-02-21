@@ -40,3 +40,9 @@ export const addStudent = async (data) =>{
     return response;
 }
 
+export const saveStudent = async (id, data) =>{
+  const response = await apiClient.put('/student/' + id, data);
+  return response;
+}
+
+

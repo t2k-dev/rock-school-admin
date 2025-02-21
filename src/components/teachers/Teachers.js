@@ -19,6 +19,15 @@ class Teachers extends React.Component{
     }
 
     render(){
+        let teachersList;
+        if (this.state.teachers){
+            teachersList = this.state.teachers.map((item, index) => (
+                <TeacherCard key={index}  item={item} />
+            ));
+        }
+        else{
+            teachersList = <Col>Нет записей</Col>
+        }
 
         return(
             <div 
@@ -33,9 +42,7 @@ class Teachers extends React.Component{
                 </Row>
                 <Row style={{marginTop:'20px'}}>
                     <Col>
-                        {this.state.teachers.map((item, index) => (
-                            <TeacherCard key={index}  item={item} />
-                        ))}
+                        {teachersList}
                     </Col>
                 </Row>
             </div>

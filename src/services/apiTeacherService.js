@@ -25,7 +25,12 @@ export const postTeacher = async (data) =>{
   return res
 }
 
-export const registerTeacher = async (data) =>{
-  const res = await apiClient.post('/account/registerTeacher', data)
+export const addTeacher = async (data) =>{
+  const res = await apiClient.post('/account/addTeacher', data)
   return res
+}
+
+export const getSchedules = async (data) =>{
+  const response = await apiClient.get('/teacher/getSchedules', data);
+  return response;
 }

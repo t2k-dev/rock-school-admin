@@ -16,7 +16,7 @@ const MyNavbar = () =>{
                         <NavDropdown.Item href="/admin/registerTeacher"><Link to="/admin/registerTeacher">Новый преподаватель</Link></NavDropdown.Item>
                     </NavDropdown>
 
-                    <NavDropdown title="Ученики" id="basic-nav-dropdown">
+                    <NavDropdown title="Ученики" id="basic-nav-dropdown2">
                         <NavDropdown.Item href="/students"><Link to="/students">Список учеников</Link></NavDropdown.Item>
                         <NavDropdown.Item href="/student/1"><Link to="/student/1">Ученик</Link></NavDropdown.Item>
                         <NavDropdown.Item href="/admin/registerStudent"><Link to="/admin/registerStudent">Новый ученик</Link></NavDropdown.Item>

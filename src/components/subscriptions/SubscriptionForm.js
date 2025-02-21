@@ -3,7 +3,7 @@ import { Form, Container, Row, Col, Image, Button } from 'react-bootstrap';
 import axios from "axios";
 import { Link } from "react-router-dom";
 
-class AddSubscription extends React.Component{
+class SubscriptionForm extends React.Component{
     constructor(props)
     {
         super(props);
@@ -24,7 +24,6 @@ class AddSubscription extends React.Component{
     }
     
     generateSchedule = (e) =>{
-        console.log("generateSchedule");
         this.setState({generatedSchedule:"Сергей: Пн: 13:00 - 18:00 \nСергей: Ср: 13:00 - 18:00"});
     }
 
@@ -95,15 +94,16 @@ class AddSubscription extends React.Component{
                                 </Form.Label>
                             </Form.Group>
                             <hr></hr>
+                            <Form.Group className="mb-3" controlId="Teacher">
+                                <Form.Label>Преподаватель</Form.Label>
+                                <Form.Control onChange={this.handleChange} placeholder="" />
+                            </Form.Group>
+
                             <Form.Group className="mb-3" controlId="Schedule">
                                 <Form.Label>Расписание</Form.Label>
                                 <Form.Control onChange={this.handleChange} placeholder="" />
                             </Form.Group>
 
-                            <Form.Group className="mb-3" controlId="Teacher">
-                                <Form.Label>Преподаватель</Form.Label>
-                                <Form.Control onChange={this.handleChange} placeholder="" />
-                            </Form.Group>
 
                             <Form.Group className="mb-3" controlId="Subscription">
                                 <Form.Label>Абонемент (кол-во занятий)</Form.Label>
@@ -123,4 +123,4 @@ class AddSubscription extends React.Component{
     }
 }
 
-export default AddSubscription;
+export default SubscriptionForm;

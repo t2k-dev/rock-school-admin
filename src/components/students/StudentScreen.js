@@ -33,8 +33,6 @@ class StudentScreen extends React.Component {
     const details = await getStudentScreenDetails(this.props.match.params.id);
 
     this.setState({student : details.student});
-    //console.log(response.data.student);
-    console.log(this.state.student.firstName);
   }
 
   handleChange = (e) =>{
@@ -49,7 +47,7 @@ class StudentScreen extends React.Component {
   }
 
   render() {
-    const {firstName, phone} = this.state.student;
+    const {firstName, lastName, phone} = this.state.student;
 
     let subscriptionsList;
     if (this.state.subscriptions){
@@ -73,24 +71,30 @@ class StudentScreen extends React.Component {
       <Container style={{ marginTop: "40px" }}>
         <Row>
           <Col md="4">
-            <h2 style={{ textAlign: "center" }}>Ученик</h2>
-            <Form.Group className="mb-3" controlId="firstName">
-              <Form.Label>Имя</Form.Label>
-              <Form.Control onChange={this.handleChange} value={firstName} placeholder="введите имя..." autoComplete="off"/>
-            </Form.Group>
+            <h2 style={{ textAlign: "left" }}>{firstName} {lastName}</h2> 
 
             <Form.Group className="mb-3" controlId="phone">
               <Form.Label>Телефон</Form.Label>
               <Form.Control onChange={this.handleChange} value={phone} placeholder="введите телефон..."/>
             </Form.Group>
           </Col>
-          <Col md="4"></Col>
+          <Col md="4">
+                <Button variant="secondary" type="null" size="sm" onClick={this.handleEditClick}>
+                    Редактировать
+                </Button>
+          </Col>
         </Row>
         <Row>
             <Col>
-                <Button variant="secondary" type="null" onClick={this.handleEditClick}>
-                    Редактировать
-                </Button>
+                <Link to="/admin/subscriptionForm">
+                        <Button variant="info" type="null" size="sm" onClick={this.handleSave}>
+                            Добавить пробное занятие
+                        </Button>
+                    </Link>
+
+                <Link to="/admin/subscriptionForm">
+                        <Button variant="warning" type="null" size="sm" onClick={this.handleSave}>Добавить абонемент</Button>
+                    </Link>
             </Col>
         </Row>
         <Row>
@@ -112,18 +116,6 @@ class StudentScreen extends React.Component {
             <Col md="4">
             <Row>
                 <Col>
-                    <Link to="/admin/addSubscription">
-                        <Button variant="warning" type="null" size="sm" onClick={this.handleSave}>Добавить абонемент</Button>
-                    </Link>
-                </Col>
-            </Row>
-            <Row>
-                <Col>
-                    <Link to="/admin/addSubscription">
-                        <Button variant="info" type="null" size="sm" onClick={this.handleSave}>
-                            Добавить пробное занятие
-                        </Button>
-                    </Link>
                 </Col>
                 </Row>
             </Col>

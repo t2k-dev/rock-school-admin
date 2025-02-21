@@ -5,7 +5,7 @@ import { SexControl } from "../common/SexControl";
 
 import WorkingPeriods from "./WorkingPeriods";
 
-import { getTeacher, registerTeacher } from "../../services/apiTeacherService";
+import { getTeacher, addTeacher } from "../../services/apiTeacherService";
 
 class TeacherForm extends React.Component{
   constructor(props) {
@@ -18,7 +18,8 @@ class TeacherForm extends React.Component{
       firstName: "",
       lastName: "",
       birthDate: "",
-      phone: 0,
+      phone: "",
+      sex: 0,
       userId: 1,
       disciplines: [],
       workingPeriods: [],
@@ -26,7 +27,7 @@ class TeacherForm extends React.Component{
       periodDay: 0,
       periodStart: "",
       periodEnd: "",
-      ageLimit: 0,
+      ageLimit: "",
       allowGroupLessons: false,
     };
 
@@ -53,14 +54,16 @@ class TeacherForm extends React.Component{
     console.log('onFormLoad');
     console.log(teacher);
     this.setState({
-      email: teacher.email,
-      firstName: teacher.firstName,
-      lastName: teacher.lastName,
-      birthDate: teacher.birthDate,
-      phone: teacher.phone,
-      disciplines: teacher.disciplines,
-      sex: teacher.sex,
-      workingPeriods: [], // DEV
+      teacher:{
+        email: teacher.email,
+        firstName: teacher.firstName,
+        lastName: teacher.lastName,
+        birthDate: teacher.birthDate,
+        phone: teacher.phone,
+        disciplines: teacher.disciplines,
+        sex: teacher.sex,
+      },
+      workingPeriods: [],
     });
   }
 
@@ -75,25 +78,24 @@ class TeacherForm extends React.Component{
   handleSave = (e) => {
     e.preventDefault();
 
-    console.log(this.state);
-return;
-
     const requestBody = {
-      login: this.state.email,
-      firstName: this.state.firstName,
-      lastName: this.state.lastName,
-      middleName: this.state.middleName,
-      birthDate: this.state.birthDate,
-      phone: parseInt(this.state.phone),
-      disciplines: this.state.disciplines,
+      teacher:{
+        login: this.state.email,
+        firstName: this.state.firstName,
+        lastName: this.state.lastName,
+        middleName: this.state.middleName,
+        birthDate: this.state.birthDate,
+        phone: parseInt(this.state.phone),
+        disciplines: this.state.disciplines, 
+      },
       workingHours: {
-        workingPeriods: this.state.WorkingPeriods,
+        workingPeriods: this.state.workingPeriods,
       },
     };
 
     console.log(requestBody);
     if (this.state.isNew) {
-      const response = registerTeacher(requestBody);
+      const response = addTeacher(requestBody);
       alert((response) => alert(response));
     } else {
       console.log("Not implemented");
@@ -129,7 +131,6 @@ return;
     });
   };
 
-
   handleAllowGroupLessonsChange = (e) =>{
     this.setState({
         allowGroupLessons: e.target.isChecked,
@@ -141,8 +142,8 @@ return;
     console.log(this.state);
 
     this.setState((prevState) => ({
-      WorkingPeriods: [
-        ...prevState.WorkingPeriods,
+      workingPeriods: [
+        ...prevState.workingPeriods,
         {
           day: parseInt(this.state.periodDay),
           startTime: this.state.periodStart,
@@ -183,7 +184,7 @@ return;
   };
 
   render() {
-    const {email, firstName, lastName, birthDate, phone, ageLimit, allowGroupLessons, disciplines,} = this.state;
+    const {email, firstName, lastName, birthDate, phone, sex, ageLimit, allowGroupLessons, disciplines,} = this.state;
     return (
       <Container style={{ marginTop: "40px" }}>
         <Row>
@@ -223,7 +224,7 @@ return;
                 />
               </Form.Group>
 
-              <SexControl onChange={this.handleSexChange}></SexControl>
+              <SexControl value={sex} onChange={this.handleSexChange}></SexControl>
 
               <Form.Group className="mb-3" controlId="phone">
                 <Form.Label>Телефон</Form.Label>
