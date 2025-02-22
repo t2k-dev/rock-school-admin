@@ -3,6 +3,8 @@ import { getStudentScreenDetails } from "../../services/apiStudentService";
 import { Row, Col, Container, Form, Button, Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
+import StudentScreenCard from "./StudentScreenCard";
+
 class StudentScreen extends React.Component {
   constructor(props)
   {
@@ -11,14 +13,9 @@ class StudentScreen extends React.Component {
           student: {
             firstName : "",
             phone : "",
+            level : "Начинающий"
           },
-          subscriptions: [
-            {
-              descipline: "Vocal",
-              status: "Активный",
-              description: "С 01-04-2025 до 01-05-2025",
-          }
-        ]
+          subscriptions: []
       };
 
       this.handleChange = this.handleChange.bind(this);
@@ -31,8 +28,18 @@ class StudentScreen extends React.Component {
 
   async onFormLoad() {
     const details = await getStudentScreenDetails(this.props.match.params.id);
+    const fakeSubscriptions = [
+      {
+        descipline: "Электро гитара",
+        status: "Активный",
+        description: "6",
+        teacherName: "Михаил",
+    }]
 
-    this.setState({student : details.student});
+    this.setState({
+      student : details.student,
+      subscriptions: fakeSubscriptions,
+    });
   }
 
   handleChange = (e) =>{
@@ -42,68 +49,46 @@ class StudentScreen extends React.Component {
 
   handleEditClick = (e) =>{
     e.preventDefault();
-    console.log("22");
     this.props.history.push('/students/edit/'+ this.props.match.params.id);
   }
 
   render() {
-    const {firstName, lastName, phone} = this.state.student;
-
+    const {student, subscriptions} = this.state;
     let subscriptionsList;
-    if (this.state.subscriptions){
-      subscriptionsList = this.state.subscriptions.map((item, index) => (
+    if (subscriptions && subscriptions.length > 0){
+      subscriptionsList = subscriptions.map((item, index) => (
         <tr key={index}>
-          <td>{item.description}</td>
           <td>{item.descipline}</td>
+          <td>{item.teacherName}</td>
+          <td>{item.description}</td>
           <td>{item.status}</td>
         </tr>
         ));
     }
     else{
       subscriptionsList = <tr key={1}>
-        <td></td>
-        <td>Нет записей</td>
-        <td></td>
+        <td colSpan="4" style={{textAlign:"center"}}>Нет записей</td>
       </tr>
     }
 
     return (
       <Container style={{ marginTop: "40px" }}>
         <Row>
-          <Col md="4">
-            <h2 style={{ textAlign: "left" }}>{firstName} {lastName}</h2> 
-
-            <Form.Group className="mb-3" controlId="phone">
-              <Form.Label>Телефон</Form.Label>
-              <Form.Control onChange={this.handleChange} value={phone} placeholder="введите телефон..."/>
-            </Form.Group>
-          </Col>
-          <Col md="4">
-                <Button variant="secondary" type="null" size="sm" onClick={this.handleEditClick}>
-                    Редактировать
-                </Button>
-          </Col>
+          <StudentScreenCard item={this.state.student} history={this.props.history}/>
         </Row>
         <Row>
             <Col>
-                <Link to="/admin/subscriptionForm">
-                        <Button variant="info" type="null" size="sm" onClick={this.handleSave}>
-                            Добавить пробное занятие
-                        </Button>
-                    </Link>
-
-                <Link to="/admin/subscriptionForm">
-                        <Button variant="warning" type="null" size="sm" onClick={this.handleSave}>Добавить абонемент</Button>
-                    </Link>
             </Col>
         </Row>
-        <Row>
-            <Col md="8">
-            <Table striped bordered hover style={{ marginTop: "20px" }}>
+        <Row><h3>Абонементы</h3></Row>
+        <Row style={{ marginTop: "20px" }}>
+            <Col md="10">
+              <Table striped bordered hover >
                     <thead>
                       <tr>
-                        <th>Абонементы</th>
                         <th>Дисциплина</th>
+                        <th>Преподаватель</th>
+                        <th>Осталось занятий</th>
                         <th>Статус</th>
                       </tr>
                     </thead>
@@ -113,11 +98,26 @@ class StudentScreen extends React.Component {
                   </Table>
 
             </Col>
-            <Col md="4">
-            <Row>
+            <Col md="2">
+            <div className="d-grid gap-2">
+                <Link to="/admin/subscriptionForm">
+                    <Button variant="primary" type="null" size="md" className="w-100" onClick={this.handleSave}>
+                        Пробное занятие
+                    </Button>
+                </Link>
+                <Link to="/admin/subscriptionForm">
+                  <Button variant="primary" type="null" size="md" className="w-100" onClick={this.handleSave}>
+                    Новый абонемент
+                  </Button>
+                </Link>
+            </div>
+
+              <Row>
                 <Col>
+
+
                 </Col>
-                </Row>
+              </Row>
             </Col>
         </Row>
       </Container>

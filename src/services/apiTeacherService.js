@@ -26,7 +26,7 @@ export const postTeacher = async (data) =>{
 }
 
 export const addTeacher = async (data) =>{
-  const res = await apiClient.post('/account/addTeacher', data)
+  const res = await apiClient.post('/teacher/addTeacher', data)
   return res
 }
 

@@ -75,27 +75,28 @@ class TeacherForm extends React.Component{
     return "";
   };
 
-  handleSave = (e) => {
+  handleSave = async (e) => {
     e.preventDefault();
 
     const requestBody = {
       teacher:{
         login: this.state.email,
-        firstName: this.state.firstName,
+        FirstName: this.state.firstName,
         lastName: this.state.lastName,
         middleName: this.state.middleName,
         birthDate: this.state.birthDate,
         phone: parseInt(this.state.phone),
         disciplines: this.state.disciplines, 
+        branchId: 0,
       },
-      workingHours: {
+      /*workingHours: {
         workingPeriods: this.state.workingPeriods,
-      },
+      },*/
     };
 
     console.log(requestBody);
     if (this.state.isNew) {
-      const response = addTeacher(requestBody);
+      const response = await addTeacher(requestBody);
       alert((response) => alert(response));
     } else {
       console.log("Not implemented");
@@ -184,7 +185,7 @@ class TeacherForm extends React.Component{
   };
 
   render() {
-    const {email, firstName, lastName, birthDate, phone, sex, ageLimit, allowGroupLessons, disciplines,} = this.state;
+    const {email, firstName, lastName, birthDate, phone, sex, ageLimit, allowGroupLessons, disciplines, branchId} = this.state;
     return (
       <Container style={{ marginTop: "40px" }}>
         <Row>
@@ -270,6 +271,19 @@ class TeacherForm extends React.Component{
               <DisciplinesControl onCheck={this.handleDisciplineCheck} disciplines={disciplines}></DisciplinesControl>
 
               <hr></hr>
+              
+                                          <Form.Group className="mb-3" controlId="branchId">
+                                              <Form.Label>Филиал</Form.Label>
+                                              <Form.Select 
+                                                  aria-label="Веберите..."
+                                                  value={branchId}
+                                                  onChange={e => this.setState({ branchId: e.target.value })}
+                                                  >
+                                                  <option>выберите...</option>
+                                                  <option value="1">На Абая</option>
+                                                  <option value="2">На Аль-Фараби</option>
+                                              </Form.Select>
+                                          </Form.Group>
               
 
               <Form.Group className="mb-3">
