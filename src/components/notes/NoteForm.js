@@ -1,6 +1,8 @@
 import React from "react";
 import { Form, Container, Row, Col, Button } from 'react-bootstrap';
 
+import { addNote } from '../../services/apiNoteService'
+
 class NoteForm extends React.Component{
     constructor(props)
     {
@@ -23,8 +25,9 @@ class NoteForm extends React.Component{
 
         const requestBody ={
             description: this.state.description,
+            branchId: 1 //DEV
         }
-        //const response = registerStudent(requestBody);
+        const response = addNote(requestBody);
         this.props.history.push('/home');
     }
 
