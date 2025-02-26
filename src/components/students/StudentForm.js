@@ -1,6 +1,7 @@
 import React from "react";
 import { Form, Container, Row, Col, Image, Button } from 'react-bootstrap';
 import { Link } from "react-router-dom";
+import InputMask from "react-input-mask";
 import { getStudent, saveStudent } from "../../services/apiStudentService";
 import { SexControl } from "../common/SexControl";
 
@@ -10,14 +11,13 @@ class StudentForm extends React.Component{
     {
         super(props);
         this.state= {
-            isNew: props.type == 'New',
             email: "",
             firstName: "",
             lastName: "",
             birthDate: "",
             phone: 0,
             userId: "",
-            Level: 0,
+            level: 0,
             sex: 1,
             studentId: ""
         }
@@ -25,19 +25,42 @@ class StudentForm extends React.Component{
         this.handleSave = this.handleSave.bind(this);
         this.handleChange = this.handleChange.bind(this);
     }
-    
+
+    componentDidMount(){
+        this.onFormLoad();
+    }
+
+    async onFormLoad(){
+        const id = this.props.match.params.id;
+        const student = await getStudent(id);
+        
+        this.setState({
+            studentId: id,
+            email: student.data.email,
+            firstName: student.data.firstName,
+            lastName: student.data.lastName,
+            birthDate: student.data.birthDate,
+            phone: student.data.phone,
+            sex: student.data.sex,
+            level: student.data.level,
+        })
+
+        console.log(this.state);
+    }
+
     handleSave = async (e) =>{
         e.preventDefault();
 
         const requestBody ={
-            login: this.state.email,
+            email: this.state.email,
             firstName: this.state.firstName,
             lastName: this.state.lastName,
             birthDate: this.state.birthDate,
             sex: this.state.sex,
-            phone: parseInt(this.state.phone)
+            phone: parseInt(this.state.phone),
+            level: this.state.level,
         }
-
+        console.log(requestBody);
         const response = await saveStudent(this.state.studentId, requestBody);
     }
 
@@ -52,36 +75,6 @@ class StudentForm extends React.Component{
         })
       }
 
-    componentDidMount(){
-        console.log("--")
-        console.log(this.props.match)
-        this.onFormLoad();
-    }
-
-    async onFormLoad(){
-        if (this.state.isNew)
-        {
-            return;
-        }
-
-        const id = this.props.match.params.id;
-        const student = await getStudent(id);
-        
-        console.log( student);
-
-        this.setState({
-            email: student.data.email,
-            firstName: student.data.firstName,
-            lastName: student.data.lastName,
-            birthDate: student.data.birthDate,
-            phone: student.data.phone,
-            sex: student.data.sex,
-            studentId : id,
-        })
-
-        console.log(this.state);
-    }
-
     render(){
         const {email, firstName, lastName, birthDate, phone, level, sex} = this.state;
         return(
@@ -90,7 +83,7 @@ class StudentForm extends React.Component{
                 <Row>
                     <Col md="4"></Col>
                     <Col md="4">
-                        <h2 style={{textAlign:"center"}}>{this.state.isNew?'Новый ученик':'Редактировать ученика'}</h2>
+                        <h2 style={{textAlign:"center"}}>Редактировать ученика</h2>
                         <Form>
                             <Form.Group className="mb-3" controlId="firstName">
                                 <Form.Label>Имя</Form.Label>
@@ -104,7 +97,7 @@ class StudentForm extends React.Component{
 
                             <Form.Group className="mb-3" controlId="birthDate">
                                 <Form.Label>Дата рождения</Form.Label>
-                                <Form.Control onChange={this.handleChange} value={birthDate} placeholder="введите дату..." />
+                                <Form.Control as={InputMask} mask="9999-99-99" maskChar=" " onChange={this.handleChange} value={birthDate} placeholder="введите дату..." />
                             </Form.Group>
 
                             <SexControl value={sex} onChange={this.handleSexChange}></SexControl>
@@ -116,14 +109,15 @@ class StudentForm extends React.Component{
 
                             <Form.Group className="mb-3" controlId="phone">
                                 <Form.Label>Телефон</Form.Label>
-                                <Form.Control onChange={this.handleChange} value={phone} placeholder="введите телефон..." />
+                                <Form.Control as={InputMask} mask="+7 999 999 99 99" maskChar=" "  onChange={this.handleChange} value={phone} placeholder="введите телефон..." />
                             </Form.Group>
 
                             <hr></hr>
 
-                            <Form.Group className="mb-3" controlId="discipline">
+                            <Form.Group className="mb-3" controlId="level">
                                 <Form.Label>Уровень</Form.Label>
                                 <Form.Select 
+                                    name="level"
                                     aria-label="Веберите..."
                                     value={level}
                                     onChange={e => this.setState({ level: e.target.value })}
