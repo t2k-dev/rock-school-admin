@@ -1,13 +1,8 @@
 import apiClient from "./apiClient";
 
 export const addStudent = async (data) =>{
-  const response = await apiClient.post('/student/addStudent', data)
+  const response = await apiClient.post('/student', data)
   return response;
-}
-
-export const postStudent = async (data) =>{
-  const res = await apiClient.post('/students', data);
-  return res;
 }
 
 export const saveStudent = async (id, data) =>{

@@ -2,18 +2,18 @@ import React from "react";
 import { Form, Container, Row, Col, Table, FormCheck, Button } from "react-bootstrap";
 import { DisciplinesControl } from "../common/DisciplinesControl";
 import { SexControl } from "../common/SexControl";
-
+import InputMask from "react-input-mask";
 import WorkingPeriods from "./WorkingPeriods";
 
-import { getTeacher, addTeacher } from "../../services/apiTeacherService";
+import { addTeacher, saveTeacher, getTeacher } from "../../services/apiTeacherService";
 
-class TeacherForm extends React.Component{
+class TeacherForm extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
       isNew: props.type == "New",
-
+      teacherId: "",
       email: "",
       firstName: "",
       lastName: "",
@@ -50,11 +50,12 @@ class TeacherForm extends React.Component{
 
     const id = this.props.match.params.id;
     const teacher = await getTeacher(id);
-    
-    console.log('onFormLoad');
+
+    console.log("onFormLoad");
     console.log(teacher);
     this.setState({
-      teacher:{
+      teacherId: teacher.teacherId,
+      teacher: {
         email: teacher.email,
         firstName: teacher.firstName,
         lastName: teacher.lastName,
@@ -62,8 +63,10 @@ class TeacherForm extends React.Component{
         phone: teacher.phone,
         disciplines: teacher.disciplines,
         sex: teacher.sex,
+        ageLimit: teacher.ageLimit,
+        allowGroupLessons: teacher.allowGroupLessons
       },
-      workingPeriods: [],
+      workingPeriods: teacher.workingPeriods,
     });
   }
 
@@ -79,21 +82,25 @@ class TeacherForm extends React.Component{
     e.preventDefault();
 
     const requestBody = {
-      teacher:{
-        login: this.state.email,
-        FirstName: this.state.firstName,
+      teacher: {
+        email: this.state.email,
+        firstName: this.state.firstName,
         lastName: this.state.lastName,
-        middleName: this.state.middleName,
         birthDate: this.state.birthDate,
-        phone: parseInt(this.state.phone),
-        disciplines: this.state.disciplines, 
-        branchId: 0,
+        phone: this.state.phone,
+        disciplines: this.state.disciplines,
+        branchId: this.state.branchId,
+        ageLimit: this.state.ageLimit,
+        allowGroupLessons: this.state.allowGroupLessons,
       },
-      /*workingHours: {
-        workingPeriods: this.state.workingPeriods,
-      },*/
+      workingPeriods: this.state.workingPeriods,
     };
-
+    if (this.state.isNew){
+      const response = await addTeacher(requestBody);
+    }
+    else{
+      const response = await saveTeacher(this.state.teacherId, requestBody);
+    }
     console.log(requestBody);
     if (this.state.isNew) {
       const response = await addTeacher(requestBody);
@@ -108,15 +115,13 @@ class TeacherForm extends React.Component{
     this.setState({ [id]: value });
   };
 
-  handleSexChange = (isChecked) =>{
+  handleSexChange = (isChecked) => {
     this.setState({
-        sex: isChecked,
-    })
-  }
-  
-  handlePeriodsChange = () =>{
+      sex: isChecked,
+    });
+  };
 
-  }
+  handlePeriodsChange = () => {};
 
   handleDisciplineCheck = (id, isChecked) => {
     this.setState((prevState) => {
@@ -124,17 +129,15 @@ class TeacherForm extends React.Component{
       if (isChecked) {
         newDisciplines.push(id);
       } else {
-        newDisciplines = newDisciplines.filter(
-          (discipline) => discipline !== id
-        );
+        newDisciplines = newDisciplines.filter((discipline) => discipline !== id);
       }
       return { disciplines: newDisciplines };
     });
   };
 
-  handleAllowGroupLessonsChange = (e) =>{
+  handleAllowGroupLessonsChange = (e) => {
     this.setState({
-        allowGroupLessons: e.target.isChecked,
+      allowGroupLessons: e.target.isChecked,
     });
   };
 
@@ -156,10 +159,7 @@ class TeacherForm extends React.Component{
 
   deleteWorkingPeriod = (itemIndex) => {
     this.setState({
-      WorkingPeriods: this.state.WorkingPeriods.filter(function (
-        workingPeriod,
-        index
-      ) {
+      WorkingPeriods: this.state.WorkingPeriods.filter(function (workingPeriod, index) {
         return index !== itemIndex;
       }),
     });
@@ -185,40 +185,30 @@ class TeacherForm extends React.Component{
   };
 
   render() {
-    const {email, firstName, lastName, birthDate, phone, sex, ageLimit, allowGroupLessons, disciplines, branchId} = this.state;
+    const { email, firstName, lastName, birthDate, phone, sex, ageLimit, allowGroupLessons, disciplines, branchId } = this.state;
     return (
       <Container style={{ marginTop: "40px" }}>
         <Row>
           <Col md="4"></Col>
           <Col md="4">
-            <h2 style={{ textAlign: "center" }}>
-              {this.state.isNew
-                ? "Новый преподаватель"
-                : "Редактировать преподавателя"}
-            </h2>
+            <h2 style={{ textAlign: "center" }}>{this.state.isNew ? "Новый преподаватель" : "Редактировать преподавателя"}</h2>
             <Form>
               <Form.Group className="mb-3" controlId="firstName">
                 <Form.Label>Имя</Form.Label>
-                <Form.Control
-                  onChange={this.handleChange}
-                  value={firstName}
-                  placeholder="введите имя..."
-                  autoComplete="off"
-                />
+                <Form.Control onChange={this.handleChange} value={firstName} placeholder="введите имя..." autoComplete="off" />
               </Form.Group>
 
               <Form.Group className="mb-3" controlId="lastName">
                 <Form.Label>Фамилия</Form.Label>
-                <Form.Control
-                  onChange={this.handleChange}
-                  value={lastName}
-                  placeholder="введите фамилию..."
-                />
+                <Form.Control onChange={this.handleChange} value={lastName} placeholder="введите фамилию..." />
               </Form.Group>
 
               <Form.Group className="mb-3" controlId="birthDate">
                 <Form.Label>Дата рождения</Form.Label>
                 <Form.Control
+                  as={InputMask}
+                  mask="9999-99-99"
+                  maskChar=" "
                   onChange={this.handleChange}
                   value={birthDate}
                   placeholder="введите дату..."
@@ -230,6 +220,9 @@ class TeacherForm extends React.Component{
               <Form.Group className="mb-3" controlId="phone">
                 <Form.Label>Телефон</Form.Label>
                 <Form.Control
+                  as={InputMask}
+                  mask="+7 999 999 99 99"
+                  maskChar=" "
                   onChange={this.handleChange}
                   value={phone}
                   placeholder="введите телефон..."
@@ -238,29 +231,19 @@ class TeacherForm extends React.Component{
 
               <Form.Group className="mb-3" controlId="email">
                 <Form.Label>Email</Form.Label>
-                <Form.Control
-                  onChange={this.handleChange}
-                  value={email}
-                  placeholder="введите email..."
-                  autoComplete="off"
-                />
+                <Form.Control onChange={this.handleChange} value={email} placeholder="введите email..." autoComplete="off" />
               </Form.Group>
               <hr></hr>
               <Form.Group className="mb-3" controlId="ageLimit">
                 <Form.Label>Ученики от</Form.Label>
-                <Form.Control
-                  onChange={this.handleChange}
-                  value={ageLimit}
-                  placeholder="введите возраст..."
-                  autoComplete="off"
-                />
+                <Form.Control onChange={this.handleChange} value={ageLimit} placeholder="введите возраст..." autoComplete="off" />
               </Form.Group>
 
               <Form.Group className="mb-3" controlId="supportGroups">
                 <FormCheck
-                  id='supportGroups'
-                  key='supportGroups'
-                  label='Групповые занятия'
+                  id="supportGroups"
+                  key="supportGroups"
+                  label="Групповые занятия"
                   checked={allowGroupLessons}
                   onChange={this.handleAllowGroupLessonsChange}
                   style={{ marginTop: "10px" }}
@@ -271,20 +254,15 @@ class TeacherForm extends React.Component{
               <DisciplinesControl onCheck={this.handleDisciplineCheck} disciplines={disciplines}></DisciplinesControl>
 
               <hr></hr>
-              
-                                          <Form.Group className="mb-3" controlId="branchId">
-                                              <Form.Label>Филиал</Form.Label>
-                                              <Form.Select 
-                                                  aria-label="Веберите..."
-                                                  value={branchId}
-                                                  onChange={e => this.setState({ branchId: e.target.value })}
-                                                  >
-                                                  <option>выберите...</option>
-                                                  <option value="1">На Абая</option>
-                                                  <option value="2">На Аль-Фараби</option>
-                                              </Form.Select>
-                                          </Form.Group>
-              
+
+              <Form.Group className="mb-3" controlId="branchId">
+                <Form.Label>Филиал</Form.Label>
+                <Form.Select aria-label="Веберите..." value={branchId} onChange={(e) => this.setState({ branchId: e.target.value })}>
+                  <option>выберите...</option>
+                  <option value="1">На Абая</option>
+                  <option value="2">На Аль-Фараби</option>
+                </Form.Select>
+              </Form.Group>
 
               <Form.Group className="mb-3">
                 <b>Расписание</b>
@@ -293,9 +271,7 @@ class TeacherForm extends React.Component{
                     <Form.Select
                       aria-label="Веберите день..."
                       value={this.state.periodDay}
-                      onChange={(e) =>
-                        this.setState({ periodDay: e.target.value })
-                      }
+                      onChange={(e) => this.setState({ periodDay: e.target.value })}
                     >
                       <option>День недели...</option>
                       <option value="1">Понедельник</option>
@@ -309,27 +285,30 @@ class TeacherForm extends React.Component{
                   </Col>
                   <Col>
                     <Row>
-                      <Form.Label column md={1}>с</Form.Label>
+                      <Form.Label column md={1}>
+                        с
+                      </Form.Label>
                       <Col md={4}>
                         <Form.Control
+                          as={InputMask}
+                          mask="99:99"
+                          maskChar=" "
                           placeholder="чч:мм"
                           value={this.state.periodStart}
-                          onChange={(e) =>
-                            this.setState({ periodStart: e.target.value })
-                          }
+                          onChange={(e) => this.setState({ periodStart: e.target.value })}
                         />
                       </Col>
-
                       <Form.Label column md={1}>
                         по
                       </Form.Label>
                       <Col md={4}>
                         <Form.Control
+                          as={InputMask}
+                          mask="99:99"
+                          maskChar=" "
                           placeholder="чч:мм"
                           value={this.state.periodEnd}
-                          onChange={(e) =>
-                            this.setState({ periodEnd: e.target.value })
-                          }
+                          onChange={(e) => this.setState({ periodEnd: e.target.value })}
                         />
                       </Col>
                       <Col md={2}>
@@ -359,9 +338,7 @@ class TeacherForm extends React.Component{
                           <td>{item.startTime}</td>
                           <td>{item.endTime}</td>
                           <td>
-                            <Button
-                              onClick={() => this.deleteWorkingPeriod(index)}
-                            >
+                            <Button onClick={() => this.deleteWorkingPeriod(index)}>
                               <i>-</i>
                             </Button>
                           </td>
