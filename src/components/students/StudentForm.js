@@ -19,6 +19,7 @@ class StudentForm extends React.Component{
             userId: "",
             Level: 0,
             sex: 1,
+            studentId: ""
         }
     
         this.handleSave = this.handleSave.bind(this);
@@ -36,8 +37,8 @@ class StudentForm extends React.Component{
             sex: this.state.sex,
             phone: parseInt(this.state.phone)
         }
-        
-        const response = await saveStudent(requestBody);
+
+        const response = await saveStudent(this.state.studentId, requestBody);
     }
 
     handleChange = (e) =>{
@@ -75,6 +76,7 @@ class StudentForm extends React.Component{
             birthDate: student.data.birthDate,
             phone: student.data.phone,
             sex: student.data.sex,
+            studentId : id,
         })
 
         console.log(this.state);

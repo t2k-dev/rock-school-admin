@@ -1,8 +1,8 @@
 import React from "react";
 import { Form, Container, Row, Col, Table, Card, Button, FormCheck } from 'react-bootstrap';
-import axios from "axios";
 import { Link } from "react-router-dom";
 import { getHomeScreenDetails } from "../../services/apiHomeService";
+import { markComplete } from "../../services/apiNoteService";
 
 class HomeScreen extends React.Component{
   constructor(props) {
@@ -11,6 +11,7 @@ class HomeScreen extends React.Component{
       rooms : null,
       notes : null,
     }
+    this.handleMarkComplete = this.handleMarkComplete.bind(this);
   }
 
   componentDidMount(){
@@ -25,10 +26,17 @@ class HomeScreen extends React.Component{
     })
   }
 
+  async handleMarkComplete(noteId){
+    console.log('Start');
+    await markComplete(noteId);
+    console.log('Done');
+  }
+
   render(){
+    const {rooms, notes} = this.state;
     let roomsList;
-    if (this.state.rooms){
-      roomsList = this.state.rooms.map((item, index) => (
+    if (rooms){
+      roomsList = rooms.map((item, index) => (
         <tr key={index}>
           <td>{item.roomName}</td>
           <td>{item.teacherName}</td>
@@ -46,9 +54,12 @@ class HomeScreen extends React.Component{
       </tr>
     }
 
-    let notesList;
-    if (this.state.notes){
-      notesList = this.state.notes.map((item, index) => (
+    const activeNotes = notes?.filter(n => n.status === 1);
+    const completedNotes = notes?.filter(n => n.status === 2);
+    
+    let activeNotesList;
+    if (activeNotes){
+      activeNotesList = activeNotes.map((item, index) => (
         <Card key={index} className="mb-2">
         <Card.Body>
           <Card.Text>
@@ -57,7 +68,7 @@ class HomeScreen extends React.Component{
               {item.description}
             </Col>
             <Col md="1">
-            <Button variant="primary" size="sm">Сделано</Button>
+              <Button variant="primary" size="sm" onClick={(e) => this.handleMarkComplete(item.noteId)}>Сделано</Button>
             </Col>
             </Row>
           </Card.Text>
@@ -67,7 +78,32 @@ class HomeScreen extends React.Component{
       ));
     }
     else{
-      notesList =
+      activeNotesList =
+        <h4>Нет записей</h4>
+    }
+
+    let completedNotesList;
+    if (completedNotes){
+      completedNotesList = completedNotes.map((item, index) => (
+        <Card key={index} className="mb-2">
+        <Card.Body>
+          <Card.Text>
+            <Row>
+            <Col md="11">
+              {item.description}
+            </Col>
+            <Col md="1">
+              <Button variant="primary" size="sm" onClick={(e) => this.handleMarkComplete(item.noteId)}>Сделано</Button>
+            </Col>
+            </Row>
+          </Card.Text>
+          
+        </Card.Body>
+      </Card>
+      ));
+    }
+    else{
+      completedNotesList =
         <h4>Нет записей</h4>
     }
 
@@ -99,11 +135,19 @@ class HomeScreen extends React.Component{
                   </Col>
               </Row>
               <Row style={{ marginTop: "10px" }}>
-                {notesList}
+                {activeNotesList}
               </Row>
               <Row>
               <Link to="/notes/addNote"><Button variant="success" size="sm">Добавить</Button></Link>
               </Row>
+              <Row>
+                  <Col style={{ marginTop: "40px" }}><h3>Выполненные активности</h3>
+                  </Col>
+              </Row>
+              <Row>
+                {completedNotesList}
+              </Row>
+
           </Container>
       )
     }
