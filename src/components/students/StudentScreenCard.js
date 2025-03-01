@@ -11,6 +11,12 @@ class StudentScreenCard extends React.Component {
   };
 
   render() {
+    const Level = {
+      0: 'Начинающий',
+      1: 'Продожающий',
+      2: 'Продвинутый'
+    }
+
     const { item } = this.props;
     return (
       <Card className="ms-col-2 mb-2">
@@ -27,7 +33,7 @@ class StudentScreenCard extends React.Component {
                 <div style={{fontWeight:'bold', fontSize:'28px'}}>
                   {item.firstName} {item.lastName}
                 </div>
-                <div className="mt-1">Начинающий</div>
+                <div className="mt-2">{Level[item.level]}</div>
               </Container>
               <Container className="mt-2">
                 <div>Играет в группе</div>

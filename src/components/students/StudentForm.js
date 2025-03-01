@@ -40,7 +40,7 @@ class StudentForm extends React.Component{
             firstName: student.data.firstName,
             lastName: student.data.lastName,
             birthDate: student.data.birthDate,
-            phone: student.data.phone,
+            phone: "7" + student.data.phone,
             sex: student.data.sex,
             level: student.data.level,
         })
@@ -57,11 +57,13 @@ class StudentForm extends React.Component{
             lastName: this.state.lastName,
             birthDate: this.state.birthDate,
             sex: this.state.sex,
-            phone: parseInt(this.state.phone),
+            phone: this.state.phone.replace('+7 ', '').replace(/\s/g, ''),
             level: this.state.level,
         }
         console.log(requestBody);
         const response = await saveStudent(this.state.studentId, requestBody);
+
+        this.props.history.goBack();
     }
 
     handleChange = (e) =>{
@@ -109,7 +111,7 @@ class StudentForm extends React.Component{
 
                             <Form.Group className="mb-3" controlId="phone">
                                 <Form.Label>Телефон</Form.Label>
-                                <Form.Control as={InputMask} mask="+7 999 999 99 99" maskChar=" "  onChange={this.handleChange} value={phone} placeholder="введите телефон..." />
+                                <Form.Control as={InputMask} mask="+7 999 999 99 99" maskChar=" " onChange={this.handleChange} value={phone} placeholder="введите телефон..." />
                             </Form.Group>
 
                             <hr></hr>
@@ -123,9 +125,9 @@ class StudentForm extends React.Component{
                                     onChange={e => this.setState({ level: e.target.value })}
                                     >
                                     <option>выберите...</option>
-                                    <option value="1">Начинающий</option>
-                                    <option value="2">Продолжающий</option>
-                                    <option value="3">Продвинутый</option>
+                                    <option value="0">Начинающий</option>
+                                    <option value="1">Продолжающий</option>
+                                    <option value="2">Продвинутый</option>
                                 </Form.Select>
                             </Form.Group>
                             
