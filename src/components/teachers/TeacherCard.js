@@ -14,7 +14,7 @@ class TeacherCard extends React.Component{
                             <Image src={noImage} className='img-preview' fluid='true'/>
                             </Col>
                             <Col>
-                                <Link to={`/teachers/edit/${this.props.item.teacherId}`} ><h3>{this.props.item.firstName} {this.props.item.lastName}</h3></Link>
+                                <Link to={`/teacher/${this.props.item.teacherId}`} ><h3>{this.props.item.firstName} {this.props.item.lastName}</h3></Link>
                                 <div>
                                     Дисциплины
                                     <ul>

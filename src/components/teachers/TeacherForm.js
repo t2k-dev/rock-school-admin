@@ -13,15 +13,18 @@ class TeacherForm extends React.Component {
 
     this.state = {
       isNew: props.type == "New",
-      teacherId: "",
-      email: "",
-      firstName: "",
-      lastName: "",
-      birthDate: "",
-      phone: "",
-      sex: 0,
-      userId: 1,
-      disciplines: [],
+      teacher:{
+        teacherId: this.props.match.params.id,
+        email: "",
+        firstName: "",
+        lastName: "",
+        birthDate: "",
+        phone: "",
+        sex: 1,
+        userId: 1,
+        disciplines: [] 
+      },
+
       workingPeriods: [],
 
       periodDay: 0,
@@ -54,17 +57,17 @@ class TeacherForm extends React.Component {
     console.log("onFormLoad");
     console.log(teacher);
     this.setState({
-      teacherId: teacher.teacherId,
       teacher: {
+        teacherId: this.props.match.params.id,
         email: teacher.email,
         firstName: teacher.firstName,
         lastName: teacher.lastName,
         birthDate: teacher.birthDate,
-        phone: teacher.phone,
+        phone: "7" + teacher.phone,
         disciplines: teacher.disciplines,
         sex: teacher.sex,
         ageLimit: teacher.ageLimit,
-        allowGroupLessons: teacher.allowGroupLessons
+        allowGroupLessons: teacher.allowGroupLessons,
       },
       workingPeriods: teacher.workingPeriods,
     });
@@ -80,45 +83,41 @@ class TeacherForm extends React.Component {
 
   handleSave = async (e) => {
     e.preventDefault();
-
     const requestBody = {
       teacher: {
-        email: this.state.email,
-        firstName: this.state.firstName,
-        lastName: this.state.lastName,
-        birthDate: this.state.birthDate,
-        phone: this.state.phone,
-        disciplines: this.state.disciplines,
-        branchId: this.state.branchId,
-        ageLimit: this.state.ageLimit,
-        allowGroupLessons: this.state.allowGroupLessons,
+        email: this.state.teacher.email,
+        firstName: this.state.teacher.firstName,
+        lastName: this.state.teacher.lastName,
+        birthDate: this.state.teacher.birthDate,
+        sex: this.state.teacher.sex,
+        phone: this.state.teacher.phone.replace("+7 ", "").replace(/\s/g, ""),
+        disciplines: this.state.teacher.disciplines,
+        branchId: this.state.teacher.branchId,
+        ageLimit: this.state.teacher.ageLimit,
+        allowGroupLessons: this.state.teacher.allowGroupLessons,
       },
       workingPeriods: this.state.workingPeriods,
     };
-    if (this.state.isNew){
-      const response = await addTeacher(requestBody);
-    }
-    else{
-      const response = await saveTeacher(this.state.teacherId, requestBody);
-    }
-    console.log(requestBody);
     if (this.state.isNew) {
       const response = await addTeacher(requestBody);
-      alert((response) => alert(response));
     } else {
-      console.log("Not implemented");
+      const response = await saveTeacher(this.state.teacher.teacherId, requestBody);
     }
   };
 
   handleChange = (e) => {
     const { id, value } = e.target;
-    this.setState({ [id]: value });
+    const teacher = {...this.state.teacher};
+    teacher[id] = value;
+    //this.setState({ [id]: value });
+    this.setState({teacher});
   };
 
   handleSexChange = (isChecked) => {
-    this.setState({
-      sex: isChecked,
-    });
+    const teacher = {...this.state.teacher};
+    teacher.sex = isChecked;
+    this.setState({teacher})
+    
   };
 
   handlePeriodsChange = () => {};
@@ -185,7 +184,34 @@ class TeacherForm extends React.Component {
   };
 
   render() {
-    const { email, firstName, lastName, birthDate, phone, sex, ageLimit, allowGroupLessons, disciplines, branchId } = this.state;
+    const { email, firstName, lastName, birthDate, phone, sex, ageLimit, allowGroupLessons, disciplines, branchId } = this.state.teacher;
+    const { workingPeriods } = this.state;
+
+    let workingPeriodsList;
+    if (workingPeriods && workingPeriods.length > 0) {
+      workingPeriodsList = workingPeriods.map((item, index) => (
+        <tr key={index}>
+          <td>{index + 1}</td>
+          <td>{this.getDayName(item.day)}</td>
+          <td>{item.startTime}</td>
+          <td>{item.endTime}</td>
+          <td>
+            <Button onClick={() => this.deleteWorkingPeriod(index)}>
+              <i>-</i>
+            </Button>
+          </td>
+        </tr>
+      ));
+    } else {
+      workingPeriodsList = (
+        <tr key={1}>
+          <td colSpan="5" style={{ textAlign: "center" }}>
+            Нет записей
+          </td>
+        </tr>
+      );
+    }
+
     return (
       <Container style={{ marginTop: "40px" }}>
         <Row>
@@ -193,46 +219,51 @@ class TeacherForm extends React.Component {
           <Col md="4">
             <h2 style={{ textAlign: "center" }}>{this.state.isNew ? "Новый преподаватель" : "Редактировать преподавателя"}</h2>
             <Form>
-              <Form.Group className="mb-3" controlId="firstName">
-                <Form.Label>Имя</Form.Label>
-                <Form.Control onChange={this.handleChange} value={firstName} placeholder="введите имя..." autoComplete="off" />
-              </Form.Group>
+              <Row className="mb-3">
+                <Form.Group as={Col} controlId="firstName">
+                  <Form.Label>Имя</Form.Label>
+                  <Form.Control onChange={this.handleChange} value={firstName} placeholder="введите имя..." autoComplete="off" />
+                </Form.Group>
+                <Form.Group as={Col} controlId="lastName">
+                  <Form.Label>Фамилия</Form.Label>
+                  <Form.Control onChange={this.handleChange} value={lastName} placeholder="введите фамилию..." />
+                </Form.Group>
+              </Row>
+              <Row>
+                <Form.Group className="mb-3" controlId="birthDate">
+                  <Form.Label>Дата рождения</Form.Label>
+                  <Form.Control
+                    as={InputMask}
+                    mask="9999-99-99"
+                    maskChar=" "
+                    onChange={this.handleChange}
+                    value={birthDate}
+                    placeholder="введите дату..."
+                  />
+                </Form.Group>
+              </Row>
+              <Row>
+                <SexControl value={sex} onChange={this.handleSexChange}></SexControl>
+              </Row>
+              <Row className="mb-3">
+                <Form.Group as={Col} controlId="phone">
+                  <Form.Label>Телефон</Form.Label>
+                  <Form.Control
+                    as={InputMask}
+                    mask="+7 999 999 99 99"
+                    maskChar=" "
+                    onChange={this.handleChange}
+                    value={phone}
+                    placeholder="введите телефон..."
+                  />
+                </Form.Group>
 
-              <Form.Group className="mb-3" controlId="lastName">
-                <Form.Label>Фамилия</Form.Label>
-                <Form.Control onChange={this.handleChange} value={lastName} placeholder="введите фамилию..." />
-              </Form.Group>
+                <Form.Group as={Col} controlId="email">
+                  <Form.Label>Email</Form.Label>
+                  <Form.Control onChange={this.handleChange} value={email} placeholder="введите email..." autoComplete="off" />
+                </Form.Group>
+              </Row>
 
-              <Form.Group className="mb-3" controlId="birthDate">
-                <Form.Label>Дата рождения</Form.Label>
-                <Form.Control
-                  as={InputMask}
-                  mask="9999-99-99"
-                  maskChar=" "
-                  onChange={this.handleChange}
-                  value={birthDate}
-                  placeholder="введите дату..."
-                />
-              </Form.Group>
-
-              <SexControl value={sex} onChange={this.handleSexChange}></SexControl>
-
-              <Form.Group className="mb-3" controlId="phone">
-                <Form.Label>Телефон</Form.Label>
-                <Form.Control
-                  as={InputMask}
-                  mask="+7 999 999 99 99"
-                  maskChar=" "
-                  onChange={this.handleChange}
-                  value={phone}
-                  placeholder="введите телефон..."
-                />
-              </Form.Group>
-
-              <Form.Group className="mb-3" controlId="email">
-                <Form.Label>Email</Form.Label>
-                <Form.Control onChange={this.handleChange} value={email} placeholder="введите email..." autoComplete="off" />
-              </Form.Group>
               <hr></hr>
               <Form.Group className="mb-3" controlId="ageLimit">
                 <Form.Label>Ученики от</Form.Label>
@@ -331,19 +362,7 @@ class TeacherForm extends React.Component {
                       </tr>
                     </thead>
                     <tbody>
-                      {this.state.workingPeriods.map((item, index) => (
-                        <tr key={index}>
-                          <td>{index + 1}</td>
-                          <td>{this.getDayName(item.day)}</td>
-                          <td>{item.startTime}</td>
-                          <td>{item.endTime}</td>
-                          <td>
-                            <Button onClick={() => this.deleteWorkingPeriod(index)}>
-                              <i>-</i>
-                            </Button>
-                          </td>
-                        </tr>
-                      ))}
+                      {workingPeriodsList}
                     </tbody>
                   </Table>
                 </Row>
