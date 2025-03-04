@@ -3,7 +3,7 @@ import { Form, Container, Row, Col, Table, FormCheck, Button } from "react-boots
 import { DisciplinesControl } from "../common/DisciplinesControl";
 import { SexControl } from "../common/SexControl";
 import InputMask from "react-input-mask";
-import WorkingPeriods from "./WorkingPeriods";
+import TeacherWorkingPeriods from "./TeacherWorkingPeriods";
 
 import { addTeacher, saveTeacher, getTeacher } from "../../services/apiTeacherService";
 
@@ -13,33 +13,28 @@ class TeacherForm extends React.Component {
 
     this.state = {
       isNew: props.type == "New",
-      teacher:{
-        teacherId: this.props.match.params.id,
-        email: "",
+      teacher: {
+        teacherId: "",
+        //email: "",
         firstName: "",
         lastName: "",
         birthDate: "",
         phone: "",
         sex: 1,
-        userId: 1,
-        disciplines: [] 
+        //userId: 1,
+        disciplines: [],
+        brachId: 0,
+        allowGroupLessons: false,
+        ageLimit: "",
       },
 
       workingPeriods: [],
-
-      periodDay: 0,
-      periodStart: "",
-      periodEnd: "",
-      ageLimit: "",
-      allowGroupLessons: false,
     };
 
     this.handleSave = this.handleSave.bind(this);
     this.handleChange = this.handleChange.bind(this);
-    this.getDayName = this.getDayName.bind(this);
     this.getValueOrEmptyString = this.getValueOrEmptyString.bind(this);
-    this.addWorkingPeriod = this.addWorkingPeriod.bind(this);
-    this.deleteWorkingPeriod = this.deleteWorkingPeriod.bind(this);
+    this.handlePeriodsChange = this.handlePeriodsChange.bind(this);
   }
 
   componentDidMount() {
@@ -54,12 +49,25 @@ class TeacherForm extends React.Component {
     const id = this.props.match.params.id;
     const teacher = await getTeacher(id);
 
+    const fakeWorkingPeriods = [
+      {
+        weekDay: 1,
+        startTime: "09:00",
+        endTime: "13:00",
+      },
+      {
+        weekDay: 3,
+        startTime: "09:00",
+        endTime: "13:00",
+      },
+    ];
+
     console.log("onFormLoad");
     console.log(teacher);
     this.setState({
       teacher: {
         teacherId: this.props.match.params.id,
-        email: teacher.email,
+        //email: teacher.email,
         firstName: teacher.firstName,
         lastName: teacher.lastName,
         birthDate: teacher.birthDate,
@@ -68,8 +76,10 @@ class TeacherForm extends React.Component {
         sex: teacher.sex,
         ageLimit: teacher.ageLimit,
         allowGroupLessons: teacher.allowGroupLessons,
+        branchId: teacher.branchId,
       },
-      workingPeriods: teacher.workingPeriods,
+      //workingPeriods: teacher.workingPeriods,
+      workingPeriods: fakeWorkingPeriods,
     });
   }
 
@@ -98,6 +108,8 @@ class TeacherForm extends React.Component {
       },
       workingPeriods: this.state.workingPeriods,
     };
+
+    console.log(this.state);
     if (this.state.isNew) {
       const response = await addTeacher(requestBody);
     } else {
@@ -107,111 +119,45 @@ class TeacherForm extends React.Component {
 
   handleChange = (e) => {
     const { id, value } = e.target;
-    const teacher = {...this.state.teacher};
+    const teacher = { ...this.state.teacher };
     teacher[id] = value;
     //this.setState({ [id]: value });
-    this.setState({teacher});
+    this.setState({ teacher });
   };
 
   handleSexChange = (isChecked) => {
-    const teacher = {...this.state.teacher};
+    const teacher = { ...this.state.teacher };
     teacher.sex = isChecked;
-    this.setState({teacher})
-    
+    this.setState({ teacher });
   };
 
-  handlePeriodsChange = () => {};
-
   handleDisciplineCheck = (id, isChecked) => {
-    this.setState((prevState) => {
-      let newDisciplines = [...prevState.disciplines];
-      if (isChecked) {
-        newDisciplines.push(id);
-      } else {
-        newDisciplines = newDisciplines.filter((discipline) => discipline !== id);
-      }
-      return { disciplines: newDisciplines };
-    });
+    const teacher = { ...this.state.teacher };
+    let newDisciplines = teacher.disciplines;
+    if (isChecked) {
+      newDisciplines.push(id);
+    } else {
+      newDisciplines = newDisciplines.filter((discipline) => discipline !== id);
+    }
+    teacher.disciplines = newDisciplines;
+    this.setState({ teacher });
   };
 
   handleAllowGroupLessonsChange = (e) => {
-    this.setState({
-      allowGroupLessons: e.target.isChecked,
-    });
+    const teacher = { ...this.state.teacher };
+    teacher.allowGroupLessons = e.target.isChecked;
+
+    this.setState({ teacher });
   };
 
-  addWorkingPeriod = () => {
-    console.log(this.state.periodDay);
-    console.log(this.state);
-
-    this.setState((prevState) => ({
-      workingPeriods: [
-        ...prevState.workingPeriods,
-        {
-          day: parseInt(this.state.periodDay),
-          startTime: this.state.periodStart,
-          endTime: this.state.periodEnd,
-        },
-      ],
-    }));
-  };
-
-  deleteWorkingPeriod = (itemIndex) => {
-    this.setState({
-      WorkingPeriods: this.state.WorkingPeriods.filter(function (workingPeriod, index) {
-        return index !== itemIndex;
-      }),
-    });
-  };
-
-  getDayName = (dayIndex) => {
-    switch (dayIndex) {
-      case 1:
-        return "Понедельник";
-      case 2:
-        return "Вторник";
-      case 3:
-        return "Среда";
-      case 4:
-        return "Четверг";
-      case 5:
-        return "Пятница";
-      case 6:
-        return "Суббота";
-      case 7:
-        return "Воскресенье";
-    }
+  handlePeriodsChange = (periods) => {
+    this.setState({ workingPeriods: periods });
   };
 
   render() {
     const { email, firstName, lastName, birthDate, phone, sex, ageLimit, allowGroupLessons, disciplines, branchId } = this.state.teacher;
-    const { workingPeriods } = this.state;
-
-    let workingPeriodsList;
-    if (workingPeriods && workingPeriods.length > 0) {
-      workingPeriodsList = workingPeriods.map((item, index) => (
-        <tr key={index}>
-          <td>{index + 1}</td>
-          <td>{this.getDayName(item.day)}</td>
-          <td>{item.startTime}</td>
-          <td>{item.endTime}</td>
-          <td>
-            <Button onClick={() => this.deleteWorkingPeriod(index)}>
-              <i>-</i>
-            </Button>
-          </td>
-        </tr>
-      ));
-    } else {
-      workingPeriodsList = (
-        <tr key={1}>
-          <td colSpan="5" style={{ textAlign: "center" }}>
-            Нет записей
-          </td>
-        </tr>
-      );
-    }
-
+    console.log('Render');
+    console.log(this.state.workingPeriods);
     return (
       <Container style={{ marginTop: "40px" }}>
         <Row>
@@ -295,78 +241,10 @@ class TeacherForm extends React.Component {
                 </Form.Select>
               </Form.Group>
 
-              <Form.Group className="mb-3">
-                <b>Расписание</b>
-                <Row style={{ marginTop: "20px" }}>
-                  <Col md="5">
-                    <Form.Select
-                      aria-label="Веберите день..."
-                      value={this.state.periodDay}
-                      onChange={(e) => this.setState({ periodDay: e.target.value })}
-                    >
-                      <option>День недели...</option>
-                      <option value="1">Понедельник</option>
-                      <option value="2">Вторник</option>
-                      <option value="3">Среда</option>
-                      <option value="4">Четверг</option>
-                      <option value="5">Пятница</option>
-                      <option value="6">Суббота</option>
-                      <option value="7">Воскресенье</option>
-                    </Form.Select>
-                  </Col>
-                  <Col>
-                    <Row>
-                      <Form.Label column md={1}>
-                        с
-                      </Form.Label>
-                      <Col md={4}>
-                        <Form.Control
-                          as={InputMask}
-                          mask="99:99"
-                          maskChar=" "
-                          placeholder="чч:мм"
-                          value={this.state.periodStart}
-                          onChange={(e) => this.setState({ periodStart: e.target.value })}
-                        />
-                      </Col>
-                      <Form.Label column md={1}>
-                        по
-                      </Form.Label>
-                      <Col md={4}>
-                        <Form.Control
-                          as={InputMask}
-                          mask="99:99"
-                          maskChar=" "
-                          placeholder="чч:мм"
-                          value={this.state.periodEnd}
-                          onChange={(e) => this.setState({ periodEnd: e.target.value })}
-                        />
-                      </Col>
-                      <Col md={2}>
-                        <Button onClick={this.addWorkingPeriod}>
-                          <i>+</i>
-                        </Button>
-                      </Col>
-                    </Row>
-                  </Col>
-                </Row>
-                <Row>
-                  <Table striped bordered hover style={{ marginTop: "20px" }}>
-                    <thead>
-                      <tr>
-                        <th>#</th>
-                        <th>День</th>
-                        <th>С</th>
-                        <th>До</th>
-                        <th></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {workingPeriodsList}
-                    </tbody>
-                  </Table>
-                </Row>
-              </Form.Group>
+              <TeacherWorkingPeriods 
+                workingPeriods={this.state.workingPeriods} 
+                handlePeriodsChange={this.handlePeriodsChange} 
+              />
 
               <hr></hr>
               <Button variant="primary" type="null" onClick={this.handleSave}>

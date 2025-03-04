@@ -4,7 +4,6 @@ import {  Form } from "react-bootstrap";
 export class SexControl extends React.Component {
   
   handleSexClick = (e) => {
-    const { id } = e.target;
     if (e.target.id === "rb_male") {
         this.props.onChange(1);
     } else {
