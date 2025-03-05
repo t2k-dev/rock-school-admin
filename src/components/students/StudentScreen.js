@@ -71,10 +71,12 @@ class StudentScreen extends React.Component {
       </tr>
     }
 
+    const trialSubscriptionLink = "/student/"+student.studentId+"/subscriptionForm";
+
     return (
       <Container style={{ marginTop: "40px" }}>
         <Row>
-          <StudentScreenCard item={this.state.student} history={this.props.history}/>
+          <StudentScreenCard item={student} history={this.props.history}/>
         </Row>
         <Row>
             <Col>
@@ -100,7 +102,7 @@ class StudentScreen extends React.Component {
             </Col>
             <Col md="2">
             <div className="d-grid gap-2">
-                <Link to="/admin/subscriptionForm">
+                <Link to={trialSubscriptionLink}>
                     <Button variant="primary" type="null" size="md" className="w-100" onClick={this.handleSave}>
                         Пробное занятие
                     </Button>

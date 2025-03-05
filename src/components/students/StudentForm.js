@@ -1,6 +1,5 @@
 import React from "react";
-import { Form, Container, Row, Col, Image, Button } from 'react-bootstrap';
-import { Link } from "react-router-dom";
+import { Form, Container, Row, Col, Button } from 'react-bootstrap';
 import InputMask from "react-input-mask";
 import { getStudent, saveStudent } from "../../services/apiStudentService";
 import { SexControl } from "../common/SexControl";

@@ -1,9 +1,9 @@
 import React from "react";
 import { Form, Container, Row, Col, Image, Button } from 'react-bootstrap';
 import { Link, useHistory } from "react-router-dom";
-import { getStudent, addStudent } from "../../services/apiStudentService";
+import { addStudent } from "../../services/apiStudentService";
 import { SexControl } from "../common/SexControl";
-
+import InputMask from "react-input-mask";
 
 class NewStudentForm extends React.Component{
     constructor(props)
@@ -12,7 +12,7 @@ class NewStudentForm extends React.Component{
         this.state= {
             firstName: "",
             birthDate: "",
-            sex: 0,
+            sex: 1,
             phone: "",
             Level: 0,
             branchId: 0,
@@ -29,7 +29,7 @@ class NewStudentForm extends React.Component{
             firstName: this.state.firstName,
             birthDate: this.state.birthDate,
             sex: this.state.sex,
-            phone: parseInt(this.state.phone),
+            phone: this.state.phone.replace('+7 ', '').replace(/\s/g, ''),
             level: this.state.level,
             branchId: this.state.branchId,
         }
@@ -51,9 +51,8 @@ class NewStudentForm extends React.Component{
         })
       }
 
-
     render(){
-        const {firstName, branchId, birthDate, phone, level} = this.state;
+        const {firstName, branchId, birthDate, phone, level, sex} = this.state;
         return(
             
             <Container style={{marginTop: "40px"}}>
@@ -69,14 +68,14 @@ class NewStudentForm extends React.Component{
 
                             <Form.Group className="mb-3" controlId="birthDate">
                                 <Form.Label>Дата рождения</Form.Label>
-                                <Form.Control onChange={this.handleChange} value={birthDate} placeholder="введите дату..." />
+                                <Form.Control as={InputMask} mask="9999-99-99" maskChar=" " onChange={this.handleChange} value={birthDate} placeholder="введите дату..." />
                             </Form.Group>
 
-                            <SexControl onChange={this.handleSexChange}></SexControl>
+                            <SexControl value={sex} onChange={this.handleSexChange}></SexControl>
 
                             <Form.Group className="mb-3" controlId="phone">
                                 <Form.Label>Телефон</Form.Label>
-                                <Form.Control onChange={this.handleChange} value={phone} placeholder="введите телефон..." />
+                                <Form.Control as={InputMask} mask="+7 999 999 99 99" maskChar=" " onChange={this.handleChange} value={phone} placeholder="введите телефон..." />
                             </Form.Group>
 
                             <hr></hr>

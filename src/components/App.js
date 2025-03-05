@@ -36,7 +36,7 @@ function App() {
       <Route exact path="/students/edit/:id" render={(props) => <StudentForm type="Edit" {...props} />}/>
       <Route exact path="/admin/registerStudent" render={(props) => <NewStudentForm {...props} />}/>
       
-      <Route exact path="/admin/subscriptionForm" render={(props) => <SubscriptionForm type="New" {...props} />}/>
+      <Route exact path="/student/:id/subscriptionForm" render={(props) => <SubscriptionForm type="New" {...props} />}/>
       <Route path="/about" element={<About />} />
       <Route path="/contact" element={<Contact />} />
 

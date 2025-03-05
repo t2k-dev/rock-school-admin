@@ -2,32 +2,41 @@ import React from "react";
 import { Form, Container, Row, Col, Image, Button } from 'react-bootstrap';
 import axios from "axios";
 import { Link } from "react-router-dom";
+import {getAvailablePeriods} from '../../services/apiTeacherService'
+import {addSubscription} from '../../services/apiSubscriptionService'
 
 class SubscriptionForm extends React.Component{
     constructor(props)
     {
         super(props);
         this.state= {
+            studentId: this.props.match.params.id,
             email: "",
             firstName: "",
             lastName: "",
             birthDate: "",
             phone: 0,
             userId: 1,
-
+            attendanceLength: 0,
             generatedSchedule: "",
         }
-        this.generateSchedule = this.generateSchedule.bind(this);
+        this.generateAvailablePeriods = this.generateAvailablePeriods.bind(this);
         this.handleSave = this.handleSave.bind(this);
         this.handleChange = this.handleChange.bind(this);
-        this.handleSexClick = this.handleSexClick.bind(this);
-    }
-    
-    generateSchedule = (e) =>{
-        this.setState({generatedSchedule:"Сергей: Пн: 13:00 - 18:00 \nСергей: Ср: 13:00 - 18:00"});
     }
 
-    handleSave = (e) =>{
+    generateAvailablePeriods = async (e) =>{
+        const response = await getAvailablePeriods(this.state.discipline, this.state.studentId, 1);
+        console.log(response);
+        let result = "";
+        response.data.forEach(element => {
+            result = result + element +"\n";
+        });
+
+        this.setState({generatedSchedule: result});
+    }
+
+    handleSave = async (e) =>{
         e.preventDefault();
 
         const requestBody ={
@@ -39,23 +48,13 @@ class SubscriptionForm extends React.Component{
             phone: parseInt(this.state.phone)
         }
         console.log(requestBody);
-        //axios.post('https://localhost:44358/api/account/registerStudent', requestBody)
-            //.then(alert(response => alert(response)));
-        
+
+        //await addSubscription(requestBody);
     }
 
     handleChange = (e) =>{
         const {id, value} = e.target
         this.setState({[id] : value})
-    }
-
-    handleSexClick = (e) =>{
-        const {id} = e.target
-        if (e.target.id === 'rb_male')
-            this.setState({sex: 1})
-
-        if (e.target.id === 'rb_female')
-            this.setState({sex: 2})
     }
 
     render(){
@@ -89,7 +88,7 @@ class SubscriptionForm extends React.Component{
                             <Form.Group className="mb-3" controlId="GenerteSchedule">
                                 <Form.Label>Расписание</Form.Label>
                                 <Form.Control as="textarea" value={generatedSchedule} onChange={this.handleChange} placeholder="" />
-                                <Form.Label onClick={this.generateSchedule} style={{marginTop:"20px", color:"green"}}>
+                                <Form.Label onClick={this.generateAvailablePeriods} style={{marginTop:"20px", color:"green"}}>
                                     Сгенерировать
                                 </Form.Label>
                             </Form.Group>
@@ -108,6 +107,19 @@ class SubscriptionForm extends React.Component{
                             <Form.Group className="mb-3" controlId="Subscription">
                                 <Form.Label>Абонемент (кол-во занятий)</Form.Label>
                                 <Form.Control onChange={this.handleChange} placeholder="" />
+                            </Form.Group>
+
+                            <Form.Group className="mb-3" controlId="AttendanceLength">
+                                <Form.Label>Длительность урока</Form.Label>
+                                <Form.Select 
+                                    aria-label="Веберите..."
+                                    value={this.state.attendanceLength}
+                                    onChange={e => this.setState({ attendanceLength: e.target.value })}
+                                    >
+                                    <option>выберите...</option>
+                                    <option value="1">Час</option>
+                                    <option value="2">Полтора часа</option>
+                                </Form.Select>
                             </Form.Group>
 
                             <hr></hr>

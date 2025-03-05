@@ -11,12 +11,10 @@ class StudentCard extends React.Component{
                     <Card.Body>
                         <Row>
                             <Col md="1">
-                            <Image src={noImage} className='img-preview' fluid='true'/>
+                                <Image src={noImage} className='img-preview' fluid='true'/>
                             </Col>
                             <Col>
-                            <Link to={`/student/${this.props.item.studentId}`} ><h3>{this.props.item.firstName} {this.props.item.lastName}</h3></Link>
-                                <div>
-                                </div>
+                                <Link to={`/student/${this.props.item.studentId}`} ><h3>{this.props.item.firstName} {this.props.item.lastName}</h3></Link>
                             </Col>
                         </Row>
                     </Card.Body>
