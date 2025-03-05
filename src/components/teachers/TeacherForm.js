@@ -156,8 +156,6 @@ class TeacherForm extends React.Component {
 
   render() {
     const { email, firstName, lastName, birthDate, phone, sex, ageLimit, allowGroupLessons, disciplines, branchId } = this.state.teacher;
-    console.log('Render');
-    console.log(this.state.workingPeriods);
     return (
       <Container style={{ marginTop: "40px" }}>
         <Row>
@@ -234,7 +232,7 @@ class TeacherForm extends React.Component {
 
               <Form.Group className="mb-3" controlId="branchId">
                 <Form.Label>Филиал</Form.Label>
-                <Form.Select aria-label="Веберите..." value={branchId} onChange={(e) => this.setState({ branchId: e.target.value })}>
+                <Form.Select aria-label="Веберите..." value={branchId} onChange={this.handleChange}>
                   <option>выберите...</option>
                   <option value="1">На Абая</option>
                   <option value="2">На Аль-Фараби</option>
