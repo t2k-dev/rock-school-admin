@@ -3,7 +3,7 @@ import { Form, Container, Row, Col, Table, FormCheck, Button } from "react-boots
 import { DisciplinesControl } from "../common/DisciplinesControl";
 import { SexControl } from "../common/SexControl";
 import InputMask from "react-input-mask";
-import TeacherWorkingPeriods from "./TeacherWorkingPeriods";
+import SchedulePicker from "../common/SchedulePicker";
 
 import { addTeacher, saveTeacher, getTeacher } from "../../services/apiTeacherService";
 
@@ -239,8 +239,8 @@ class TeacherForm extends React.Component {
                 </Form.Select>
               </Form.Group>
 
-              <TeacherWorkingPeriods 
-                workingPeriods={this.state.workingPeriods} 
+              <SchedulePicker 
+                periods={this.state.workingPeriods} 
                 handlePeriodsChange={this.handlePeriodsChange} 
               />
 

@@ -32,6 +32,18 @@ class TeacherScreen extends React.Component {
         description: "6",
         teacherName: "Михаил",
       },
+      {
+        descipline: "Электро гитара",
+        status: "Активный",
+        description: "1",
+        teacherName: "Азамат",
+      },
+      {
+        descipline: "Укулеле",
+        status: "Отмененный",
+        description: "10",
+        teacherName: "Джесика",
+      },
     ];
 
     this.setState({
@@ -91,16 +103,6 @@ class TeacherScreen extends React.Component {
           </Col>
           <Col md="2">
             <div className="d-grid gap-2">
-              <Link to="/admin/subscriptionForm">
-                <Button variant="primary" type="null" size="md" className="w-100" onClick={this.handleSave}>
-                  Пробное занятие
-                </Button>
-              </Link>
-              <Link to="/admin/subscriptionForm">
-                <Button variant="primary" type="null" size="md" className="w-100" onClick={this.handleSave}>
-                  Новый абонемент
-                </Button>
-              </Link>
             </div>
 
             <Row>

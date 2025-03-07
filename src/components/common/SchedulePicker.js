@@ -2,12 +2,12 @@ import React from "react";
 import { Form, Container, Row, Col, Table, Button } from "react-bootstrap";
 import InputMask from "react-input-mask";
 
-class TeacherWorkingPeriods extends React.Component {
+class SchedulePicker extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      workingPeriods: this.props.workingPeriods,
+      periods: this.props.periods,
 
       periodDay: 0,
       periodStart: "",
@@ -16,28 +16,12 @@ class TeacherWorkingPeriods extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.workingPeriods !== prevProps.workingPeriods) {
-      this.setState({ workingPeriods: this.props.workingPeriods });
+    if (this.props.periods !== prevProps.periods) {
+      this.setState({ periods: this.props.periods });
     }
   }
 
-  addWorkingPeriod = () => {
-    /*this.setState((prevState) => ({
-      workingPeriods: [
-        ...prevState.workingPeriods,
-        {
-          weekDay: parseInt(this.state.periodDay),
-          startTime: this.state.periodStart,
-          endTime: this.state.periodEnd,
-        },
-      ],
-    }));
-
-    console.log("OnAdd");
-    console.log(this.state.workingPeriods);
-
-    this.props.handlePeriodsChange(this.state.workingPeriods);
-*/
+  addPeriod = () => {
     this.setState(
       (prevState) => {
         const newPeriod = {
@@ -45,20 +29,20 @@ class TeacherWorkingPeriods extends React.Component {
           startTime: this.state.periodStart,
           endTime: this.state.periodEnd,
         };
-        return { workingPeriods: [...prevState.workingPeriods, newPeriod] };
+        return { periods: [...prevState.periods, newPeriod] };
       },
       () => {
-        this.props.handlePeriodsChange(this.state.workingPeriods);
+        this.props.handlePeriodsChange(this.state.periods);
       }
     );
   };
 
-  deleteWorkingPeriod = (itemIndex) => {
+  deletePeriod = (itemIndex) => {
     this.setState(
       (prevState) => ({
-        workingPeriods: prevState.workingPeriods.filter((_, index) => index !== itemIndex),
+        periods: prevState.periods.filter((_, index) => index !== itemIndex),
       }),
-      () => this.props.handlePeriodsChange(this.state.workingPeriods)
+      () => this.props.handlePeriodsChange(this.state.periods)
     );
   };
 
@@ -82,26 +66,25 @@ class TeacherWorkingPeriods extends React.Component {
   };
 
   render() {
-    const { workingPeriods } = this.state;
-    console.log("Render Child");
-    console.log(workingPeriods);
-    let workingPeriodsList;
-    if (workingPeriods && workingPeriods.length > 0) {
-      workingPeriodsList = workingPeriods.map((item, index) => (
+    const { periods } = this.state;
+
+    let periodsList;
+    if (periods && periods.length > 0) {
+      periodsList = periods.map((item, index) => (
         <tr key={index}>
           <td>{index + 1}</td>
           <td>{this.getDayName(item.weekDay)}</td>
           <td>{item.startTime}</td>
           <td>{item.endTime}</td>
           <td>
-            <Button onClick={() => this.deleteWorkingPeriod(index)}>
+            <Button onClick={() => this.deletePeriod(index)}>
               <i>-</i>
             </Button>
           </td>
         </tr>
       ));
     } else {
-      workingPeriodsList = (
+      periodsList = (
         <tr key={1}>
           <td colSpan="5" style={{ textAlign: "center" }}>
             Нет записей
@@ -155,7 +138,7 @@ class TeacherWorkingPeriods extends React.Component {
                 />
               </Col>
               <Col md={2}>
-                <Button onClick={this.addWorkingPeriod}>
+                <Button onClick={this.addPeriod}>
                   <i>+</i>
                 </Button>
               </Col>
@@ -173,7 +156,7 @@ class TeacherWorkingPeriods extends React.Component {
                 <th></th>
               </tr>
             </thead>
-            <tbody>{workingPeriodsList}</tbody>
+            <tbody>{periodsList}</tbody>
           </Table>
         </Row>
       </Form.Group>
@@ -181,4 +164,4 @@ class TeacherWorkingPeriods extends React.Component {
   }
 }
 
-export default TeacherWorkingPeriods;
+export default SchedulePicker;

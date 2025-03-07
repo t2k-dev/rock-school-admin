@@ -4,6 +4,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import { getAvailablePeriods } from "../../services/apiTeacherService";
 import { addSubscription } from "../../services/apiSubscriptionService";
+import SchedulePicker from "../common/SchedulePicker";
 
 class SubscriptionForm extends React.Component {
   constructor(props) {
@@ -13,29 +14,31 @@ class SubscriptionForm extends React.Component {
 
       disciplineId: 0,
       teacherId: "",
-      attendanceCount: 0,
+      attendanceCount: "",
       attendanceLength: 0,
 
       generatedSchedule: "",
       teachers: [],
+      schedules: [],
     };
     this.generateAvailablePeriods = this.generateAvailablePeriods.bind(this);
     this.handleSave = this.handleSave.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.handlePeriodsChange = this.handlePeriodsChange.bind(this);
   }
 
   generateAvailablePeriods = async (e) => {
     const response = await getAvailablePeriods(this.state.disciplineId, this.state.studentId, 1);
     console.log(response);
     let result = "";
-    
+
     response.data.periods.forEach((element) => {
       result = result + element + "\n";
     });
 
-    this.setState({ 
-        generatedSchedule: result,
-        teachers: response.data.teachers
+    this.setState({
+      generatedSchedule: result,
+      teachers: response.data.teachers,
     });
   };
 
@@ -43,11 +46,11 @@ class SubscriptionForm extends React.Component {
     e.preventDefault();
 
     const requestBody = {
-        studentId: this.state.studentId,
-        disciplineId: this.state.disciplineId,
-        teacherId: this.state.teacherId,
-        attendanceCount: this.state.attendanceCount,
-        attendanceLength: this.state.attendanceLength,
+      studentId: this.state.studentId,
+      disciplineId: this.state.disciplineId,
+      teacherId: this.state.teacherId,
+      attendanceCount: this.state.attendanceCount,
+      attendanceLength: this.state.attendanceLength,
     };
 
     await addSubscription(requestBody);
@@ -58,9 +61,13 @@ class SubscriptionForm extends React.Component {
     this.setState({ [id]: value });
   };
 
+  handlePeriodsChange = (periods) => {
+    this.setState({ workingPeriods: periods });
+  };
+
   render() {
     const { disciplineId, teacherId, attendanceCount, attendanceLength, generatedSchedule, teachers } = this.state;
-console.log(teachers);
+    console.log(teachers);
     return (
       <Container style={{ marginTop: "40px" }}>
         <Row>
@@ -95,35 +102,35 @@ console.log(teachers);
                 <Form.Label>Преподаватель</Form.Label>
                 <Form.Select aria-label="Веберите..." value={teacherId} onChange={(e) => this.setState({ teacherId: e.target.value })}>
                   <option>выберите...</option>
-                  {teachers.map((teacher,index) => (
+                  {teachers.map((teacher, index) => (
                     <option key={index} value={teacher.teacherId}>
-                        {teacher.fullName}
+                      {teacher.fullName}
                     </option>
-                ))}
+                  ))}
                 </Form.Select>
-              </Form.Group>
-
-              <Form.Group className="mb-3" controlId="Schedule">
-                <Form.Label>Расписание</Form.Label>
-                <Form.Control onChange={this.handleChange} placeholder="" />
               </Form.Group>
 
               <Form.Group className="mb-3" controlId="Subscription">
                 <Form.Label>Абонемент (кол-во занятий)</Form.Label>
-                <Form.Control value={attendanceCount} onChange={this.handleChange} placeholder="" />
+                <Form.Select aria-label="Веберите..." value={attendanceCount} onChange={(e) => this.setState({ attendanceCount: e.target.value })}>
+                  <option>выберите...</option>
+                  <option value="1">4</option>
+                  <option value="2">8</option>
+                  <option value="3">12</option>
+                </Form.Select>
               </Form.Group>
 
               <Form.Group className="mb-3" controlId="AttendanceLength">
                 <Form.Label>Длительность урока</Form.Label>
-                <Form.Select
-                  aria-label="Веберите..."
-                  value={attendanceLength}
-                  onChange={(e) => this.setState({ attendanceLength: e.target.value })}
-                >
+                <Form.Select aria-label="Веберите..." value={attendanceLength} onChange={(e) => this.setState({ attendanceLength: e.target.value })}>
                   <option>выберите...</option>
                   <option value="1">Час</option>
                   <option value="2">Полтора часа</option>
                 </Form.Select>
+              </Form.Group>
+
+              <Form.Group className="mb-3" controlId="Schedule">
+                <SchedulePicker periods={this.state.schedules} handlePeriodsChange={this.handlePeriodsChange} />
               </Form.Group>
 
               <hr></hr>
