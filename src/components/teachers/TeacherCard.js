@@ -20,7 +20,7 @@ class TeacherCard extends React.Component{
                                     <ul>
                                         {
                                             this.props.item.disciplines.map((item, index) => {
-                                                return(<li key={index}>{item.disciplineName}</li>)
+                                                return(<li key={index}>{item.name}</li>)
                                         })}
                                     </ul>
                                 </div>
