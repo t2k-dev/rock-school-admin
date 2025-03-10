@@ -161,7 +161,7 @@ class TeacherForm extends React.Component {
         <Row>
           <Col md="4"></Col>
           <Col md="4">
-            <h2 style={{ textAlign: "center" }}>{this.state.isNew ? "Новый преподаватель" : "Редактировать преподавателя"}</h2>
+            <h2 className="mb-2" style={{ textAlign: "center" }}>{this.state.isNew ? "Новый преподаватель" : "Редактировать преподавателя"}</h2>
             <Form>
               <Row className="mb-3">
                 <Form.Group as={Col} controlId="firstName">

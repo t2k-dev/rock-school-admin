@@ -1,8 +1,8 @@
 import React from "react";
 import { Card, Row, Col, Image, Button, Container } from "react-bootstrap";
-import noImage from "../../images/user.jpg";
-import { Link } from "react-router-dom";
 import { Avatar } from "../common/Avatar";
+import EditIcon from "../common/EditIcon";
+import GroupIcon from "../icons/GroupIcon";
 
 class StudentScreenCard extends React.Component {
   handleEditClick = (e) => {
@@ -32,26 +32,18 @@ class StudentScreenCard extends React.Component {
               <Container>
                 <div style={{fontWeight:'bold', fontSize:'28px'}}>
                   {item.firstName} {item.lastName}
+                  <EditIcon onIconClick={this.handleEditClick} />
                 </div>
                 <div className="mt-2">{Level[item.level]}</div>
               </Container>
-              <Container className="mt-2">
-                <div>Играет в группе</div>
-                <div className="d-inline">Нет</div>
-              </Container>
             </Container>
             <Container>
-                
+            <Container style={{textAlign:'center'}} className="mt-2">
+              <GroupIcon/>
+                <div> Группа</div>
+                <div >18pm</div>
+              </Container>                
             </Container>
-            <Button
-              variant="secondary"
-              type="null"
-              size="sm"
-              onClick={this.handleEditClick}
-            >
-              Редактировать
-            </Button>
-
           </Container>
         </Card.Body>
       </Card>

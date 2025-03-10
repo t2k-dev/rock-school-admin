@@ -68,7 +68,7 @@ class HomeScreen extends React.Component{
               {item.description}
             </Col>
             <Col md="1">
-              <Button variant="primary" size="sm" onClick={(e) => this.handleMarkComplete(item.noteId)}>Сделано</Button>
+              <Button variant="primary" size="sm" onClick={(e) => this.handleMarkComplete(item.noteId)}>Выполнено</Button>
             </Col>
             </Row>
           </Card.Text>
@@ -89,11 +89,11 @@ class HomeScreen extends React.Component{
         <Card.Body>
           <Card.Text>
             <Row>
-            <Col md="11">
+            <Col md="10">
               {item.description}
             </Col>
-            <Col md="1">
-              <Button variant="primary" size="sm" onClick={(e) => this.handleMarkComplete(item.noteId)}>Сделано</Button>
+            <Col md="2" style={{textAlign:'right'}}>
+              <Button variant="secondary" size="sm" onClick={(e) => this.handleMarkComplete(item.noteId)}>Не выполнено</Button>
             </Col>
             </Row>
           </Card.Text>
@@ -137,8 +137,8 @@ class HomeScreen extends React.Component{
               <Row style={{ marginTop: "10px" }}>
                 {activeNotesList}
               </Row>
-              <Row>
-              <Link to="/notes/addNote"><Button variant="success" size="sm">Добавить</Button></Link>
+              <Row style={{textAlign: "center"}}>
+              <Link to="/notes/addNote"><Button variant="outline-success" size="sm">Добавить</Button></Link>
               </Row>
               <Row>
                   <Col style={{ marginTop: "40px" }}><h3>Выполненные активности</h3>

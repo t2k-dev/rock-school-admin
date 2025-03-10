@@ -36,7 +36,7 @@ class TeacherScreenCard extends React.Component {
             </Container>
             <Container style={{ flexDirection: "column" }} className="">
               <Container>
-                <div style={{ fontWeight: "bold", fontSize: "28px" }}>
+                <div style={{ fontWeight: "bold", fontSize: "28px", width: "600px" }}>
                   {item.firstName} {item.lastName}
                   <EditIcon onIconClick={this.handleEditClick} />
                 </div>
