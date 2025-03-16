@@ -49,19 +49,6 @@ class TeacherForm extends React.Component {
     const id = this.props.match.params.id;
     const teacher = await getTeacher(id);
 
-    const fakeWorkingPeriods = [
-      {
-        weekDay: 1,
-        startTime: "09:00",
-        endTime: "13:00",
-      },
-      {
-        weekDay: 3,
-        startTime: "09:00",
-        endTime: "13:00",
-      },
-    ];
-
     console.log("onFormLoad");
     console.log(teacher);
     this.setState({
@@ -78,8 +65,7 @@ class TeacherForm extends React.Component {
         allowGroupLessons: teacher.allowGroupLessons,
         branchId: teacher.branchId,
       },
-      //workingPeriods: teacher.workingPeriods,
-      workingPeriods: fakeWorkingPeriods,
+      workingPeriods: teacher.workingPeriods,
     });
   }
 
@@ -115,6 +101,7 @@ class TeacherForm extends React.Component {
     } else {
       const response = await saveTeacher(this.state.teacher.teacherId, requestBody);
     }
+    this.props.history.goBack();
   };
 
   handleChange = (e) => {

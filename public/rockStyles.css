@@ -14,3 +14,19 @@ h1, h2, h3, h4, h5 {
   border-radius: 50%;
   object-fit: cover;
 }
+
+.rbc-event{
+  background-color: #268577 !important;
+}
+.rbc-event-label{
+  background-color: #268577 !important;
+  display: none !important;
+}
+
+.rbc-background-event{
+  background-color: #87ce96 !important;
+  ;
+}
+.rbc-allday-cell{
+  display: none;
+}

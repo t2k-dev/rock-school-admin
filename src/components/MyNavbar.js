@@ -13,6 +13,8 @@ const MyNavbar = () =>{
                     <NavDropdown title="Преподаватели" id="basic-nav-dropdown">
                         <NavDropdown.Item href="/teachers"><Link to="/teachers">Список преподавателей</Link></NavDropdown.Item>
                         <NavDropdown.Item href="/admin/registerTeacher"><Link to="/admin/registerTeacher">Новый преподаватель</Link></NavDropdown.Item>
+                        <NavDropdown.Divider />
+                        <NavDropdown.Item href="/bigCalendarTest"><Link to="/bigCalendarTest">Calendar Test</Link></NavDropdown.Item>
                     </NavDropdown>
 
                     <NavDropdown title="Ученики" id="basic-nav-dropdown2">

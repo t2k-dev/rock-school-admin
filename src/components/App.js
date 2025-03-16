@@ -19,6 +19,7 @@ import TeacherScreen from "./teachers/TeacherScreen"
 import TeacherForm from "./teachers/TeacherForm";
 import SubscriptionForm from "./subscriptions/SubscriptionForm";
 import NoteForm from "./notes/NoteForm";
+import BigCalendarTest from "./common/WeekCalendar";
 
 function App() {
   return (
@@ -41,7 +42,9 @@ function App() {
       <Route path="/contact" element={<Contact />} />
 
       <Route exact path="/notes/addNote" render={(props) => <NoteForm {...props} />}/>
-
+      
+      <Route exact path="/bigCalendarTest"><BigCalendarTest /></Route>
+      
     </BrowserRouter>
   );
 }

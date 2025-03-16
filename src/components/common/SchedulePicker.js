@@ -9,7 +9,7 @@ class SchedulePicker extends React.Component {
     this.state = {
       periods: this.props.periods,
 
-      periodDay: 0,
+      periodDay: "",
       periodStart: "",
       periodEnd: "",
     };
@@ -60,7 +60,7 @@ class SchedulePicker extends React.Component {
         return "Пятница";
       case 6:
         return "Суббота";
-      case 7:
+      case 0:
         return "Воскресенье";
     }
   };
@@ -106,7 +106,7 @@ class SchedulePicker extends React.Component {
               <option value="4">Четверг</option>
               <option value="5">Пятница</option>
               <option value="6">Суббота</option>
-              <option value="7">Воскресенье</option>
+              <option value="0">Воскресенье</option>
             </Form.Select>
           </Col>
           <Col>

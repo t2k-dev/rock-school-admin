@@ -4,6 +4,7 @@ import { Row, Col, Container, Form, Button, Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 import TeacherScreenCard from "./TeacherScreenCard";
+import BigCalendarTest from "../common/WeekCalendar"
 
 class TeacherScreen extends React.Component {
   constructor(props) {
@@ -99,7 +100,7 @@ class TeacherScreen extends React.Component {
                 </tr>
               </thead>
               <tbody>{subscriptionsList}</tbody>
-            </Table>
+            </Table>          
           </Col>
           <Col md="2">
             <div className="d-grid gap-2">
@@ -109,6 +110,10 @@ class TeacherScreen extends React.Component {
               <Col></Col>
             </Row>
           </Col>
+        </Row>
+        <Row>
+          <h3>Расписание</h3>
+          <BigCalendarTest/>
         </Row>
       </Container>
     );

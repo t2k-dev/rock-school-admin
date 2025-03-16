@@ -11,7 +11,7 @@ class NewStudentForm extends React.Component{
         super(props);
         this.state= {
             firstName: "",
-            birthDate: "",
+            age: "",
             sex: 1,
             phone: "",
             Level: 0,
@@ -27,7 +27,7 @@ class NewStudentForm extends React.Component{
 
         const requestBody ={
             firstName: this.state.firstName,
-            birthDate: this.state.birthDate,
+            age: this.state.age,
             sex: this.state.sex,
             phone: this.state.phone.replace('+7 ', '').replace(/\s/g, ''),
             level: this.state.level,
@@ -52,7 +52,7 @@ class NewStudentForm extends React.Component{
       }
 
     render(){
-        const {firstName, branchId, birthDate, phone, level, sex} = this.state;
+        const {firstName, branchId, age, phone, level, sex} = this.state;
         return(
             
             <Container style={{marginTop: "40px"}}>
@@ -66,9 +66,9 @@ class NewStudentForm extends React.Component{
                                 <Form.Control onChange={this.handleChange} value={firstName} placeholder="введите имя..." autoComplete="off"/>
                             </Form.Group>
 
-                            <Form.Group className="mb-3" controlId="birthDate">
-                                <Form.Label>Дата рождения</Form.Label>
-                                <Form.Control as={InputMask} mask="9999-99-99" maskChar=" " onChange={this.handleChange} value={birthDate} placeholder="введите дату..." />
+                            <Form.Group className="mb-3" controlId="age">
+                                <Form.Label>Возраст</Form.Label>
+                                <Form.Control as={InputMask} mask="999" maskChar=" " onChange={this.handleChange} value={age} placeholder="введите число..." />
                             </Form.Group>
 
                             <SexControl value={sex} onChange={this.handleSexChange}></SexControl>
@@ -87,10 +87,17 @@ class NewStudentForm extends React.Component{
                                     value={level}
                                     onChange={e => this.setState({ level: e.target.value })}
                                     >
-                                    <option>выберите...</option>
-                                    <option value="1">Начинающий</option>
-                                    <option value="2">Продолжающий</option>
-                                    <option value="3">Продвинутый</option>
+                                    <option value="0">0</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
                                 </Form.Select>
                             </Form.Group>
 
