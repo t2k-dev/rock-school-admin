@@ -4,7 +4,67 @@ import { Row, Col, Container, Form, Button, Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 import TeacherScreenCard from "./TeacherScreenCard";
-import BigCalendarTest from "../common/WeekCalendar"
+import {CalendarWeek} from "../common/CalendarWeek";
+
+const backgroundEvents = [
+  {
+    title: "",
+    start: new Date(1900, 0, 2, 11, 0, 0, 0),
+    end: new Date(1900, 0, 2, 15, 0, 0, 0),
+  },
+  {
+    title: "",
+    start: new Date(1900, 0, 2, 16, 0, 0, 0),
+    end: new Date(1900, 0, 2, 21, 0, 0, 0),
+  },
+  {
+    title: "",
+    start: new Date(1900, 0, 3, 10, 0, 0, 0),
+    end: new Date(1900, 0, 3, 15, 0, 0, 0),
+  },
+  {
+    title: "",
+    start: new Date(1900, 0, 3, 16, 0, 0, 0),
+    end: new Date(1900, 0, 3, 21, 0, 0, 0),
+  },
+  {
+    title: "",
+    start: new Date(1900, 0, 4, 10, 0, 0, 0),
+    end: new Date(1900, 0, 4, 15, 0, 0, 0),
+  },
+  {
+    title: "",
+    start: new Date(1900, 0, 4, 16, 0, 0, 0),
+    end: new Date(1900, 0, 4, 21, 0, 0, 0),
+  },
+  {
+    title: "",
+    start: new Date(1900, 0, 7, 10, 0, 0, 0),
+    end: new Date(1900, 0, 7, 15, 0, 0, 0),
+  },
+  {
+    title: "",
+    start: new Date(1900, 0, 7, 16, 0, 0, 0),
+    end: new Date(1900, 0, 7, 21, 0, 0, 0),
+  },
+];
+const events = [
+  {
+    title: "Алексей Кутузов",
+    start: new Date(1900, 0, 2, 11, 0, 0, 0),
+    end: new Date(1900, 0, 2, 12, 0, 0, 0),
+  },
+  {
+    title: "Всеволод Жердеев",
+    start: new Date(1900, 0, 2, 14, 0, 0, 0),
+    end: new Date(1900, 0, 2, 15, 0, 0, 0),
+  },
+  {
+    title: "Ануар Ахметкалиев ",
+    start: new Date(1900, 0, 4, 18, 0, 0, 0),
+    end: new Date(1900, 0, 4, 19, 0, 0, 0),
+  },
+];
 
 class TeacherScreen extends React.Component {
   constructor(props) {
@@ -31,13 +91,13 @@ class TeacherScreen extends React.Component {
         descipline: "Электро гитара",
         status: "Активный",
         description: "6",
-        teacherName: "Михаил",
+        teacherName: "Ануар Ахметкалиев",
       },
       {
         descipline: "Электро гитара",
         status: "Активный",
         description: "1",
-        teacherName: "Азамат",
+        teacherName: "Всеволод Жердеев",
       },
       {
         descipline: "Укулеле",
@@ -86,6 +146,10 @@ class TeacherScreen extends React.Component {
           <TeacherScreenCard item={teacher} history={this.props.history} />
         </Row>
         <Row>
+          <h3>Расписание</h3>
+          <CalendarWeek events={events} backgroundEvents={backgroundEvents}/>
+        </Row>
+        <Row>
           <h3>Абонементы</h3>
         </Row>
         <Row style={{ marginTop: "20px" }}>
@@ -111,10 +175,7 @@ class TeacherScreen extends React.Component {
             </Row>
           </Col>
         </Row>
-        <Row>
-          <h3>Расписание</h3>
-          <BigCalendarTest/>
-        </Row>
+
       </Container>
     );
   }

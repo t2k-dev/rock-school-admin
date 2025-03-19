@@ -36,12 +36,33 @@ class TeacherScreenCard extends React.Component {
             </Container>
             <Container style={{ flexDirection: "column" }} className="">
               <Container>
-                <div style={{ fontWeight: "bold", fontSize: "28px", width: "600px" }}>
+                <div style={{ fontWeight: "bold", fontSize: "28px", width: "500px" }}>
                   {item.firstName} {item.lastName}
                   <EditIcon onIconClick={this.handleEditClick} />
                 </div>
                 <div className="mt-2">Ветеран</div>
               </Container>
+            </Container>
+            <Container style={{width:"160px"}}>
+              <div style={{textAlign:"center"}}>Загрузка</div>
+              <div style={{ width: "120px" }}>
+                <Doughnut
+                  data={{
+                    datasets: [
+                      {
+                        data: [20, 3],
+                        color: ["rgb(254, 106, 1)", "#0dc2fd"],
+                        backgroundColor: ["rgb(204, 223, 243)", "#0dc2fd"],
+                        borderWidth: 3,
+                        radius: "100%",
+                      },
+                    ],
+                    options: {
+
+                    },
+                  }}
+                />
+              </div>
             </Container>
             <Container style={{width:"160px"}}>
               <div style={{textAlign:"center"}}>Посещаемость</div>

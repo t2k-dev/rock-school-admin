@@ -15,11 +15,8 @@ h1, h2, h3, h4, h5 {
   object-fit: cover;
 }
 
-.rbc-event{
-  background-color: #268577 !important;
-}
+
 .rbc-event-label{
-  background-color: #268577 !important;
   display: none !important;
 }
 
@@ -29,4 +26,12 @@ h1, h2, h3, h4, h5 {
 }
 .rbc-allday-cell{
   display: none;
+}
+
+.nav-link{
+  color: #8c8c8c !important
+}
+
+.nav-link.active{
+  color: #000000 !important
 }

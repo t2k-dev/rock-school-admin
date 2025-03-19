@@ -1,6 +1,6 @@
 import React from "react";
 import { Form, Container, Row, Col, Table, FormCheck, Button } from "react-bootstrap";
-import { DisciplinesControl } from "../common/DisciplinesControl";
+import { DisciplinesListControl } from "../common/DisciplinesListControl";
 import { SexControl } from "../common/SexControl";
 import InputMask from "react-input-mask";
 import SchedulePicker from "../common/SchedulePicker";
@@ -213,7 +213,7 @@ class TeacherForm extends React.Component {
               </Form.Group>
 
               <hr></hr>
-              <DisciplinesControl onCheck={this.handleDisciplineCheck} disciplines={disciplines}></DisciplinesControl>
+              <DisciplinesListControl onCheck={this.handleDisciplineCheck} disciplines={disciplines}></DisciplinesListControl>
 
               <hr></hr>
 

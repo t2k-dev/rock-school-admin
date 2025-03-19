@@ -1,7 +1,7 @@
 import React from "react";
 import { Form, Row, Col, FormCheck } from "react-bootstrap";
 
-export class DisciplinesControl extends React.Component {
+export class DisciplinesListControl extends React.Component {
   constructor(props) {
     super(props);
 
@@ -53,7 +53,7 @@ export class DisciplinesControl extends React.Component {
   render() {
     return (
       <Form.Group className="mb-3">
-        <b>Дисциплины</b>
+        <b>Направление</b>
         <Row>
           <Col>
             {this.state.checkboxes.map((checkbox) => (

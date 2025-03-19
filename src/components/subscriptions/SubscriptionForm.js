@@ -3,10 +3,10 @@ import { Form, Container, Row, Col, Image, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { getAvailablePeriods } from "../../services/apiTeacherService";
 import { addSubscription } from "../../services/apiSubscriptionService";
-import WeekCalendar from "../common/WeekCalendar";
-import AvailableTeachersModal from "./AvailableTeachersModal";
+import {CalendarWeek} from "../common/CalendarWeek";
+import {AvailableTeachersModal} from "../teachers/AvailableTeachersModal";
 import InputMask from "react-input-mask";
-import SchedulePicker from "../common/SchedulePicker";
+import SchedulePickerFixed from "../common/SchedulePickerFixed";
 
 const backgroundEvents = [
   {
@@ -50,8 +50,25 @@ const backgroundEvents = [
     end: new Date(1900, 0, 7, 21, 0, 0, 0),
   },
 ];
+const events = [
+  {
+    title: "Занято",
+    start: new Date(1900, 0, 2, 11, 0, 0, 0),
+    end: new Date(1900, 0, 2, 12, 0, 0, 0),
+  },
+  {
+    title: "Занято",
+    start: new Date(1900, 0, 2, 14, 0, 0, 0),
+    end: new Date(1900, 0, 2, 15, 0, 0, 0),
+  },
+  {
+    title: "Занято",
+    start: new Date(1900, 0, 4, 18, 0, 0, 0),
+    end: new Date(1900, 0, 4, 19, 0, 0, 0),
+  },
+];
 
-class SubscriptionForm extends React.Component {
+export class SubscriptionForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -61,6 +78,7 @@ class SubscriptionForm extends React.Component {
       attendanceCount: "",
       attendanceLength: 0,
       backgroundEvents: backgroundEvents,
+      events: events,
       generatedSchedule: "",
       availableTeachers: [],
       teachers: [],
@@ -85,12 +103,14 @@ class SubscriptionForm extends React.Component {
         FirstName: "Агалая",
         LastName: "Епанчина",
         WorkingPeriods: backgroundEvents,
+        Events: events,
       },
       {
         teacherId: "01956780-2dfd-745e-a5e9-b8e329f1f03a",
         FirstName: "Мария",
         LastName: "Калас",
         WorkingPeriods: backgroundEvents,
+        Events: [],
       },
     ];
 
@@ -131,7 +151,7 @@ class SubscriptionForm extends React.Component {
   };
 
   render() {
-    const { disciplineId, teacherId, attendanceCount, attendanceLength, startDate, availableTeachers, showAvailableTeacherModal } = this.state;
+    const { disciplineId, teacherId, attendanceCount, events, attendanceLength, startDate, availableTeachers, showAvailableTeacherModal } = this.state;
     
     console.log('render');
     console.log('teacherId:'+teacherId);
@@ -142,13 +162,13 @@ class SubscriptionForm extends React.Component {
       console.log(selectedTeacher);
       selectedTeacherPeriods = (
         <>
-          <WeekCalendar backgroundEvents={selectedTeacher.WorkingPeriods} />
+          <CalendarWeek backgroundEvents={selectedTeacher.WorkingPeriods} events ={events}/>
         </>
       );
     }
 
     return (
-      <Container style={{ marginTop: "40px" }}>
+      <Container style={{ marginTop: "40px", paddingBottom: "50px" }}>
         <Row>
           <Col md="2"></Col>
           <Col md="6">
@@ -228,7 +248,7 @@ class SubscriptionForm extends React.Component {
               {selectedTeacherPeriods}
 
               <Form.Group className="mb-3 mt-3" controlId="Schedule">
-                <SchedulePicker periods={this.state.schedules} handlePeriodsChange={this.handlePeriodsChange} />
+                <SchedulePickerFixed periods={this.state.schedules} handlePeriodsChange={this.handlePeriodsChange} />
               </Form.Group>
 
               <hr></hr>
@@ -243,5 +263,3 @@ class SubscriptionForm extends React.Component {
     );
   }
 }
-
-export default SubscriptionForm;
