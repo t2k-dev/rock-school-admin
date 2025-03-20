@@ -31,9 +31,7 @@ class SchedulePicker extends React.Component {
         };
         return { periods: [...prevState.periods, newPeriod] };
       },
-      () => {
-        this.props.handlePeriodsChange(this.state.periods);
-      }
+      () => { this.props.handlePeriodsChange(this.state.periods); }
     );
   };
 

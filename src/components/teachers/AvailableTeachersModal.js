@@ -1,5 +1,7 @@
 import React from "react";
 import { Modal, Form, Button, Badge } from "react-bootstrap";
+import { v4 as uuidv4 } from "uuid";
+
 import { CalendarWeek } from "../common/CalendarWeek";
 import { formatTime, formatDate } from "../common/DateTimeHelper";
 
@@ -31,24 +33,22 @@ export class AvailableTeachersModal extends React.Component {
   getAvailableSlots() {
     let result = "";
     this.state.availableSlots.forEach((element) => {
-      result = result + element.teacherFullName + ": " + formatDate(element.start) + " в " + formatTime(element.start) + "\n";
+      result = result + element.description + "\n";
     });
     this.setState({ availableSlotsText: result });
   }
 
   handleSelectSlot = (teacher, slotInfo) => {
     const teacherId = teacher.teacherId;
-    console.log(slotInfo);
-    console.log(this.state.availableTeachers);
 
     const updatedTeachers = [...this.state.availableTeachers];
-
-    // Find the teacher to update using teacherId
     const teacherIndex = updatedTeachers.findIndex((teacher) => teacher.teacherId === teacherId);
 
+    let slotId = uuidv4();
+
     if (teacherIndex !== -1) {
-      // Add the new event (slotInfo) to the teacher's events array
       const newEvent = {
+        id: slotId,
         title: "Окно",
         start: slotInfo.start,
         end: slotInfo.end,
@@ -64,10 +64,12 @@ export class AvailableTeachersModal extends React.Component {
 
     // Add the selected slot to the availableSlots array
     const newSlot = {
+      id: slotId,
       teacherId: teacherId,
       teacherFullName: teacher.firstName + " " + teacher.lastName,
       start: slotInfo.start,
       end: slotInfo.end,
+      description: teacher.firstName + " " + teacher.lastName + ": " + formatDate(slotInfo.start) + " в " + formatTime(slotInfo.start)
     };
 
     const updatedAvailableSlots = [...this.state.availableSlots, newSlot];
@@ -77,6 +79,28 @@ export class AvailableTeachersModal extends React.Component {
       availableTeachers: updatedTeachers,
       availableSlots: updatedAvailableSlots,
     });
+    
+    this.props.updateAvailableSlots(updatedAvailableSlots);
+  };
+
+  handleSelectEvent = (teacherId, slotInfo) => {
+    console.log("handleSelectEvent" + slotInfo.id);
+    // update available slots
+    const updatedSlots = this.state.availableSlots.filter((s) => s.id !== slotInfo.id);
+
+    // update teacher events
+    const updatedTeachers = [...this.state.availableTeachers];
+    const teacherIndex = updatedTeachers.findIndex((teacher) => teacher.teacherId === teacherId);
+
+    if (teacherIndex !== -1) {
+      console.log('teacherIndex' + teacherIndex);
+      updatedTeachers[teacherIndex] = {
+        ...updatedTeachers[teacherIndex],
+        events: [...updatedTeachers[teacherIndex].events.filter((s) => s.id !== slotInfo.id)],
+      };
+    }
+
+    this.setState({ availableSlots: updatedSlots, availableTeachers: updatedTeachers });
   };
 
   render() {
@@ -100,6 +124,9 @@ export class AvailableTeachersModal extends React.Component {
               events={item.events}
               onSelectSlot={(slotInfo) => {
                 this.handleSelectSlot(item, slotInfo);
+              }}
+              onSelectEvent={(slotInfo) => {
+                this.handleSelectEvent(item.teacherId, slotInfo);
               }}
             />
           </div>

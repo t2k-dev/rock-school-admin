@@ -73,6 +73,7 @@ export class CalendarWeek extends React.Component {
           selectable
           onShowMore={(events, date) => this.setState({ showModal: true, events })}
           onSelectSlot={this.props.onSelectSlot}
+          onSelectEvent={this.props.onSelectEvent}
           eventPropGetter={this.eventPropGetter}
         />
       </div>

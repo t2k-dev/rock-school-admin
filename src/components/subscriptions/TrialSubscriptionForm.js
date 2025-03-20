@@ -52,21 +52,25 @@ const backgroundEvents = [
 ];
 const events = [
   {
+    id: "1235",
     title: "Занято",
     start: new Date(1900, 0, 2, 11, 0, 0, 0),
     end: new Date(1900, 0, 2, 12, 0, 0, 0),
   },
   {
+    id: "1234",
     title: "Занято",
     start: new Date(1900, 0, 2, 14, 0, 0, 0),
     end: new Date(1900, 0, 2, 15, 0, 0, 0),
   },
   {
+    id: "123",
     title: "Занято",
     start: new Date(1900, 0, 4, 18, 0, 0, 0),
     end: new Date(1900, 0, 4, 19, 0, 0, 0),
   },
   {
+    id: "12883",
     title: "Занято",
     start: new Date(1900, 0, 4, 19, 0, 0, 0),
     end: new Date(1900, 0, 4, 20, 0, 0, 0),
@@ -84,10 +88,10 @@ export class TrialSubscriptionForm extends React.Component {
 
       backgroundEvents: backgroundEvents,
       events: events,
-      generatedSchedule: "",
 
       disciplineId: "",
       availableTeachers: [],
+      availableSlots: [],
       showAvailableTeacherModal: false,
       fakeId: "",
     };
@@ -102,9 +106,11 @@ export class TrialSubscriptionForm extends React.Component {
     this.newStudentSelected = this.newStudentSelected.bind(this);
     this.existingStudentSelected = this.existingStudentSelected.bind(this);
   }
+
   newStudentSelected = () => {
     this.setState({ isExistingStudent: false });
   };
+
   existingStudentSelected = () => {
     this.setState({ isExistingStudent: true });
   };
@@ -134,6 +140,10 @@ export class TrialSubscriptionForm extends React.Component {
     this.setState({ showAvailableTeacherModal: false });
   };
 
+  updateAvailableSlots = (availableSlots) => {
+    this.setState({availableSlots: availableSlots})
+  }
+
   handleDisciplineCheck = (id, isChecked) => {
     const teacher = { ...this.state.teacher };
     let newDisciplines = teacher.disciplines;
@@ -152,16 +162,13 @@ export class TrialSubscriptionForm extends React.Component {
     const requestBody = {
       firstName: this.state.firstName,
       age: this.state.age,
-      sex: this.state.sex,
-      phone: this.state.phone.replace("+7 ", "").replace(/\s/g, ""),
-      level: this.state.level,
       branchId: this.state.branchId,
     };
 
-    const response = await addStudent(requestBody);
-    const newStudentId = response.data;
+    //const response = await addStudent(requestBody);
+    //const newStudentId = response.data;
 
-    this.props.history.push("/student/" + newStudentId);
+    this.props.history.push("/student/" + '01952471-c83f-7932-b28e-94bd45791589');
   };
 
   handleChange = (e) => {
@@ -176,7 +183,15 @@ export class TrialSubscriptionForm extends React.Component {
   };
 
   render() {
-    const { isExistingStudent, firstName, age, showAvailableTeacherModal, availableTeachers, fakeId } = this.state;
+    const { isExistingStudent, firstName, age, showAvailableTeacherModal, availableTeachers, availableSlots, fakeId } = this.state;
+
+    let availableSlotsList;
+    if (availableSlots && availableSlots.length > 0){
+      availableSlotsList = availableSlots.map((item, index) => (
+        <option key={index} value={item.id}>{item.description}</option>
+      ));
+    }
+
     return (
       <Container style={{ marginTop: "40px" }}>
         <Row>
@@ -229,6 +244,7 @@ export class TrialSubscriptionForm extends React.Component {
                 <AvailableTeachersModal
                   show={showAvailableTeacherModal}
                   availableTeachers={availableTeachers}
+                  updateAvailableSlots={this.updateAvailableSlots}
                   handleClose={this.handleCloseAvailableTeachersModal}
                 />
               </Form.Group>
@@ -237,8 +253,7 @@ export class TrialSubscriptionForm extends React.Component {
                 <Form.Label>Выбранное окно</Form.Label>
                 <Form.Select aria-label="Веберите..." value={fakeId} onChange={(e) => this.setState({ fakeId: e.target.value })}>
                   <option>выберите...</option>
-                  <option value="1">Варвара: 22.03.2025 12:00</option>
-                  <option value="2">Варвара: 22.03.2025 14:00</option>
+                  {availableSlotsList}
                 </Form.Select>
               </Form.Group>
 

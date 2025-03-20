@@ -219,9 +219,10 @@ export class SubscriptionForm extends React.Component {
                 <Form.Label>Абонемент (кол-во занятий)</Form.Label>
                 <Form.Select aria-label="Веберите..." value={attendanceCount} onChange={(e) => this.setState({ attendanceCount: e.target.value })}>
                   <option>выберите...</option>
-                  <option value="1">4</option>
-                  <option value="2">8</option>
-                  <option value="3">12</option>
+                  <option value="1">1</option>
+                  <option value="2">4</option>
+                  <option value="3">8</option>
+                  <option value="4">12</option>
                 </Form.Select>
               </Form.Group>
 
