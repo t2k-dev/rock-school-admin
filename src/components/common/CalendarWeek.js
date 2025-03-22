@@ -55,17 +55,31 @@ export class CalendarWeek extends React.Component {
   };
 
   render() {
+    const messages = {
+      next: "Вперед",
+      previous: "Назад",
+      today: "Сегодня",
+      month: "Месяц",
+      week: "Неделя",
+      day: "День",
+      agenda: "Расписание",
+      date: "Дата",
+      time: "Время",
+      event: "Событие",
+    };
+
     return (
       <div style={{ height: 550 }}>
         <Calendar
           events={this.state.events}
           backgroundEvents={this.state.backgroundEvents}
           localizer={localizer}
+          messages={messages}
           step={60}
           timeslots={1}
-          views={["month", "week"]}
+          views={["week"]}
           defaultView="week"
-          toolbar={false}
+          toolbar={true}
           min={new Date(1900, 9, 30, 10, 0)}
           max={new Date(2500, 9, 30, 22, 0)}
           defaultDate={new Date(1900, 0, 1)}

@@ -27,7 +27,9 @@ h1, h2, h3, h4, h5 {
 .rbc-allday-cell{
   display: none;
 }
-
+.rbc-btn-group{
+  font-size: 14px;
+}
 .nav-link{
   color: #8c8c8c !important
 }

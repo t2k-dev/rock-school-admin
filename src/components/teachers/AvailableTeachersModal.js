@@ -84,7 +84,9 @@ export class AvailableTeachersModal extends React.Component {
   };
 
   handleSelectEvent = (teacherId, slotInfo) => {
-    console.log("handleSelectEvent" + slotInfo.id);
+    if (!slotInfo.isNew){
+      return;
+    }
     // update available slots
     const updatedSlots = this.state.availableSlots.filter((s) => s.id !== slotInfo.id);
 
@@ -93,7 +95,6 @@ export class AvailableTeachersModal extends React.Component {
     const teacherIndex = updatedTeachers.findIndex((teacher) => teacher.teacherId === teacherId);
 
     if (teacherIndex !== -1) {
-      console.log('teacherIndex' + teacherIndex);
       updatedTeachers[teacherIndex] = {
         ...updatedTeachers[teacherIndex],
         events: [...updatedTeachers[teacherIndex].events.filter((s) => s.id !== slotInfo.id)],
@@ -111,7 +112,7 @@ export class AvailableTeachersModal extends React.Component {
       availableTeachersList = availableTeachers.map((item, index) => {
         return (
           <div className="mb-4" key={index} id={`teacher-${item.teacherId}`}>
-            <div className="mb-2">
+            <div className="mb-3">
               <span style={{ fontWeight: "bold" }}>
                 {item.firstName} {item.lastName}
               </span>
