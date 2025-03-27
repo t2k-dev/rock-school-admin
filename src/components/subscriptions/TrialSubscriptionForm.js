@@ -129,7 +129,7 @@ export class TrialSubscriptionForm extends React.Component {
     ];
 
     const response = await getAvailableTeachers(this.state.disciplineId, this.state.age, 1);
-
+    console.log(response);
     this.setState({
       teachers: ["Варвара", "2"],
       availableTeachers: fakeAvailableTeachers,

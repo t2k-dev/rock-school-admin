@@ -41,6 +41,6 @@ export const getTeacherScreenDetails = async (id) => {
 };
 
 export const getAvailableTeachers = async (disciplineId, age, branchId) =>{
-  const response = await apiClient.get('/teacher/getAvailablePeriods?disciplineId='+disciplineId+"&age="+age+"&branchId="+branchId);
+  const response = await apiClient.get('/teacher/getAvailableTeachers?disciplineId='+disciplineId+"&age="+age+"&branchId="+branchId);
   return response;
 }
