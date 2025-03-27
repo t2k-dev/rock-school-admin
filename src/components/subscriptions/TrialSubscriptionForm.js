@@ -82,29 +82,30 @@ export class TrialSubscriptionForm extends React.Component {
     super(props);
     this.state = {
       isExistingStudent: false,
+
       firstName: "",
+      lastName: "",
       age: "",
+      level: 0,
+      phone:"",
       branchId: 0,
+      disciplineId: "",
 
       backgroundEvents: backgroundEvents,
       events: events,
 
-      disciplineId: "",
       availableTeachers: [],
       availableSlots: [],
       showAvailableTeacherModal: false,
       fakeId: "",
+      selectedSlotId: 0,
     };
 
     // AvailableTeachersModal
-    this.generateAvailablePeriods = this.generateAvailablePeriods.bind(this);
     this.handleCloseAvailableTeachersModal = this.handleCloseAvailableTeachersModal.bind(this);
 
     this.handleSave = this.handleSave.bind(this);
     this.handleChange = this.handleChange.bind(this);
-
-    this.newStudentSelected = this.newStudentSelected.bind(this);
-    this.existingStudentSelected = this.existingStudentSelected.bind(this);
   }
 
   newStudentSelected = () => {
@@ -141,8 +142,8 @@ export class TrialSubscriptionForm extends React.Component {
   };
 
   updateAvailableSlots = (availableSlots) => {
-    this.setState({availableSlots: availableSlots})
-  }
+    this.setState({ availableSlots: availableSlots });
+  };
 
   handleDisciplineCheck = (id, isChecked) => {
     const teacher = { ...this.state.teacher };
@@ -168,7 +169,7 @@ export class TrialSubscriptionForm extends React.Component {
     //const response = await addStudent(requestBody);
     //const newStudentId = response.data;
 
-    this.props.history.push("/student/" + '01952471-c83f-7932-b28e-94bd45791589');
+    this.props.history.push("/student/" + "01952471-c83f-7932-b28e-94bd45791589");
   };
 
   handleChange = (e) => {
@@ -181,14 +182,32 @@ export class TrialSubscriptionForm extends React.Component {
       sex: isChecked,
     });
   };
+  handleDisciplineChange = (e) => {
+    this.setState({ disciplineId: e.target.value });
+  };
 
   render() {
-    const { isExistingStudent, firstName, age, showAvailableTeacherModal, availableTeachers, availableSlots, fakeId } = this.state;
+    const {
+      isExistingStudent,
+      firstName,
+      lastName,
+      phone,
+      age,
+      disciplineId,
+      showAvailableTeacherModal,
+      availableTeachers,
+      availableSlots,
+      selectedSlotId,
+      level,
+      fakeId,
+    } = this.state;
 
     let availableSlotsList;
-    if (availableSlots && availableSlots.length > 0){
+    if (availableSlots && availableSlots.length > 0) {
       availableSlotsList = availableSlots.map((item, index) => (
-        <option key={index} value={item.id}>{item.description}</option>
+        <option key={index} value={item.id}>
+          {item.description}
+        </option>
       ));
     }
 
@@ -201,12 +220,25 @@ export class TrialSubscriptionForm extends React.Component {
             <Form>
               <Nav variant="tabs" defaultActiveKey="new" className="mb-3" fill="true">
                 <Nav.Item>
-                  <Nav.Link eventKey="new" onClick={this.newStudentSelected}>
+                  <Nav.Link
+                    eventKey="new"
+                    onClick={() => {
+                      this.newStudentSelected();
+                    }}
+                  >
                     Новый ученик
                   </Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                  <Nav.Link eventKey="existing" onClick={this.existingStudentSelected}>Существующий</Nav.Link>
+                  <Nav.Link
+                    eventKey="existing"
+                    onClick={() => {
+                      this.existingStudentSelected();
+                    }}
+                    disabled
+                  >
+                    Существующий
+                  </Nav.Link>
                 </Nav.Item>
               </Nav>
               {!isExistingStudent && (
@@ -216,9 +248,41 @@ export class TrialSubscriptionForm extends React.Component {
                     <Form.Label>Имя</Form.Label>
                     <Form.Control onChange={this.handleChange} value={firstName} placeholder="введите имя..." autoComplete="off" />
                   </Form.Group>
+                  <Form.Group className="mb-3" controlId="lastName">
+                    <Form.Label>Фамилия</Form.Label>
+                    <Form.Control onChange={this.handleChange} value={lastName} placeholder="введите фамилию..." />
+                  </Form.Group>
+                  <Form.Group className="mb-3" controlId="phone">
+                    <Form.Label>Телефон</Form.Label>
+                    <Form.Control
+                      as={InputMask}
+                      mask="+7 999 999 99 99"
+                      maskChar=" "
+                      onChange={this.handleChange}
+                      value={phone}
+                      placeholder="введите телефон..."
+                    />
+                  </Form.Group>
                   <Form.Group className="mb-3" controlId="age">
                     <Form.Label>Возраст</Form.Label>
                     <Form.Control as={InputMask} mask="999" maskChar=" " onChange={this.handleChange} value={age} placeholder="введите число..." />
+                  </Form.Group>
+                  <Form.Group className="mb-3" controlId="level">
+                    <Form.Label>Уровень</Form.Label>
+                    <Form.Select name="level" aria-label="Веберите..." value={level} onChange={(e) => this.setState({ level: e.target.value })}>
+                      <option>выберите...</option>
+                      <option value="0">0</option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="0">3</option>
+                      <option value="1">4</option>
+                      <option value="2">5</option>
+                      <option value="0">6</option>
+                      <option value="1">7</option>
+                      <option value="2">8</option>
+                      <option value="1">9</option>
+                      <option value="2">10</option>
+                    </Form.Select>
                   </Form.Group>
                 </>
               )}
@@ -235,10 +299,11 @@ export class TrialSubscriptionForm extends React.Component {
                   </Form.Group>
                 </>
               )}
-              <DisciplinesDropDownControl />
+
+              <DisciplinesDropDownControl value={disciplineId} onChange={(e) => this.handleDisciplineChange(e)} />
 
               <Form.Group className="mb-3 mt-4 text-center" controlId="GenerteSchedule">
-                <Button variant="outline-secondary" type="null" onClick={this.generateAvailablePeriods}>
+                <Button variant="outline-secondary" type="null" onClick={(e) => this.generateAvailablePeriods(e)} disabled={false}>
                   Получить доступыне окна
                 </Button>
                 <AvailableTeachersModal
@@ -251,7 +316,7 @@ export class TrialSubscriptionForm extends React.Component {
 
               <Form.Group className="mb-3" controlId="fakeId">
                 <Form.Label>Выбранное окно</Form.Label>
-                <Form.Select aria-label="Веберите..." value={fakeId} onChange={(e) => this.setState({ fakeId: e.target.value })}>
+                <Form.Select aria-label="Веберите..." value={selectedSlotId} onChange={(e) => this.setState({ selectedSlotId: e.target.value })}>
                   <option>выберите...</option>
                   {availableSlotsList}
                 </Form.Select>

@@ -20,8 +20,10 @@ function GroupIcon({ onIconClick }) {
         x="0px"
         y="0px"
         viewBox="0 0 511.999 511.999"
-        style={{enableBackground:'new 0 0 511.999 511.999;'}}
-        
+        style={{
+          enableBackground:'new 0 0 511.999 511.999;',
+          fill:"#c22222"
+        }}
       >
         <g>
           <g>

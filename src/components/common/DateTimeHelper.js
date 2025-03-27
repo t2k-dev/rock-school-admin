@@ -45,3 +45,10 @@ export function formatDate(sourceDate) {
 
   return `${date} ${monthText}`;
 }
+
+export function formatDateDot(sourceDate) {
+  const month = sourceDate.getMonth();
+  const date = sourceDate.getDate();
+
+  return `${date}.${month+1}.${sourceDate.getYear()}`;
+}

@@ -6,6 +6,8 @@ import { Avatar } from "../common/Avatar";
 import EditIcon from "../common/EditIcon";
 import { Chart as ChartJS } from "chart.js/auto";
 import { Bar, Doughnut } from "react-chartjs-2";
+import VocalIcon from "../icons/VocalIcon";
+
 
 class TeacherScreenCard extends React.Component {
   constructor(props) {
@@ -20,12 +22,6 @@ class TeacherScreenCard extends React.Component {
   };
 
   render() {
-    const Level = {
-      0: "Начинающий",
-      1: "Продожающий",
-      2: "Продвинутый",
-    };
-
     const { item } = this.props;
     return (
       <Card className="ms-col-2 mb-2">
@@ -40,7 +36,8 @@ class TeacherScreenCard extends React.Component {
                   {item.firstName} {item.lastName}
                   <EditIcon onIconClick={this.handleEditClick} />
                 </div>
-                <div className="mt-2">Ветеран</div>
+                <div className="mt-2">Преподаватель</div>
+                <VocalIcon/>
               </Container>
             </Container>
             <Container style={{width:"160px"}}>

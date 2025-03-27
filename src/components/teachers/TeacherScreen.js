@@ -149,11 +149,11 @@ class TeacherScreen extends React.Component {
           <h3>Расписание</h3>
           <CalendarWeek events={events} backgroundEvents={backgroundEvents}/>
         </Row>
-        <Row>
+        <Row className="mt-3">
           <h3>Абонементы</h3>
         </Row>
         <Row style={{ marginTop: "20px" }}>
-          <Col md="10">
+          <Col md="12">
             <Table striped bordered hover>
               <thead>
                 <tr>
@@ -164,16 +164,9 @@ class TeacherScreen extends React.Component {
                 </tr>
               </thead>
               <tbody>{subscriptionsList}</tbody>
-            </Table>          
+            </Table>
           </Col>
-          <Col md="2">
-            <div className="d-grid gap-2">
-            </div>
-
-            <Row>
-              <Col></Col>
-            </Row>
-          </Col>
+          
         </Row>
 
       </Container>

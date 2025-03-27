@@ -2,16 +2,30 @@ import React from "react";
 import { Form, Container, Row, Col, Table, Card, Button, FormCheck } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
-import DayCalendar from "../common/DayCalendar";
+import { CalendarDay } from "../common/CalendarDay";
 
 import { getHomeScreenDetails } from "../../services/apiHomeService";
 import { markComplete } from "../../services/apiNoteService";
+import { SlotDetailsModal } from "./SlotDetailsModal";
 
 const events = [
   {
     title: "Алексей Кутузов",
     start: new Date(1900, 0, 1, 11, 0, 0, 0),
     end: new Date(1900, 0, 1, 12, 0, 0, 0),
+    resourceId: 1,
+  },
+  {
+    title: "Сергей Петров",
+    start: new Date(1900, 0, 1, 11, 0, 0, 0),
+    end: new Date(1900, 0, 1, 12, 0, 0, 0),
+    resourceId: 2,
+  },
+  {
+    title: "Алексей Кутузов",
+    start: new Date(1900, 0, 1, 11, 0, 0, 0),
+    end: new Date(1900, 0, 1, 12, 0, 0, 0),
+    resourceId: 3,
   },
   {
     title: "Сергей Петров",
@@ -36,6 +50,22 @@ class HomeScreen extends React.Component {
     this.state = {
       rooms: null,
       notes: null,
+      showSlotDetailsModal: false,
+
+      selectedSlotDetails:{
+        attendance:{
+          attendanceId:"1",
+          startDate: new Date(2025, 0, 1, 11, 0, 0, 0),
+        },
+        student:{
+          studentId: "",
+          fullName: "Алексей Кутузов",
+        },
+        teacher:{
+          teacherId:"01958931-da30-780a-aadc-e99ae26bd87f",
+          firstName: "Варвара"
+        },
+      }
     };
     this.handleMarkComplete = this.handleMarkComplete.bind(this);
   }
@@ -49,7 +79,17 @@ class HomeScreen extends React.Component {
     this.setState({
       rooms: details.rooms,
       notes: details.notes,
+
+      showSlotDetailsModal: false,
     });
+  }
+
+  handleSelectEvent = (teacherId, slotInfo) => {
+    this.setState({showSlotDetailsModal: true});
+  };
+
+  handleCloseSlotDetailsModal = () => {
+    this.setState({showSlotDetailsModal: false});
   }
 
   async handleMarkComplete(noteId) {
@@ -59,27 +99,7 @@ class HomeScreen extends React.Component {
   }
 
   render() {
-    const { rooms, notes } = this.state;
-    let roomsList;
-    if (rooms) {
-      roomsList = rooms.map((item, index) => (
-        <tr key={index}>
-          <td>{item.roomName}</td>
-          <td>{item.teacherName}</td>
-          <td>{item.studentName}</td>
-          <td>{item.status}</td>
-        </tr>
-      ));
-    } else {
-      roomsList = (
-        <tr key={1}>
-          <td></td>
-          <td>Нет записей</td>
-          <td></td>
-          <td></td>
-        </tr>
-      );
-    }
+    const { selectedSlotDetails, notes, showSlotDetailsModal } = this.state;
 
     const activeNotes = notes?.filter((n) => n.status === 1);
     const completedNotes = notes?.filter((n) => n.status === 2);
@@ -130,29 +150,25 @@ class HomeScreen extends React.Component {
 
     return (
       <Container style={{ marginTop: "40px" }}>
-        <Row>
+        <Row className="mb-4">
           <Col>
             <h2>Школа на Абая</h2>
           </Col>
         </Row>
         <Row>
-          <Col>
-            <Table striped bordered hover style={{ marginTop: "20px" }}>
-              <thead>
-                <tr>
-                  <th>Комната</th>
-                  <th>Преподаватель</th>
-                  <th>Ученик</th>
-                  <th>Статус</th>
-                </tr>
-              </thead>
-              <tbody>{roomsList}</tbody>
-            </Table>
-          </Col>
-        </Row>
-        <Row>
-          <h3>Расписание</h3>
-          <DayCalendar events={events} />
+          <CalendarDay
+            events={events}
+            onSelectEvent={(slotInfo) => {
+              this.handleSelectEvent(1, slotInfo);
+            }}
+          />
+          <SlotDetailsModal
+            selectedSlotDetails={selectedSlotDetails}
+            show={showSlotDetailsModal}
+            handleClose={() => {
+              this.handleCloseSlotDetailsModal();
+            }}
+          />
         </Row>
         <Row>
           <Col style={{ marginTop: "40px" }}>
