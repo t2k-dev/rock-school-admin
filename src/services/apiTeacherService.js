@@ -40,7 +40,7 @@ export const getTeacherScreenDetails = async (id) => {
   }
 };
 
-export const getAvailablePeriods = async (disciplineId, studentId, branchId) =>{
-  const response = await apiClient.get('/teacher/getAvailablePeriods?disciplineId='+disciplineId+"&studentId="+studentId+"&branchId="+branchId);
+export const getAvailableTeachers = async (disciplineId, age, branchId) =>{
+  const response = await apiClient.get('/teacher/getAvailablePeriods?disciplineId='+disciplineId+"&age="+age+"&branchId="+branchId);
   return response;
 }

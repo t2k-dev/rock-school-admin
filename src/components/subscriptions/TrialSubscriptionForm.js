@@ -6,7 +6,7 @@ import { DisciplinesDropDownControl } from "../common/DisciplinesDropDownControl
 import { AvailableTeachersModal } from "../teachers/AvailableTeachersModal";
 
 import { addStudent } from "../../services/apiStudentService";
-import { getAvailablePeriods } from "../../services/apiTeacherService";
+import { getAvailableTeachers } from "../../services/apiTeacherService";
 
 const backgroundEvents = [
   {
@@ -128,7 +128,7 @@ export class TrialSubscriptionForm extends React.Component {
       },
     ];
 
-    //const response = await getAvailablePeriods(this.state.disciplineId, this.state.studentId, 1);
+    const response = await getAvailableTeachers(this.state.disciplineId, this.state.age, 1);
 
     this.setState({
       teachers: ["Варвара", "2"],

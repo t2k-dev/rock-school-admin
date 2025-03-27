@@ -1,7 +1,7 @@
 import React from "react";
 import { Form, Container, Row, Col, Image, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { getAvailablePeriods } from "../../services/apiTeacherService";
+import { getAvailableTeachers } from "../../services/apiTeacherService";
 import { addSubscription } from "../../services/apiSubscriptionService";
 import {CalendarWeek} from "../common/CalendarWeek";
 import {AvailableTeachersModal} from "../teachers/AvailableTeachersModal";
@@ -114,7 +114,7 @@ export class SubscriptionForm extends React.Component {
       },
     ];
 
-    const response = await getAvailablePeriods(this.state.disciplineId, this.state.studentId, 1);
+    const response = await getAvailableTeachers(this.state.disciplineId, this.state.studentId, 1);
 
     this.setState({
       teachers: response.data.teachers,
