@@ -6,7 +6,7 @@ import { Avatar } from "../common/Avatar";
 import EditIcon from "../common/EditIcon";
 import { Chart as ChartJS } from "chart.js/auto";
 import { Bar, Doughnut } from "react-chartjs-2";
-import VocalIcon from "../icons/VocalIcon";
+import {VocalIcon} from "../icons/VocalIcon";
 
 
 class TeacherScreenCard extends React.Component {

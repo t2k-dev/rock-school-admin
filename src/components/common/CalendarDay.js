@@ -49,25 +49,19 @@ export class CalendarDay extends React.Component {
       { resourceId: 4, resourceTitle: 'Жёлтая' },
       { resourceId: 5, resourceTitle: 'Зелёная' },
     ]
+    console.log('CalendarDay');
+    console.log(this.props.events);
     return (
       
       <div style={{ height: 550 }}>
         <Calendar
-          events={this.state.events}
-          backgroundEvents={this.props.backgroundEvents}
+          events={this.props.events}
           localizer={localizer}
-          //step={60}
           views={["day"]}
           defaultView="day"
-          //toolbar={false}
-          /*views = {{
-                month: false,
-                week: true,
-              }}*/
           min={new Date(1900, 9, 30, 10, 0)}
           max={new Date(2500, 9, 30, 22, 0)}
-          //defaultDate={new Date(2015, 3, 9)}
-          defaultDate={new Date(1900, 0, 1)}
+          defaultDate={Date.now()}
           popup={false}
           onShowMore={(events, date) => this.setState({ showModal: true, events })}
           messages={messages}

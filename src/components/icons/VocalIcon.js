@@ -36,5 +36,3 @@ export function VocalIcon({ onIconClick }) {
     </span>
   );
 }
-
-export default VocalIcon;

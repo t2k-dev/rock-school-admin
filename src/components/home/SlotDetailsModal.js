@@ -5,7 +5,9 @@ import { Link } from "react-router-dom";
 import { format } from "date-fns";
 
 import { VocalIcon } from "../icons/VocalIcon";
+import { DisciplineIcon } from "../common/DisciplineIcon";
 import { Avatar } from "../common/Avatar";
+import {getDisciplineName} from "../constants/disciplines";
 
 export class SlotDetailsModal extends React.Component {
   constructor(props) {
@@ -50,15 +52,20 @@ export class SlotDetailsModal extends React.Component {
   render() {
     const { status } = this.state;
     
-    const {teacher, attendance} = this.props.selectedSlotDetails;
-    const startDate = format(attendance.startDate, "dd.MM.yyyy");
-
+    if (!this.props.selectedSlotDetails){
+      return <></>;
+    }
+    const {teacher, student, startDate, disciplineId} = this.props.selectedSlotDetails;
+    console.log(this.props.selectedSlotDetails);
+    
+    
+    const t = getDisciplineName(disciplineId);
     return (
       <>
         <Modal show={this.props.show} onHide={this.props.handleClose}>
           <Modal.Header closeButton>
             <Modal.Title>
-              {this.props.selectedSlotDetails.student.fullName} ({startDate})
+              {student.firstName} {student.lastName} ({format(startDate, "dd.MM.yyyy")})
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
@@ -70,12 +77,12 @@ export class SlotDetailsModal extends React.Component {
                 <Col>
                   <Container className="mt-3" style={{fontSize:"14px"}}>
                     <Stack direction="vertical" gap={1}>
-                      <div className="mb-1">Начало в 11:00</div>
+                      <div className="mb-1">Начало в {format(startDate, "hh:mm")}</div>
                       <div>
                         Преподаватель: <Link to={"/teacher/"+ teacher.teacherId}>{teacher.firstName}</Link>
                       </div>
                       <div>
-                        Направление: <VocalIcon /> Вокал
+                        Направление: <span><DisciplineIcon disciplineId={disciplineId}/> </span> {t}
                       </div>
                     </Stack>
                   </Container>

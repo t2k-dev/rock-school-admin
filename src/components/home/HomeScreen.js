@@ -50,22 +50,10 @@ class HomeScreen extends React.Component {
     this.state = {
       rooms: null,
       notes: null,
+      attendances: null,
       showSlotDetailsModal: false,
 
-      selectedSlotDetails:{
-        attendance:{
-          attendanceId:"1",
-          startDate: new Date(2025, 0, 1, 11, 0, 0, 0),
-        },
-        student:{
-          studentId: "",
-          fullName: "Алексей Кутузов",
-        },
-        teacher:{
-          teacherId:"01958931-da30-780a-aadc-e99ae26bd87f",
-          firstName: "Варвара"
-        },
-      }
+      selectedSlotDetails:null,
     };
     this.handleMarkComplete = this.handleMarkComplete.bind(this);
   }
@@ -79,13 +67,18 @@ class HomeScreen extends React.Component {
     this.setState({
       rooms: details.rooms,
       notes: details.notes,
+      attendances: details.attendances,
 
       showSlotDetailsModal: false,
     });
   }
 
   handleSelectEvent = (teacherId, slotInfo) => {
-    this.setState({showSlotDetailsModal: true});
+    
+    const newSelectedSlotDetails = this.state.attendances.filter(a=> a.attendanceId === slotInfo.id)[0]
+    console.log('newSelectedSlotDetails')
+    console.log(newSelectedSlotDetails)
+    this.setState({showSlotDetailsModal: true, selectedSlotDetails: newSelectedSlotDetails});
   };
 
   handleCloseSlotDetailsModal = () => {
@@ -99,8 +92,20 @@ class HomeScreen extends React.Component {
   }
 
   render() {
-    const { selectedSlotDetails, notes, showSlotDetailsModal } = this.state;
+    const { attendances, selectedSlotDetails, notes, showSlotDetailsModal } = this.state;
 
+    let events
+    if (attendances){
+       events = attendances.map((attendance) => ({
+        id: attendance.attendanceId,
+        title: attendance.student.firstName + ' ' + attendance.student.lastName,
+        start: new Date(attendance.startDate),
+        end: new Date(attendance.endDate),
+        resourceId: attendance.roomId,
+      }));
+    }
+    console.log(attendances);
+    console.log(events);
     const activeNotes = notes?.filter((n) => n.status === 1);
     const completedNotes = notes?.filter((n) => n.status === 2);
 
