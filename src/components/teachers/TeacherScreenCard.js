@@ -6,8 +6,7 @@ import { Avatar } from "../common/Avatar";
 import EditIcon from "../common/EditIcon";
 import { Chart as ChartJS } from "chart.js/auto";
 import { Bar, Doughnut } from "react-chartjs-2";
-import {VocalIcon} from "../icons/VocalIcon";
-
+import { DisciplineIcon } from "../common/DisciplineIcon";
 
 class TeacherScreenCard extends React.Component {
   constructor(props) {
@@ -37,7 +36,9 @@ class TeacherScreenCard extends React.Component {
                   <EditIcon onIconClick={this.handleEditClick} />
                 </div>
                 <div className="mt-2">Преподаватель</div>
-                <VocalIcon/>
+                {item.disciplineIds && item.disciplineIds.map((id) => (
+                  <DisciplineIcon disciplineId = {id}/>
+                ))}
               </Container>
             </Container>
             <Container style={{width:"160px"}}>
