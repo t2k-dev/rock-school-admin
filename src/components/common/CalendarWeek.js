@@ -82,7 +82,7 @@ export class CalendarWeek extends React.Component {
           toolbar={true}
           min={new Date(1900, 9, 30, 10, 0)}
           max={new Date(2500, 9, 30, 22, 0)}
-          defaultDate={new Date(1900, 0, 1)}
+          defaultDate={Date.now()}
           popup={false}
           selectable
           onShowMore={(events, date) => this.setState({ showModal: true, events })}

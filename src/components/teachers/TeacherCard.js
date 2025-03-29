@@ -2,6 +2,7 @@ import React from "react";
 import { Card, Row, Col, Image, Button } from 'react-bootstrap';
 import noImage from '../../images/user.jpg';
 import { Link } from "react-router-dom";
+import { getDisciplineName } from "../constants/disciplines";
 
 class TeacherCard extends React.Component{
 
@@ -16,11 +17,11 @@ class TeacherCard extends React.Component{
                             <Col>
                                 <Link to={`/teacher/${this.props.item.teacherId}`} ><h3>{this.props.item.firstName} {this.props.item.lastName}</h3></Link>
                                 <div>
-                                    Дисциплины
+                                    Направления
                                     <ul>
                                         {
                                             this.props.item.disciplines.map((item, index) => {
-                                                return(<li key={index}>{item.name}</li>)
+                                                return(<li key={index}>{getDisciplineName(item.disciplineId)}</li>)
                                         })}
                                     </ul>
                                 </div>

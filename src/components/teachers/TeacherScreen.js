@@ -6,48 +6,6 @@ import { Link } from "react-router-dom";
 import TeacherScreenCard from "./TeacherScreenCard";
 import {CalendarWeek} from "../common/CalendarWeek";
 
-const backgroundEvents = [
-  {
-    title: "",
-    start: new Date(1900, 0, 2, 11, 0, 0, 0),
-    end: new Date(1900, 0, 2, 15, 0, 0, 0),
-  },
-  {
-    title: "",
-    start: new Date(1900, 0, 2, 16, 0, 0, 0),
-    end: new Date(1900, 0, 2, 21, 0, 0, 0),
-  },
-  {
-    title: "",
-    start: new Date(1900, 0, 3, 10, 0, 0, 0),
-    end: new Date(1900, 0, 3, 15, 0, 0, 0),
-  },
-  {
-    title: "",
-    start: new Date(1900, 0, 3, 16, 0, 0, 0),
-    end: new Date(1900, 0, 3, 21, 0, 0, 0),
-  },
-  {
-    title: "",
-    start: new Date(1900, 0, 4, 10, 0, 0, 0),
-    end: new Date(1900, 0, 4, 15, 0, 0, 0),
-  },
-  {
-    title: "",
-    start: new Date(1900, 0, 4, 16, 0, 0, 0),
-    end: new Date(1900, 0, 4, 21, 0, 0, 0),
-  },
-  {
-    title: "",
-    start: new Date(1900, 0, 7, 10, 0, 0, 0),
-    end: new Date(1900, 0, 7, 15, 0, 0, 0),
-  },
-  {
-    title: "",
-    start: new Date(1900, 0, 7, 16, 0, 0, 0),
-    end: new Date(1900, 0, 7, 21, 0, 0, 0),
-  },
-];
 const events = [
   {
     title: "Алексей Кутузов",
@@ -107,9 +65,15 @@ class TeacherScreen extends React.Component {
       },
     ];
 
+    const backgroundEvents = details.teacher.scheduledWorkingPeriods.map((item) => ({
+        start: item.startDate,
+        end: item.endDate,
+    }));
+
     this.setState({
       teacher: details.teacher,
       subscriptions: fakeSubscriptions,
+      backgroundEvents: backgroundEvents,
     });
   }
 
@@ -119,7 +83,7 @@ class TeacherScreen extends React.Component {
   };
 
   render() {
-    const { teacher, subscriptions } = this.state;
+    const { teacher, backgroundEvents, subscriptions } = this.state;
     let subscriptionsList;
     if (subscriptions && subscriptions.length > 0) {
       subscriptionsList = subscriptions.map((item, index) => (

@@ -7,7 +7,7 @@ import { format } from "date-fns";
 import { VocalIcon } from "../icons/VocalIcon";
 import { DisciplineIcon } from "../common/DisciplineIcon";
 import { Avatar } from "../common/Avatar";
-import {getDisciplineName} from "../constants/disciplines";
+import { getDisciplineName } from "../constants/disciplines";
 
 export class SlotDetailsModal extends React.Component {
   constructor(props) {
@@ -58,8 +58,6 @@ export class SlotDetailsModal extends React.Component {
     const {teacher, student, startDate, disciplineId} = this.props.selectedSlotDetails;
     console.log(this.props.selectedSlotDetails);
     
-    
-    const t = getDisciplineName(disciplineId);
     return (
       <>
         <Modal show={this.props.show} onHide={this.props.handleClose}>
@@ -82,7 +80,7 @@ export class SlotDetailsModal extends React.Component {
                         Преподаватель: <Link to={"/teacher/"+ teacher.teacherId}>{teacher.firstName}</Link>
                       </div>
                       <div>
-                        Направление: <span><DisciplineIcon disciplineId={disciplineId}/> </span> {t}
+                        Направление: <span><DisciplineIcon disciplineId={disciplineId}/> </span> {getDisciplineName(disciplineId)}
                       </div>
                     </Stack>
                   </Container>
