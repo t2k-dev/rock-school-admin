@@ -74,10 +74,7 @@ class HomeScreen extends React.Component {
   }
 
   handleSelectEvent = (teacherId, slotInfo) => {
-    
     const newSelectedSlotDetails = this.state.attendances.filter(a=> a.attendanceId === slotInfo.id)[0]
-    console.log('newSelectedSlotDetails')
-    console.log(newSelectedSlotDetails)
     this.setState({showSlotDetailsModal: true, selectedSlotDetails: newSelectedSlotDetails});
   };
 

@@ -121,7 +121,7 @@ class TeacherScreen extends React.Component {
             <Table striped bordered hover>
               <thead>
                 <tr>
-                  <th>Дисциплина</th>
+                  <th>Направление</th>
                   <th>Ученик</th>
                   <th>Осталось занятий</th>
                   <th>Статус</th>

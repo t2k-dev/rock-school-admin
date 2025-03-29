@@ -39,6 +39,7 @@ export class AvailableTeachersModal extends React.Component {
   }
 
   handleSelectSlot = (teacher, slotInfo) => {
+    console.log("handleSelectSlot")
     const teacherId = teacher.teacherId;
 
     const updatedTeachers = [...this.state.availableTeachers];
@@ -47,18 +48,21 @@ export class AvailableTeachersModal extends React.Component {
     let slotId = uuidv4();
 
     if (teacherIndex !== -1) {
-      const newEvent = {
+      //TODO: refactor
+      const newAttendance = {
         id: slotId,
         title: "Окно",
-        start: slotInfo.start,
-        end: slotInfo.end,
+        startDate: slotInfo.start,
+        endDate: slotInfo.end,
         isNew: true,
       };
+
+      const currentAttendancies = updatedTeachers[teacherIndex].attendancies ?? [];
 
       // Update the teacher's events array
       updatedTeachers[teacherIndex] = {
         ...updatedTeachers[teacherIndex],
-        events: [...updatedTeachers[teacherIndex].events, newEvent],
+        attendancies: [...currentAttendancies, newAttendance],
       };
     }
 
@@ -84,6 +88,7 @@ export class AvailableTeachersModal extends React.Component {
   };
 
   handleSelectEvent = (teacherId, slotInfo) => {
+    console.log("handleSelectEvent")
     if (!slotInfo.isNew){
       return;
     }
@@ -93,11 +98,14 @@ export class AvailableTeachersModal extends React.Component {
     // update teacher events
     const updatedTeachers = [...this.state.availableTeachers];
     const teacherIndex = updatedTeachers.findIndex((teacher) => teacher.teacherId === teacherId);
+    console.log(updatedTeachers);
+    console.log("slotInfo");
+    console.log(slotInfo);
 
     if (teacherIndex !== -1) {
       updatedTeachers[teacherIndex] = {
         ...updatedTeachers[teacherIndex],
-        events: [...updatedTeachers[teacherIndex].events.filter((s) => s.id !== slotInfo.id)],
+        attendancies: [...updatedTeachers[teacherIndex].attendancies.filter((s) => s.id !== slotInfo.id)],
       };
     }
 
@@ -109,25 +117,45 @@ export class AvailableTeachersModal extends React.Component {
 
     let availableTeachersList;
     if (availableTeachers && availableTeachers.length > 0) {
-      availableTeachersList = availableTeachers.map((item, index) => {
+      let backgroundEvents;
+      let events;
+      availableTeachersList = availableTeachers.map((teacher, index) => {
+        // Working periods
+        if (teacher.scheduledWorkingPeriods){
+          backgroundEvents = teacher.scheduledWorkingPeriods.map((period) => ({
+           id: period.scheduledWorkingPeriodId,
+           start: period.startDate,
+           end: period.endDate,
+         }));
+       
+         // Events
+         events = teacher.attendancies.map((attendance) => ({
+          id: attendance.attendanceId,
+          title: "Окно",
+          start: attendance.startDate,
+          end: attendance.endDate,
+          isNew: attendance.isNew,
+         }));
+       }
+
         return (
-          <div className="mb-4" key={index} id={`teacher-${item.teacherId}`}>
+          <div className="mb-4" key={index} id={`teacher-${teacher.teacherId}`}>
             <div className="mb-3">
               <span style={{ fontWeight: "bold" }}>
-                {item.firstName} {item.lastName}
+                {teacher.firstName} {teacher.lastName}
               </span>
               <Badge className="ms-1" bg="danger">
-                Загруженность 11%
+                Загруженность {teacher.workLoad} %
               </Badge>
             </div>
             <CalendarWeek
-              backgroundEvents={item.workingPeriods}
-              events={item.events}
+              backgroundEvents={backgroundEvents}
+              events={events}
               onSelectSlot={(slotInfo) => {
-                this.handleSelectSlot(item, slotInfo);
+                this.handleSelectSlot(teacher, slotInfo);
               }}
               onSelectEvent={(slotInfo) => {
-                this.handleSelectEvent(item.teacherId, slotInfo);
+                this.handleSelectEvent(teacher.teacherId, slotInfo);
               }}
             />
           </div>
@@ -147,7 +175,7 @@ export class AvailableTeachersModal extends React.Component {
             {availableTeachersList}
             <Form.Group className="mb-3" controlId="availableSlotsText">
               <Form.Label>Свободные окна</Form.Label>
-              <Form.Control as="textarea" value={availableSlotsText} style={{ height: "100px" }} placeholder="" />
+              <Form.Control as="textarea" value={availableSlotsText} style={{ height: "100px" }} placeholder="" onChange={(e) => this.setState({ availableSlotsText: e.target.value })}/>
             </Form.Group>
             <Form.Group>
               <Button variant="outline-secondary" type="null" onClick={this.getAvailableSlots}>
