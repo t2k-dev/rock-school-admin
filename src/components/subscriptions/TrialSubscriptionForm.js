@@ -202,7 +202,7 @@ export class TrialSubscriptionForm extends React.Component {
                   </Form.Group>
                   <Form.Group className="mb-3" controlId="age">
                     <Form.Label>Возраст</Form.Label>
-                    <Form.Control as={InputMask} mask="999" maskChar=" " onChange={this.handleChange} value={age} placeholder="введите число..." />
+                    <Form.Control as={InputMask} mask="999" maskChar="" onChange={this.handleChange} value={age} placeholder="введите число..." autoComplete="off"/>
                   </Form.Group>
                   <Form.Group className="mb-3" controlId="level">
                     <Form.Label>Уровень</Form.Label>

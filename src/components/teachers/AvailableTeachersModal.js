@@ -22,7 +22,11 @@ export class AvailableTeachersModal extends React.Component {
   componentDidUpdate(prevProps) {
     console.log("componentDidUpdate available");
     if (this.props.availableTeachers !== prevProps.availableTeachers) {
-      this.setState({ availableTeachers: this.props.availableTeachers });
+      this.setState({ 
+        availableTeachers: this.props.availableTeachers,
+        availableSlots:[],
+        availableSlotsText:"",
+      });
     }
   }
 
@@ -95,12 +99,13 @@ export class AvailableTeachersModal extends React.Component {
     // update available slots
     const updatedSlots = this.state.availableSlots.filter((s) => s.id !== slotInfo.id);
 
+    console.log(updatedSlots);
+    console.log("slotInfo");
+    console.log(slotInfo);
+
     // update teacher events
     const updatedTeachers = [...this.state.availableTeachers];
     const teacherIndex = updatedTeachers.findIndex((teacher) => teacher.teacherId === teacherId);
-    console.log(updatedTeachers);
-    console.log("slotInfo");
-    console.log(slotInfo);
 
     if (teacherIndex !== -1) {
       updatedTeachers[teacherIndex] = {
@@ -110,9 +115,11 @@ export class AvailableTeachersModal extends React.Component {
     }
 
     this.setState({ availableSlots: updatedSlots, availableTeachers: updatedTeachers });
+    this.props.updateAvailableSlots(updatedSlots);
   };
 
   render() {
+    console.log("render");
     const { availableTeachers, availableSlotsText } = this.state;
 
     let availableTeachersList;
@@ -127,10 +134,11 @@ export class AvailableTeachersModal extends React.Component {
            start: period.startDate,
            end: period.endDate,
          }));
-       
+         console.log("teacher.attendancies");
+         console.log(teacher.attendancies);
          // Events
          events = teacher.attendancies.map((attendance) => ({
-          id: attendance.attendanceId,
+          id: attendance.id,
           title: "Окно",
           start: attendance.startDate,
           end: attendance.endDate,
