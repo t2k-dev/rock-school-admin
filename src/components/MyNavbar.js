@@ -23,7 +23,7 @@ const MyNavbar = () =>{
                         <NavDropdown.Divider />
                     </NavDropdown>
                     <Nav.Item>
-                        <Nav.Link href="/admin/registerStudent" eventKey="2" title="Item">Добавить пробное занятие</Nav.Link>
+                        <Nav.Link href="/admin/addTrial" eventKey="2" title="Item">Добавить пробное занятие</Nav.Link>
                     </Nav.Item>
                 </Nav>
                 </Navbar.Collapse>

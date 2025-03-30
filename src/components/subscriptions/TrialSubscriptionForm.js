@@ -5,77 +5,8 @@ import InputMask from "react-input-mask";
 import { DisciplinesDropDownControl } from "../common/DisciplinesDropDownControl";
 import { AvailableTeachersModal } from "../teachers/AvailableTeachersModal";
 
-import { addStudent } from "../../services/apiStudentService";
+import { addTrialSubscription } from "../../services/apiSubscriptionService";
 import { getAvailableTeachers } from "../../services/apiTeacherService";
-
-const backgroundEvents = [
-  {
-    title: "",
-    start: new Date(1900, 0, 2, 11, 0, 0, 0),
-    end: new Date(1900, 0, 2, 15, 0, 0, 0),
-  },
-  {
-    title: "",
-    start: new Date(1900, 0, 2, 16, 0, 0, 0),
-    end: new Date(1900, 0, 2, 21, 0, 0, 0),
-  },
-  {
-    title: "",
-    start: new Date(1900, 0, 3, 10, 0, 0, 0),
-    end: new Date(1900, 0, 3, 15, 0, 0, 0),
-  },
-  {
-    title: "",
-    start: new Date(1900, 0, 3, 16, 0, 0, 0),
-    end: new Date(1900, 0, 3, 21, 0, 0, 0),
-  },
-  {
-    title: "",
-    start: new Date(1900, 0, 4, 10, 0, 0, 0),
-    end: new Date(1900, 0, 4, 15, 0, 0, 0),
-  },
-  {
-    title: "",
-    start: new Date(1900, 0, 4, 16, 0, 0, 0),
-    end: new Date(1900, 0, 4, 21, 0, 0, 0),
-  },
-  {
-    title: "",
-    start: new Date(1900, 0, 7, 10, 0, 0, 0),
-    end: new Date(1900, 0, 7, 15, 0, 0, 0),
-  },
-  {
-    title: "",
-    start: new Date(1900, 0, 7, 16, 0, 0, 0),
-    end: new Date(1900, 0, 7, 21, 0, 0, 0),
-  },
-];
-const events = [
-  {
-    id: "1235",
-    title: "Занято",
-    start: new Date(1900, 0, 2, 11, 0, 0, 0),
-    end: new Date(1900, 0, 2, 12, 0, 0, 0),
-  },
-  {
-    id: "1234",
-    title: "Занято",
-    start: new Date(1900, 0, 2, 14, 0, 0, 0),
-    end: new Date(1900, 0, 2, 15, 0, 0, 0),
-  },
-  {
-    id: "123",
-    title: "Занято",
-    start: new Date(1900, 0, 4, 18, 0, 0, 0),
-    end: new Date(1900, 0, 4, 19, 0, 0, 0),
-  },
-  {
-    id: "12883",
-    title: "Занято",
-    start: new Date(1900, 0, 4, 19, 0, 0, 0),
-    end: new Date(1900, 0, 4, 20, 0, 0, 0),
-  },
-];
 
 export class TrialSubscriptionForm extends React.Component {
   constructor(props) {
@@ -91,8 +22,7 @@ export class TrialSubscriptionForm extends React.Component {
       branchId: 0,
       disciplineId: "",
 
-      backgroundEvents: backgroundEvents,
-      events: events,
+      backgroundEvents: [],
 
       availableTeachers: [],
       availableSlots: [],
@@ -118,16 +48,6 @@ export class TrialSubscriptionForm extends React.Component {
 
   generateAvailablePeriods = async (e) => {
     e.preventDefault();
-    const fakeAvailableTeachers = [
-      {
-        teacherId: "01958931-da30-780a-aadc-e99ae26bd87f",
-        firstName: "Варвара",
-        lastName: "Епанчина",
-        workingPeriods: backgroundEvents,
-        events: events,
-      },
-    ];
-
     const response = await getAvailableTeachers(this.state.disciplineId, this.state.age, 1);
     console.log("response.availableTeachers");
     console.log(response.data);
@@ -160,16 +80,33 @@ export class TrialSubscriptionForm extends React.Component {
   handleSave = async (e) => {
     e.preventDefault();
 
+
+    const selectedSlot = this.state.availableSlots.filter((s)=> s.id === this.state.selectedSlotId)[0];
+    
+    console.log(this.state.selectedSlotId)
+    console.log(this.state.availableSlots)
+    console.log(selectedSlot)
+
     const requestBody = {
-      firstName: this.state.firstName,
-      age: this.state.age,
-      branchId: this.state.branchId,
+      disciplineId: this.state.disciplineId,
+      branchId: 1,// DEV: map after clarification
+      teacherId: selectedSlot.teacherId,
+      trialDate: selectedSlot.start,
+      studentInfo:{
+        firstName: this.state.firstName,
+        lastName: this.state.lastName,
+        age: this.state.age,
+        phone: this.state.phone.replace("+7 ", "").replace(/\s/g, ""),
+        level: this.state.level,
+      }
     };
 
-    //const response = await addStudent(requestBody);
+    console.log(requestBody)
+
+    const response = await addTrialSubscription(requestBody);
     //const newStudentId = response.data;
 
-    this.props.history.push("/student/" + "01952471-c83f-7932-b28e-94bd45791589");
+    //this.props.history.push("/student/" + "01952471-c83f-7932-b28e-94bd45791589");
   };
 
   handleChange = (e) => {
@@ -314,7 +251,7 @@ export class TrialSubscriptionForm extends React.Component {
                 />
               </Form.Group>
 
-              <Form.Group className="mb-3" controlId="fakeId">
+              <Form.Group className="mb-3" controlId="selectedSlot">
                 <Form.Label>Выбранное окно</Form.Label>
                 <Form.Select aria-label="Веберите..." value={selectedSlotId} onChange={(e) => this.setState({ selectedSlotId: e.target.value })}>
                   <option>выберите...</option>
