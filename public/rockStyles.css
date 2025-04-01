@@ -15,7 +15,12 @@ h1, h2, h3, h4, h5 {
   object-fit: cover;
 }
 
-
+.rbc-header{
+  font-weight: normal !important;
+}
+.rbc-toolbar-label{
+  font-weight: bold;
+}
 .rbc-event-label{
   display: none !important;
 }

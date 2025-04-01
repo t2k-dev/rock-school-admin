@@ -12,8 +12,8 @@ class StudentScreenCard extends React.Component {
 
   render() {
     const Level = {
-      0: 'Начинающий',
-      1: 'Продолжающий',
+      0: 'Начинающий (0)',
+      1: 'Продолжающий (1)',
       2: 'Продвинутый'
     }
 
@@ -42,7 +42,7 @@ class StudentScreenCard extends React.Component {
               <GroupIcon/>
                 <div style={{fontWeight:'bold'}}> Группа</div>
                 <div >18pm</div>
-              </Container>                
+              </Container>
             </Container>
           </Container>
         </Card.Body>

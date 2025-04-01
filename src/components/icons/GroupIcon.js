@@ -21,7 +21,7 @@ function GroupIcon({ onIconClick }) {
         y="0px"
         viewBox="0 0 511.999 511.999"
         style={{
-          enableBackground:'new 0 0 511.999 511.999;',
+          enableBackground:'new 0 0 511.999 511.999',
           fill:"#c22222"
         }}
       >

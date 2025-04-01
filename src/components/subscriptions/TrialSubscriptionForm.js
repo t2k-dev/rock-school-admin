@@ -207,18 +207,18 @@ export class TrialSubscriptionForm extends React.Component {
                   <Form.Group className="mb-3" controlId="level">
                     <Form.Label>Уровень</Form.Label>
                     <Form.Select name="level" aria-label="Веберите..." value={level} onChange={(e) => this.setState({ level: e.target.value })}>
-                      <option>выберите...</option>
-                      <option value="0">0</option>
-                      <option value="1">1</option>
-                      <option value="2">2</option>
-                      <option value="0">3</option>
-                      <option value="1">4</option>
-                      <option value="2">5</option>
-                      <option value="0">6</option>
-                      <option value="1">7</option>
-                      <option value="2">8</option>
-                      <option value="1">9</option>
-                      <option value="2">10</option>
+                        <option>выберите...</option>
+                        <option value="0">0 - Начинающий</option>
+                        <option value="1">1 - Начинающий</option>
+                        <option value="2">2 - Начинающий</option>
+                        <option value="3">3 - Продолжающий</option>
+                        <option value="4">4 - Продолжающий</option>
+                        <option value="5">5 - Продолжающий</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10 - Бог</option>
                     </Form.Select>
                   </Form.Group>
                 </>

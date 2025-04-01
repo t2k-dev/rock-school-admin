@@ -5,6 +5,8 @@ import moment from "moment";
 import "moment/locale/ru";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
+import AttendanceStatus from "../constants/AttendanceStatus";
+
 moment.locale("ru");
 const localizer = momentLocalizer(moment);
 
@@ -18,7 +20,7 @@ export class CalendarWeek extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    console.log('componentDidUpdate Week');
+    console.log("componentDidUpdate Week");
     if (this.props.events !== prevProps.events) {
       this.setState({ events: this.props.events });
     }
@@ -30,6 +32,29 @@ export class CalendarWeek extends React.Component {
   }
 
   eventPropGetter = (event) => {
+    if (event.isTrial === true) {
+      return {
+        style: {
+          backgroundColor: "#e1da77",
+          color: "black",
+          borderRadius: "5px",
+          border: "0",
+          textAlign: "center",
+        },
+      };
+    }
+
+    if (event.status === AttendanceStatus.NEW) {
+      return {
+        style: {
+          backgroundColor: "#697ac9",
+          color: "white",
+          borderRadius: "5px",
+          border: "0",
+          textAlign: "center",
+        },
+      };
+    }
     if (event.isNew) {
       // Custom style for new events
       return {
