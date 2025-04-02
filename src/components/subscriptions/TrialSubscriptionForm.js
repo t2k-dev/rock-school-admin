@@ -92,7 +92,7 @@ export class TrialSubscriptionForm extends React.Component {
       branchId: 1,// DEV: map after clarification
       teacherId: selectedSlot.teacherId,
       trialDate: selectedSlot.start,
-      studentInfo:{
+      student:{
         firstName: this.state.firstName,
         lastName: this.state.lastName,
         age: this.state.age,
@@ -104,9 +104,9 @@ export class TrialSubscriptionForm extends React.Component {
     console.log(requestBody)
 
     const response = await addTrialSubscription(requestBody);
-    //const newStudentId = response.data;
+    const newStudentId = response.data //"01952471-c83f-7932-b28e-94bd45791589";
 
-    //this.props.history.push("/student/" + "01952471-c83f-7932-b28e-94bd45791589");
+    this.props.history.push("/student/" + newStudentId);
   };
 
   handleChange = (e) => {

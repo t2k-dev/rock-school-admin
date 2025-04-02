@@ -7,6 +7,9 @@ import StudentScreenCard from "./StudentScreenCard";
 import { StudentAttendanceDetailsModal } from "./StudentAttendanceDetailsModal";
 import { CalendarWeek } from "../common/CalendarWeek";
 
+import { getDisciplineName } from "../constants/disciplines";
+import { getSubscriptionStatusName } from "../constants/subscriptions";
+
 class StudentScreen extends React.Component {
   constructor(props) {
     super(props);
@@ -44,7 +47,7 @@ class StudentScreen extends React.Component {
 
     this.setState({
       student: details.student,
-      subscriptions: fakeSubscriptions,
+      subscriptions: details.subscriptions,
       attendances: details.attendances,
     });
   }
@@ -66,14 +69,16 @@ class StudentScreen extends React.Component {
 
   render() {
     const { student, subscriptions, attendances, selectedAttendanceDetails, showAttendanceDetailsModal } = this.state;
+    console.log("subscriptions");
+    console.log(subscriptions);
     let subscriptionsList;
     if (subscriptions && subscriptions.length > 0) {
       subscriptionsList = subscriptions.map((item, index) => (
         <tr key={index}>
-          <td>{item.descipline}</td>
-          <td>{item.teacherName}</td>
-          <td>{item.description}</td>
-          <td>{item.status}</td>
+          <td>{getDisciplineName(item.disciplineId)}</td>
+          <td>Оспан</td>
+          <td>1</td>
+          <td>{getSubscriptionStatusName(item.status)}</td>
           <td>
             <Button size="sm" variant="success">
               Продлить
@@ -133,7 +138,7 @@ class StudentScreen extends React.Component {
                 <tr>
                   <th>Направление</th>
                   <th>Преподаватель</th>
-                  <th>Осталось занятий</th>
+                  <th>Занятий</th>
                   <th>Статус</th>
                   <th></th>
                 </tr>
