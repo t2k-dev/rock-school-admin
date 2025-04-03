@@ -99,6 +99,8 @@ class HomeScreen extends React.Component {
         start: new Date(attendance.startDate),
         end: new Date(attendance.endDate),
         resourceId: attendance.roomId,
+        status: attendance.status,
+        isTrial: attendance.isTrial,
       }));
     }
     console.log(attendances);

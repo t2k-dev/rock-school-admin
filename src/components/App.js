@@ -27,7 +27,9 @@ import {CalendarWeek} from "./common/CalendarWeek";
 function App() {
   return (
     <BrowserRouter>
+      
       <MyNavbar />
+      <Route exact path="/"><HomeScreen /></Route>
       <Route exact path="/home"><HomeScreen /></Route>
       
       <Route exact path="/teachers"><Teachers /></Route>

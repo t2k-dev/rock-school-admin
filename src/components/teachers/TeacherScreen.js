@@ -4,25 +4,10 @@ import { Row, Col, Container, Form, Button, Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 import TeacherScreenCard from "./TeacherScreenCard";
-import {CalendarWeek} from "../common/CalendarWeek";
+import { CalendarWeek } from "../common/CalendarWeek";
 
-const events = [
-  {
-    title: "Алексей Кутузов",
-    start: new Date(1900, 0, 2, 11, 0, 0, 0),
-    end: new Date(1900, 0, 2, 12, 0, 0, 0),
-  },
-  {
-    title: "Всеволод Жердеев",
-    start: new Date(1900, 0, 2, 14, 0, 0, 0),
-    end: new Date(1900, 0, 2, 15, 0, 0, 0),
-  },
-  {
-    title: "Ануар Ахметкалиев ",
-    start: new Date(1900, 0, 4, 18, 0, 0, 0),
-    end: new Date(1900, 0, 4, 19, 0, 0, 0),
-  },
-];
+import { getDisciplineName } from "../constants/disciplines";
+import { getSubscriptionStatusName } from "../constants/subscriptions";
 
 class TeacherScreen extends React.Component {
   constructor(props) {
@@ -37,42 +22,23 @@ class TeacherScreen extends React.Component {
 
     this.handleEditClick = this.handleEditClick.bind(this);
   }
-  
+
   componentDidMount() {
     this.onFormLoad();
   }
-  
+
   async onFormLoad() {
     const details = await getTeacherScreenDetails(this.props.match.params.id);
-    const fakeSubscriptions = [
-      {
-        descipline: "Электро гитара",
-        status: "Активный",
-        description: "6",
-        teacherName: "Ануар Ахметкалиев",
-      },
-      {
-        descipline: "Электро гитара",
-        status: "Активный",
-        description: "1",
-        teacherName: "Всеволод Жердеев",
-      },
-      {
-        descipline: "Укулеле",
-        status: "Отмененный",
-        description: "10",
-        teacherName: "Джесика",
-      },
-    ];
 
     const backgroundEvents = details.teacher.scheduledWorkingPeriods.map((item) => ({
-        start: item.startDate,
-        end: item.endDate,
+      start: item.startDate,
+      end: item.endDate,
     }));
 
     this.setState({
       teacher: details.teacher,
-      subscriptions: fakeSubscriptions,
+      subscriptions: details.subscriptions,
+      attendances: details.attendances,
       backgroundEvents: backgroundEvents,
     });
   }
@@ -83,15 +49,33 @@ class TeacherScreen extends React.Component {
   };
 
   render() {
-    const { teacher, backgroundEvents, subscriptions } = this.state;
+    const { teacher, backgroundEvents, subscriptions, attendances } = this.state;
+    
+    // Events
+    let events;
+    if (attendances) {
+      events = attendances.map((attendance) => ({
+        id: attendance.attendanceId,
+        title: attendance.student.firstName + ' ' + attendance.student.lastName,
+        start: new Date(attendance.startDate),
+        end: new Date(attendance.endDate),
+        resourceId: attendance.roomId,
+        status: attendance.status,
+        isTrial: attendance.isTrial,
+      }));
+    }
+
+    // Subscriptions
     let subscriptionsList;
     if (subscriptions && subscriptions.length > 0) {
       subscriptionsList = subscriptions.map((item, index) => (
         <tr key={index}>
-          <td>{item.descipline}</td>
-          <td>{item.teacherName}</td>
+          <td>{getDisciplineName(item.disciplineId)}</td>
+          <td>
+            <Link to={"/student/"+item.student.studentId}>{item.student.firstName} {item.student.lastName}</Link>
+          </td>
           <td>{item.description}</td>
-          <td>{item.status}</td>
+          <td>{getSubscriptionStatusName(item.status)}</td>
         </tr>
       ));
     } else {
@@ -111,7 +95,7 @@ class TeacherScreen extends React.Component {
         </Row>
         <Row>
           <h3>Расписание</h3>
-          <CalendarWeek events={events} backgroundEvents={backgroundEvents}/>
+          <CalendarWeek events={events} backgroundEvents={backgroundEvents} />
         </Row>
         <Row className="mt-3">
           <h3>Абонементы</h3>
@@ -130,9 +114,7 @@ class TeacherScreen extends React.Component {
               <tbody>{subscriptionsList}</tbody>
             </Table>
           </Col>
-          
         </Row>
-
       </Container>
     );
   }

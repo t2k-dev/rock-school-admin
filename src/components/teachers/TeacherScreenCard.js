@@ -36,7 +36,7 @@ class TeacherScreenCard extends React.Component {
                   <EditIcon onIconClick={this.handleEditClick} />
                 </div>
                 <div className="mt-2">Преподаватель</div>
-                {item.disciplineIds && item.disciplineIds.map((id) => (
+                {item.disciplines && item.disciplines.map((id) => (
                   <DisciplineIcon disciplineId = {id}/>
                 ))}
               </Container>

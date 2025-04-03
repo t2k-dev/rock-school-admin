@@ -4,6 +4,7 @@ import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "moment/locale/ru";
 import "react-big-calendar/lib/css/react-big-calendar.css";
+import AttendanceStatus from "../constants/AttendanceStatus";
 
 moment.locale("ru");
 const localizer = momentLocalizer(moment);
@@ -18,6 +19,32 @@ export class CalendarDay extends React.Component {
   }
 
   eventPropGetter = (event) => {
+    if (event.status === AttendanceStatus.MISSED) {
+      return {
+        style: {
+          backgroundColor: "#ce6868",
+          color: "white",
+          borderRadius: "5px",
+          border: "0",
+          textAlign: "center",
+        },
+      };
+    }
+
+    if (event.isTrial === true) {
+      return {
+        style: {
+          backgroundColor: "#e1da77",
+          color: "black",
+          borderRadius: "5px",
+          border: "0",
+          textAlign: "center",
+        },
+      };
+    }
+
+    
+
     return {
       style: {
         backgroundColor: "#697ac9",
@@ -27,7 +54,7 @@ export class CalendarDay extends React.Component {
         textAlign: "center",
       },
     };
-  }
+  };
 
   render() {
     const messages = {
@@ -43,16 +70,15 @@ export class CalendarDay extends React.Component {
       event: "Событие",
     };
     const resources = [
-      { resourceId: 1, resourceTitle: 'Гитарная' },
-      { resourceId: 2, resourceTitle: 'Вокальная' },
-      { resourceId: 3, resourceTitle: 'Барабанная' },
-      { resourceId: 4, resourceTitle: 'Жёлтая' },
-      { resourceId: 5, resourceTitle: 'Зелёная' },
-    ]
-    console.log('CalendarDay');
+      { resourceId: 1, resourceTitle: "Гитарная" },
+      { resourceId: 2, resourceTitle: "Вокальная" },
+      { resourceId: 3, resourceTitle: "Барабанная" },
+      { resourceId: 4, resourceTitle: "Жёлтая" },
+      { resourceId: 5, resourceTitle: "Зелёная" },
+    ];
+    console.log("CalendarDay");
     console.log(this.props.events);
     return (
-      
       <div style={{ height: 550 }}>
         <Calendar
           events={this.props.events}

@@ -67,12 +67,13 @@ class StudentScreen extends React.Component {
     const { student, subscriptions, attendances, selectedAttendanceDetails, showAttendanceDetailsModal } = this.state;
     console.log("subscriptions");
     console.log(subscriptions);
+    // Subscriptions
     let subscriptionsList;
     if (subscriptions && subscriptions.length > 0) {
       subscriptionsList = subscriptions.map((item, index) => (
         <tr key={index}>
           <td>{getDisciplineName(item.disciplineId)}</td>
-          <td>{item.teacher.firstName??'Имя Препода'}</td>
+          <td><Link to={"/teacher/"+item.teacher.teacherId}>{item.teacher.firstName} {item.teacher.lastName}</Link></td>
           <td>{item.attendanceCount}</td>
           <td>{getSubscriptionStatusName(item.status)}</td>
           <td>
@@ -105,7 +106,8 @@ class StudentScreen extends React.Component {
         isTrial: attendance.isTrial,
       }));
     }
-
+    console.log("events");
+    console.log(events);
     const trialSubscriptionLink = "/student/" + student.studentId + "/subscriptionForm";
 
     return (
