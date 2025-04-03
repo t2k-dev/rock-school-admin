@@ -16,16 +16,15 @@ export class AvailableTeachersModal extends React.Component {
     };
 
     this.handleClose = this.handleClose.bind(this);
-    this.getAvailableSlots = this.getAvailableSlots.bind(this);
   }
 
   componentDidUpdate(prevProps) {
     console.log("componentDidUpdate available");
     if (this.props.availableTeachers !== prevProps.availableTeachers) {
-      this.setState({ 
+      this.setState({
         availableTeachers: this.props.availableTeachers,
-        availableSlots:[],
-        availableSlotsText:"",
+        availableSlots: [],
+        availableSlotsText: "",
       });
     }
   }
@@ -34,8 +33,9 @@ export class AvailableTeachersModal extends React.Component {
     this.setState({ show: false });
   }
 
-  getAvailableSlots() {
+  getAvailableSlotsText() {
     let result = "";
+    console.log(this.state.availableSlots);
     this.state.availableSlots.forEach((element) => {
       result = result + element.description + "\n";
     });
@@ -43,7 +43,8 @@ export class AvailableTeachersModal extends React.Component {
   }
 
   handleSelectSlot = (teacher, slotInfo) => {
-    console.log("handleSelectSlot")
+    console.log("handleSelectSlot");
+    console.log(teacher);
     const teacherId = teacher.teacherId;
 
     const updatedTeachers = [...this.state.availableTeachers];
@@ -52,9 +53,8 @@ export class AvailableTeachersModal extends React.Component {
     let slotId = uuidv4();
 
     if (teacherIndex !== -1) {
-      //TODO: refactor
       const newAttendance = {
-        id: slotId,
+        attendanceId: slotId,
         title: "Окно",
         startDate: slotInfo.start,
         endDate: slotInfo.end,
@@ -62,7 +62,8 @@ export class AvailableTeachersModal extends React.Component {
       };
 
       const currentAttendancies = updatedTeachers[teacherIndex].attendancies ?? [];
-
+      console.log("currentAttendancies");
+      console.log(currentAttendancies);
       // Update the teacher's events array
       updatedTeachers[teacherIndex] = {
         ...updatedTeachers[teacherIndex],
@@ -77,7 +78,7 @@ export class AvailableTeachersModal extends React.Component {
       teacherFullName: teacher.firstName + " " + teacher.lastName,
       start: slotInfo.start,
       end: slotInfo.end,
-      description: teacher.firstName + " " + teacher.lastName + ": " + formatDate(slotInfo.start) + " в " + formatTime(slotInfo.start)
+      description: teacher.firstName + " " + teacher.lastName + ": " + formatDate(slotInfo.start) + " в " + formatTime(slotInfo.start),
     };
 
     const updatedAvailableSlots = [...this.state.availableSlots, newSlot];
@@ -87,21 +88,22 @@ export class AvailableTeachersModal extends React.Component {
       availableTeachers: updatedTeachers,
       availableSlots: updatedAvailableSlots,
     });
-    
+
     this.props.updateAvailableSlots(updatedAvailableSlots);
   };
 
   handleSelectEvent = (teacherId, slotInfo) => {
-    console.log("handleSelectEvent")
-    if (!slotInfo.isNew){
+    console.log("handleSelectEvent");
+    if (!slotInfo.isNew) {
       return;
     }
+
     // update available slots
     const updatedSlots = this.state.availableSlots.filter((s) => s.id !== slotInfo.id);
-
-    console.log(updatedSlots);
-    console.log("slotInfo");
+    console.log("slotInfo.id");
+    console.log(slotInfo.id);
     console.log(slotInfo);
+    console.log(updatedSlots);
 
     // update teacher events
     const updatedTeachers = [...this.state.availableTeachers];
@@ -110,12 +112,17 @@ export class AvailableTeachersModal extends React.Component {
     if (teacherIndex !== -1) {
       updatedTeachers[teacherIndex] = {
         ...updatedTeachers[teacherIndex],
-        attendancies: [...updatedTeachers[teacherIndex].attendancies.filter((s) => s.id !== slotInfo.id)],
+        attendancies: [...updatedTeachers[teacherIndex].attendancies.filter((a) => a.attendanceId !== slotInfo.id)],
       };
     }
 
     this.setState({ availableSlots: updatedSlots, availableTeachers: updatedTeachers });
     this.props.updateAvailableSlots(updatedSlots);
+  };
+
+  handleCloseModal = () => {
+    this.props.handleClose();
+    this.props.updateAvailableSlots(this.state.availableSlots);
   };
 
   render() {
@@ -128,23 +135,28 @@ export class AvailableTeachersModal extends React.Component {
       let events;
       availableTeachersList = availableTeachers.map((teacher, index) => {
         // Working periods
-        if (teacher.scheduledWorkingPeriods){
+        if (teacher.scheduledWorkingPeriods) {
           backgroundEvents = teacher.scheduledWorkingPeriods.map((period) => ({
-           id: period.scheduledWorkingPeriodId,
-           start: period.startDate,
-           end: period.endDate,
-         }));
-         console.log("teacher.attendancies");
-         console.log(teacher.attendancies);
-         // Events
-         events = teacher.attendancies.map((attendance) => ({
-          id: attendance.id,
-          title: "Окно",
-          start: attendance.startDate,
-          end: attendance.endDate,
-          isNew: attendance.isNew,
-         }));
-       }
+            id: period.scheduledWorkingPeriodId,
+            start: period.startDate,
+            end: period.endDate,
+          }));
+        } else {
+          backgroundEvents = [];
+        }
+
+        // Events
+        if (teacher.attendancies) {
+          events = teacher.attendancies.map((attendance) => ({
+            id: attendance.attendanceId,
+            title: attendance.isNew ? "Окно" : "Занято",
+            start: new Date(attendance.startDate),
+            end: new Date(attendance.endDate),
+            isNew: attendance.isNew,
+          }));
+        } else {
+          events = [];
+        }
 
         return (
           <div className="mb-4" key={index} id={`teacher-${teacher.teacherId}`}>
@@ -183,16 +195,22 @@ export class AvailableTeachersModal extends React.Component {
             {availableTeachersList}
             <Form.Group className="mb-3" controlId="availableSlotsText">
               <Form.Label>Свободные окна</Form.Label>
-              <Form.Control as="textarea" value={availableSlotsText} style={{ height: "100px" }} placeholder="" onChange={(e) => this.setState({ availableSlotsText: e.target.value })}/>
+              <Form.Control
+                as="textarea"
+                value={availableSlotsText}
+                style={{ height: "100px" }}
+                placeholder=""
+                onChange={(e) => this.setState({ availableSlotsText: e.target.value })}
+              />
             </Form.Group>
             <Form.Group>
-              <Button variant="outline-secondary" type="null" onClick={this.getAvailableSlots}>
+              <Button variant="outline-secondary" type="null" onClick={() => this.getAvailableSlotsText()}>
                 Получить доступыне окна
               </Button>
             </Form.Group>
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={this.props.handleClose}>
+            <Button variant="secondary" onClick={() => this.handleCloseModal()}>
               Закрыть
             </Button>
           </Modal.Footer>

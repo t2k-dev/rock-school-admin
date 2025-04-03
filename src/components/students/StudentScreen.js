@@ -23,7 +23,7 @@ class StudentScreen extends React.Component {
 
       // Attendance Details
       showAttendanceDetailsModal: false,
-      selectedAttendanceDetails:null,
+      selectedAttendanceDetails: null,
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -36,14 +36,6 @@ class StudentScreen extends React.Component {
 
   async onFormLoad() {
     const details = await getStudentScreenDetails(this.props.match.params.id);
-    const fakeSubscriptions = [
-      {
-        descipline: "Электро гитара",
-        status: "Активный",
-        description: "6",
-        teacherName: "Михаил",
-      },
-    ];
 
     this.setState({
       student: details.student,
@@ -62,10 +54,14 @@ class StudentScreen extends React.Component {
     this.props.history.push("/students/edit/" + this.props.match.params.id);
   };
 
-  handleSelectEvent = (teacherId, slotInfo) => {
-    const newSelectedAttendanceDetails = this.state.attendances.filter(a=> a.attendanceId === slotInfo.id)[0]
-    this.setState({showAttendanceDetailsModal: true, selectedAttendanceDetails: newSelectedAttendanceDetails});
+  handleSelectEvent = (slotInfo) => {
+    const newSelectedSlotDetails = this.state.attendances.filter(a=> a.attendanceId === slotInfo.id)[0]
+    this.setState({showAttendanceDetailsModal: true, selectedAttendanceDetails: newSelectedSlotDetails});
   };
+
+  handleCloseModal = () => {
+    this.setState({showAttendanceDetailsModal: false});
+  }
 
   render() {
     const { student, subscriptions, attendances, selectedAttendanceDetails, showAttendanceDetailsModal } = this.state;
@@ -76,8 +72,8 @@ class StudentScreen extends React.Component {
       subscriptionsList = subscriptions.map((item, index) => (
         <tr key={index}>
           <td>{getDisciplineName(item.disciplineId)}</td>
-          <td>Оспан</td>
-          <td>1</td>
+          <td>{item.teacher.firstName??'Имя Препода'}</td>
+          <td>{item.attendanceCount}</td>
           <td>{getSubscriptionStatusName(item.status)}</td>
           <td>
             <Button size="sm" variant="success">
@@ -119,12 +115,17 @@ class StudentScreen extends React.Component {
         </Row>
         <Row className="mb-3">
           <h3>Расписание</h3>
-          <CalendarWeek events={events} />
+          <CalendarWeek
+            events={events}
+            onSelectEvent={(slotInfo) => {
+              this.handleSelectEvent(slotInfo);
+            }}
+          />
           <StudentAttendanceDetailsModal
             selectedAttendanceDetails={selectedAttendanceDetails}
             show={showAttendanceDetailsModal}
             handleClose={() => {
-              this.handleCloseSlotDetailsModal();
+              this.handleCloseModal();
             }}
           />
         </Row>
@@ -149,12 +150,12 @@ class StudentScreen extends React.Component {
           <Col md="2">
             <div className="d-grid gap-2">
               <Link to={trialSubscriptionLink}>
-                <Button variant="primary" type="null" size="md" className="w-100" onClick={this.handleSave}>
+                <Button variant="secondary" type="null" size="md" className="w-100" onClick={this.handleSave}>
                   Пробное занятие
                 </Button>
               </Link>
               <Link to="/admin/subscriptionForm">
-                <Button variant="primary" type="null" size="md" className="w-100" onClick={this.handleSave}>
+                <Button variant="secondary" type="null" size="md" className="w-100" onClick={this.handleSave}>
                   Новый абонемент
                 </Button>
               </Link>

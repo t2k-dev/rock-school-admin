@@ -31,7 +31,7 @@ export class StudentAttendanceDetailsModal extends React.Component {
     if (!this.props.selectedAttendanceDetails){
       return <></>;
     }
-    const {teacher, student, startDate, disciplineId} = this.props.selectedAttendanceDetails;
+    const {teacher, startDate, disciplineId} = this.props.selectedAttendanceDetails;
     console.log(this.props.selectedAttendanceDetails);
     
     return (
@@ -39,7 +39,7 @@ export class StudentAttendanceDetailsModal extends React.Component {
         <Modal show={this.props.show} onHide={this.props.handleClose}>
           <Modal.Header closeButton>
             <Modal.Title>
-              {student.firstName} {student.lastName} ({format(startDate, "dd.MM.yyyy")})
+              Пробное занятие ({format(startDate, "dd.MM.yyyy")})
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
