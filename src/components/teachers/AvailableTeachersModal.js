@@ -72,13 +72,16 @@ export class AvailableTeachersModal extends React.Component {
     }
 
     // Add the selected slot to the availableSlots array
+
+    const dayName = new Intl.DateTimeFormat('ru-RU', { weekday: 'long' }).format(slotInfo.start);
+
     const newSlot = {
       id: slotId,
       teacherId: teacherId,
       teacherFullName: teacher.firstName + " " + teacher.lastName,
       start: slotInfo.start,
       end: slotInfo.end,
-      description: teacher.firstName + " " + teacher.lastName + ": " + formatDate(slotInfo.start) + " в " + formatTime(slotInfo.start),
+      description: teacher.firstName + " " + teacher.lastName + ": " + dayName + ", " + formatDate(slotInfo.start) + " в " + formatTime(slotInfo.start),
     };
 
     const updatedAvailableSlots = [...this.state.availableSlots, newSlot];
