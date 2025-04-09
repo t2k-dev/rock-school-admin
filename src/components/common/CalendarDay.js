@@ -30,6 +30,28 @@ export class CalendarDay extends React.Component {
         },
       };
     }
+    if (event.status === AttendanceStatus.CANCELED_BY_STUDENT) {
+      return {
+        style: {
+          backgroundColor: "#949494",
+          color: "white",
+          borderRadius: "5px",
+          border: "0",
+          textAlign: "center",
+        },
+      };
+    }
+    if (event.status === AttendanceStatus.CANCELED_BY_TEACHER) {
+      return {
+        style: {
+          backgroundColor: "#646464",
+          color: "white",
+          borderRadius: "5px",
+          border: "0",
+          textAlign: "center",
+        },
+      };
+    }
 
     if (event.isTrial === true) {
       return {
@@ -43,7 +65,17 @@ export class CalendarDay extends React.Component {
       };
     }
 
-    
+    if (event.status === AttendanceStatus.ATTENDED) {
+      return {
+        style: {
+          backgroundColor: "#8d9bdd",
+          color: "white",
+          borderRadius: "5px",
+          border: "0",
+          textAlign: "center",
+        },
+      };
+    }
 
     return {
       style: {

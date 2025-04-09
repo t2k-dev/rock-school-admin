@@ -1,6 +1,7 @@
 import React from "react";
 import { Form, Container, Row, Col, Table, Button } from "react-bootstrap";
 import InputMask from "react-input-mask";
+import { format } from "date-fns";
 
 class SchedulePicker extends React.Component {
   constructor(props) {
@@ -72,8 +73,8 @@ class SchedulePicker extends React.Component {
         <tr key={index}>
           <td>{index + 1}</td>
           <td>{this.getDayName(item.weekDay)}</td>
-          <td>{item.startTime}</td>
-          <td>{item.endTime}</td>
+          <td>{item.startTime.substring(0, 5)}</td>
+          <td>{item.endTime.substring(0, 5)}</td>
           <td>
             <Button onClick={() => this.deletePeriod(index)}>
               <i>-</i>
@@ -95,53 +96,48 @@ class SchedulePicker extends React.Component {
       <Form.Group className="mb-3">
         <b>Расписание</b>
         <Row style={{ marginTop: "20px" }}>
-          <Col md="5">
-            <Form.Select aria-label="Веберите день..." value={this.state.periodDay} onChange={(e) => this.setState({ periodDay: e.target.value })}>
-              <option>День недели...</option>
-              <option value="1">Понедельник</option>
-              <option value="2">Вторник</option>
-              <option value="3">Среда</option>
-              <option value="4">Четверг</option>
-              <option value="5">Пятница</option>
-              <option value="6">Суббота</option>
-              <option value="0">Воскресенье</option>
-            </Form.Select>
-          </Col>
-          <Col>
-            <Row>
-              <Form.Label column md={1}>
-                с
-              </Form.Label>
-              <Col md={4}>
-                <Form.Control
-                  as={InputMask}
-                  mask="99:99"
-                  maskChar=" "
-                  placeholder="чч:мм"
-                  value={this.state.periodStart}
-                  onChange={(e) => this.setState({ periodStart: e.target.value })}
-                />
-              </Col>
-              <Form.Label column md={1}>
-                по
-              </Form.Label>
-              <Col md={4}>
-                <Form.Control
+          <Container className="d-flex">
+            <Container className="p-0">
+              <Form.Select aria-label="Веберите день..." value={this.state.periodDay} onChange={(e) => this.setState({ periodDay: e.target.value })}>
+                <option>День недели...</option>
+                <option value="1">Понедельник</option>
+                <option value="2">Вторник</option>
+                <option value="3">Среда</option>
+                <option value="4">Четверг</option>
+                <option value="5">Пятница</option>
+                <option value="6">Суббота</option>
+                <option value="0">Воскресенье</option>
+              </Form.Select>
+            </Container>
+            <Container className="d-flex p-0 flex-fill">
+              <span className="mt-1" style={{margin:"6px 8px"}}>с</span>
+              <Form.Control
+                    as={InputMask}
+                    mask="99:99"
+                    maskChar=" "
+                    placeholder="чч:мм"
+                    value={this.state.periodStart}
+                    onChange={(e) => this.setState({ periodStart: e.target.value })}
+                    style={{width:"60px"}}
+              />
+              <span className="mt-1" style={{margin:"6px 8px"}}>по</span>
+              <Form.Control
                   as={InputMask}
                   mask="99:99"
                   maskChar=" "
                   placeholder="чч:мм"
                   value={this.state.periodEnd}
                   onChange={(e) => this.setState({ periodEnd: e.target.value })}
+                  style={{width:"60px"}}
                 />
-              </Col>
-              <Col md={2}>
-                <Button onClick={this.addPeriod}>
-                  <i>+</i>
-                </Button>
-              </Col>
-            </Row>
-          </Col>
+            </Container>
+            <Container className="p-0" style={{width:"40px"}}>
+              <Button style={{width:"40px"}} onClick={this.addPeriod}>
+                <i>+</i>
+              </Button>
+            </Container>
+          </Container>
+
         </Row>
         <Row>
           <Table striped bordered hover style={{ marginTop: "20px" }}>

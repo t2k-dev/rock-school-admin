@@ -104,7 +104,6 @@ class HomeScreen extends React.Component {
       }));
     }
     console.log(attendances);
-    console.log(events);
     const activeNotes = notes?.filter((n) => n.status === 1);
     const completedNotes = notes?.filter((n) => n.status === 2);
 

@@ -15,9 +15,9 @@ export class SexControl extends React.Component {
     const isMale = this.props.value === 1;
     const isFemale = this.props.value === 2;
     return (
-      <Form.Group className="mb-3" controlId="sex">
+      <Form.Group className="mb-1" controlId="sex">
         <Form.Label>Пол</Form.Label>
-        <div className="mb-3">
+        <div className="mb-3 text-center">
           <Form.Check
             inline
             label="Мужской"

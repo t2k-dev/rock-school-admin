@@ -37,37 +37,31 @@ export class DisciplinesListControl extends React.Component {
   handleChange = (checkboxId) => {
     this.setState((prevState) => {
       let updatedCheckboxes = [...prevState.checkboxes];
-      let checkbox = updatedCheckboxes.find(
-        (checkbox) => checkbox.id === checkboxId
-      );
+      let checkbox = updatedCheckboxes.find((checkbox) => checkbox.id === checkboxId);
       checkbox.isChecked = !checkbox.isChecked;
       return { checkboxes: updatedCheckboxes };
     });
-    this.props.onCheck(
-      checkboxId,
-      !this.state.checkboxes.find((checkbox) => checkbox.id === checkboxId)
-        .isChecked
-    );
+    this.props.onCheck(checkboxId, !this.state.checkboxes.find((checkbox) => checkbox.id === checkboxId).isChecked);
   };
 
   render() {
     return (
       <Form.Group className="mb-3">
-        <b>Направление</b>
+        <b>Направления</b>
         <Row>
           <Col>
-            {this.state.checkboxes.map((checkbox) => (
-              <div key={checkbox.id}>
-                <FormCheck
-                  id={checkbox.id}
-                  key={checkbox.id}
-                  label={checkbox.name}
-                  checked={checkbox.isChecked}
-                  onChange={() => this.handleChange(checkbox.id)}
-                  style={{ marginTop: "10px" }}
-                />
-              </div>
-            ))}
+            <FormCheck id={1} key={1} label="Гитара" checked={this.state.checkboxes[0].isChecked} onChange={() => this.handleChange(1)} style={{ marginTop: "10px" }}/>
+            <FormCheck id={2} key={2} label="Электрогитара" checked={this.state.checkboxes[1].isChecked} onChange={() => this.handleChange(2)} style={{ marginTop: "10px" }}/>
+            <FormCheck id={3} key={3} label="Бас-гитара" checked={this.state.checkboxes[2].isChecked} onChange={() => this.handleChange(3)} style={{ marginTop: "10px" }}/>
+            <FormCheck id={4} key={4} label="Укулеле" checked={this.state.checkboxes[3].isChecked} onChange={() => this.handleChange(4)} style={{ marginTop: "10px" }}/>
+          </Col>
+          <Col>
+            <FormCheck id={5} key={5} label="Вокал" checked={this.state.checkboxes[4].isChecked} onChange={() => this.handleChange(5)} style={{ marginTop: "10px" }}/>
+            <FormCheck id={9} key={9} label="Экстрим Вокал" checked={this.state.checkboxes[8].isChecked} onChange={() => this.handleChange(9)} style={{ marginTop: "10px" }}/>
+
+            <FormCheck id={6} key={6} label="Ударные" checked={this.state.checkboxes[5].isChecked} onChange={() => this.handleChange(6)} style={{ marginTop: "20px" }}/>
+            <FormCheck id={7} key={7} label="Фортепиано" checked={this.state.checkboxes[6].isChecked} onChange={() => this.handleChange(7)} style={{ marginTop: "10px" }}/>
+            <FormCheck id={8} key={8} label="Скрипка" checked={this.state.checkboxes[7].isChecked} onChange={() => this.handleChange(8)} style={{ marginTop: "10px" }}/>
           </Col>
         </Row>
       </Form.Group>

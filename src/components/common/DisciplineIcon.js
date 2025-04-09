@@ -13,8 +13,6 @@ export class DisciplineIcon extends React.Component {
 
   render() {
     let iconControl;
-    console.log("disciplineId");
-    console.log(this.props.disciplineId);
     switch (this.props.disciplineId) {
       case 1:
         iconControl = <GuitarIcon />;

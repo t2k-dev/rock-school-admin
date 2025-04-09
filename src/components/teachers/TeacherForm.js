@@ -4,6 +4,7 @@ import { DisciplinesListControl } from "../common/DisciplinesListControl";
 import { SexControl } from "../common/SexControl";
 import InputMask from "react-input-mask";
 import SchedulePicker from "../common/SchedulePicker";
+import { format, parse } from "date-fns";
 
 import { addTeacher, saveTeacher, getTeacher } from "../../services/apiTeacherService";
 
@@ -49,7 +50,7 @@ class TeacherForm extends React.Component {
     const id = this.props.match.params.id;
     const teacher = await getTeacher(id);
 
-    console.log("onFormLoad");
+    console.log("on Teacher FormLoad");
     console.log(teacher);
     this.setState({
       teacher: {
@@ -57,7 +58,7 @@ class TeacherForm extends React.Component {
         //email: teacher.email,
         firstName: teacher.firstName,
         lastName: teacher.lastName,
-        birthDate: teacher.birthDate,
+        birthDate: format(teacher.birthDate, "dd-MM-yyyy"),
         phone: "7" + teacher.phone,
         disciplines: teacher.disciplines,
         sex: teacher.sex,
@@ -78,13 +79,16 @@ class TeacherForm extends React.Component {
   };
 
   handleSave = async (e) => {
+    console.log("handleSave");
+    console.log(this.state);
+    
     e.preventDefault();
     const requestBody = {
       teacher: {
         email: this.state.teacher.email,
         firstName: this.state.teacher.firstName,
         lastName: this.state.teacher.lastName,
-        birthDate: this.state.teacher.birthDate,
+        birthDate: parse(this.state.teacher.birthDate, "dd-MM-yyyy", new Date()),
         sex: this.state.teacher.sex,
         phone: this.state.teacher.phone.replace("+7 ", "").replace(/\s/g, ""),
         disciplines: this.state.teacher.disciplines,
@@ -95,7 +99,7 @@ class TeacherForm extends React.Component {
       workingPeriods: this.state.workingPeriods,
     };
 
-    console.log(this.state);
+    
     if (this.state.isNew) {
       const response = await addTeacher(requestBody);
     } else {
@@ -148,7 +152,7 @@ class TeacherForm extends React.Component {
         <Row>
           <Col md="4"></Col>
           <Col md="4">
-            <h2 className="mb-2" style={{ textAlign: "center" }}>{this.state.isNew ? "Новый преподаватель" : "Редактировать преподавателя"}</h2>
+            <h2 className="mb-4" style={{ textAlign: "center" }}>{this.state.isNew ? "Новый преподаватель" : "Редактировать преподавателя"}</h2>
             <Form>
               <Row className="mb-3">
                 <Form.Group as={Col} controlId="firstName">
@@ -157,7 +161,7 @@ class TeacherForm extends React.Component {
                 </Form.Group>
                 <Form.Group as={Col} controlId="lastName">
                   <Form.Label>Фамилия</Form.Label>
-                  <Form.Control onChange={this.handleChange} value={lastName} placeholder="введите фамилию..." />
+                  <Form.Control onChange={this.handleChange} value={lastName} placeholder="введите фамилию..." autoComplete="off"/>
                 </Form.Group>
               </Row>
               <Row>
@@ -165,7 +169,7 @@ class TeacherForm extends React.Component {
                   <Form.Label>Дата рождения</Form.Label>
                   <Form.Control
                     as={InputMask}
-                    mask="9999-99-99"
+                    mask="99-99-9999"
                     maskChar=" "
                     onChange={this.handleChange}
                     value={birthDate}
