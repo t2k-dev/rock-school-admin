@@ -19,6 +19,43 @@ export class CalendarDay extends React.Component {
   }
 
   eventPropGetter = (event) => {
+console.log(event.status);
+    if (event.isTrial === true) {
+      return {
+        style: {
+          backgroundColor: "#e1da77",
+          color: "black",
+          borderRadius: "5px",
+          border: "0",
+          textAlign: "center",
+        },
+      };
+    }
+
+    if (event.status === AttendanceStatus.NEW) {
+      return {
+        style: {
+          backgroundColor: "#697ac9",
+          color: "white",
+          borderRadius: "5px",
+          border: "0",
+          textAlign: "center",
+        },
+      };
+    }
+
+    if (event.status === AttendanceStatus.ATTENDED) {
+      return {
+        style: {
+          backgroundColor: "#8d9bdd",
+          color: "white",
+          borderRadius: "5px",
+          border: "0",
+          textAlign: "center",
+        },
+      };
+    }
+    
     if (event.status === AttendanceStatus.MISSED) {
       return {
         style: {
@@ -53,33 +90,11 @@ export class CalendarDay extends React.Component {
       };
     }
 
-    if (event.isTrial === true) {
-      return {
-        style: {
-          backgroundColor: "#e1da77",
-          color: "black",
-          borderRadius: "5px",
-          border: "0",
-          textAlign: "center",
-        },
-      };
-    }
 
-    if (event.status === AttendanceStatus.ATTENDED) {
-      return {
-        style: {
-          backgroundColor: "#8d9bdd",
-          color: "white",
-          borderRadius: "5px",
-          border: "0",
-          textAlign: "center",
-        },
-      };
-    }
 
     return {
       style: {
-        backgroundColor: "#697ac9",
+        backgroundColor: "red",
         color: "white",
         borderRadius: "5px",
         border: "0",

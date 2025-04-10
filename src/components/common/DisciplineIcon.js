@@ -4,6 +4,7 @@ import { VocalIcon } from "../icons/VocalIcon";
 import { GuitarIcon } from "../icons/GuitarIcon";
 import { BassGuitarIcon } from "../icons/BassGuitarIcon";
 import { ElectroGuitarIcon } from "../icons/ElectroGuitarIcon";
+import { ExtremeVocalIcon } from "../icons/ExtremeVocalIcon";
 import { UkuleleIcon } from "../icons/UkuleleIcon";
 
 export class DisciplineIcon extends React.Component {
@@ -28,6 +29,9 @@ export class DisciplineIcon extends React.Component {
         break;
       case 5:
         iconControl = <VocalIcon />;
+        break;
+      case 9:
+        iconControl = <ExtremeVocalIcon />;
         break;
       default:
         iconControl = <div>#</div>;

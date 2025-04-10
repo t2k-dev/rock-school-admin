@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import { CalendarWeek } from "../common/CalendarWeek";
 import { formatTime, formatDate } from "../common/DateTimeHelper";
 
-export class AvailableTeachersModal extends React.Component {
+export class AvailableTeachersTrialModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -130,10 +130,7 @@ export class AvailableTeachersModal extends React.Component {
 
   render() {
     console.log("render");
-    
     const { availableTeachers, availableSlotsText } = this.state;
-
-    console.log(availableTeachers);
 
     let availableTeachersList;
     if (availableTeachers && availableTeachers.length > 0) {

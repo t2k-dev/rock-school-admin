@@ -108,7 +108,7 @@ class StudentScreen extends React.Component {
     }
     console.log("events");
     console.log(events);
-    const trialSubscriptionLink = "/student/" + student.studentId + "/subscriptionForm";
+    const subscriptionLink = "/student/" + student.studentId + "/subscriptionForm";
 
     return (
       <Container style={{ marginTop: "40px" }}>
@@ -151,12 +151,12 @@ class StudentScreen extends React.Component {
           </Col>
           <Col md="2">
             <div className="d-grid gap-2">
-              <Link to={trialSubscriptionLink}>
+              <Link to="aa">
                 <Button variant="secondary" type="null" size="md" className="w-100" onClick={this.handleSave}>
                   Пробное занятие
                 </Button>
               </Link>
-              <Link to="/admin/subscriptionForm">
+              <Link to={subscriptionLink}>
                 <Button variant="secondary" type="null" size="md" className="w-100" onClick={this.handleSave}>
                   Новый абонемент
                 </Button>
