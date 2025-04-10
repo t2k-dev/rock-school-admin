@@ -1,8 +1,8 @@
 import React from "react";
 import { Form, Container, Row, Col, Table, Button } from "react-bootstrap";
-import { addMinutes, format } from "date-fns";
+import InputMask from "react-input-mask";
 
-export class ScheduleEditorStartTime extends React.Component {
+export class ScheduleEditor extends React.Component {
   constructor(props) {
     super(props);
 
@@ -22,22 +22,12 @@ export class ScheduleEditorStartTime extends React.Component {
   }
 
   addPeriod = () => {
-    const [hours, minutes] = this.state.periodStart.split(":").map(Number);
-    const date = new Date();
-    date.setHours(hours, minutes);
-
-    const minutesToAdd = this.props.attendanceLength === "1" ? 60 : 90;
-
-    const updatedDate = addMinutes(date, minutesToAdd);
-
-    const endTime = format(updatedDate, "HH:mm");
-
     this.setState(
       (prevState) => {
         const newPeriod = {
           weekDay: parseInt(this.state.periodDay),
           startTime: this.state.periodStart,
-          endTime: endTime,
+          endTime: this.state.periodEnd,
         };
         return { periods: [...prevState.periods, newPeriod] };
       },
@@ -81,12 +71,12 @@ export class ScheduleEditorStartTime extends React.Component {
     let periodsList;
     if (periods && periods.length > 0) {
       periodsList = periods.map((item, index) => (
-        <tr key={index}>
+<tr key={index}>
           <td>{index + 1}</td>
           <td>
             <Container className="d-flex p-0">
               <div className="flex-grow-1">
-                {this.getDayName(item.weekDay)} {item.startTime} - {item.endTime}
+                {this.getDayName(item.weekDay)} {item.startTime.substring(0, 5)} - {item.endTime.substring(0, 5)}
               </div>
               <div className="flex-shrink-1">
                 <Button
@@ -116,7 +106,7 @@ export class ScheduleEditorStartTime extends React.Component {
         <b>Расписание</b>
         <Row style={{ marginTop: "20px" }}>
           <Container className="d-flex">
-            <Container className="p-0">
+            <div style={{ width: "150px" }}>
               <Form.Select aria-label="Веберите день..." value={this.state.periodDay} onChange={(e) => this.setState({ periodDay: e.target.value })}>
                 <option>День недели...</option>
                 <option value="1">Понедельник</option>
@@ -127,16 +117,15 @@ export class ScheduleEditorStartTime extends React.Component {
                 <option value="6">Суббота</option>
                 <option value="0">Воскресенье</option>
               </Form.Select>
-            </Container>
-            <Container className="d-flex p-0 flex-fill">
+            </div>
+            <div className="d-flex flex-fill">
               <span className="mt-1" style={{ margin: "6px 8px" }}>
-                начало в
+                с
               </span>
               <Form.Select
                 aria-label="Веберите день..."
                 value={this.state.periodStart}
                 onChange={(e) => this.setState({ periodStart: e.target.value })}
-                style={{ width: "100px" }}
               >
                 <option>чч:мм</option>
                 <option value="10:00">10:00</option>
@@ -152,20 +141,41 @@ export class ScheduleEditorStartTime extends React.Component {
                 <option value="20:00">20:00</option>
                 <option value="21:00">21:00</option>
                 <option value="22:00">22:00</option>
+                <option value="23:00">23:00</option>
               </Form.Select>
-            </Container>
-            <Container className="p-0" style={{ width: "40px" }}>
-              <Button variant="outline-success"style={{ width: "40px", fontSize:"14px" }} onClick={this.addPeriod}>
+              <span className="mt-1" style={{ margin: "6px 8px" }}>
+                по
+              </span>
+              <Form.Select value={this.state.periodEnd} onChange={(e) => this.setState({ periodEnd: e.target.value })}>
+                <option>чч:мм</option>
+                <option value="10:00">10:00</option>
+                <option value="11:00">11:00</option>
+                <option value="12:00">12:00</option>
+                <option value="13:00">13:00</option>
+                <option value="14:00">14:00</option>
+                <option value="15:00">15:00</option>
+                <option value="16:00">16:00</option>
+                <option value="17:00">17:00</option>
+                <option value="18:00">18:00</option>
+                <option value="19:00">19:00</option>
+                <option value="20:00">20:00</option>
+                <option value="21:00">21:00</option>
+                <option value="22:00">22:00</option>
+                <option value="23:00">23:00</option>
+              </Form.Select>
+            </div>
+            <div style={{ width: "40px", marginLeft: "10px" }}>
+              <Button variant="outline-success" style={{ width: "40px" }} onClick={this.addPeriod}>
                 +
               </Button>
-            </Container>
+            </div>
           </Container>
         </Row>
         <Row>
           <Container>
-          <Table striped bordered hover style={{ marginTop: "20px" }}>
-            <tbody>{periodsList}</tbody>
-          </Table>
+            <Table striped bordered hover style={{ marginTop: "20px" }}>
+              <tbody>{periodsList}</tbody>
+            </Table>
           </Container>
         </Row>
       </Form.Group>

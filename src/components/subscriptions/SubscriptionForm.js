@@ -213,10 +213,11 @@ export class SubscriptionForm extends React.Component {
               </Form.Group>
 
               <hr></hr>
-
-              <Button variant="primary" type="null" onClick={this.handleSave}>
-                Сохранить
-              </Button>
+              <Container className="text-center">
+                <Button variant="primary" type="null" onClick={this.handleSave}>
+                  Сохранить
+                </Button>
+              </Container>
             </Form>
           </Col>
         </Row>
