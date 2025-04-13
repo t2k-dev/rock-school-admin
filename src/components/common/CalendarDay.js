@@ -19,7 +19,6 @@ export class CalendarDay extends React.Component {
   }
 
   eventPropGetter = (event) => {
-console.log(event.status);
     if (event.isTrial === true) {
       return {
         style: {

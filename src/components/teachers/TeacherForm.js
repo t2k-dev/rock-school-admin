@@ -3,7 +3,7 @@ import { Form, Container, Row, Col, Table, FormCheck, Button } from "react-boots
 import { DisciplinesListControl } from "../common/DisciplinesListControl";
 import { SexControl } from "../common/SexControl";
 import InputMask from "react-input-mask";
-import {ScheduleEditor} from "../common/ScheduleEditor";
+import { ScheduleEditor } from "../common/ScheduleEditor";
 import { format, parse } from "date-fns";
 
 import { addTeacher, saveTeacher, getTeacher } from "../../services/apiTeacherService";

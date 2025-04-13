@@ -8,6 +8,6 @@ export class Avatar extends React.Component{
 
     render(){
         const imgSrc = noImage;
-        return(<Image src={imgSrc} className="avatar" alt="Avatar"/>)
+        return(<Image src={imgSrc} className="avatar" alt="Avatar" style={this.props.style}/>)
     }
 }

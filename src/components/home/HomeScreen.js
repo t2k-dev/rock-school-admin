@@ -8,42 +8,6 @@ import { getHomeScreenDetails } from "../../services/apiHomeService";
 import { markComplete } from "../../services/apiNoteService";
 import { SlotDetailsModal } from "./SlotDetailsModal";
 
-const events = [
-  {
-    title: "Алексей Кутузов",
-    start: new Date(1900, 0, 1, 11, 0, 0, 0),
-    end: new Date(1900, 0, 1, 12, 0, 0, 0),
-    resourceId: 1,
-  },
-  {
-    title: "Сергей Петров",
-    start: new Date(1900, 0, 1, 11, 0, 0, 0),
-    end: new Date(1900, 0, 1, 12, 0, 0, 0),
-    resourceId: 2,
-  },
-  {
-    title: "Алексей Кутузов",
-    start: new Date(1900, 0, 1, 11, 0, 0, 0),
-    end: new Date(1900, 0, 1, 12, 0, 0, 0),
-    resourceId: 3,
-  },
-  {
-    title: "Сергей Петров",
-    start: new Date(1900, 0, 1, 11, 0, 0, 0),
-    end: new Date(1900, 0, 1, 12, 0, 0, 0),
-  },
-  {
-    title: "Всеволод Жердеев",
-    start: new Date(1900, 0, 2, 14, 0, 0, 0),
-    end: new Date(1900, 0, 2, 15, 0, 0, 0),
-  },
-  {
-    title: "Ануар Ахметкалиев ",
-    start: new Date(1900, 0, 4, 18, 0, 0, 0),
-    end: new Date(1900, 0, 4, 19, 0, 0, 0),
-  },
-];
-
 class HomeScreen extends React.Component {
   constructor(props) {
     super(props);

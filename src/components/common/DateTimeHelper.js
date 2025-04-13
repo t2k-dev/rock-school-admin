@@ -52,3 +52,18 @@ export function formatDateDot(sourceDate) {
 
   return `${date}.${month+1}.${sourceDate.getYear()}`;
 }
+
+export function calculateAge(birthDate) {
+  const today = new Date();
+  const birth = new Date(birthDate);
+
+  let age = today.getFullYear() - birth.getFullYear();
+  const monthDiff = today.getMonth() - birth.getMonth();
+
+  // If the birth month hasn't occurred yet, or it's the birth month but the day hasn't occurred, subtract 1 from the age
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+    age--;
+  }
+
+  return age;
+};

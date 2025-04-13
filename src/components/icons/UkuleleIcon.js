@@ -10,7 +10,7 @@ export function UkuleleIcon({ onIconClick }) {
   };
 
   return (
-    <span>
+    <span title="Укулеле">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="24px"

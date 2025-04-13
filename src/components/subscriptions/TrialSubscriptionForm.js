@@ -80,12 +80,7 @@ export class TrialSubscriptionForm extends React.Component {
   handleSave = async (e) => {
     e.preventDefault();
 
-
     const selectedSlot = this.state.availableSlots.filter((s)=> s.id === this.state.selectedSlotId)[0];
-    
-    console.log(this.state.selectedSlotId)
-    console.log(this.state.availableSlots)
-    console.log(selectedSlot)
 
     const requestBody = {
       disciplineId: this.state.disciplineId,
@@ -101,10 +96,8 @@ export class TrialSubscriptionForm extends React.Component {
       }
     };
 
-    console.log(requestBody)
-
     const response = await addTrialSubscription(requestBody);
-    const newStudentId = response.data //"01952471-c83f-7932-b28e-94bd45791589";
+    const newStudentId = response.data;
 
     this.props.history.push("/student/" + newStudentId);
   };

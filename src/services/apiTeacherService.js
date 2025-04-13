@@ -32,7 +32,7 @@ export const getTeachers = async () => {
 
 export const getTeacherScreenDetails = async (id) => {
   try {
-    const response = await apiClient.get('/teacher/getTeacherScreenDetails/' + id);
+    const response = await apiClient.get(`/teacher/getTeacherScreenDetails/${id}`);
     return response.data;
   } 
   catch (error) {
@@ -41,6 +41,11 @@ export const getTeacherScreenDetails = async (id) => {
 };
 
 export const getAvailableTeachers = async (disciplineId, age, branchId) =>{
-  const response = await apiClient.get('/teacher/getAvailableTeachers?disciplineId='+disciplineId+"&age="+age+"&branchId="+branchId);
+  const response = await apiClient.get(`/teacher/getAvailableTeachers?disciplineId=${disciplineId}&age=${age}&branchId=${branchId}`);
+  return response;
+}
+
+export const getWorkingPeriods = async (id) =>{
+  const response = await apiClient.get(`/teacher/${id}/workingPeriods`);
   return response;
 }

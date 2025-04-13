@@ -10,7 +10,7 @@ export function VocalIcon({ onIconClick }) {
   };
 
   return (
-    <span>
+    <span title="Вокал">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="18px"

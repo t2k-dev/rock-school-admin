@@ -10,7 +10,7 @@ export function BassGuitarIcon({ onIconClick }) {
   };
 
   return (
-    <span>
+    <span title="Басс гитара">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="23px"

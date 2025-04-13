@@ -1,14 +1,14 @@
 import React from "react";
-import { Form, Container, Row, Col, Image, Button } from "react-bootstrap";
+import { Form, InputGroup, Container, Row, Col, Image, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { getAvailableTeachers } from "../../services/apiTeacherService";
+import { getAvailableTeachers, getWorkingPeriods } from "../../services/apiTeacherService";
 import { addSubscription } from "../../services/apiSubscriptionService";
-import {CalendarWeek} from "../common/CalendarWeek";
-import {AvailableTeachersModal} from "../teachers/AvailableTeachersModal";
+import { CalendarWeek } from "../common/CalendarWeek";
+import { AvailableTeachersModal } from "../teachers/AvailableTeachersModal";
 import InputMask from "react-input-mask";
-import {ScheduleEditorStartTime} from "../common/ScheduleEditorStartTime";
+import { ScheduleEditorStartTime } from "../common/ScheduleEditorStartTime";
 import { format, parse } from "date-fns";
-
+import { calculateAge } from "../common/DateTimeHelper";
 
 const backgroundEvents = [
   {
@@ -81,13 +81,38 @@ export class SubscriptionForm extends React.Component {
     this.handlePeriodsChange = this.handlePeriodsChange.bind(this);
   }
 
-  generateAvailablePeriods = async (e) => {
-    e.preventDefault();
-    // TODO: replace age
-    const response = await getAvailableTeachers(this.state.disciplineId, 1, 1);
+  componentDidMount() {
+    let updatedAvailableTeachers = this.state.availableTeachers;
+
+    if (this.props.location.state.teacher) {
+      updatedAvailableTeachers.push(this.props.location.state.teacher);
+    }
 
     this.setState({
-      availableTeachers: response.data.availableTeachers,
+      student: this.props.location.state.student,
+      disciplineId: this.props.location.state.disciplineId,
+      teacherId: this.props.location.state.teacher?.teacherId,
+      availableTeachers: updatedAvailableTeachers,
+    });
+  }
+
+  generateAvailablePeriods = async (e) => {
+    e.preventDefault();
+
+    let teachers;
+    if (this.props.location.state.teacher){
+      // TODO: refactor for non array
+      const response = await getWorkingPeriods(this.props.location.state.teacher.teacherId);
+      teachers = response.data.availableTeachers;
+    }
+    else{
+      // TODO: branchId
+      const response = await getAvailableTeachers(this.state.disciplineId, calculateAge(this.state.student.birthDate), 1);
+      teachers = response.data.availableTeachers;
+    }
+
+    this.setState({
+      availableTeachers: teachers,
       showAvailableTeacherModal: true,
     });
   };
@@ -98,11 +123,14 @@ export class SubscriptionForm extends React.Component {
 
   handleSave = async (e) => {
     e.preventDefault();
-    
-    const startDate = parse(this.state.startDate, "dd-MM-yyyy", new Date());
 
+    const startDate = parse(this.state.startDate, "dd-MM-yyyy", new Date());
+    
+    console.log("this.state");
+    console.log(this.state);
+    
     const requestBody = {
-      studentId: this.state.studentId,
+      studentId: this.state.student.studentId,
       disciplineId: this.state.disciplineId,
       teacherId: this.state.teacherId,
       attendanceCount: this.state.attendanceCount,
@@ -125,9 +153,6 @@ export class SubscriptionForm extends React.Component {
 
   render() {
     const { disciplineId, teacherId, attendanceCount, attendanceLength, startDate, availableTeachers, showAvailableTeacherModal } = this.state;
-    
-    console.log('render');
-    console.log('teacherId:'+teacherId);
 
     return (
       <Container style={{ marginTop: "40px", paddingBottom: "50px" }}>
@@ -160,7 +185,7 @@ export class SubscriptionForm extends React.Component {
                   maskChar=" "
                   onChange={this.handleChange}
                   value={startDate}
-                  placeholder="введите дату..."
+                  placeholder="дд-мм-гггг"
                 />
               </Form.Group>
 
@@ -184,21 +209,15 @@ export class SubscriptionForm extends React.Component {
                 </Form.Select>
               </Form.Group>
 
-              <Form.Group className="mb-3 mt-4 text-center" controlId="GenerteSchedule">
-                <Button variant="outline-secondary" type="null" onClick={this.generateAvailablePeriods}>
-                  Получить доступные окна
-                </Button>
-                <AvailableTeachersModal
-                  show={showAvailableTeacherModal}
-                  availableTeachers={availableTeachers}
-                  updateAvailableSlots={this.updateAvailableSlots}
-                  handleClose={this.handleCloseAvailableTeachersModal}
-                />
-              </Form.Group>
-
-              <Form.Group className="mb-3" controlId="Teacher">
-                <Form.Label>Преподаватель</Form.Label>
-                <Form.Select aria-label="Веберите..." value={teacherId} onChange={(e) => this.setState({ teacherId: e.target.value })}>
+              <hr></hr>
+              <b>Преподаватель</b>
+              <InputGroup className="mb-3 mt-4 text-center" controlId="GenerteSchedule">
+                <Form.Select
+                  aria-label="Веберите..."
+                  value={teacherId}
+                  onChange={(e) => this.setState({ teacherId: e.target.value })}
+                  style={{ width: "200px" }}
+                >
                   <option>выберите...</option>
                   {availableTeachers.map((teacher, index) => (
                     <option key={index} value={teacher.teacherId}>
@@ -206,10 +225,26 @@ export class SubscriptionForm extends React.Component {
                     </option>
                   ))}
                 </Form.Select>
-              </Form.Group>
 
+                <Button variant="outline-secondary" type="null" onClick={this.generateAvailablePeriods}>
+                  Доступные окна...
+                </Button>
+              </InputGroup>
+              <AvailableTeachersModal
+                show={showAvailableTeacherModal}
+                availableTeachers={availableTeachers}
+                updateAvailableSlots={this.updateAvailableSlots}
+                handleClose={this.handleCloseAvailableTeachersModal}
+              />
+
+              <Form.Group className="mb-3" controlId="Teacher"></Form.Group>
+              <hr></hr>
               <Form.Group className="mb-3 mt-3" controlId="Schedule">
-                <ScheduleEditorStartTime periods={this.state.schedules} handlePeriodsChange={this.handlePeriodsChange} attendanceLength={this.state.attendanceLength}/>
+                <ScheduleEditorStartTime
+                  periods={this.state.schedules}
+                  handlePeriodsChange={this.handlePeriodsChange}
+                  attendanceLength={this.state.attendanceLength}
+                />
               </Form.Group>
 
               <hr></hr>

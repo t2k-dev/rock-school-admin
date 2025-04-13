@@ -55,13 +55,13 @@ class StudentScreen extends React.Component {
   };
 
   handleSelectEvent = (slotInfo) => {
-    const newSelectedSlotDetails = this.state.attendances.filter(a=> a.attendanceId === slotInfo.id)[0]
-    this.setState({showAttendanceDetailsModal: true, selectedAttendanceDetails: newSelectedSlotDetails});
+    const newSelectedSlotDetails = this.state.attendances.filter((a) => a.attendanceId === slotInfo.id)[0];
+    this.setState({ showAttendanceDetailsModal: true, selectedAttendanceDetails: newSelectedSlotDetails });
   };
 
   handleCloseModal = () => {
-    this.setState({showAttendanceDetailsModal: false});
-  }
+    this.setState({ showAttendanceDetailsModal: false });
+  };
 
   render() {
     const { student, subscriptions, attendances, selectedAttendanceDetails, showAttendanceDetailsModal } = this.state;
@@ -73,7 +73,11 @@ class StudentScreen extends React.Component {
       subscriptionsList = subscriptions.map((item, index) => (
         <tr key={index}>
           <td>{getDisciplineName(item.disciplineId)}</td>
-          <td><Link to={"/teacher/"+item.teacher.teacherId}>{item.teacher.firstName} {item.teacher.lastName}</Link></td>
+          <td>
+            <Link to={"/teacher/" + item.teacher.teacherId}>
+              {item.teacher.firstName} {item.teacher.lastName}
+            </Link>
+          </td>
           <td>{item.attendanceCount}</td>
           <td>{getSubscriptionStatusName(item.status)}</td>
           <td>
@@ -106,9 +110,6 @@ class StudentScreen extends React.Component {
         isTrial: attendance.isTrial,
       }));
     }
-    console.log("events");
-    console.log(events);
-    const subscriptionLink = "/student/" + student.studentId + "/subscriptionForm";
 
     return (
       <Container style={{ marginTop: "40px" }}>
@@ -156,7 +157,12 @@ class StudentScreen extends React.Component {
                   Пробное занятие
                 </Button>
               </Link>
-              <Link to={subscriptionLink}>
+              <Link
+                to={{
+                  pathname: `/student/${student.studentId}/subscriptionForm`,
+                  state: { student: student },
+                }}
+              >
                 <Button variant="secondary" type="null" size="md" className="w-100" onClick={this.handleSave}>
                   Новый абонемент
                 </Button>
