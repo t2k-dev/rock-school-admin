@@ -1,6 +1,7 @@
 import React from "react";
-import { Nav, Container, Row, Col, Table, Card, Button, FormCheck } from "react-bootstrap";
+import { Tab, Tabs, Container, Row, Col, Table, Card, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import { format } from "date-fns";
 
 import { CalendarDay } from "../common/CalendarDay";
 import EditIcon from "../common/EditIcon";
@@ -72,48 +73,70 @@ class HomeScreen extends React.Component {
     const activeNotes = notes?.filter((n) => n.status === 1);
     const completedNotes = notes?.filter((n) => n.status === 2);
 
-    let activeNotesList;
+    let activeNotesTable;
     if (activeNotes) {
-      activeNotesList = activeNotes.map((item, index) => (
-        <Card key={index} className="mb-2">
-          <Card.Body>
-            <Card.Text>
-              <Row>
-                <Col md="11">{item.description}</Col>
-                <Col md="1">
-                  <Button variant="primary" size="sm" onClick={(e) => this.handleMarkComplete(item.noteId)}>
-                    Выполнено
-                  </Button>
-                </Col>
-              </Row>
-            </Card.Text>
-          </Card.Body>
-        </Card>
-      ));
+      activeNotesTable = (
+        <Table striped bordered hover>
+          <thead>
+            <tr>
+              <th style={{ width: "100px" }}>Дата</th>
+              <th>Описание</th>
+            </tr>
+          </thead>
+          <tbody>
+            {activeNotes.map((item, index) => (
+              <tr key={index}>
+                <td>{format(item.completeDate, "dd-MM-yyyy")}</td>
+                <td>
+                  <Container className="d-flex p-0">
+                    <div className="flex-grow-1">{item.description}</div>
+                    <div className="flex-shrink-1">
+                      <Button variant="primary" size="sm" onClick={(e) => this.handleMarkComplete(item.noteId)}>
+                        Выполнено
+                      </Button>
+                    </div>
+                  </Container>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      );
     } else {
-      activeNotesList = <h4>Нет записей</h4>;
+      activeNotesTable = <h4>Нет записей</h4>;
     }
 
-    let completedNotesList;
+    let completedNotesTable;
     if (completedNotes) {
-      completedNotesList = completedNotes.map((item, index) => (
-        <Card key={index} className="mb-2">
-          <Card.Body>
-            <Card.Text>
-              <Row>
-                <Col md="10">{item.description}</Col>
-                <Col md="2" style={{ textAlign: "right" }}>
-                  <Button variant="secondary" size="sm" onClick={(e) => this.handleMarkComplete(item.noteId)}>
-                    Не выполнено
-                  </Button>
-                </Col>
-              </Row>
-            </Card.Text>
-          </Card.Body>
-        </Card>
-      ));
+      completedNotesTable = (
+        <Table striped bordered hover>
+          <thead>
+            <tr>
+              <th style={{ width: "100px" }}>Дата</th>
+              <th>Описание</th>
+            </tr>
+          </thead>
+          <tbody>
+            {completedNotes.map((item, index) => (
+              <tr key={index}>
+                <td>{format(item.completeDate, "dd-MM-yyyy")}</td>
+                <td>
+                  <Container className="d-flex p-0">
+                    <div className="flex-grow-1">{item.description}</div>
+                    <div className="flex-shrink-1">
+                      <Button variant="secondary" size="sm" onClick={(e) => this.handleMarkComplete(item.noteId)} disabled>
+                        Не выполнено
+                      </Button>
+                    </div>
+                  </Container>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      );
     } else {
-      completedNotesList = <h4>Нет записей</h4>;
+      completedNotesTable = <h4>Нет записей</h4>;
     }
 
     return (
@@ -121,7 +144,10 @@ class HomeScreen extends React.Component {
         <Row className="mb-4">
           <div className="d-flex">
             <div className="flex-grow-1">
-              <div style={{fontWeight:'bold', fontSize:'28px'}}>Школа на Абая<EditIcon onIconClick={this.handleEditClick} /></div>
+              <div style={{ fontWeight: "bold", fontSize: "28px" }}>
+                Школа на Абая
+                <EditIcon onIconClick={this.handleEditClick} />
+              </div>
             </div>
             <div>
               <Button as={Link} to="/admin/addTrial" variant="outline-success">
@@ -146,9 +172,9 @@ class HomeScreen extends React.Component {
           />
         </Row>
         <Row>
-        <div className="d-flex mb-2">
+          <div className="d-flex mb-2">
             <div className="flex-grow-1">
-              <div style={{fontWeight:'bold', fontSize:'20px'}}>Активности</div>
+              <div style={{ fontWeight: "bold", fontSize: "20px" }}>Активности</div>
             </div>
             <div>
               <Button as={Link} to="/notes/addNote" variant="outline-success" size="sm">
@@ -156,31 +182,14 @@ class HomeScreen extends React.Component {
               </Button>
             </div>
           </div>
-          <Nav variant="tabs" defaultActiveKey="new" className="mb-3">
-            <Nav.Item>
-              <Nav.Link eventKey="new">
-                Текущие
-              </Nav.Link>
-            </Nav.Item>
-            <Nav.Item>
-              <Nav.Link
-                eventKey="existing"
-                onClick={() => {
-                  this.existingStudentSelected();
-                }}
-              >
-                Выполненные
-              </Nav.Link>
-            </Nav.Item>
-          </Nav>
-        </Row>
-        <Row style={{ marginTop: "10px" }}>{activeNotesList}</Row>
-        <Row style={{ textAlign: "center" }}>
-          <Link to="/notes/addNote">
-            <Button variant="outline-success" size="sm">
-              
-            </Button>
-          </Link>
+          <Tabs defaultActiveKey="active" id="uncontrolled-tab-example" className="mb-3">
+            <Tab eventKey="active" title="Текущие">
+              {activeNotesTable}
+            </Tab>
+            <Tab eventKey="completed" title="Выполненные">
+              {completedNotesTable}
+            </Tab>
+          </Tabs>
         </Row>
       </Container>
     );

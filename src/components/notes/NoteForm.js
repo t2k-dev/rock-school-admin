@@ -9,6 +9,7 @@ class NoteForm extends React.Component{
         super(props);
         this.state= {
             description: "",
+            completeDate: "",
         }
     
         this.handleSave = this.handleSave.bind(this);
@@ -25,6 +26,7 @@ class NoteForm extends React.Component{
 
         const requestBody ={
             description: this.state.description,
+            completeDate: this.state.completeDate,
             branchId: 1 //DEV
         }
         const response = addNote(requestBody);
@@ -32,7 +34,7 @@ class NoteForm extends React.Component{
     }
 
     render(){
-        const {description} = this.state;
+        const {description, completeDate} = this.state;
         return(<Container style={{marginTop: "40px"}}>
             <Row>
                 <Col md="4"></Col>
@@ -42,6 +44,11 @@ class NoteForm extends React.Component{
                         <Form.Group className="mb-3" controlId="description">
                             <Form.Label>Описание</Form.Label>
                             <Form.Control onChange={this.handleChange} value={description} placeholder="введите текст..." autoComplete="off"/>
+                        </Form.Group>
+
+                        <Form.Group className="mb-3" controlId="completeDate">
+                            <Form.Label>Дата</Form.Label>
+                            <Form.Control onChange={this.handleChange} value={completeDate} placeholder="гггг-мм-дд" autoComplete="off"/>
                         </Form.Group>
 
                         <hr></hr>
