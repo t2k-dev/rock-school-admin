@@ -115,8 +115,6 @@ class TeacherScreen extends React.Component {
               </Nav.Link>
             </Nav.Item>
           </Nav>
-
-          
         </Row>
         <Row style={{ marginTop: "20px" }}>
           <Col md="12">

@@ -1,8 +1,9 @@
 import React from "react";
-import { Form, Container, Row, Col, Table, Card, Button, FormCheck } from "react-bootstrap";
+import { Nav, Container, Row, Col, Table, Card, Button, FormCheck } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 import { CalendarDay } from "../common/CalendarDay";
+import EditIcon from "../common/EditIcon";
 
 import { getHomeScreenDetails } from "../../services/apiHomeService";
 import { markComplete } from "../../services/apiNoteService";
@@ -120,14 +121,16 @@ class HomeScreen extends React.Component {
         <Row className="mb-4">
           <div className="d-flex">
             <div className="flex-grow-1">
-              <h2>Школа на Абая</h2>
+              <div style={{fontWeight:'bold', fontSize:'28px'}}>Школа на Абая<EditIcon onIconClick={this.handleEditClick} /></div>
             </div>
             <div>
-              <Button as={Link} to="/admin/addTrial" variant="outline-success">+ Пробное занятие</Button>
+              <Button as={Link} to="/admin/addTrial" variant="outline-success">
+                + Пробное занятие
+              </Button>
             </div>
           </div>
         </Row>
-        <Row>
+        <Row className="mb-5">
           <CalendarDay
             events={events}
             onSelectEvent={(slotInfo) => {
@@ -143,24 +146,42 @@ class HomeScreen extends React.Component {
           />
         </Row>
         <Row>
-          <Col style={{ marginTop: "40px" }}>
-            <h3>Активности на сегодня</h3>
-          </Col>
+        <div className="d-flex mb-2">
+            <div className="flex-grow-1">
+              <div style={{fontWeight:'bold', fontSize:'20px'}}>Активности</div>
+            </div>
+            <div>
+              <Button as={Link} to="/notes/addNote" variant="outline-success" size="sm">
+                + Новая активность
+              </Button>
+            </div>
+          </div>
+          <Nav variant="tabs" defaultActiveKey="new" className="mb-3">
+            <Nav.Item>
+              <Nav.Link eventKey="new">
+                Текущие
+              </Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Nav.Link
+                eventKey="existing"
+                onClick={() => {
+                  this.existingStudentSelected();
+                }}
+              >
+                Выполненные
+              </Nav.Link>
+            </Nav.Item>
+          </Nav>
         </Row>
         <Row style={{ marginTop: "10px" }}>{activeNotesList}</Row>
         <Row style={{ textAlign: "center" }}>
           <Link to="/notes/addNote">
             <Button variant="outline-success" size="sm">
-              Добавить
+              
             </Button>
           </Link>
         </Row>
-        <Row>
-          <Col style={{ marginTop: "40px" }}>
-            <h3>Выполненные активности</h3>
-          </Col>
-        </Row>
-        <Row>{completedNotesList}</Row>
       </Container>
     );
   }
