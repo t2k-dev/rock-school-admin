@@ -211,7 +211,7 @@ export class AvailableTeachersModal extends React.Component {
             </Form.Group>
             <Form.Group>
               <Button variant="outline-secondary" type="null" onClick={() => this.getAvailableSlotsText()}>
-                Получить доступыне окна
+                Сгенерировать текст
               </Button>
             </Form.Group>
           </Modal.Body>

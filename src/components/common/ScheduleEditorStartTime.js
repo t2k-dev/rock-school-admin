@@ -1,6 +1,7 @@
 import React from "react";
-import { Form, Container, Row, Col, Table, Button } from "react-bootstrap";
+import { Form, Container, Row, Table, Button } from "react-bootstrap";
 import { addMinutes, format } from "date-fns";
+import { CalendarIcon } from "../icons/CalendarIcon";
 
 export class ScheduleEditorStartTime extends React.Component {
   constructor(props) {
@@ -113,7 +114,7 @@ export class ScheduleEditorStartTime extends React.Component {
 
     return (
       <Form.Group className="mb-3">
-        <b>Расписание</b>
+        <b><CalendarIcon/>Расписание</b>
         <Row style={{ marginTop: "20px" }}>
           <Container className="d-flex">
             <Container className="p-0">

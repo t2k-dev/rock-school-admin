@@ -1,6 +1,7 @@
 import React from "react";
-import { Form, Container, Row, Col, Table, Button } from "react-bootstrap";
-import InputMask from "react-input-mask";
+import { Form, Container, Row, Table, Button } from "react-bootstrap";
+import { CalendarIcon } from "../icons/CalendarIcon";
+
 
 export class ScheduleEditor extends React.Component {
   constructor(props) {
@@ -103,7 +104,7 @@ export class ScheduleEditor extends React.Component {
 
     return (
       <Form.Group className="mb-3">
-        <b>Расписание</b>
+        <b><CalendarIcon/>Расписание</b>
         <Row style={{ marginTop: "20px" }}>
           <Container className="d-flex">
             <div style={{ width: "150px" }}>

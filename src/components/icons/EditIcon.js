@@ -1,7 +1,7 @@
 import React, {useState } from "react"
 
 
-function EditIcon({onIconClick}) {
+export function EditIcon({onIconClick}) {
     
     const [color, setColor ] = useState('#000000');  // Default color
     
@@ -19,5 +19,3 @@ function EditIcon({onIconClick}) {
         </span>
     )
 }
-
-export default EditIcon;

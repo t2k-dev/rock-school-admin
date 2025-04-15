@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, Row, Col, Image, Button, Container } from "react-bootstrap";
 import { Avatar } from "../common/Avatar";
-import EditIcon from "../common/EditIcon";
+import { EditIcon } from "../icons/EditIcon";
 import GroupIcon from "../icons/GroupIcon";
 
 class StudentScreenCard extends React.Component {

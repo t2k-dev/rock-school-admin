@@ -1,11 +1,8 @@
 import React from "react";
-import { Card, Row, Col, Image, Button, Container } from "react-bootstrap";
-import noImage from "../../images/user.jpg";
-import { Link } from "react-router-dom";
+import { Card, Container } from "react-bootstrap";
 import { Avatar } from "../common/Avatar";
-import EditIcon from "../common/EditIcon";
-import { Chart as ChartJS } from "chart.js/auto";
-import { Bar, Doughnut } from "react-chartjs-2";
+import { EditIcon } from "../icons/EditIcon";
+import { Doughnut } from "react-chartjs-2";
 import { DisciplineIcon } from "../common/DisciplineIcon";
 
 class TeacherScreenCard extends React.Component {

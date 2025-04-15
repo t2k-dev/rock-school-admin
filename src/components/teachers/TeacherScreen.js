@@ -1,6 +1,6 @@
 import React from "react";
 import { getTeacherScreenDetails } from "../../services/apiTeacherService";
-import { Row, Col, Container, Nav, Button, Table } from "react-bootstrap";
+import { Tabs, Tab, Row, Col, Container, Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 import TeacherScreenCard from "./TeacherScreenCard";
@@ -66,22 +66,36 @@ class TeacherScreen extends React.Component {
     }
 
     // Subscriptions
-    let subscriptionsList;
+    let subscriptionsTable;
     if (subscriptions && subscriptions.length > 0) {
-      subscriptionsList = subscriptions.map((item, index) => (
-        <tr key={index}>
-          <td>{getDisciplineName(item.disciplineId)}</td>
-          <td>
-            <Link to={"/student/" + item.student.studentId}>
-              {item.student.firstName} {item.student.lastName}
-            </Link>
-          </td>
-          <td>{item.description}</td>
-          <td>{getSubscriptionStatusName(item.status)}</td>
-        </tr>
-      ));
+      subscriptionsTable = (
+        <Table striped bordered hover>
+          <thead>
+            <tr>
+              <th>Направление</th>
+              <th>Ученик</th>
+              <th>Осталось занятий</th>
+              <th>Статус</th>
+            </tr>
+          </thead>
+          <tbody>
+            {subscriptions.map((item, index) => (
+              <tr key={index}>
+                <td>{getDisciplineName(item.disciplineId)}</td>
+                <td>
+                  <Link to={"/student/" + item.student.studentId}>
+                    {item.student.firstName} {item.student.lastName}
+                  </Link>
+                </td>
+                <td>{item.description}</td>
+                <td>{getSubscriptionStatusName(item.status)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      );
     } else {
-      subscriptionsList = (
+      subscriptionsTable = (
         <tr key={1}>
           <td colSpan="4" style={{ textAlign: "center" }}>
             Нет записей
@@ -100,36 +114,17 @@ class TeacherScreen extends React.Component {
           <CalendarWeek events={events} backgroundEvents={backgroundEvents} />
         </Row>
         <Row className="mt-3">
-          <Nav variant="tabs" defaultActiveKey="new" className="mb-3">
-            <Nav.Item>
-              <Nav.Link eventKey="new">
-                <h3>Абонементы</h3>
-              </Nav.Link>
-            </Nav.Item>
-            <Nav.Item>
-              <Nav.Link
-                eventKey="existing"
-                onClick={() => {this.existingStudentSelected();}}
-              >
-                Пробные занятия
-              </Nav.Link>
-            </Nav.Item>
-          </Nav>
+          <Tabs defaultActiveKey="subscriptions" id="uncontrolled-tab-example" className="mb-3">
+            <Tab eventKey="subscriptions" title="Абонементы">
+              <Table striped bordered hover>
+                {subscriptionsTable}
+              </Table>
+            </Tab>
+            <Tab eventKey="trials" title="Пробные занятия"></Tab>
+          </Tabs>
         </Row>
         <Row style={{ marginTop: "20px" }}>
-          <Col md="12">
-            <Table striped bordered hover>
-              <thead>
-                <tr>
-                  <th>Направление</th>
-                  <th>Ученик</th>
-                  <th>Осталось занятий</th>
-                  <th>Статус</th>
-                </tr>
-              </thead>
-              <tbody>{subscriptionsList}</tbody>
-            </Table>
-          </Col>
+          <Col md="12"></Col>
         </Row>
       </Container>
     );

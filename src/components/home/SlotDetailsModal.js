@@ -1,10 +1,11 @@
 import React from "react";
-import { Modal, Form, Button, Row, Col, Card, Container, Stack } from "react-bootstrap";
-
+import { Modal, Form, Button, Row, Container, Stack } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
 
 import { DisciplineIcon } from "../common/DisciplineIcon";
+
+import { CalendarIcon } from "../icons/CalendarIcon";
 import { Avatar } from "../common/Avatar";
 import { getDisciplineName } from "../constants/disciplines";
 
@@ -69,9 +70,7 @@ export class SlotDetailsModal extends React.Component {
       <>
         <Modal show={this.props.show} onHide={this.props.handleClose} size="md">
           <Modal.Header closeButton>
-            <Modal.Title>
-              {this.props.selectedSlotDetails.isTrial ? "Пробное занятие" : "Занятие"} ({format(startDate, "dd.MM.yyyy")})
-            </Modal.Title>
+            <Modal.Title>{this.props.selectedSlotDetails.isTrial ? "Пробное занятие" : "Занятие"}</Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <Container className="mb-3">
@@ -86,7 +85,9 @@ export class SlotDetailsModal extends React.Component {
                   <Container>
                     <Container className="mt-3" style={{ fontSize: "14px" }}>
                       <Stack direction="vertical" gap={0}>
-                        <div>Начало в {format(startDate, "HH:mm")}</div>
+                        <div>
+                          <CalendarIcon /> <span style={{ fontSize: "14px" }}>{format(startDate, "HH:mm - dd.MM.yyyy")}</span>
+                        </div>
                         <div>
                           Направление:{" "}
                           <span>
@@ -97,9 +98,7 @@ export class SlotDetailsModal extends React.Component {
                         <div>
                           Преподаватель: <Link to={"/teacher/" + teacher.teacherId}>{teacher.firstName}</Link>
                         </div>
-                        <div>
-                          Комната: Зеленая
-                        </div>
+                        <div>Комната: Зеленая</div>
                       </Stack>
                     </Container>
                     <Link to={`/student/${this.props.selectedSlotDetails.studentId}`}>
@@ -125,7 +124,6 @@ export class SlotDetailsModal extends React.Component {
             </Form.Group>
             {showTrialStatus && (
               <Form.Group className="mt-3 mb-3">
-                
                 {
                   /*showAddSubscription && */ <div className="text-center">
                     <Button
@@ -138,13 +136,13 @@ export class SlotDetailsModal extends React.Component {
                     >
                       Оформить абонемент
                     </Button>
-                    <Button variant="outline-danger" style={{marginLeft:"10px"}}>Отказаться</Button>
+                    <Button variant="outline-danger" style={{ marginLeft: "10px" }}>
+                      Отказаться
+                    </Button>
                   </div>
                 }
               </Form.Group>
-              
             )}
-
           </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={this.props.handleClose}>

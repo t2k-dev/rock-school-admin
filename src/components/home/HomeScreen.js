@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { format } from "date-fns";
 
 import { CalendarDay } from "../common/CalendarDay";
-import EditIcon from "../common/EditIcon";
+import { EditIcon } from "../icons/EditIcon";
 
 import { getHomeScreenDetails } from "../../services/apiHomeService";
 import { markComplete } from "../../services/apiNoteService";

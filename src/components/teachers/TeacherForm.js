@@ -1,5 +1,5 @@
 import React from "react";
-import { Form, Container, Row, Col, Table, FormCheck, Button } from "react-bootstrap";
+import { Form, Container, Row, Col, FormCheck, Button } from "react-bootstrap";
 import { DisciplinesListControl } from "../common/DisciplinesListControl";
 import { SexControl } from "../common/SexControl";
 import InputMask from "react-input-mask";
@@ -221,7 +221,7 @@ class TeacherForm extends React.Component {
 
               <hr></hr>
 
-              <Form.Group className="mb-3" controlId="branchId">
+              <Form.Group className="mb-4" controlId="branchId">
                 <Form.Label>Филиал</Form.Label>
                 <Form.Select aria-label="Веберите..." value={branchId} onChange={this.handleChange}>
                   <option>выберите...</option>
