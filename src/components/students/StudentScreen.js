@@ -51,7 +51,7 @@ class StudentScreen extends React.Component {
 
   handleEditClick = (e) => {
     e.preventDefault();
-    this.props.history.push("/students/edit/" + this.props.match.params.id);
+    this.props.history.push("/student/edit/" + this.props.match.params.id);
   };
 
   handleSelectEvent = (slotInfo) => {

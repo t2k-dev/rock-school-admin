@@ -10,7 +10,7 @@ export function ElectroGuitarIcon({ onIconClick }) {
   };
 
   return (
-    <span>
+    <span title="Электро гитара">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="22px"

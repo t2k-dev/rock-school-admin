@@ -17,7 +17,7 @@ class HomeScreen extends React.Component {
       attendances: null,
       showSlotDetailsModal: false,
 
-      selectedSlotDetails:null,
+      selectedSlotDetails: null,
     };
     this.handleMarkComplete = this.handleMarkComplete.bind(this);
   }
@@ -38,13 +38,13 @@ class HomeScreen extends React.Component {
   }
 
   handleSelectEvent = (teacherId, slotInfo) => {
-    const newSelectedSlotDetails = this.state.attendances.filter(a=> a.attendanceId === slotInfo.id)[0]
-    this.setState({showSlotDetailsModal: true, selectedSlotDetails: newSelectedSlotDetails});
+    const newSelectedSlotDetails = this.state.attendances.filter((a) => a.attendanceId === slotInfo.id)[0];
+    this.setState({ showSlotDetailsModal: true, selectedSlotDetails: newSelectedSlotDetails });
   };
 
   handleCloseSlotDetailsModal = () => {
-    this.setState({showSlotDetailsModal: false});
-  }
+    this.setState({ showSlotDetailsModal: false });
+  };
 
   async handleMarkComplete(noteId) {
     console.log("Start");
@@ -55,11 +55,11 @@ class HomeScreen extends React.Component {
   render() {
     const { attendances, selectedSlotDetails, notes, showSlotDetailsModal } = this.state;
 
-    let events
-    if (attendances){
-       events = attendances.map((attendance) => ({
+    let events;
+    if (attendances) {
+      events = attendances.map((attendance) => ({
         id: attendance.attendanceId,
-        title: attendance.student.firstName + ' ' + attendance.student.lastName,
+        title: attendance.student.firstName + " " + attendance.student.lastName,
         start: new Date(attendance.startDate),
         end: new Date(attendance.endDate),
         resourceId: attendance.roomId,
@@ -118,9 +118,14 @@ class HomeScreen extends React.Component {
     return (
       <Container style={{ marginTop: "40px" }}>
         <Row className="mb-4">
-          <Col>
-            <h2>Школа на Абая</h2>
-          </Col>
+          <div className="d-flex">
+            <div className="flex-grow-1">
+              <h2>Школа на Абая</h2>
+            </div>
+            <div>
+              <Button as={Link} to="/admin/addTrial" variant="outline-success">+ Пробное занятие</Button>
+            </div>
+          </div>
         </Row>
         <Row>
           <CalendarDay

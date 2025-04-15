@@ -1,6 +1,6 @@
 import React from "react";
 import { getTeacherScreenDetails } from "../../services/apiTeacherService";
-import { Row, Col, Container, Form, Button, Table } from "react-bootstrap";
+import { Row, Col, Container, Nav, Button, Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 import TeacherScreenCard from "./TeacherScreenCard";
@@ -50,13 +50,13 @@ class TeacherScreen extends React.Component {
 
   render() {
     const { teacher, backgroundEvents, subscriptions, attendances } = this.state;
-    
+
     // Events
     let events;
     if (attendances) {
       events = attendances.map((attendance) => ({
         id: attendance.attendanceId,
-        title: attendance.student.firstName + ' ' + attendance.student.lastName,
+        title: attendance.student.firstName + " " + attendance.student.lastName,
         start: new Date(attendance.startDate),
         end: new Date(attendance.endDate),
         resourceId: attendance.roomId,
@@ -72,7 +72,9 @@ class TeacherScreen extends React.Component {
         <tr key={index}>
           <td>{getDisciplineName(item.disciplineId)}</td>
           <td>
-            <Link to={"/student/"+item.student.studentId}>{item.student.firstName} {item.student.lastName}</Link>
+            <Link to={"/student/" + item.student.studentId}>
+              {item.student.firstName} {item.student.lastName}
+            </Link>
           </td>
           <td>{item.description}</td>
           <td>{getSubscriptionStatusName(item.status)}</td>
@@ -98,7 +100,23 @@ class TeacherScreen extends React.Component {
           <CalendarWeek events={events} backgroundEvents={backgroundEvents} />
         </Row>
         <Row className="mt-3">
-          <h3>Абонементы</h3>
+          <Nav variant="tabs" defaultActiveKey="new" className="mb-3">
+            <Nav.Item>
+              <Nav.Link eventKey="new">
+                <h3>Абонементы</h3>
+              </Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Nav.Link
+                eventKey="existing"
+                onClick={() => {this.existingStudentSelected();}}
+              >
+                Пробные занятия
+              </Nav.Link>
+            </Nav.Item>
+          </Nav>
+
+          
         </Row>
         <Row style={{ marginTop: "20px" }}>
           <Col md="12">

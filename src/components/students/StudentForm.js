@@ -1,7 +1,7 @@
 import React from "react";
 import { Form, Container, Row, Col, Button } from 'react-bootstrap';
 import InputMask from "react-input-mask";
-import { getStudent, saveStudent } from "../../services/apiStudentService";
+import { getStudent, addStudent, saveStudent } from "../../services/apiStudentService";
 import { SexControl } from "../common/SexControl";
 
 
@@ -10,11 +10,12 @@ class StudentForm extends React.Component{
     {
         super(props);
         this.state= {
+            isNew: props.type == "New",
             email: "",
             firstName: "",
             lastName: "",
             birthDate: "",
-            phone: 0,
+            phone: "",
             userId: "",
             level: 0,
             sex: 1,
@@ -51,16 +52,22 @@ class StudentForm extends React.Component{
         e.preventDefault();
 
         const requestBody ={
-            email: this.state.email,
+            //email: this.state.email,
             firstName: this.state.firstName,
             lastName: this.state.lastName,
             birthDate: this.state.birthDate,
             sex: this.state.sex,
             phone: this.state.phone.replace('+7 ', '').replace(/\s/g, ''),
             level: this.state.level,
+            branchId: 1,
         }
         console.log(requestBody);
-        const response = await saveStudent(this.state.studentId, requestBody);
+        if (this.state.isNew){
+            const response = await addStudent(requestBody);
+        }
+        else{
+            const response = await saveStudent(this.state.studentId, requestBody);
+        }
 
         this.props.history.goBack();
     }
@@ -84,7 +91,7 @@ class StudentForm extends React.Component{
                 <Row>
                     <Col md="4"></Col>
                     <Col md="4">
-                        <h2 style={{textAlign:"center"}}>Редактировать ученика</h2>
+                        <h2 className="mb-4 text-center">{this.state.isNew ? "Новый ученик" : "Редактировать ученика"}</h2>
                         <Form>
                             <Form.Group className="mb-3" controlId="firstName">
                                 <Form.Label>Имя</Form.Label>

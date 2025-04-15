@@ -13,20 +13,19 @@ const MyNavbar = () =>{
                     <NavDropdown title="Преподаватели" id="basic-nav-dropdown">
                         <NavDropdown.Item as={Link} to="/teachers">Список преподавателей</NavDropdown.Item>
                         <NavDropdown.Item as={Link} to="/admin/registerTeacher">Новый преподаватель</NavDropdown.Item>
-                        <NavDropdown.Divider />
-                        <NavDropdown.Item as={Link} to="/bigCalendarTest">Calendar Test</NavDropdown.Item>
                     </NavDropdown>
 
                     <NavDropdown title="Ученики" id="basic-nav-dropdown2">
                         <NavDropdown.Item as={Link} to="/students">Список учеников</NavDropdown.Item>
-                        <NavDropdown.Item as={Link} to="/admin/addSubscription">Новый абонемент</NavDropdown.Item>
+                        <NavDropdown.Item as={Link} to="/student/new">Новый ученик</NavDropdown.Item>
                         <NavDropdown.Divider />
                     </NavDropdown>
-                    <Nav.Item>
+                    <NavDropdown title="Абонементы" id="basic-nav-dropdown">
+                        <NavDropdown.Item as={Link} to="/teachers">Список абонементов</NavDropdown.Item>
                         <Nav.Link as={Link} to="/admin/addTrial" eventKey="2">
                             Добавить пробное занятие
                         </Nav.Link>
-                    </Nav.Item>
+                    </NavDropdown>
                 </Nav>
                 </Navbar.Collapse>
             </Container>

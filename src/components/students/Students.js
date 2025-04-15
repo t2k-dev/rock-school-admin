@@ -34,7 +34,7 @@ class Students extends React.Component{
                 <Row>
                     <Col md="8"><h3 className="ui header">Студенты</h3></Col>
                     <Col style={{textAlign:'right'}}>
-                        <Link to="/admin/registerStudent"><Button variant="success">Добавить</Button></Link>
+                        <Link to="/student/new"><Button variant="outline-success">+ Новый ученик</Button></Link>
                     </Col>
                 </Row>
                 <Row style={{marginTop:'20px'}}>

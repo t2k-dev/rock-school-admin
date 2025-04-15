@@ -7,7 +7,7 @@ import GroupIcon from "../icons/GroupIcon";
 class StudentScreenCard extends React.Component {
   handleEditClick = (e) => {
     e.preventDefault();
-    this.props.history.push("/students/edit/" + this.props.item.studentId);
+    this.props.history.push(`/student/edit/${this.props.item.studentId}`);
   };
 
   render() {
