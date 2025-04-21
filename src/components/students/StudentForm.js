@@ -61,12 +61,15 @@ class StudentForm extends React.Component{
             level: this.state.level,
             branchId: 1,
         }
-        console.log(requestBody);
+
+        let studentId;
         if (this.state.isNew){
             const response = await addStudent(requestBody);
+            studentId = response.data.studentId
         }
         else{
             const response = await saveStudent(this.state.studentId, requestBody);
+            studentId = response.data.studentId
         }
 
         this.props.history.goBack();

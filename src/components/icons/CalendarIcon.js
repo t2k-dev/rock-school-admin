@@ -13,7 +13,7 @@ export function CalendarIcon({ onIconClick }) {
     <span>
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        enable-background="new 0 0 16 16"
+        enableBackground="new 0 0 16 16"
         id="calendar"
         onClick={handleClick}
         width="20"

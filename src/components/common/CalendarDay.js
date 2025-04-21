@@ -1,5 +1,4 @@
 import React from "react";
-import { render } from "react-dom";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "moment/locale/ru";
@@ -122,8 +121,7 @@ export class CalendarDay extends React.Component {
       { resourceId: 4, resourceTitle: "Жёлтая" },
       { resourceId: 5, resourceTitle: "Зелёная" },
     ];
-    console.log("CalendarDay");
-    console.log(this.props.events);
+
     return (
       <div style={{ height: 550 }}>
         <Calendar

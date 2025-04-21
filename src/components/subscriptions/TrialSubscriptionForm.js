@@ -49,8 +49,6 @@ export class TrialSubscriptionForm extends React.Component {
   generateAvailablePeriods = async (e) => {
     e.preventDefault();
     const response = await getAvailableTeachers(this.state.disciplineId, this.state.age, 1);
-    console.log("response.availableTeachers");
-    console.log(response.data);
     this.setState({
       availableTeachers: response.data.availableTeachers,
       showAvailableTeacherModal: true,
@@ -99,7 +97,7 @@ export class TrialSubscriptionForm extends React.Component {
     const response = await addTrialSubscription(requestBody);
     const newStudentId = response.data;
 
-    this.props.history.push("/student/" + newStudentId);
+    this.props.history.push(`/studentScreen/${newStudentId}`);
   };
 
   handleChange = (e) => {

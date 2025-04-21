@@ -1,6 +1,5 @@
 import React from "react";
-import { BrowserRouter, Route, Link, Switch, Router } from "react-router-dom";
-import { Container, Row, Col, Card, ListGroup, Button } from "react-bootstrap";
+import { BrowserRouter, Route } from "react-router-dom";
 
 import Teachers from "./teachers/Teachers";
 import Students from "./students/Students";

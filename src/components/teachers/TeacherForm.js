@@ -1,5 +1,6 @@
 import React from "react";
 import { Form, Container, Row, Col, FormCheck, Button } from "react-bootstrap";
+
 import { DisciplinesListControl } from "../common/DisciplinesListControl";
 import { SexControl } from "../common/SexControl";
 import InputMask from "react-input-mask";
@@ -7,6 +8,8 @@ import { ScheduleEditor } from "../common/ScheduleEditor";
 import { format, parse } from "date-fns";
 
 import { addTeacher, saveTeacher, getTeacher } from "../../services/apiTeacherService";
+
+
 
 class TeacherForm extends React.Component {
   constructor(props) {
@@ -145,6 +148,19 @@ class TeacherForm extends React.Component {
     this.setState({ workingPeriods: periods });
   };
 
+  handleDateChange = (date) =>{
+    console.log(date);
+
+    this.setState((prevState) => ({
+      teacher: {
+        ...prevState.teacher,
+        birthDate: format(date, "dd-MM-yyyy"),
+      }
+    }));
+    
+    console.log(this.state);
+  }
+
   render() {
     const { email, firstName, lastName, birthDate, phone, sex, ageLimit, allowGroupLessons, disciplines, branchId } = this.state.teacher;
     return (
@@ -177,6 +193,7 @@ class TeacherForm extends React.Component {
                   />
                 </Form.Group>
               </Row>
+
               <Row>
                 <SexControl value={sex} onChange={this.handleSexChange}></SexControl>
               </Row>

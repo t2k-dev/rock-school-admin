@@ -57,6 +57,7 @@ class HomeScreen extends React.Component {
   render() {
     const { attendances, selectedSlotDetails, notes, showSlotDetailsModal } = this.state;
 
+    // Events
     let events;
     if (attendances) {
       events = attendances.map((attendance) => ({
@@ -69,24 +70,19 @@ class HomeScreen extends React.Component {
         isTrial: attendance.isTrial,
       }));
     }
-    console.log(attendances);
+
+    // Notes
     const activeNotes = notes?.filter((n) => n.status === 1);
     const completedNotes = notes?.filter((n) => n.status === 2);
 
     let activeNotesTable;
-    if (activeNotes) {
+    if (activeNotes && activeNotes?.length > 0) {
       activeNotesTable = (
         <Table striped bordered hover>
-          <thead>
-            <tr>
-              <th style={{ width: "100px" }}>Дата</th>
-              <th>Описание</th>
-            </tr>
-          </thead>
+
           <tbody>
             {activeNotes.map((item, index) => (
               <tr key={index}>
-                <td>{format(item.completeDate, "dd-MM-yyyy")}</td>
                 <td>
                   <Container className="d-flex p-0">
                     <div className="flex-grow-1">{item.description}</div>
@@ -103,11 +99,11 @@ class HomeScreen extends React.Component {
         </Table>
       );
     } else {
-      activeNotesTable = <h4>Нет записей</h4>;
+      activeNotesTable = <div className="text-center">Нет записей</div>;
     }
 
     let completedNotesTable;
-    if (completedNotes) {
+    if (completedNotes ) {
       completedNotesTable = (
         <Table striped bordered hover>
           <thead>
@@ -136,7 +132,7 @@ class HomeScreen extends React.Component {
         </Table>
       );
     } else {
-      completedNotesTable = <h4>Нет записей</h4>;
+      completedNotesTable = <div className="text-center">Нет записей</div>;
     }
 
     return (
@@ -183,7 +179,7 @@ class HomeScreen extends React.Component {
             </div>
           </div>
           <Tabs defaultActiveKey="active" id="uncontrolled-tab-example" className="mb-3">
-            <Tab eventKey="active" title="Текущие">
+            <Tab eventKey="active" title="На сегодня">
               {activeNotesTable}
             </Tab>
             <Tab eventKey="completed" title="Выполненные">

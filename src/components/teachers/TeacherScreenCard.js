@@ -36,6 +36,7 @@ class TeacherScreenCard extends React.Component {
                 {item.disciplines && item.disciplines.map((id) => <DisciplineIcon disciplineId={id} />)}
               </Container>
             </Container>
+            {/*
             <Container className="d-flex p-0">
               <Container className="p-0" style={{ width: "120px" }}>
                 <div style={{ textAlign: "center" }}>Загрузка</div>
@@ -93,6 +94,7 @@ class TeacherScreenCard extends React.Component {
                 </div>
               </Container>
             </Container>
+            */}
           </Container>
         </Card.Body>
       </Card>
