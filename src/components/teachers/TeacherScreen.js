@@ -2,6 +2,7 @@ import React from "react";
 import { getTeacherScreenDetails } from "../../services/apiTeacherService";
 import { Tabs, Tab, Row, Col, Container, Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import { format } from "date-fns";
 
 import TeacherScreenCard from "./TeacherScreenCard";
 import { CalendarWeek } from "../common/CalendarWeek";
@@ -67,13 +68,15 @@ class TeacherScreen extends React.Component {
 
     // Subscriptions
     let subscriptionsTable;
-    if (subscriptions && subscriptions.length > 0) {
+    const nonTrialSubscriptions = subscriptions.filter(s => s.isTrial === false);
+    if (nonTrialSubscriptions && nonTrialSubscriptions.length > 0) {
       subscriptionsTable = (
         <Table striped bordered hover>
           <thead>
             <tr>
-              <th>Направление</th>
+              <th>Дата</th>
               <th>Ученик</th>
+              <th>Направление</th>
               <th>Осталось занятий</th>
               <th>Статус</th>
             </tr>
@@ -81,12 +84,12 @@ class TeacherScreen extends React.Component {
           <tbody>
             {subscriptions.map((item, index) => (
               <tr key={index}>
-                <td>{getDisciplineName(item.disciplineId)}</td>
                 <td>
                   <Link to={"/student/" + item.student.studentId}>
                     {item.student.firstName} {item.student.lastName}
                   </Link>
                 </td>
+                <td>{getDisciplineName(item.disciplineId)}</td>
                 <td>{item.description}</td>
                 <td>{getSubscriptionStatusName(item.status)}</td>
               </tr>
@@ -96,6 +99,46 @@ class TeacherScreen extends React.Component {
       );
     } else {
       subscriptionsTable = (
+        <tr key={1}>
+          <td colSpan="4" style={{ textAlign: "center" }}>
+            Нет записей
+          </td>
+        </tr>
+      );
+    }
+
+    // Trials
+    let trialsTable;
+    const trialSubscriptions = subscriptions.filter(s => s.isTrial === true);
+    if (trialSubscriptions && trialSubscriptions.length > 0) {
+      trialsTable = (
+        <Table striped bordered hover>
+          <thead>
+            <tr>
+              <th style={{width:"100px"}}>Дата</th>
+              <th>Ученик</th>
+              <th>Направление</th>
+              <th>Статус</th>
+            </tr>
+          </thead>
+          <tbody>
+            {trialSubscriptions.map((item, index) => (
+              <tr key={index}>
+                <td>{format(item.startDate, "yyyy-MM-dd")}</td>
+                <td>
+                  <Link to={"/student/" + item.student.studentId}>
+                    {item.student.firstName} {item.student.lastName}
+                  </Link>
+                </td>
+                <td>{getDisciplineName(item.disciplineId)}</td>
+                <td>{getSubscriptionStatusName(item.status)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      );
+    } else {
+      trialsTable = (
         <tr key={1}>
           <td colSpan="4" style={{ textAlign: "center" }}>
             Нет записей
@@ -120,7 +163,11 @@ class TeacherScreen extends React.Component {
                 {subscriptionsTable}
               </Table>
             </Tab>
-            <Tab eventKey="trials" title="Пробные занятия"></Tab>
+            <Tab eventKey="trials" title="Пробные занятия">
+              <Table>
+                {trialsTable}
+              </Table>
+            </Tab>
           </Tabs>
         </Row>
         <Row style={{ marginTop: "20px" }}>

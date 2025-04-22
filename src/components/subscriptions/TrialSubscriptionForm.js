@@ -1,5 +1,5 @@
 import React from "react";
-import { Form, Container, Row, Col, Button, Nav } from "react-bootstrap";
+import { Form, Container, Row, Col, Button, Nav, InputGroup } from "react-bootstrap";
 import InputMask from "react-input-mask";
 
 import { DisciplinesDropDownControl } from "../common/DisciplinesDropDownControl";
@@ -229,10 +229,20 @@ export class TrialSubscriptionForm extends React.Component {
               )}
 
               <DisciplinesDropDownControl value={disciplineId} onChange={(e) => this.handleDisciplineChange(e)} />
+              <label for="GenerteSchedule">Окно для занятия</label>
+              <InputGroup className="mb-3 mt-2 text-center" controlId="GenerteSchedule">
+                <Form.Select
+                  aria-label="Веберите..."
+                  value={selectedSlotId} 
+                  onChange={(e) => this.setState({ selectedSlotId: e.target.value })}
+                  style={{ width: "200px" }}
+                >
+                  <option>выберите...</option>
+                  {availableSlotsList}
+                </Form.Select>
 
-              <Form.Group className="mb-3 mt-4 text-center" controlId="GenerteSchedule">
                 <Button variant="outline-secondary" type="null" onClick={(e) => this.generateAvailablePeriods(e)} disabled={false}>
-                  Получить доступыне окна
+                  Доступыне окна...
                 </Button>
                 <AvailableTeachersTrialModal
                   show={showAvailableTeacherModal}
@@ -240,15 +250,7 @@ export class TrialSubscriptionForm extends React.Component {
                   updateAvailableSlots={this.updateAvailableSlots}
                   handleClose={this.handleCloseAvailableTeachersModal}
                 />
-              </Form.Group>
-
-              <Form.Group className="mb-3" controlId="selectedSlot">
-                <Form.Label>Выбранное окно</Form.Label>
-                <Form.Select aria-label="Веберите..." value={selectedSlotId} onChange={(e) => this.setState({ selectedSlotId: e.target.value })}>
-                  <option>выберите...</option>
-                  {availableSlotsList}
-                </Form.Select>
-              </Form.Group>
+              </InputGroup>
 
               <hr></hr>
               <div className="text-center">

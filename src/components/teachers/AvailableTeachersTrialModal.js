@@ -19,7 +19,6 @@ export class AvailableTeachersTrialModal extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    console.log("componentDidUpdate available");
     if (this.props.availableTeachers !== prevProps.availableTeachers) {
       this.setState({
         availableTeachers: this.props.availableTeachers,
@@ -35,7 +34,6 @@ export class AvailableTeachersTrialModal extends React.Component {
 
   getAvailableSlotsText() {
     let result = "";
-    console.log(this.state.availableSlots);
     this.state.availableSlots.forEach((element) => {
       result = result + element.description + "\n";
     });
@@ -43,8 +41,6 @@ export class AvailableTeachersTrialModal extends React.Component {
   }
 
   handleSelectSlot = (teacher, slotInfo) => {
-    console.log("handleSelectSlot");
-    console.log(teacher);
     const teacherId = teacher.teacherId;
 
     const updatedTeachers = [...this.state.availableTeachers];
@@ -62,8 +58,6 @@ export class AvailableTeachersTrialModal extends React.Component {
       };
 
       const currentAttendancies = updatedTeachers[teacherIndex].attendancies ?? [];
-      console.log("currentAttendancies");
-      console.log(currentAttendancies);
       // Update the teacher's events array
       updatedTeachers[teacherIndex] = {
         ...updatedTeachers[teacherIndex],
@@ -81,7 +75,7 @@ export class AvailableTeachersTrialModal extends React.Component {
       teacherFullName: teacher.firstName + " " + teacher.lastName,
       start: slotInfo.start,
       end: slotInfo.end,
-      description: teacher.firstName + " " + teacher.lastName + ": " + dayName + ", " + formatDate(slotInfo.start) + " в " + formatTime(slotInfo.start),
+      description: `${teacher.firstName}: ${dayName}, ${formatDate(slotInfo.start)} в ${formatTime(slotInfo.start)}`,
     };
 
     const updatedAvailableSlots = [...this.state.availableSlots, newSlot];
