@@ -127,12 +127,12 @@ class TeacherForm extends React.Component {
 
   handleDisciplineCheck = (id, isChecked) => {
     const teacher = { ...this.state.teacher };
-    let newDisciplines = teacher.disciplines;
-    if (isChecked) {
-      newDisciplines.push(id);
-    } else {
-      newDisciplines = newDisciplines.filter((discipline) => discipline !== id);
-    }
+  
+    // Update disciplines array based on the isChecked value
+    const newDisciplines = isChecked
+      ? [...new Set([...teacher.disciplines, id])] // Add ID, ensuring no duplicates
+      : teacher.disciplines.filter((discipline) => discipline !== id); // Remove ID
+  
     teacher.disciplines = newDisciplines;
     this.setState({ teacher });
   };

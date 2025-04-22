@@ -25,7 +25,7 @@ export class DisciplinesListControl extends React.Component {
   componentDidUpdate(prevProps) {
     if (this.props.disciplines !== prevProps.disciplines) {
       this.setState((prevState) => {
-        let updatedDisciplines = prevState.checkboxes.map((checkbox) => ({
+        const updatedDisciplines = prevState.checkboxes.map((checkbox) => ({
           ...checkbox,
           isChecked: this.props.disciplines.includes(checkbox.id),
         }));
@@ -36,12 +36,15 @@ export class DisciplinesListControl extends React.Component {
 
   handleChange = (checkboxId) => {
     this.setState((prevState) => {
-      let updatedCheckboxes = [...prevState.checkboxes];
-      let checkbox = updatedCheckboxes.find((checkbox) => checkbox.id === checkboxId);
-      checkbox.isChecked = !checkbox.isChecked;
+      const updatedCheckboxes = prevState.checkboxes.map((checkbox) =>
+        checkbox.id === checkboxId ? { ...checkbox, isChecked: !checkbox.isChecked } : checkbox
+      );
+
+      const updatedCheckbox = updatedCheckboxes.find((checkbox) => checkbox.id === checkboxId);
+      this.props.onCheck(checkboxId, updatedCheckbox.isChecked); // Pass updated value to the parent
+
       return { checkboxes: updatedCheckboxes };
     });
-    this.props.onCheck(checkboxId, !this.state.checkboxes.find((checkbox) => checkbox.id === checkboxId).isChecked);
   };
 
   render() {

@@ -2,7 +2,6 @@ import React from "react";
 import { Form, Container, Row, Table, Button } from "react-bootstrap";
 import { CalendarIcon } from "../icons/CalendarIcon";
 
-
 export class ScheduleEditor extends React.Component {
   constructor(props) {
     super(props);
@@ -10,9 +9,10 @@ export class ScheduleEditor extends React.Component {
     this.state = {
       periods: this.props.periods,
 
-      periodDay: "",
-      periodStart: "",
-      periodEnd: "",
+      periodDay: '',
+      periodStart: '',
+      periodEnd: '',
+      roomId: '',
     };
   }
 
@@ -29,6 +29,7 @@ export class ScheduleEditor extends React.Component {
           weekDay: parseInt(this.state.periodDay),
           startTime: this.state.periodStart,
           endTime: this.state.periodEnd,
+          roomId: this.state.roomId,
         };
         return { periods: [...prevState.periods, newPeriod] };
       },
@@ -72,7 +73,7 @@ export class ScheduleEditor extends React.Component {
     let periodsList;
     if (periods && periods.length > 0) {
       periodsList = periods.map((item, index) => (
-<tr key={index}>
+        <tr key={index}>
           <td>{index + 1}</td>
           <td>
             <Container className="d-flex p-0">
@@ -104,7 +105,23 @@ export class ScheduleEditor extends React.Component {
 
     return (
       <Form.Group className="mb-3">
-        <b><CalendarIcon/>Расписание</b>
+        <Form.Label>
+          <b><CalendarIcon />Расписание</b>
+        </Form.Label>
+
+        <Row>
+          <Container>
+            <Form.Select aria-label="Веберите день..." value={this.state.roomId} onChange={(e) => this.setState({ roomId: e.target.value })}>
+              <option>выберите комнату...</option>
+              <option value="1">Красная</option>
+              <option value="2">Вокальная</option>
+              <option value="3">Барабанная</option>
+              <option value="4">Желтая</option>
+              <option value="5">Зеленая</option>
+            </Form.Select>
+          </Container>
+        </Row>
+
         <Row style={{ marginTop: "20px" }}>
           <Container className="d-flex">
             <div style={{ width: "150px" }}>
