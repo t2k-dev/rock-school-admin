@@ -8,12 +8,13 @@ import { EditIcon } from "../icons/EditIcon";
 
 import { getHomeScreenDetails } from "../../services/apiHomeService";
 import { markComplete } from "../../services/apiNoteService";
-import { SlotDetailsModal } from "./SlotDetailsModal";
+import { SlotDetailsModal } from "../home/SlotDetailsModal";
 
-class HomeScreen extends React.Component {
+export class BranchScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      branch: null,
       rooms: null,
       notes: null,
       attendances: null,
@@ -21,16 +22,24 @@ class HomeScreen extends React.Component {
 
       selectedSlotDetails: null,
     };
+
     this.handleMarkComplete = this.handleMarkComplete.bind(this);
   }
-
+  
   componentDidMount() {
     this.onFormLoad();
   }
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.match.params.id !== this.props.match.params.id) {
+      this.onFormLoad();
+    }
+  }
+
   async onFormLoad() {
-    const details = await getHomeScreenDetails(1);
+    const details = await getHomeScreenDetails(this.props.match.params.id);
     this.setState({
+      branch: details.branch,
       rooms: details.rooms,
       notes: details.notes,
       attendances: details.attendances,
@@ -55,7 +64,7 @@ class HomeScreen extends React.Component {
   }
 
   render() {
-    const { attendances, selectedSlotDetails, notes, showSlotDetailsModal } = this.state;
+    const { branch, attendances, selectedSlotDetails, notes, showSlotDetailsModal } = this.state;
 
     // Events
     let events;
@@ -144,7 +153,7 @@ class HomeScreen extends React.Component {
           <div className="d-flex">
             <div className="flex-grow-1">
               <div style={{ fontWeight: "bold", fontSize: "28px" }}>
-                Школа на Абая
+                {branch?.name}
                 <EditIcon onIconClick={this.handleEditClick} />
               </div>
             </div>
@@ -194,5 +203,3 @@ class HomeScreen extends React.Component {
     );
   }
 }
-
-export default HomeScreen;

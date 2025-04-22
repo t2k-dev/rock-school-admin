@@ -174,11 +174,11 @@ export class TrialSubscriptionForm extends React.Component {
                   {" "}
                   <Form.Group className="mb-3" controlId="firstName">
                     <Form.Label>Имя</Form.Label>
-                    <Form.Control onChange={this.handleChange} value={firstName} placeholder="введите имя..." autoComplete="off" />
+                    <Form.Control onChange={this.handleChange} value={firstName} placeholder="введите имя..." autoComplete="off"/>
                   </Form.Group>
                   <Form.Group className="mb-3" controlId="lastName">
                     <Form.Label>Фамилия</Form.Label>
-                    <Form.Control onChange={this.handleChange} value={lastName} placeholder="введите фамилию..." />
+                    <Form.Control onChange={this.handleChange} value={lastName} placeholder="введите фамилию..." autoComplete="off"/>
                   </Form.Group>
                   <Form.Group className="mb-3" controlId="phone">
                     <Form.Label>Телефон</Form.Label>

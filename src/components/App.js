@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserRouter, Route } from "react-router-dom";
 
+import { BranchScreen } from "./branches/BranchScreen";
 import Teachers from "./teachers/Teachers";
 import Students from "./students/Students";
 
@@ -30,7 +31,9 @@ function App() {
       <MyNavbar />
       <Route exact path="/"><HomeScreen /></Route>
       <Route exact path="/home"><HomeScreen /></Route>
-      
+
+      <Route exact path="/branchScreen/:id" render={(props) => <BranchScreen {...props}/>}/>
+
       <Route exact path="/teachers"><Teachers /></Route>
       <Route exact path="/teacher/:id" render={(props) => <TeacherScreen {...props}/>}/>
       <Route exact path="/teachers/edit/:id" render={(props) => <TeacherForm type="Edit" {...props} />}/>
