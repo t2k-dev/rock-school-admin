@@ -1,6 +1,7 @@
 import React from "react";
 import { Form, Container, Row, Table, Button } from "react-bootstrap";
 import { CalendarIcon } from "../icons/CalendarIcon";
+import {getRoomName} from "../constants/rooms";
 
 export class ScheduleEditor extends React.Component {
   constructor(props) {
@@ -72,13 +73,24 @@ export class ScheduleEditor extends React.Component {
 
     let periodsList;
     if (periods && periods.length > 0) {
-      periodsList = periods.map((item, index) => (
+
+      const sortedPeriods = periods.sort((a, b) => {
+        // Sort by `weekDay` first
+        if (a.weekDay !== b.weekDay) {
+          return a.weekDay - b.weekDay;
+        }
+      
+        // If `weekDay` is the same, sort by `startTime`
+        return a.startTime.localeCompare(b.startTime);
+      });
+
+      periodsList = sortedPeriods.map((item, index) => (
         <tr key={index}>
           <td>{index + 1}</td>
           <td>
             <Container className="d-flex p-0">
               <div className="flex-grow-1">
-                {this.getDayName(item.weekDay)} {item.startTime.substring(0, 5)} - {item.endTime.substring(0, 5)}
+                {this.getDayName(item.weekDay)} {item.startTime.substring(0, 5)} - {item.endTime.substring(0, 5)} ({getRoomName(item.roomId)})
               </div>
               <div className="flex-shrink-1">
                 <Button

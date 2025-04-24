@@ -102,13 +102,16 @@ class TeacherForm extends React.Component {
       workingPeriods: this.state.workingPeriods,
     };
 
-    
+    let response;
     if (this.state.isNew) {
-      const response = await addTeacher(requestBody);
+      response = await addTeacher(requestBody);
+
     } else {
-      const response = await saveTeacher(this.state.teacher.teacherId, requestBody);
+      response = await saveTeacher(this.state.teacher.teacherId, requestBody);
     }
-    this.props.history.goBack();
+
+    const teacherId = response.data.teacherId;
+    this.props.history.push(`/teacher/${teacherId}`);
   };
 
   handleChange = (e) => {
@@ -157,8 +160,6 @@ class TeacherForm extends React.Component {
         birthDate: format(date, "dd-MM-yyyy"),
       }
     }));
-    
-    console.log(this.state);
   }
 
   render() {

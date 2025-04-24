@@ -159,7 +159,7 @@ class TeacherScreen extends React.Component {
         <Row className="mt-3">
           <Tabs defaultActiveKey="subscriptions" id="uncontrolled-tab-example" className="mb-3">
             <Tab eventKey="subscriptions" title="Абонементы">
-              <Table striped bordered hover>
+              <Table>
                 {subscriptionsTable}
               </Table>
             </Tab>
