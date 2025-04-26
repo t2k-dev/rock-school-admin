@@ -1,9 +1,9 @@
 import React from "react";
-import { Modal, Form, Button, Badge } from "react-bootstrap";
+import { Badge, Button, Form, Modal } from "react-bootstrap";
 import { v4 as uuidv4 } from "uuid";
 
 import { CalendarWeek } from "../common/CalendarWeek";
-import { formatTime, formatDate } from "../common/DateTimeHelper";
+import { formatDate, formatTime } from "../common/DateTimeHelper";
 
 export class AvailableTeachersTrialModal extends React.Component {
   constructor(props) {
@@ -67,7 +67,16 @@ export class AvailableTeachersTrialModal extends React.Component {
 
     // Add the selected slot to the availableSlots array
 
-    const dayName = new Intl.DateTimeFormat('ru-RU', { weekday: 'long' }).format(slotInfo.start);
+    const dayName = new Intl.DateTimeFormat("ru-RU", { weekday: "long" }).format(slotInfo.start);
+
+    // Find the matching backgroundEvent based on the slot's start and end times
+    const matchingBackgroundEvent = teacher.scheduledWorkingPeriods?.find(
+      (backgroundEvent) =>
+        new Date(backgroundEvent.startDate).getTime() <= new Date(slotInfo.start).getTime() &&
+        new Date(backgroundEvent.endDate).getTime() >= new Date(slotInfo.end).getTime()
+    );
+
+    const roomId = matchingBackgroundEvent?.roomId;
 
     const newSlot = {
       id: slotId,
@@ -75,9 +84,12 @@ export class AvailableTeachersTrialModal extends React.Component {
       teacherFullName: teacher.firstName + " " + teacher.lastName,
       start: slotInfo.start,
       end: slotInfo.end,
+      roomId: roomId,
       description: `${teacher.firstName}: ${dayName}, ${formatDate(slotInfo.start)} в ${formatTime(slotInfo.start)}`,
     };
-
+    console.log("newSlot");
+    console.log(newSlot);
+    console.log(slotInfo);
     const updatedAvailableSlots = [...this.state.availableSlots, newSlot];
 
     // Update the state with the modified array
@@ -137,6 +149,7 @@ export class AvailableTeachersTrialModal extends React.Component {
             id: period.scheduledWorkingPeriodId,
             start: period.startDate,
             end: period.endDate,
+            roomId: period.roomId,
           }));
         } else {
           backgroundEvents = [];

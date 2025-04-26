@@ -1,5 +1,5 @@
 import React from "react";
-import { Form, Container, Row, Col, Button, Nav, InputGroup } from "react-bootstrap";
+import { Button, Col, Container, Form, InputGroup, Nav, Row } from "react-bootstrap";
 import InputMask from "react-input-mask";
 
 import { DisciplinesDropDownControl } from "../common/DisciplinesDropDownControl";
@@ -79,12 +79,14 @@ export class TrialSubscriptionForm extends React.Component {
     e.preventDefault();
 
     const selectedSlot = this.state.availableSlots.filter((s)=> s.id === this.state.selectedSlotId)[0];
-
+    console.log("selectedSlot2");
+    console.log(selectedSlot);
     const requestBody = {
       disciplineId: this.state.disciplineId,
       branchId: 1,// DEV: map after clarification
       teacherId: selectedSlot.teacherId,
       trialDate: selectedSlot.start,
+      roomId: selectedSlot.roomId,
       student:{
         firstName: this.state.firstName,
         lastName: this.state.lastName,

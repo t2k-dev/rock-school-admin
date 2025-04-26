@@ -1,7 +1,7 @@
 import React from "react";
-import { Form, Container, Row, Table, Button } from "react-bootstrap";
+import { Button, Container, Form, Row, Table } from "react-bootstrap";
+import { getRoomName } from "../constants/rooms";
 import { CalendarIcon } from "../icons/CalendarIcon";
-import {getRoomName} from "../constants/rooms";
 
 export class ScheduleEditor extends React.Component {
   constructor(props) {
@@ -127,9 +127,9 @@ export class ScheduleEditor extends React.Component {
               <option>выберите комнату...</option>
               <option value="1">Красная</option>
               <option value="2">Вокальная</option>
-              <option value="3">Барабанная</option>
-              <option value="4">Желтая</option>
-              <option value="5">Зеленая</option>
+              <option value="4">Барабанная</option>
+              <option value="5">Желтая</option>
+              <option value="6">Зеленая</option>
             </Form.Select>
           </Container>
         </Row>

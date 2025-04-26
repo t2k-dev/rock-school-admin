@@ -1,7 +1,7 @@
-import React from "react";
-import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "moment/locale/ru";
+import React from "react";
+import { Calendar, momentLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import AttendanceStatus from "../constants/AttendanceStatus";
 
@@ -117,9 +117,9 @@ export class CalendarDay extends React.Component {
     const resources = [
       { resourceId: 1, resourceTitle: "Гитарная" },
       { resourceId: 2, resourceTitle: "Вокальная" },
-      { resourceId: 3, resourceTitle: "Барабанная" },
-      { resourceId: 4, resourceTitle: "Жёлтая" },
-      { resourceId: 5, resourceTitle: "Зелёная" },
+      { resourceId: 4, resourceTitle: "Барабанная" },
+      { resourceId: 5, resourceTitle: "Жёлтая" },
+      { resourceId: 6, resourceTitle: "Зелёная" },
     ];
 
     return (
