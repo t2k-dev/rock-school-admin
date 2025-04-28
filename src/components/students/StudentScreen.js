@@ -1,11 +1,11 @@
 import React from "react";
-import { getStudentScreenDetails } from "../../services/apiStudentService";
-import { Row, Col, Container, Form, Button, Table } from "react-bootstrap";
+import { Button, Col, Container, Row, Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import { getStudentScreenDetails } from "../../services/apiStudentService";
 
-import StudentScreenCard from "./StudentScreenCard";
-import { StudentAttendanceDetailsModal } from "./StudentAttendanceDetailsModal";
 import { CalendarWeek } from "../common/CalendarWeek";
+import { StudentAttendanceDetailsModal } from "./StudentAttendanceDetailsModal";
+import StudentScreenCard from "./StudentScreenCard";
 
 import { getDisciplineName } from "../constants/disciplines";
 import { getSubscriptionStatusName } from "../constants/subscriptions";
@@ -65,8 +65,8 @@ class StudentScreen extends React.Component {
 
   render() {
     const { student, subscriptions, attendances, selectedAttendanceDetails, showAttendanceDetailsModal } = this.state;
-    console.log("subscriptions");
-    console.log(subscriptions);
+    console.log("selectedAttendanceDetails");
+    console.log(selectedAttendanceDetails);
     // Subscriptions
     let subscriptionsList;
     if (subscriptions && subscriptions.length > 0) {

@@ -1,13 +1,15 @@
-import React from "react";
-import { Modal, Form, Button, Row, Container, Stack } from "react-bootstrap";
-import { Link } from "react-router-dom";
 import { format } from "date-fns";
+import React from "react";
+import { Button, Container, Form, Modal, Row, Stack } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 import { DisciplineIcon } from "../common/DisciplineIcon";
 
-import { CalendarIcon } from "../icons/CalendarIcon";
 import { Avatar } from "../common/Avatar";
 import { getDisciplineName } from "../constants/disciplines";
+import { CalendarIcon } from "../icons/CalendarIcon";
+
+import { getRoomName } from "../constants/rooms";
 
 export class SlotDetailsModal extends React.Component {
   constructor(props) {
@@ -64,7 +66,7 @@ export class SlotDetailsModal extends React.Component {
     if (!this.props.selectedSlotDetails) {
       return <></>;
     }
-    const { teacher, student, startDate, disciplineId, comment } = this.props.selectedSlotDetails;
+    const { teacher, student, startDate, disciplineId, roomId, comment } = this.props.selectedSlotDetails;
 
     return (
       <>
@@ -98,7 +100,7 @@ export class SlotDetailsModal extends React.Component {
                         <div>
                           Преподаватель: <Link to={"/teacher/" + teacher.teacherId}>{teacher.firstName}</Link>
                         </div>
-                        <div>Комната: Зеленая</div>
+                        <div>Комната: {getRoomName(roomId)}</div>
                       </Stack>
                     </Container>
                     <Link to={`/student/${this.props.selectedSlotDetails.studentId}`}>

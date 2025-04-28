@@ -2,8 +2,8 @@ import React from "react";
 import { BrowserRouter, Route } from "react-router-dom";
 
 import { BranchScreen } from "./branches/BranchScreen";
-import Teachers from "./teachers/Teachers";
 import Students from "./students/Students";
+import Teachers from "./teachers/Teachers";
 
 import About from "./About";
 import Contact from "./Contact";
@@ -11,18 +11,19 @@ import MyNavbar from "./MyNavbar";
 
 import HomeScreen from "./home/HomeScreen";
 
-import StudentScreen from "./students/StudentScreen";
+import { AttendanceCancelationForm } from "./attendances/AttendanceCancelationForm";
+
 import StudentForm from "./students/StudentForm";
+import StudentScreen from "./students/StudentScreen";
 
-
-import TeacherScreen from "./teachers/TeacherScreen"
 import TeacherForm from "./teachers/TeacherForm";
+import TeacherScreen from "./teachers/TeacherScreen";
 
-import {TrialSubscriptionForm} from "./subscriptions/TrialSubscriptionForm";
-import {SubscriptionForm} from "./subscriptions/SubscriptionForm";
+import { SubscriptionForm } from "./subscriptions/SubscriptionForm";
+import { TrialSubscriptionForm } from "./subscriptions/TrialSubscriptionForm";
 
+import { CalendarWeek } from "./common/CalendarWeek";
 import NoteForm from "./notes/NoteForm";
-import {CalendarWeek} from "./common/CalendarWeek";
 
 function App() {
   return (
@@ -31,6 +32,8 @@ function App() {
       <MyNavbar />
       <Route exact path="/"><HomeScreen /></Route>
       <Route exact path="/home"><HomeScreen /></Route>
+
+      <Route exact path="/attendance/:id/cancelationForm" render={(props) => <AttendanceCancelationForm {...props}/>}/>
 
       <Route exact path="/branchScreen/:id" render={(props) => <BranchScreen {...props}/>}/>
 
