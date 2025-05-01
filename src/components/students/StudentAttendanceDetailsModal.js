@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 
 import { Avatar } from "../common/Avatar";
 import { DisciplineIcon } from "../common/DisciplineIcon";
+import { getAttendanceStatusName } from "../constants/attendancies";
 import { getDisciplineName } from "../constants/disciplines";
 
 export class StudentAttendanceDetailsModal extends React.Component {
@@ -18,8 +19,6 @@ export class StudentAttendanceDetailsModal extends React.Component {
     this.handleClose = this.handleClose.bind(this);
   }
 
-  componentDidUpdate(prevProps) {}
-
   handleClose() {
     this.setState({ show: false });
   }
@@ -28,7 +27,7 @@ export class StudentAttendanceDetailsModal extends React.Component {
     if (!this.props.selectedAttendanceDetails) {
       return <></>;
     }
-    const { teacher, startDate, disciplineId } = this.props.selectedAttendanceDetails;
+    const { status, teacher, startDate, disciplineId } = this.props.selectedAttendanceDetails;
     console.log(this.props.selectedAttendanceDetails);
 
     return (
@@ -48,14 +47,17 @@ export class StudentAttendanceDetailsModal extends React.Component {
                     <Stack direction="vertical" gap={1}>
                       <div className="mb-1">Начало в {format(startDate, "hh:mm")}</div>
                       <div>
-                        Преподаватель: <Link to={"/teacher/" + teacher.teacherId}>{teacher.firstName}</Link>
+                        Преподаватель: <Link to={`/teacher/${teacher.teacherId}`}>{teacher.firstName}</Link>
                       </div>
                       <div>
-                        Направление:{" "}
+                        Направление:
                         <span>
                           <DisciplineIcon disciplineId={disciplineId} />{" "}
                         </span>{" "}
                         {getDisciplineName(disciplineId)}
+                      </div>
+                      <div>
+                        Статус: {getAttendanceStatusName(status)}
                       </div>
                     </Stack>
                   </Container>

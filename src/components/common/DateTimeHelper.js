@@ -19,28 +19,40 @@ export function formatDate(sourceDate) {
   switch (month) {
     case 0:
       monthText = "января";
+      break;
     case 1:
       monthText = "февраля";
+      break;
     case 2:
       monthText = "марта";
+      break;
     case 3:
       monthText = "апреля";
+      break;
     case 4:
       monthText = "мая";
+      break;
     case 5:
       monthText = "июня";
+      break;
     case 6:
       monthText = "июля";
+      break;
     case 7:
       monthText = "августа";
+      break;
     case 8:
       monthText = "сентября";
+      break;
     case 9:
       monthText = "октября";
+      break;
     case 10:
       monthText = "ноября";
+      break;
     case 11:
       monthText = "декабря";
+      break;
   }
 
   return `${date} ${monthText}`;

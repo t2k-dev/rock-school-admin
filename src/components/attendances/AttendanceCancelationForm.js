@@ -1,12 +1,13 @@
 import React from "react";
-import { Button, Col, Container, Form, Row, Stack } from "react-bootstrap";
+import { Button, Col, Container, Form, InputGroup, Row, Stack } from "react-bootstrap";
 
-import { AvailableTeachersTrialModal } from "../teachers/AvailableTeachersTrialModal";
+import { AvailableTeachersModal } from "../teachers/AvailableTeachersModal";
 
 import { getAttendance } from "../../services/apiAttendanceService";
-import { addTrialSubscription, getNextAvailableSlot } from "../../services/apiSubscriptionService";
-import { getAvailableTeachers } from "../../services/apiTeacherService";
+import { getNextAvailableSlot, rescheduleAttendance } from "../../services/apiSubscriptionService";
+import { getWorkingPeriods } from "../../services/apiTeacherService";
 import { formatDate, formatTime } from "../common/DateTimeHelper";
+import { getSlotDescription } from "../common/attendanceHelper";
 import { getRoomName } from "../constants/rooms";
 
 export class AttendanceCancelationForm extends React.Component {
@@ -15,11 +16,6 @@ export class AttendanceCancelationForm extends React.Component {
     this.state = {
       isExistingStudent: false,
 
-      firstName: "",
-      lastName: "",
-      age: "",
-      level: 0,
-      phone: "",
       branchId: 0,
       disciplineId: "",
 
@@ -28,7 +24,6 @@ export class AttendanceCancelationForm extends React.Component {
       availableTeachers: [],
       availableSlots: [],
       showAvailableTeacherModal: false,
-      fakeId: "",
       selectedSlotId: 0,
     };
 
@@ -48,15 +43,19 @@ export class AttendanceCancelationForm extends React.Component {
     const attendance = await getAttendance(id);
 
     this.setState({
-        attendance: attendance
+      attendance: attendance,
     });
   }
 
   generateAvailablePeriods = async (e) => {
     e.preventDefault();
-    const response = await getAvailableTeachers(this.state.disciplineId, this.state.age, 1);
+
+    let teachers;
+    const response = await getWorkingPeriods(this.state.attendance.teacherId);
+    teachers = response.data.availableTeachers;
+
     this.setState({
-      availableTeachers: response.data.availableTeachers,
+      availableTeachers: teachers,
       showAvailableTeacherModal: true,
     });
   };
@@ -71,44 +70,33 @@ export class AttendanceCancelationForm extends React.Component {
 
   handleGetNextAvailableSlot = async (e) => {
     e.preventDefault();
-    const data = (await getNextAvailableSlot(this.state.attendance.attendanceId)).data;
 
-    const date = new Date(data.startDate)
+    const data = (await getNextAvailableSlot(this.state.attendance.subscriptionId)).data;
 
-    const dayName = new Intl.DateTimeFormat('ru-RU', { weekday: 'long' }).format(date);
+    const date = new Date(data.startDate);
+
+    const dayName = new Intl.DateTimeFormat("ru-RU", { weekday: "long" }).format(date);
     const slot = {
-        startDate: data.startDate,
-        description: `${dayName}, ${formatDate(date)} в ${formatTime(date)} - ${getRoomName(data.roomId)}`,
-    }
+      startDate: data.startDate,
+      description: `${dayName}, ${formatDate(date)} в ${formatTime(date)} - ${getRoomName(data.roomId)}`,
+    };
 
-    this.setState({availableSlots: [slot], selectedSlotId: 1})
+    this.setState({ availableSlots: [slot], selectedSlotId: 1 });
   };
 
   handleSave = async (e) => {
     e.preventDefault();
 
     const selectedSlot = this.state.availableSlots.filter((s) => s.id === this.state.selectedSlotId)[0];
-    console.log("selectedSlot2");
-    console.log(selectedSlot);
+
     const requestBody = {
-      disciplineId: this.state.disciplineId,
-      branchId: 1, // DEV: map after clarification
-      teacherId: selectedSlot.teacherId,
-      trialDate: selectedSlot.start,
-      roomId: selectedSlot.roomId,
-      student: {
-        firstName: this.state.firstName,
-        lastName: this.state.lastName,
-        age: this.state.age,
-        phone: this.state.phone.replace("+7 ", "").replace(/\s/g, ""),
-        level: this.state.level,
-      },
+      attendanceId: this.state.attendance.attendanceId,
+      newStartDate: selectedSlot.start,
     };
 
-    const response = await addTrialSubscription(requestBody);
-    const newStudentId = response.data;
+    const response = await rescheduleAttendance(requestBody);
 
-    this.props.history.push(`/studentScreen/${newStudentId}`);
+    this.props.history.push(`/studentScreen/${this.state.attendance.studentId}`);
   };
 
   handleChange = (e) => {
@@ -117,24 +105,72 @@ export class AttendanceCancelationForm extends React.Component {
   };
 
   render() {
-    const { lastName, showAvailableTeacherModal, availableTeachers, availableSlots, selectedSlotId, level } = this.state;
+    const { attendance, lastName, showAvailableTeacherModal, availableTeachers, availableSlots, selectedSlotId, level } = this.state;
+    if (!attendance) {
+      return;
+    }
 
     let availableSlotsList;
     if (availableSlots && availableSlots.length > 0) {
       availableSlotsList = availableSlots.map((item, index) => (
         <option key={index} value={item.id}>
-          {item.description}
+          { getSlotDescription(item.teacherFullName, item.start)}
         </option>
       ));
     }
+
+    let availableSlotsSelection = attendance.isTrial ? (
+      <Form.Group className="mb-3" controlId="comment">
+        <div className="mb-2">Окно для занятия</div>
+        <InputGroup className="mb-3 mt-2 text-center" controlId="GenerteSchedule">
+          <Form.Select
+            aria-label="Веберите..."
+            value={selectedSlotId}
+            onChange={(e) => this.setState({ selectedSlotId: e.target.value })}
+            style={{ width: "200px" }}
+          >
+            <option>выберите...</option>
+            {availableSlotsList}
+          </Form.Select>
+
+          <Button variant="outline-secondary" type="null" onClick={(e) => this.generateAvailablePeriods(e)} disabled={false}>
+            Доступыне окна...
+          </Button>
+        </InputGroup>
+      </Form.Group>
+    ) : (
+      <Form.Group className="mb-3" controlId="comment">
+        <div className="mb-2">Окно для занятия</div>
+        <div className="mb-3">
+          <Button
+            variant="outline-secondary"
+            type="null"
+            onClick={(e) => this.handleGetNextAvailableSlot(e)}
+            disabled={false}
+            style={{ marginRight: "10px" }}
+          >
+            Следующее окно по расписанию
+          </Button>
+
+          <Button variant="outline-secondary" type="null" onClick={(e) => this.generateAvailablePeriods(e)} disabled={false}>
+            Доступыне окна...
+          </Button>
+        </div>
+
+        <Form.Select aria-label="Веберите..." value={selectedSlotId} onChange={(e) => this.setState({ selectedSlotId: e.target.value })}>
+          <option>выберите...</option>
+          {availableSlotsList}
+        </Form.Select>
+      </Form.Group>
+    );
 
     return (
       <Container style={{ marginTop: "40px" }}>
         <Row>
           <Col md="4"></Col>
           <Col md="4">
-            <h2 className="text-center mb-4">Перенос занятия</h2>
-            <Stack className="mb-3" gap={2}>
+            <h2 className="text-center mb-4">{attendance?.isTrial ? "Перенос пробного занятия" : "Перенос занятия"}</h2>
+            <Stack className="mb-3" gap={2} style={{ backgroundColor: "#e7e7e7", padding: "15px", borderRadius: "10px" }}>
               <div>Дата: 2025-05-05</div>
               <div>Направление: Вокал</div>
               <div>Преподаватель: Варавара</div>
@@ -159,35 +195,14 @@ export class AttendanceCancelationForm extends React.Component {
                 <Form.Label>Комментарий</Form.Label>
                 <Form.Control onChange={this.handleChange} value={lastName} placeholder="введите..." autoComplete="off" />
               </Form.Group>
-              <Form.Group className="mb-3" controlId="comment">
-                <div className="mb-2">Окно для занятия</div>
-                <div className="mb-3">
-                  <Button
-                    variant="outline-secondary"
-                    type="null"
-                    onClick={(e) => this.handleGetNextAvailableSlot(e)}
-                    disabled={false}
-                    style={{ marginRight: "10px" }}
-                  >
-                    Следующее окно по расписанию
-                  </Button>
+              {availableSlotsSelection}
 
-                  <Button variant="outline-secondary" type="null" onClick={(e) => this.generateAvailablePeriods(e)} disabled={false}>
-                    Доступыне окна...
-                  </Button>
-                </div>
-
-                <AvailableTeachersTrialModal
-                  show={showAvailableTeacherModal}
-                  availableTeachers={availableTeachers}
-                  updateAvailableSlots={this.updateAvailableSlots}
-                  handleClose={this.handleCloseAvailableTeachersModal}
-                />
-                <Form.Select aria-label="Веберите..." value={selectedSlotId} onChange={(e) => this.setState({ selectedSlotId: e.target.value })}>
-                  <option>выберите...</option>
-                  {availableSlotsList}
-                </Form.Select>
-              </Form.Group>
+              <AvailableTeachersModal
+                show={showAvailableTeacherModal}
+                availableTeachers={availableTeachers}
+                updateAvailableSlots={this.updateAvailableSlots}
+                handleClose={this.handleCloseAvailableTeachersModal}
+              />
               <hr></hr>
               <div className="text-center">
                 <Button variant="success" type="null" onClick={this.handleSave}>

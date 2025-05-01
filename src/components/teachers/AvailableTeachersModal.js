@@ -1,9 +1,9 @@
 import React from "react";
-import { Modal, Form, Button, Badge } from "react-bootstrap";
+import { Badge, Button, Form, Modal } from "react-bootstrap";
 import { v4 as uuidv4 } from "uuid";
 
 import { CalendarWeek } from "../common/CalendarWeek";
-import { formatTime, formatDate } from "../common/DateTimeHelper";
+import { getSlotDescription } from "../common/attendanceHelper";
 
 export class AvailableTeachersModal extends React.Component {
   constructor(props) {
@@ -19,7 +19,6 @@ export class AvailableTeachersModal extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    console.log("componentDidUpdate available");
     if (this.props.availableTeachers !== prevProps.availableTeachers) {
       this.setState({
         availableTeachers: this.props.availableTeachers,
@@ -35,16 +34,13 @@ export class AvailableTeachersModal extends React.Component {
 
   getAvailableSlotsText() {
     let result = "";
-    console.log(this.state.availableSlots);
     this.state.availableSlots.forEach((element) => {
-      result = result + element.description + "\n";
+      result = `${result}${getSlotDescription(element.teacherFullName, element.start)} \n`;
     });
     this.setState({ availableSlotsText: result });
   }
 
   handleSelectSlot = (teacher, slotInfo) => {
-    console.log("handleSelectSlot");
-    console.log(teacher);
     const teacherId = teacher.teacherId;
 
     const updatedTeachers = [...this.state.availableTeachers];
@@ -62,8 +58,7 @@ export class AvailableTeachersModal extends React.Component {
       };
 
       const currentAttendancies = updatedTeachers[teacherIndex].attendancies ?? [];
-      console.log("currentAttendancies");
-      console.log(currentAttendancies);
+
       // Update the teacher's events array
       updatedTeachers[teacherIndex] = {
         ...updatedTeachers[teacherIndex],
@@ -72,16 +67,12 @@ export class AvailableTeachersModal extends React.Component {
     }
 
     // Add the selected slot to the availableSlots array
-
-    const dayName = new Intl.DateTimeFormat('ru-RU', { weekday: 'long' }).format(slotInfo.start);
-
     const newSlot = {
       id: slotId,
       teacherId: teacherId,
       teacherFullName: teacher.firstName + " " + teacher.lastName,
       start: slotInfo.start,
       end: slotInfo.end,
-      description: teacher.firstName + " " + teacher.lastName + ": " + dayName + ", " + formatDate(slotInfo.start) + " в " + formatTime(slotInfo.start),
     };
 
     const updatedAvailableSlots = [...this.state.availableSlots, newSlot];
@@ -96,17 +87,12 @@ export class AvailableTeachersModal extends React.Component {
   };
 
   handleSelectEvent = (teacherId, slotInfo) => {
-    console.log("handleSelectEvent");
     if (!slotInfo.isNew) {
       return;
     }
 
     // update available slots
     const updatedSlots = this.state.availableSlots.filter((s) => s.id !== slotInfo.id);
-    console.log("slotInfo.id");
-    console.log(slotInfo.id);
-    console.log(slotInfo);
-    console.log(updatedSlots);
 
     // update teacher events
     const updatedTeachers = [...this.state.availableTeachers];
@@ -129,18 +115,14 @@ export class AvailableTeachersModal extends React.Component {
   };
 
   render() {
-    console.log("render");
-    
     const { availableTeachers, availableSlotsText } = this.state;
-
-    console.log(availableTeachers);
 
     let availableTeachersList;
     if (availableTeachers && availableTeachers.length > 0) {
-      let backgroundEvents;
-      let events;
       availableTeachersList = availableTeachers.map((teacher, index) => {
+
         // Working periods
+        let backgroundEvents;
         if (teacher.scheduledWorkingPeriods) {
           backgroundEvents = teacher.scheduledWorkingPeriods.map((period) => ({
             id: period.scheduledWorkingPeriodId,
@@ -152,6 +134,7 @@ export class AvailableTeachersModal extends React.Component {
         }
 
         // Events
+        let events;
         if (teacher.attendancies) {
           events = teacher.attendancies.map((attendance) => ({
             id: attendance.attendanceId,

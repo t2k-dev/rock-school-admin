@@ -1,8 +1,7 @@
-import React from "react";
-import { render } from "react-dom";
-import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "moment/locale/ru";
+import React from "react";
+import { Calendar, momentLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
 import AttendanceStatus from "../constants/AttendanceStatus";
@@ -20,19 +19,30 @@ export class CalendarWeek extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    console.log("componentDidUpdate Week");
     if (this.props.events !== prevProps.events) {
       this.setState({ events: this.props.events });
     }
     if (this.props.backgroundEvents !== prevProps.backgroundEvents) {
       this.setState({ backgroundEvents: this.props.backgroundEvents });
     }
-
-    console.log(this.state);
   }
 
   eventPropGetter = (event) => {
+    const cancelStatuses = [4, 5, 6];
+    
     if (event.isTrial === true) {
+      if (cancelStatuses.includes(event.status)) {
+        return {
+          style: {
+            backgroundColor: "#a8a24d",
+            color: "black",
+            borderRadius: "5px",
+            border: "0",
+            textAlign: "center",
+          },
+        };
+      }
+
       return {
         style: {
           backgroundColor: "#e1da77",
