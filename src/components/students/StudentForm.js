@@ -1,7 +1,7 @@
 import React from "react";
-import { Form, Container, Row, Col, Button } from 'react-bootstrap';
+import { Button, Col, Container, Form, Row } from 'react-bootstrap';
 import InputMask from "react-input-mask";
-import { getStudent, addStudent, saveStudent } from "../../services/apiStudentService";
+import { addStudent, getStudent, saveStudent } from "../../services/apiStudentService";
 import { SexControl } from "../common/SexControl";
 
 
@@ -31,6 +31,9 @@ class StudentForm extends React.Component{
     }
 
     async onFormLoad(){
+        if (this.state.isNew)
+            return;
+
         const id = this.props.match.params.id;
         const student = await getStudent(id);
         
