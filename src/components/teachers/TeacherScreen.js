@@ -1,11 +1,11 @@
-import React from "react";
-import { getTeacherScreenDetails } from "../../services/apiTeacherService";
-import { Tabs, Tab, Row, Col, Container, Table } from "react-bootstrap";
-import { Link } from "react-router-dom";
 import { format } from "date-fns";
+import React from "react";
+import { Col, Container, Row, Tab, Table, Tabs } from "react-bootstrap";
+import { Link } from "react-router-dom";
+import { getTeacherScreenDetails } from "../../services/apiTeacherService";
 
-import TeacherScreenCard from "./TeacherScreenCard";
 import { CalendarWeek } from "../common/CalendarWeek";
+import TeacherScreenCard from "./TeacherScreenCard";
 
 import { getDisciplineName } from "../constants/disciplines";
 import { getSubscriptionStatusName } from "../constants/subscriptions";
@@ -126,7 +126,7 @@ class TeacherScreen extends React.Component {
               <tr key={index}>
                 <td>{format(item.startDate, "yyyy-MM-dd")}</td>
                 <td>
-                  <Link to={"/student/" + item.student.studentId}>
+                  <Link to={`/studentScreen/${item.student.studentId}`}>
                     {item.student.firstName} {item.student.lastName}
                   </Link>
                 </td>

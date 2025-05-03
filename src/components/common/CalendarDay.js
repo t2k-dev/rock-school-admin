@@ -3,7 +3,9 @@ import "moment/locale/ru";
 import React from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import AttendanceStatus from "../constants/AttendanceStatus";
+
+import { applyCalendarStyle } from "./calendarHelper";
+
 
 moment.locale("ru");
 const localizer = momentLocalizer(moment);
@@ -16,90 +18,6 @@ export class CalendarDay extends React.Component {
       backgroundEvents: this.props.backgroundEvents,
     };
   }
-
-  eventPropGetter = (event) => {
-    if (event.isTrial === true) {
-      return {
-        style: {
-          backgroundColor: "#e1da77",
-          color: "black",
-          borderRadius: "5px",
-          border: "0",
-          textAlign: "center",
-        },
-      };
-    }
-
-    if (event.status === AttendanceStatus.NEW) {
-      return {
-        style: {
-          backgroundColor: "#697ac9",
-          color: "white",
-          borderRadius: "5px",
-          border: "0",
-          textAlign: "center",
-        },
-      };
-    }
-
-    if (event.status === AttendanceStatus.ATTENDED) {
-      return {
-        style: {
-          backgroundColor: "#8d9bdd",
-          color: "white",
-          borderRadius: "5px",
-          border: "0",
-          textAlign: "center",
-        },
-      };
-    }
-    
-    if (event.status === AttendanceStatus.MISSED) {
-      return {
-        style: {
-          backgroundColor: "#ce6868",
-          color: "white",
-          borderRadius: "5px",
-          border: "0",
-          textAlign: "center",
-        },
-      };
-    }
-    if (event.status === AttendanceStatus.CANCELED_BY_STUDENT) {
-      return {
-        style: {
-          backgroundColor: "#949494",
-          color: "white",
-          borderRadius: "5px",
-          border: "0",
-          textAlign: "center",
-        },
-      };
-    }
-    if (event.status === AttendanceStatus.CANCELED_BY_TEACHER) {
-      return {
-        style: {
-          backgroundColor: "#646464",
-          color: "white",
-          borderRadius: "5px",
-          border: "0",
-          textAlign: "center",
-        },
-      };
-    }
-
-
-
-    return {
-      style: {
-        backgroundColor: "red",
-        color: "white",
-        borderRadius: "5px",
-        border: "0",
-        textAlign: "center",
-      },
-    };
-  };
 
   render() {
     const messages = {
@@ -140,7 +58,7 @@ export class CalendarDay extends React.Component {
           resourceTitleAccessor="resourceTitle"
           resourceGroupingLayout={false}
           now={() => new Date()}
-          eventPropGetter={this.eventPropGetter}
+          eventPropGetter={(event) => applyCalendarStyle(event)}
           onSelectEvent={this.props.onSelectEvent}
         />
       </div>

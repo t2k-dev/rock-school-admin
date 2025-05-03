@@ -5,10 +5,14 @@ import { Link } from "react-router-dom";
 
 import { DisciplineIcon } from "../common/DisciplineIcon";
 
+import { updateStatus } from "../../services/apiAttendanceService";
+
 import { Avatar } from "../common/Avatar";
-import { getDisciplineName } from "../constants/disciplines";
 import { CalendarIcon } from "../icons/CalendarIcon";
 
+import AttendanceStatus from "../constants/AttendanceStatus";
+import { getAttendanceStatusName } from "../constants/attendancies";
+import { getDisciplineName } from "../constants/disciplines";
 import { getRoomName } from "../constants/rooms";
 
 export class SlotDetailsModal extends React.Component {
@@ -26,6 +30,7 @@ export class SlotDetailsModal extends React.Component {
     };
 
     this.handleClose = this.handleClose.bind(this);
+    this.handleStatusChange = this.handleStatusChange.bind(this);
     this.getAvailableSlots = this.getAvailableSlots.bind(this);
     this.handleStatusChange = this.handleStatusChange.bind(this);
     this.handleTrialStatusChange = this.handleTrialStatusChange.bind(this);
@@ -37,17 +42,16 @@ export class SlotDetailsModal extends React.Component {
     }
   }
 
-  handleStatusChange(e) {
-    alert(this.props.selectedSlotDetails.attendanceId);
-    this.setState({ status: e.target.value });
-  }
-
   handleTrialStatusChange(e) {
     this.setState({ trialStatus: e.target.value });
   }
 
   handleClose() {
     this.setState({ show: false });
+  }
+
+  async handleStatusChange(status) {
+    const response = await updateStatus(this.props.selectedSlotDetails.attendanceId, status)
   }
 
   getAvailableSlots() {
@@ -85,7 +89,7 @@ export class SlotDetailsModal extends React.Component {
                     </div>
                   </Container>
                   <Container>
-                    <Container className="mt-3" style={{ fontSize: "14px" }}>
+                    <Container className="mt-2" style={{ fontSize: "14px" }}>
                       <Stack direction="vertical" gap={0}>
                         <div>
                           <CalendarIcon /> <span style={{ fontSize: "14px" }}>{format(startDate, "HH:mm - dd.MM.yyyy")}</span>
@@ -101,6 +105,7 @@ export class SlotDetailsModal extends React.Component {
                           Преподаватель: <Link to={"/teacher/" + teacher.teacherId}>{teacher.firstName}</Link>
                         </div>
                         <div>Комната: {getRoomName(roomId)}</div>
+                        <div>Статус: {getAttendanceStatusName(status)}</div>
                       </Stack>
                     </Container>
                     <Link to={`/student/${this.props.selectedSlotDetails.studentId}`}>
@@ -113,21 +118,28 @@ export class SlotDetailsModal extends React.Component {
               </Row>
             </Container>
             <hr></hr>
-            <Form.Group className="mb-3" controlId="status">
-              <Form.Label>Статус</Form.Label>
-              <Form.Select name="level" aria-label="Веберите..." value={status} onChange={this.handleStatusChange}>
-                <option>выберите...</option>
-                <option value="1">Новое</option>
-                <option value="2">Проведено</option>
-                <option value="3">Пропущено</option>
-                <option value="4">Отменено учеником</option>
-                <option value="5">Отменено преподавателем</option>
-              </Form.Select>
-            </Form.Group>
+            <div className="text-center mt-5 mb-5">
+                <Button onClick={(s) => this.handleStatusChange(AttendanceStatus.ATTENDED)} variant={status === AttendanceStatus.ATTENDED ? 'primary' : 'outline-primary'}>Посещено</Button>
+                <Button onClick={(s) => this.handleStatusChange(AttendanceStatus.MISSED)} variant={status === AttendanceStatus.MISSED ? 'danger' : 'outline-danger'} style={{marginLeft:"10px"}}>Пропущено</Button>
+                <Button
+                  as={Link}
+                  to={{
+                    pathname: `/attendance/${this.props.selectedSlotDetails.attendanceId}/cancelationForm`,
+                    state: { disciplineId: "??" },
+                  }}
+                  variant={status === AttendanceStatus.CANCELED_BY_STUDENT ? 'secondary' : 'outline-secondary'}
+                  style={{marginLeft:"10px"}}
+                  
+                >
+                  Перенесено
+                </Button>
+            </div>
+
             {showTrialStatus && (
-              <Form.Group className="mt-3 mb-3">
-                {
+              <Form.Group className="mb-4">
+                {                
                   /*showAddSubscription && */ <div className="text-center">
+                    <h4>Результат пробного занятия</h4>
                     <Button
                       as={Link}
                       to={{

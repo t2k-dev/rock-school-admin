@@ -1,4 +1,7 @@
 export function getAttendanceStatusName(statusId) {
+  if (!statusId) {
+    return "(none)";
+  }
   const attendanceStatusesRu = [
     { id: 1, name: "Новое" },
     { id: 2, name: "Посещено" },

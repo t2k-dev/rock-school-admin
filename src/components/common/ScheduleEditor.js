@@ -10,10 +10,10 @@ export class ScheduleEditor extends React.Component {
     this.state = {
       periods: this.props.periods,
 
-      periodDay: '',
-      periodStart: '',
-      periodEnd: '',
-      roomId: '',
+      periodDay: "",
+      periodStart: "",
+      periodEnd: "",
+      roomId: "",
     };
   }
 
@@ -73,13 +73,20 @@ export class ScheduleEditor extends React.Component {
 
     let periodsList;
     if (periods && periods.length > 0) {
-
       const sortedPeriods = periods.sort((a, b) => {
+        // Special condition: Always place `weekDay = 0` at the end
+        if (a.weekDay === 0 && b.weekDay !== 0) {
+          return 1; // Move `a` to after `b`
+        }
+        
+        if (b.weekDay === 0 && a.weekDay !== 0) {
+          return -1; // Move `b` to after `a`
+        }
         // Sort by `weekDay` first
         if (a.weekDay !== b.weekDay) {
           return a.weekDay - b.weekDay;
         }
-      
+
         // If `weekDay` is the same, sort by `startTime`
         return a.startTime.localeCompare(b.startTime);
       });
@@ -118,7 +125,10 @@ export class ScheduleEditor extends React.Component {
     return (
       <Form.Group className="mb-3">
         <Form.Label>
-          <b><CalendarIcon />Расписание</b>
+          <b>
+            <CalendarIcon />
+            Расписание
+          </b>
         </Form.Label>
 
         <Row>

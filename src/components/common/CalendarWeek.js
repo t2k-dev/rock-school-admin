@@ -4,7 +4,8 @@ import React from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
-import AttendanceStatus from "../constants/AttendanceStatus";
+
+import { applyCalendarStyle } from "./calendarHelper";
 
 moment.locale("ru");
 const localizer = momentLocalizer(moment);
@@ -26,68 +27,6 @@ export class CalendarWeek extends React.Component {
       this.setState({ backgroundEvents: this.props.backgroundEvents });
     }
   }
-
-  eventPropGetter = (event) => {
-    const cancelStatuses = [4, 5, 6];
-    
-    if (event.isTrial === true) {
-      if (cancelStatuses.includes(event.status)) {
-        return {
-          style: {
-            backgroundColor: "#a8a24d",
-            color: "black",
-            borderRadius: "5px",
-            border: "0",
-            textAlign: "center",
-          },
-        };
-      }
-
-      return {
-        style: {
-          backgroundColor: "#e1da77",
-          color: "black",
-          borderRadius: "5px",
-          border: "0",
-          textAlign: "center",
-        },
-      };
-    }
-
-    if (event.status === AttendanceStatus.NEW) {
-      return {
-        style: {
-          backgroundColor: "#697ac9",
-          color: "white",
-          borderRadius: "5px",
-          border: "0",
-          textAlign: "center",
-        },
-      };
-    }
-    if (event.isNew) {
-      // Custom style for new events
-      return {
-        style: {
-          backgroundColor: "#ffc839",
-          color: "black", // Text color
-          borderRadius: "5px",
-          border: "0",
-          textAlign: "center",
-        },
-      };
-    }
-    // Default style for other events
-    return {
-      style: {
-        backgroundColor: "#acacac",
-        color: "white",
-        borderRadius: "5px",
-        border: "0",
-        textAlign: "center",
-      },
-    };
-  };
 
   render() {
     const messages = {
@@ -123,7 +62,7 @@ export class CalendarWeek extends React.Component {
           onShowMore={(events, date) => this.setState({ showModal: true, events })}
           onSelectSlot={this.props.onSelectSlot}
           onSelectEvent={this.props.onSelectEvent}
-          eventPropGetter={this.eventPropGetter}
+          eventPropGetter={(event) => applyCalendarStyle(event)}
         />
       </div>
     );
