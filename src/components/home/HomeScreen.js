@@ -1,10 +1,12 @@
 import { format } from "date-fns";
 import React from "react";
-import { Button, Container, Row, Tab, Table, Tabs } from "react-bootstrap";
+import { Button, Container, Form, Row, Tab, Table, Tabs } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 import { CalendarDay } from "../common/CalendarDay";
 import { EditIcon } from "../icons/EditIcon";
+
+import { isCancelledAttendanceStatus } from "../common/attendanceHelper";
 
 import { getHomeScreenDetails } from "../../services/apiHomeService";
 import { markComplete } from "../../services/apiNoteService";
@@ -17,13 +19,16 @@ class HomeScreen extends React.Component {
       rooms: null,
       notes: null,
       attendances: null,
+
+      showCanceled: false,
+
       showSlotDetailsModal: false,
 
       selectedSlotDetails: null,
     };
     this.handleMarkComplete = this.handleMarkComplete.bind(this);
+    this.handleShowCanceled = this.handleShowCanceled.bind(this);
   }
-
   componentDidMount() {
     this.onFormLoad();
   }
@@ -39,6 +44,10 @@ class HomeScreen extends React.Component {
     });
   }
 
+  handleShowCanceled = (e) => {
+    this.setState({ showCanceled: e.target.checked });
+  };
+
   handleSelectEvent = (teacherId, slotInfo) => {
     const newSelectedSlotDetails = this.state.attendances.filter((a) => a.attendanceId === slotInfo.id)[0];
     this.setState({ showSlotDetailsModal: true, selectedSlotDetails: newSelectedSlotDetails });
@@ -53,12 +62,14 @@ class HomeScreen extends React.Component {
   }
 
   render() {
-    const { attendances, selectedSlotDetails, notes, showSlotDetailsModal } = this.state;
+    const { attendances, showCanceled, selectedSlotDetails, notes, showSlotDetailsModal } = this.state;
 
     // Events
+
     let events;
     if (attendances) {
-      events = attendances.map((attendance) => ({
+      const filteredAttendancies = showCanceled === false ? attendances.filter((a) => !isCancelledAttendanceStatus(a.status)) : attendances;
+      events = filteredAttendancies.map((attendance) => ({
         id: attendance.attendanceId,
         title: attendance.student.firstName + " " + attendance.student.lastName,
         start: new Date(attendance.startDate),
@@ -77,13 +88,10 @@ class HomeScreen extends React.Component {
     if (activeNotes && activeNotes?.length > 0) {
       activeNotesTable = (
         <Table striped bordered hover>
-
           <tbody>
             {activeNotes.map((item, index) => (
               <tr key={index}>
-                <td style={{width: "100px"}}>
-                  {format(item.completeDate, 'HH:mm')}
-                </td>
+                <td style={{ width: "100px" }}>{format(item.completeDate, "HH:mm")}</td>
                 <td>
                   <Container className="d-flex p-0">
                     <div className="flex-grow-1">{item.description}</div>
@@ -104,7 +112,7 @@ class HomeScreen extends React.Component {
     }
 
     let completedNotesTable;
-    if (completedNotes ) {
+    if (completedNotes) {
       completedNotesTable = (
         <Table striped bordered hover>
           <thead>
@@ -160,6 +168,20 @@ class HomeScreen extends React.Component {
               this.handleSelectEvent(1, slotInfo);
             }}
           />
+          <div className="d-flex mt-2">
+            <div className="flex-grow-1"></div>
+            <Form.Check
+              type="switch"
+              id="custom-switch"
+              label="Показывать отмененные"
+              checked={showCanceled}
+              onClick={(e) => {
+                this.setState({ showCanceled: e.target.checked });
+              }}
+              className=""
+            />
+          </div>
+
           <SlotDetailsModal
             selectedSlotDetails={selectedSlotDetails}
             show={showSlotDetailsModal}

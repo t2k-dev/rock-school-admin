@@ -33,17 +33,12 @@ export class SlotDetailsModal extends React.Component {
     this.handleStatusChange = this.handleStatusChange.bind(this);
     this.getAvailableSlots = this.getAvailableSlots.bind(this);
     this.handleStatusChange = this.handleStatusChange.bind(this);
-    this.handleTrialStatusChange = this.handleTrialStatusChange.bind(this);
   }
 
   componentDidUpdate(prevProps) {
     if (this.props.selectedSlotDetails?.status !== prevProps.selectedSlotDetails?.status) {
       this.setState({ status: this.props.selectedSlotDetails.status });
     }
-  }
-
-  handleTrialStatusChange(e) {
-    this.setState({ trialStatus: e.target.value });
   }
 
   handleClose() {
@@ -63,9 +58,9 @@ export class SlotDetailsModal extends React.Component {
   }
 
   render() {
-    const { status, trialStatus } = this.state;
+    const { status } = this.state;
 
-    const showAddSubscription = status === "2";
+    const showAddSubscription = status === AttendanceStatus.ATTENDED;
     const showTrialStatus = this.props.selectedSlotDetails?.isTrial === true;
     if (!this.props.selectedSlotDetails) {
       return <></>;
@@ -138,7 +133,7 @@ export class SlotDetailsModal extends React.Component {
             {showTrialStatus && (
               <Form.Group className="mb-4">
                 {                
-                  /*showAddSubscription && */ <div className="text-center">
+                  showAddSubscription && <div className="text-center">
                     <h4>Результат пробного занятия</h4>
                     <Button
                       as={Link}
