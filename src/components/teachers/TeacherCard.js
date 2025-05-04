@@ -1,7 +1,9 @@
 import React from "react";
-import { Card, Col, Image, Row } from 'react-bootstrap';
+import { Card, Col, Image, Row, Stack } from 'react-bootstrap';
 import { Link } from "react-router-dom";
 import noImage from '../../images/user.jpg';
+import { DisciplineIcon } from "../common/DisciplineIcon";
+
 import { getDisciplineName } from "../constants/disciplines";
 
 class TeacherCard extends React.Component{
@@ -17,13 +19,16 @@ class TeacherCard extends React.Component{
                             <Col>
                                 <Link to={`/teacher/${this.props.item.teacherId}`} ><h3>{this.props.item.firstName} {this.props.item.lastName}</h3></Link>
                                 <div>
-                                    Направления
-                                    <ul>
+                                    <Stack gap={0} className="mt-2">
                                         {
                                             this.props.item.disciplines.map((item, index) => {
-                                                return(<li key={index}>{getDisciplineName(item.disciplineId)}</li>)
+                                                return(
+                                                <div key={index}>
+                                                    <DisciplineIcon disciplineId={item.disciplineId} />
+                                                    <span style={{marginLeft:"10px"}}>{getDisciplineName(item.disciplineId)}</span>
+                                                </div>)
                                         })}
-                                    </ul>
+                                    </Stack>
                                 </div>
                             </Col>
                         </Row>

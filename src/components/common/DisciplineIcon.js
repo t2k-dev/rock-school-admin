@@ -1,11 +1,10 @@
 import React from "react";
-import { Form } from "react-bootstrap";
-import { VocalIcon } from "../icons/VocalIcon";
-import { GuitarIcon } from "../icons/GuitarIcon";
 import { BassGuitarIcon } from "../icons/BassGuitarIcon";
 import { ElectroGuitarIcon } from "../icons/ElectroGuitarIcon";
 import { ExtremeVocalIcon } from "../icons/ExtremeVocalIcon";
+import { GuitarIcon } from "../icons/GuitarIcon";
 import { UkuleleIcon } from "../icons/UkuleleIcon";
+import { VocalIcon } from "../icons/VocalIcon";
 
 export class DisciplineIcon extends React.Component {
   constructor(props) {
@@ -16,22 +15,22 @@ export class DisciplineIcon extends React.Component {
     let iconControl;
     switch (this.props.disciplineId) {
       case 1:
-        iconControl = <GuitarIcon />;
+        iconControl = <GuitarIcon color={this.props.color}/>;
         break;
       case 2:
-        iconControl = <ElectroGuitarIcon />;
+        iconControl = <ElectroGuitarIcon color={this.props.color}/>;
         break;
       case 3:
-        iconControl = <BassGuitarIcon />;
+        iconControl = <BassGuitarIcon color={this.props.color}/>;
         break;
       case 4:
-        iconControl = <UkuleleIcon />;
+        iconControl = <UkuleleIcon color={this.props.color}/>;
         break;
       case 5:
-        iconControl = <VocalIcon />;
+        iconControl = <VocalIcon color={this.props.color}/>;
         break;
       case 9:
-        iconControl = <ExtremeVocalIcon />;
+        iconControl = <ExtremeVocalIcon color={this.props.color}/>;
         break;
       default:
         iconControl = <div>#</div>;
