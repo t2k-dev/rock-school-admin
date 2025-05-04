@@ -77,6 +77,7 @@ class HomeScreen extends React.Component {
         resourceId: attendance.roomId,
         status: attendance.status,
         isTrial: attendance.isTrial,
+        disciplineId: attendance.disciplineId,
       }));
     }
 
@@ -155,8 +156,11 @@ class HomeScreen extends React.Component {
               </div>
             </div>
             <div>
-              <Button as={Link} to="/admin/addTrial" variant="outline-success">
+              <Button as={Link} to="/admin/addTrial" variant="outline-success"  style={{ marginRight: "10px" }}>
                 + Пробное занятие
+              </Button>
+              <Button as={Link} to="/student/new" variant="outline-success">
+                + Новый ученик
               </Button>
             </div>
           </div>

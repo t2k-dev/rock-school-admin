@@ -68,9 +68,19 @@ class StudentScreen extends React.Component {
     console.log("selectedAttendanceDetails");
     console.log(selectedAttendanceDetails);
     // Subscriptions
-    let subscriptionsList;
+    let subscriptionsTable;
     if (subscriptions && subscriptions.length > 0) {
-      subscriptionsList = subscriptions.map((item, index) => (
+      subscriptionsTable = <Table striped bordered hover>
+        <thead>
+          <tr>
+            <th>Направление</th>
+            <th>Преподаватель</th>
+            <th>Занятий</th>
+            <th>Статус</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>{subscriptions.map((item, index) => (
         <tr key={index}>
           <td>{getDisciplineName(item.disciplineId)}</td>
           <td>
@@ -85,10 +95,12 @@ class StudentScreen extends React.Component {
               Продлить
             </Button>
           </td>
-        </tr>
-      ));
+        </tr>))
+        }
+        </tbody>
+      </Table>;
     } else {
-      subscriptionsList = (
+      subscriptionsTable = (
         <tr key={1}>
           <td colSpan="4" style={{ textAlign: "center" }}>
             Нет записей
@@ -136,42 +148,10 @@ class StudentScreen extends React.Component {
           <h3>Абонементы</h3>
         </Row>
         <Row style={{ marginTop: "20px" }}>
-          <Col md="10">
+          <Col>
             <Table striped bordered hover>
-              <thead>
-                <tr>
-                  <th>Направление</th>
-                  <th>Преподаватель</th>
-                  <th>Занятий</th>
-                  <th>Статус</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>{subscriptionsList}</tbody>
+              {subscriptionsTable}
             </Table>
-          </Col>
-          <Col md="2">
-            <div className="d-grid gap-2">
-              <Link to="aa">
-                <Button variant="secondary" type="null" size="md" className="w-100" onClick={this.handleSave}>
-                  Пробное занятие
-                </Button>
-              </Link>
-              <Link
-                to={{
-                  pathname: `/student/${student.studentId}/subscriptionForm`,
-                  state: { student: student },
-                }}
-              >
-                <Button variant="secondary" type="null" size="md" className="w-100" onClick={this.handleSave}>
-                  Новый абонемент
-                </Button>
-              </Link>
-            </div>
-
-            <Row>
-              <Col></Col>
-            </Row>
           </Col>
         </Row>
       </Container>

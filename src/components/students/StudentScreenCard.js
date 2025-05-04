@@ -1,5 +1,7 @@
 import React from "react";
-import { Card, Row, Col, Image, Button, Container } from "react-bootstrap";
+import { Button, Card, Container, Stack } from "react-bootstrap";
+import { Link } from "react-router-dom";
+
 import { Avatar } from "../common/Avatar";
 import { EditIcon } from "../icons/EditIcon";
 import GroupIcon from "../icons/GroupIcon";
@@ -12,39 +14,55 @@ class StudentScreenCard extends React.Component {
 
   render() {
     const Level = {
-      0: 'Начинающий (0)',
-      1: 'Продолжающий (1)',
-      2: 'Продвинутый'
-    }
+      0: "Начинающий (0)",
+      1: "Продолжающий (1)",
+      2: "Продвинутый",
+    };
 
     const { item } = this.props;
     return (
       <Card className="ms-col-2 mb-2">
         <Card.Body>
-          <Container className="d-flex justify-content-between align-items-center" style={{ flexDirection: "row" }}>
-            <Container style={{ width: "160px" }}>
+          <div className="d-flex justify-content-between align-items-center" style={{ flexDirection: "row" }}>
+            <div style={{ width: "160px" }}>
               <Avatar></Avatar>
-            </Container>
-            <Container
-              style={{ flexDirection: "column" }}
-              className=""
-            >
+            </div>
+            <Container className="flex-grow-1">
               <Container>
-                <div style={{fontWeight:'bold', fontSize:'28px'}}>
+                <div style={{ fontWeight: "bold", fontSize: "24px" }}>
                   {item.firstName} {item.lastName}
                   <EditIcon onIconClick={this.handleEditClick} />
                 </div>
-                <div className="mt-2">{Level[item.level]}</div>
+                <div style={{fontSize:"16px"}} className="mt-1">{Level[item.level]}</div>
               </Container>
             </Container>
-            <Container>
-            <Container style={{textAlign:'center'}} className="mt-2">
-              <GroupIcon/>
-                <div style={{fontWeight:'bold'}}> Группа</div>
-                <div >18pm</div>
+            <div>
+              <Container style={{ textAlign: "center", marginRight:"100px"}} className="mt-2">
+                <GroupIcon />
+                <div style={{ fontWeight: "bold" }}> Группа</div>
+                <div>18pm</div>
               </Container>
-            </Container>
-          </Container>
+            </div>
+            <div>
+              <Stack gap={2} style={{width:"200px"}}>
+              
+                <Button as={Link} variant="outline-success" type="null" size="md" className="w-100">
+                  + Пробное занятие
+                </Button>
+              
+              <Link
+                to={{
+                  pathname: `/student/${item.studentId}/subscriptionForm`,
+                  state: { student: item },
+                }}
+              >
+                <Button variant="outline-success" type="null" size="md" className="w-100" onClick={this.handleSave}>
+                  + Новый абонемент
+                </Button>
+              </Link>
+              </Stack>
+            </div>
+          </div>
         </Card.Body>
       </Card>
     );

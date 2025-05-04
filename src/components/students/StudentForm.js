@@ -75,7 +75,7 @@ class StudentForm extends React.Component{
             studentId = response.data.studentId
         }
 
-        this.props.history.goBack();
+        this.props.history.push(`/studentScreen/${studentId}`);
     }
 
     handleChange = (e) =>{

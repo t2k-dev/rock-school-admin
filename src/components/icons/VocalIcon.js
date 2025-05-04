@@ -21,7 +21,7 @@ export function VocalIcon({ onIconClick }) {
             imageRendering: "optimizeQuality",
             fillRule: "evenodd",
             clipRule:"evenodd",
-            fill:"#c22222"
+            fill:"black"
         }}
         viewBox="0 0 4.261 4.297"
       >

@@ -4,11 +4,23 @@ import React from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
+import { DisciplineIcon } from "../common/DisciplineIcon";
 import { applyCalendarStyle } from "./calendarHelper";
 
 
 moment.locale("ru");
 const localizer = momentLocalizer(moment);
+
+const EventComponent = ({ event }) => {
+  console.log(event);
+  return (
+    <div style={{ display: "flex", alignItems: "center", marginTop:"5px", marginLeft:"5px" }}>
+      <DisciplineIcon disciplineId={event.disciplineId}/>
+      <span style={{marginLeft:"10px"}}>{event.title}</span> 
+      
+    </div>
+  );
+};
 
 export class CalendarDay extends React.Component {
   constructor(props) {
@@ -18,7 +30,7 @@ export class CalendarDay extends React.Component {
       backgroundEvents: this.props.backgroundEvents,
     };
   }
-
+ 
   render() {
     const messages = {
       next: "Вперед",
@@ -45,7 +57,7 @@ export class CalendarDay extends React.Component {
         <Calendar
           events={this.props.events}
           localizer={localizer}
-          views={["day"]}
+          views={["day", "week", "month"]}
           defaultView="day"
           min={new Date(1900, 9, 30, 10, 0)}
           max={new Date(2500, 9, 30, 22, 0)}
@@ -60,6 +72,7 @@ export class CalendarDay extends React.Component {
           now={() => new Date()}
           eventPropGetter={(event) => applyCalendarStyle(event)}
           onSelectEvent={this.props.onSelectEvent}
+          components={{event: EventComponent}}
         />
       </div>
     );
