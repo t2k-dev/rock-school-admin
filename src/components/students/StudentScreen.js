@@ -1,14 +1,17 @@
+import { format } from "date-fns";
 import React from "react";
-import { Button, Col, Container, Row, Table } from "react-bootstrap";
+import { Button, Container, Row, Tab, Table, Tabs } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { getStudentScreenDetails } from "../../services/apiStudentService";
 
 import { CalendarWeek } from "../common/CalendarWeek";
-import { StudentAttendanceDetailsModal } from "./StudentAttendanceDetailsModal";
-import StudentScreenCard from "./StudentScreenCard";
+import { DisciplineIcon } from "../common/DisciplineIcon";
 
 import { getDisciplineName } from "../constants/disciplines";
 import { getSubscriptionStatusName } from "../constants/subscriptions";
+
+import { StudentAttendanceDetailsModal } from "./StudentAttendanceDetailsModal";
+import StudentScreenCard from "./StudentScreenCard";
 
 class StudentScreen extends React.Component {
   constructor(props) {
@@ -51,7 +54,7 @@ class StudentScreen extends React.Component {
 
   handleEditClick = (e) => {
     e.preventDefault();
-    this.props.history.push("/student/edit/" + this.props.match.params.id);
+    this.props.history.push(`/student/edit/${this.props.match.params.id}`);
   };
 
   handleSelectEvent = (slotInfo) => {
@@ -65,42 +68,90 @@ class StudentScreen extends React.Component {
 
   render() {
     const { student, subscriptions, attendances, selectedAttendanceDetails, showAttendanceDetailsModal } = this.state;
-    console.log("selectedAttendanceDetails");
-    console.log(selectedAttendanceDetails);
+
     // Subscriptions
     let subscriptionsTable;
     if (subscriptions && subscriptions.length > 0) {
-      subscriptionsTable = <Table striped bordered hover>
-        <thead>
-          <tr>
-            <th>Направление</th>
-            <th>Преподаватель</th>
-            <th>Занятий</th>
-            <th>Статус</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>{subscriptions.map((item, index) => (
-        <tr key={index}>
-          <td>{getDisciplineName(item.disciplineId)}</td>
-          <td>
-            <Link to={"/teacher/" + item.teacher.teacherId}>
-              {item.teacher.firstName} {item.teacher.lastName}
-            </Link>
-          </td>
-          <td>{item.attendanceCount}</td>
-          <td>{getSubscriptionStatusName(item.status)}</td>
-          <td>
-            <Button size="sm" variant="success">
-              Продлить
-            </Button>
-          </td>
-        </tr>))
-        }
-        </tbody>
-      </Table>;
+      subscriptionsTable = (
+        <Table striped bordered hover>
+          <thead>
+            <tr>
+              <th>Преподаватель</th>
+              <th>Направление</th>
+              <th>Занятий</th>
+              <th>Статус</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {subscriptions.map((item, index) => (
+              <tr key={index}>
+                <td>
+                  <Link to={`/teacher/${item.teacher.teacherId}`}>
+                    {item.teacher.firstName} {item.teacher.lastName}
+                  </Link>
+                </td>
+                <td>
+                  <DisciplineIcon disciplineId={item.disciplineId} />
+                  <span style={{ marginLeft: "10px" }}>{getDisciplineName(item.disciplineId)}</span>
+                </td>
+                <td>{item.attendanceCount}</td>
+                <td>{getSubscriptionStatusName(item.status)}</td>
+                <td>
+                  <Button size="sm" variant="success">
+                    Продлить
+                  </Button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      );
     } else {
       subscriptionsTable = (
+        <tr key={1}>
+          <td colSpan="4" style={{ textAlign: "center" }}>
+            Нет записей
+          </td>
+        </tr>
+      );
+    }
+
+    // Trials
+    let trialsTable;
+    const trialSubscriptions = subscriptions.filter((s) => s.isTrial === true);
+    if (trialSubscriptions && trialSubscriptions.length > 0) {
+      trialsTable = (
+        <Table striped bordered hover>
+          <thead>
+            <tr>
+              <th style={{ width: "100px" }}>Дата</th>
+              <th>Преподаватель</th>
+              <th>Направление</th>
+              <th>Статус</th>
+            </tr>
+          </thead>
+          <tbody>
+            {trialSubscriptions.map((item, index) => (
+              <tr key={index}>
+                <td>{format(item.startDate, "yyyy-MM-dd")}</td>
+                <td>
+                  <Link to={`/teacherScreen/${item.teacher.teacherId}`}>
+                    {item.teacher.firstName} {item.teacher.lastName}
+                  </Link>
+                </td>
+                <td>
+                  <DisciplineIcon disciplineId={item.disciplineId} />
+                  <span style={{ marginLeft: "10px" }}>{getDisciplineName(item.disciplineId)}</span>
+                </td>
+                <td>{getSubscriptionStatusName(item.status)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      );
+    } else {
+      trialsTable = (
         <tr key={1}>
           <td colSpan="4" style={{ textAlign: "center" }}>
             Нет записей
@@ -145,14 +196,19 @@ class StudentScreen extends React.Component {
           />
         </Row>
         <Row>
-          <h3>Абонементы</h3>
-        </Row>
-        <Row style={{ marginTop: "20px" }}>
-          <Col>
-            <Table striped bordered hover>
-              {subscriptionsTable}
-            </Table>
-          </Col>
+          <Tabs defaultActiveKey="subscriptions" id="uncontrolled-tab-example" className="mb-3">
+            <Tab eventKey="subscriptions" title="Абонементы">
+              <Table striped bordered hover>
+                {subscriptionsTable}
+              </Table>
+            </Tab>
+            <Tab eventKey="trials" title="Пробные">
+              {trialsTable}
+            </Tab>
+            <Tab eventKey="rehersals" title="Репетиции">
+              Нету
+            </Tab>
+          </Tabs>
         </Row>
       </Container>
     );

@@ -24,7 +24,9 @@ h1, h2, h3, h4, h5 {
 .rbc-event-label{
   display: none !important;
 }
-
+.rbc-toolbar button.rbc-active{
+  box-shadow: none !important;
+}
 .rbc-background-event{
   background-color: #87ce96 !important;
   ;

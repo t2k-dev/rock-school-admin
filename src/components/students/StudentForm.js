@@ -10,7 +10,7 @@ class StudentForm extends React.Component{
     {
         super(props);
         this.state= {
-            isNew: props.type == "New",
+            isNew: props.type === "New",
             email: "",
             firstName: "",
             lastName: "",
@@ -72,7 +72,7 @@ class StudentForm extends React.Component{
         }
         else{
             const response = await saveStudent(this.state.studentId, requestBody);
-            studentId = response.data.studentId
+            studentId = response.data
         }
 
         this.props.history.push(`/studentScreen/${studentId}`);

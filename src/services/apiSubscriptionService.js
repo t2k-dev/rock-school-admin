@@ -15,6 +15,11 @@ export const addTrialSubscription = async (data) =>{
   return result;
 }
 
+export const addTrialSubscription2 = async (data) =>{
+  const result = await apiClient.post('/subscription/addTrial2', data);
+  return result;
+}
+
 export const rescheduleAttendance = async (data) =>{
   const result = await apiClient.post('/subscription/rescheduleAttendance', data);
   return result;

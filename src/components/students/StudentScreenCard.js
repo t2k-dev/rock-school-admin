@@ -33,33 +33,46 @@ class StudentScreenCard extends React.Component {
                   {item.firstName} {item.lastName}
                   <EditIcon onIconClick={this.handleEditClick} />
                 </div>
-                <div style={{fontSize:"16px"}} className="mt-1">{Level[item.level]}</div>
+                <div style={{ fontSize: "16px" }} className="mt-1">
+                  {Level[item.level]}
+                </div>
               </Container>
             </Container>
             <div>
-              <Container style={{ textAlign: "center", marginRight:"100px"}} className="mt-2">
+              <Container style={{ textAlign: "center", marginRight: "100px" }} className="mt-2">
                 <GroupIcon />
                 <div style={{ fontWeight: "bold" }}> Группа</div>
                 <div>18pm</div>
               </Container>
             </div>
             <div>
-              <Stack gap={2} style={{width:"200px"}}>
-              
-                <Button as={Link} variant="outline-success" type="null" size="md" className="w-100">
+              <Stack gap={2} style={{ width: "200px" }}>
+                <Button
+                  as={Link}
+                  to={{
+                    pathname: `/student/${item.studentId}/addTrial`,
+                    state: { student: item },
+                  }}
+                  variant="outline-success"
+                  size="md"
+                  className="w-100"
+                >
                   + Пробное занятие
                 </Button>
-              
-              <Link
-                to={{
-                  pathname: `/student/${item.studentId}/subscriptionForm`,
-                  state: { student: item },
-                }}
-              >
-                <Button variant="outline-success" type="null" size="md" className="w-100" onClick={this.handleSave}>
+
+                <Button
+                  as={Link}
+                  to={{
+                    pathname: `/student/${item.studentId}/subscriptionForm`,
+                    state: { student: item },
+                  }}
+                  variant="outline-success"
+                  type="null"
+                  size="md"
+                  className="w-100"
+                >
                   + Новый абонемент
                 </Button>
-              </Link>
               </Stack>
             </div>
           </div>
