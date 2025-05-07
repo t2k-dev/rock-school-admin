@@ -32,13 +32,21 @@ export class AvailableTeachersTrialModal extends React.Component {
     this.setState({ show: false });
   }
 
-  getAvailableSlotsText() {
+  getAvailableSlotsText(availableSlots) {
     let result = "";
-    this.state.availableSlots.forEach((element) => {
-      result = result + element.description + "\n";
+    availableSlots.forEach((element) => {
+      result = `${result} ${element.description}\n`;
     });
-    this.setState({ availableSlotsText: result });
+    return result;
   }
+
+  handleCopy = () => {
+    // Use the Clipboard API to copy the text
+    navigator.clipboard
+      .writeText(this.state.availableSlotsText)
+      .then(() => this.setState({ copySuccess: "Text copied to clipboard!" })) // Success feedback
+      .catch(() => this.setState({ copySuccess: "Failed to copy text." })); // Error feedback
+  };
 
   handleSelectSlot = (teacher, slotInfo) => {
     const teacherId = teacher.teacherId;
@@ -92,10 +100,13 @@ export class AvailableTeachersTrialModal extends React.Component {
     console.log(slotInfo);
     const updatedAvailableSlots = [...this.state.availableSlots, newSlot];
 
+    const slotsTxt = this.getAvailableSlotsText(updatedAvailableSlots);
+
     // Update the state with the modified array
     this.setState({
       availableTeachers: updatedTeachers,
       availableSlots: updatedAvailableSlots,
+      availableSlotsText: slotsTxt,
     });
 
     this.props.updateAvailableSlots(updatedAvailableSlots);
@@ -124,8 +135,9 @@ export class AvailableTeachersTrialModal extends React.Component {
         attendancies: [...updatedTeachers[teacherIndex].attendancies.filter((a) => a.attendanceId !== slotInfo.id)],
       };
     }
+    const slotsTxt = this.getAvailableSlotsText(updatedSlots);
 
-    this.setState({ availableSlots: updatedSlots, availableTeachers: updatedTeachers });
+    this.setState({ availableSlots: updatedSlots, availableTeachers: updatedTeachers, availableSlotsText: slotsTxt });
     this.props.updateAvailableSlots(updatedSlots);
   };
 
@@ -197,13 +209,15 @@ export class AvailableTeachersTrialModal extends React.Component {
 
     return (
       <>
-        <Modal size="lg" show={this.props.show} onHide={this.props.handleClose}>
+        <Modal size="xl" show={this.props.show} onHide={this.props.handleClose}>
           <Modal.Header closeButton>
             <Modal.Title>Доступные преподаватели</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            {availableTeachersList}
-            <Form.Group className="mb-3" controlId="availableSlotsText">
+            <div className="d-flex">
+              <div className="flex-grow-1" style={{height:"640px", overflow:"auto", paddingRight:"15px"}}>{availableTeachersList}</div>
+              <div style={{width:"330px", paddingLeft:"15px"}}>
+              <Form.Group className="mb-3" controlId="availableSlotsText">
               <Form.Label>Свободные окна</Form.Label>
               <Form.Control
                 as="textarea"
@@ -213,11 +227,15 @@ export class AvailableTeachersTrialModal extends React.Component {
                 onChange={(e) => this.setState({ availableSlotsText: e.target.value })}
               />
             </Form.Group>
-            <Form.Group>
-              <Button variant="outline-secondary" type="null" onClick={() => this.getAvailableSlotsText()}>
-                Сгенерировать текст
+            <Form.Group style={{textAlign:"center"}}>
+              <Button variant="outline-secondary" type="null" onClick={() => this.handleCopy()} disabled={!availableSlotsText.trim()}>
+                Скопироать текст
               </Button>
             </Form.Group>
+              </div>
+            </div>
+
+
           </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={() => this.handleCloseModal()}>

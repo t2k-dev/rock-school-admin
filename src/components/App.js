@@ -15,6 +15,7 @@ import { AttendanceCancelationForm } from "./attendances/AttendanceCancelationFo
 
 import StudentForm from "./students/StudentForm";
 import StudentScreen from "./students/StudentScreen";
+import { WaitingScheduleForm } from "./students/WaitingScheduleForm";
 
 import TeacherForm from "./teachers/TeacherForm";
 import TeacherScreen from "./teachers/TeacherScreen";
@@ -48,6 +49,7 @@ function App() {
       <Route exact path="/student/new" render={(props) => <StudentForm type="New" {...props} />}/>
       <Route exact path="/student/edit/:id" render={(props) => <StudentForm type="Edit" {...props} />}/>
       <Route exact path="/student/:id/addTrial" render={(props) => <TrialSubscriptionForm2 {...props} />}/>
+      <Route exact path="/student/:id/waitingSchedule" render={(props) => <WaitingScheduleForm {...props} />}/>
       <Route exact path="/admin/addTrial" render={(props) => <TrialSubscriptionForm {...props} />}/>
       <Route exact path="/admin/addSubscription" render={(props) => <SubscriptionForm {...props} />}/>
       

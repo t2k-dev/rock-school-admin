@@ -73,6 +73,14 @@ class StudentScreenCard extends React.Component {
                 >
                   + Новый абонемент
                 </Button>
+                <Button variant="outline-warning"
+                  as={Link}
+                  to={{
+                    pathname: `/student/${item.studentId}/waitingSchedule`,
+                    state: {student:item}
+                  }}>
+                  Предзапись
+                </Button>
               </Stack>
             </div>
           </div>
