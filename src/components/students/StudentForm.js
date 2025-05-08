@@ -68,7 +68,7 @@ class StudentForm extends React.Component{
         let studentId;
         if (this.state.isNew){
             const response = await addStudent(requestBody);
-            studentId = response.data.studentId
+            studentId = response.data
         }
         else{
             const response = await saveStudent(this.state.studentId, requestBody);

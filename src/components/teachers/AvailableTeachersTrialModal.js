@@ -5,6 +5,8 @@ import { v4 as uuidv4 } from "uuid";
 import { CalendarWeek } from "../common/CalendarWeek";
 import { formatDate, formatTime } from "../common/DateTimeHelper";
 
+import { getRoomName } from "../constants/rooms";
+
 export class AvailableTeachersTrialModal extends React.Component {
   constructor(props) {
     super(props);
@@ -93,11 +95,9 @@ export class AvailableTeachersTrialModal extends React.Component {
       start: slotInfo.start,
       end: slotInfo.end,
       roomId: roomId,
-      description: `${teacher.firstName}: ${dayName}, ${formatDate(slotInfo.start)} в ${formatTime(slotInfo.start)}`,
+      description: `${teacher.firstName}: ${dayName}, ${formatDate(slotInfo.start)} в ${formatTime(slotInfo.start)} (${getRoomName(roomId)})`,
     };
-    console.log("newSlot");
-    console.log(newSlot);
-    console.log(slotInfo);
+
     const updatedAvailableSlots = [...this.state.availableSlots, newSlot];
 
     const slotsTxt = this.getAvailableSlotsText(updatedAvailableSlots);
@@ -108,7 +108,8 @@ export class AvailableTeachersTrialModal extends React.Component {
       availableSlots: updatedAvailableSlots,
       availableSlotsText: slotsTxt,
     });
-
+    console.log("updatedAvailableSlots")
+    console.log(updatedAvailableSlots)
     this.props.updateAvailableSlots(updatedAvailableSlots);
   };
 
@@ -120,10 +121,6 @@ export class AvailableTeachersTrialModal extends React.Component {
 
     // update available slots
     const updatedSlots = this.state.availableSlots.filter((s) => s.id !== slotInfo.id);
-    console.log("slotInfo.id");
-    console.log(slotInfo.id);
-    console.log(slotInfo);
-    console.log(updatedSlots);
 
     // update teacher events
     const updatedTeachers = [...this.state.availableTeachers];
@@ -175,6 +172,7 @@ export class AvailableTeachersTrialModal extends React.Component {
             start: new Date(attendance.startDate),
             end: new Date(attendance.endDate),
             isNew: attendance.isNew,
+            roomId: attendance.roomId,
           }));
         } else {
           events = [];
@@ -215,27 +213,27 @@ export class AvailableTeachersTrialModal extends React.Component {
           </Modal.Header>
           <Modal.Body>
             <div className="d-flex">
-              <div className="flex-grow-1" style={{height:"640px", overflow:"auto", paddingRight:"15px"}}>{availableTeachersList}</div>
-              <div style={{width:"330px", paddingLeft:"15px"}}>
-              <Form.Group className="mb-3" controlId="availableSlotsText">
-              <Form.Label>Свободные окна</Form.Label>
-              <Form.Control
-                as="textarea"
-                value={availableSlotsText}
-                style={{ height: "100px" }}
-                placeholder=""
-                onChange={(e) => this.setState({ availableSlotsText: e.target.value })}
-              />
-            </Form.Group>
-            <Form.Group style={{textAlign:"center"}}>
-              <Button variant="outline-secondary" type="null" onClick={() => this.handleCopy()} disabled={!availableSlotsText.trim()}>
-                Скопироать текст
-              </Button>
-            </Form.Group>
+              <div className="flex-grow-1" style={{ height: "640px", overflow: "auto", paddingRight: "15px" }}>
+                {availableTeachersList}
+              </div>
+              <div style={{ width: "330px", paddingLeft: "15px" }}>
+                <Form.Group className="mb-3" controlId="availableSlotsText">
+                  <Form.Label>Свободные окна</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    value={availableSlotsText}
+                    style={{ height: "100px" }}
+                    placeholder=""
+                    onChange={(e) => this.setState({ availableSlotsText: e.target.value })}
+                  />
+                </Form.Group>
+                <Form.Group style={{ textAlign: "center" }}>
+                  <Button variant="outline-secondary" type="null" onClick={() => this.handleCopy()} disabled={!availableSlotsText.trim()}>
+                    Скопироать текст
+                  </Button>
+                </Form.Group>
               </div>
             </div>
-
-
           </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={() => this.handleCloseModal()}>

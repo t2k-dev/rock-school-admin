@@ -1,14 +1,15 @@
-import React from "react";
-import { Form, InputGroup, Container, Row, Col, Image, Button } from "react-bootstrap";
-import { Link } from "react-router-dom";
-import { getAvailableTeachers, getWorkingPeriods } from "../../services/apiTeacherService";
-import { addSubscription } from "../../services/apiSubscriptionService";
-import { CalendarWeek } from "../common/CalendarWeek";
-import { AvailableTeachersModal } from "../teachers/AvailableTeachersModal";
-import InputMask from "react-input-mask";
-import { ScheduleEditorStartTime } from "../common/ScheduleEditorStartTime";
 import { format, parse } from "date-fns";
+import React from "react";
+import { Button, Col, Container, Form, InputGroup, Row } from "react-bootstrap";
+import InputMask from "react-input-mask";
+
 import { calculateAge } from "../common/DateTimeHelper";
+import { ScheduleEditorWithSlots } from "../common/ScheduleEditorWithSlots";
+
+import { addSubscription } from "../../services/apiSubscriptionService";
+import { getAvailableTeachers, getWorkingPeriods } from "../../services/apiTeacherService";
+
+import { AvailableTeachersTrialModal } from "../teachers/AvailableTeachersTrialModal";
 
 const backgroundEvents = [
   {
@@ -126,9 +127,6 @@ export class SubscriptionForm extends React.Component {
 
     const startDate = parse(this.state.startDate, "dd-MM-yyyy", new Date());
     
-    console.log("this.state");
-    console.log(this.state);
-    
     const requestBody = {
       studentId: this.state.student.studentId,
       disciplineId: this.state.disciplineId,
@@ -136,7 +134,8 @@ export class SubscriptionForm extends React.Component {
       attendanceCount: this.state.attendanceCount,
       attendanceLength: this.state.attendanceLength,
       startDate: format(startDate, "yyyy-MM-dd"),
-      schedule: this.state.schedule,
+      schedules: this.state.schedules,
+      branchId: 1,
     };
 
     await addSubscription(requestBody);
@@ -148,12 +147,19 @@ export class SubscriptionForm extends React.Component {
   };
 
   handlePeriodsChange = (periods) => {
-    this.setState({ schedule: periods });
+    this.setState({ schedules: periods });
+  };
+
+  updateAvailableSlots = (availableSlots) => {
+    this.setState({ availableSlots: availableSlots });
+    console.log("this.state.availableSlots");
+    console.log(this.state.availableSlots);
   };
 
   render() {
-    const { disciplineId, teacherId, attendanceCount, attendanceLength, startDate, availableTeachers, showAvailableTeacherModal } = this.state;
-
+    const { disciplineId, teacherId, availableSlots, attendanceCount, attendanceLength, startDate, availableTeachers, showAvailableTeacherModal } = this.state;
+console.log("render");
+console.log(availableSlots)
     return (
       <Container style={{ marginTop: "40px", paddingBottom: "50px" }}>
         <Row>
@@ -194,9 +200,9 @@ export class SubscriptionForm extends React.Component {
                 <Form.Select aria-label="Веберите..." value={attendanceCount} onChange={(e) => this.setState({ attendanceCount: e.target.value })}>
                   <option>выберите...</option>
                   <option value="1">1</option>
-                  <option value="2">4</option>
-                  <option value="3">8</option>
-                  <option value="4">12</option>
+                  <option value="4">4</option>
+                  <option value="8">8</option>
+                  <option value="12">12</option>
                 </Form.Select>
               </Form.Group>
 
@@ -230,7 +236,7 @@ export class SubscriptionForm extends React.Component {
                   Доступные окна...
                 </Button>
               </InputGroup>
-              <AvailableTeachersModal
+              <AvailableTeachersTrialModal
                 show={showAvailableTeacherModal}
                 availableTeachers={availableTeachers}
                 updateAvailableSlots={this.updateAvailableSlots}
@@ -240,8 +246,9 @@ export class SubscriptionForm extends React.Component {
               <Form.Group className="mb-3" controlId="Teacher"></Form.Group>
               <hr></hr>
               <Form.Group className="mb-3 mt-3" controlId="Schedule">
-                <ScheduleEditorStartTime
+                <ScheduleEditorWithSlots
                   periods={this.state.schedules}
+                  availableSlots={availableSlots}
                   handlePeriodsChange={this.handlePeriodsChange}
                   attendanceLength={this.state.attendanceLength}
                 />

@@ -79,3 +79,7 @@ export function calculateAge(birthDate) {
 
   return age;
 };
+
+export function getWeekDayNameLong(date){
+  return new Intl.DateTimeFormat("ru-RU", { weekday: "long" }).format(date);
+}

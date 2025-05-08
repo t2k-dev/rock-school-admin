@@ -127,7 +127,21 @@ export class ScheduleEditorNoRoom extends React.Component {
             Расписание
           </b>
         </Form.Label>
+
         <Row>
+          <Container>
+            <Form.Select aria-label="Веберите день..." value={this.state.roomId} onChange={(e) => this.setState({ roomId: e.target.value })}>
+              <option>выберите комнату...</option>
+              <option value="1">Красная</option>
+              <option value="2">Вокальная</option>
+              <option value="4">Барабанная</option>
+              <option value="5">Желтая</option>
+              <option value="6">Зеленая</option>
+            </Form.Select>
+          </Container>
+        </Row>
+
+        <Row style={{ marginTop: "20px" }}>
           <Container className="d-flex">
             <div style={{ width: "150px" }}>
               <Form.Select aria-label="Веберите день..." value={this.state.periodDay} onChange={(e) => this.setState({ periodDay: e.target.value })}>

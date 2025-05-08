@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import { CalendarWeek } from "../common/CalendarWeek";
 import { getSlotDescription } from "../common/attendanceHelper";
 
+/* TO REMOVE */
 export class AvailableTeachersModal extends React.Component {
   constructor(props) {
     super(props);
@@ -120,7 +121,6 @@ export class AvailableTeachersModal extends React.Component {
     let availableTeachersList;
     if (availableTeachers && availableTeachers.length > 0) {
       availableTeachersList = availableTeachers.map((teacher, index) => {
-
         // Working periods
         let backgroundEvents;
         if (teacher.scheduledWorkingPeriods) {
@@ -176,27 +176,33 @@ export class AvailableTeachersModal extends React.Component {
 
     return (
       <>
-        <Modal size="lg" show={this.props.show} onHide={this.props.handleClose}>
+        <Modal size="xl" show={this.props.show} onHide={this.props.handleClose}>
           <Modal.Header closeButton>
             <Modal.Title>Доступные преподаватели</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            {availableTeachersList}
-            <Form.Group className="mb-3" controlId="availableSlotsText">
-              <Form.Label>Свободные окна</Form.Label>
-              <Form.Control
-                as="textarea"
-                value={availableSlotsText}
-                style={{ height: "100px" }}
-                placeholder=""
-                onChange={(e) => this.setState({ availableSlotsText: e.target.value })}
-              />
-            </Form.Group>
-            <Form.Group>
-              <Button variant="outline-secondary" type="null" onClick={() => this.getAvailableSlotsText()}>
-                Сгенерировать текст
-              </Button>
-            </Form.Group>
+            <div className="d-flex">
+              <div className="flex-grow-1" style={{ height: "640px", overflow: "auto", paddingRight: "15px" }}>
+                {availableTeachersList}
+              </div>
+              <div style={{ width: "330px", paddingLeft: "15px" }}>
+                <Form.Group className="mb-3" controlId="availableSlotsText">
+                  <Form.Label>Свободные окна</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    value={availableSlotsText}
+                    style={{ height: "100px" }}
+                    placeholder=""
+                    onChange={(e) => this.setState({ availableSlotsText: e.target.value })}
+                  />
+                </Form.Group>
+                <Form.Group style={{ textAlign: "center" }}>
+                  <Button variant="outline-secondary" type="null" onClick={() => this.handleCopy()} disabled={!availableSlotsText.trim()}>
+                    Скопироать текст
+                  </Button>
+                </Form.Group>
+              </div>
+            </div>
           </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={() => this.handleCloseModal()}>
