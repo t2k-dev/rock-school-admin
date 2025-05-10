@@ -71,7 +71,9 @@ class StudentScreen extends React.Component {
 
     // Subscriptions
     let subscriptionsTable;
+
     if (subscriptions && subscriptions.length > 0) {
+      const nonTrialSubscriptions = subscriptions.filter((s) => s.trialStatus === null)
       subscriptionsTable = (
         <Table striped bordered hover>
           <thead>
@@ -84,7 +86,7 @@ class StudentScreen extends React.Component {
             </tr>
           </thead>
           <tbody>
-            {subscriptions.map((item, index) => (
+            {nonTrialSubscriptions.map((item, index) => (
               <tr key={index}>
                 <td>
                   <Link to={`/teacher/${item.teacher.teacherId}`}>
@@ -119,7 +121,7 @@ class StudentScreen extends React.Component {
 
     // Trials
     let trialsTable;
-    const trialSubscriptions = subscriptions.filter((s) => s.isTrial === true);
+    const trialSubscriptions = subscriptions.filter((s) => s.trialStatus !== null);
     if (trialSubscriptions && trialSubscriptions.length > 0) {
       trialsTable = (
         <Table striped bordered hover>
@@ -198,15 +200,13 @@ class StudentScreen extends React.Component {
         <Row>
           <Tabs defaultActiveKey="subscriptions" id="uncontrolled-tab-example" className="mb-3">
             <Tab eventKey="subscriptions" title="Абонементы">
-              <Table striped bordered hover>
                 {subscriptionsTable}
-              </Table>
             </Tab>
             <Tab eventKey="trials" title="Пробные">
               {trialsTable}
             </Tab>
             <Tab eventKey="rehersals" title="Репетиции">
-              Нету
+              Нет записей
             </Tab>
           </Tabs>
         </Row>

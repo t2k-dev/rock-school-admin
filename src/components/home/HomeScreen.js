@@ -84,6 +84,8 @@ class HomeScreen extends React.Component {
     // Notes
     const activeNotes = notes?.filter((n) => n.status === 1);
     const completedNotes = notes?.filter((n) => n.status === 2);
+    console.log("activeNotes");
+console.log(activeNotes);
 
     let activeNotesTable;
     if (activeNotes && activeNotes?.length > 0) {

@@ -139,6 +139,8 @@ export class SubscriptionForm extends React.Component {
     };
 
     await addSubscription(requestBody);
+
+    this.props.history.push(`/studentScreen/${this.state.student.studentId}`);
   };
 
   handleChange = (e) => {

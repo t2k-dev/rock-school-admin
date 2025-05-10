@@ -45,7 +45,7 @@ export class StudentAttendanceDetailsModal extends React.Component {
                 <Col>
                   <Container className="mt-3" style={{ fontSize: "14px" }}>
                     <Stack direction="vertical" gap={1}>
-                      <div className="mb-1">Начало в {format(startDate, "hh:mm")}</div>
+                      <div className="mb-1">Начало в {format(startDate, "HH:mm")}</div>
                       <div>
                         Преподаватель: <Link to={`/teacher/${teacher.teacherId}`}>{teacher.firstName}</Link>
                       </div>

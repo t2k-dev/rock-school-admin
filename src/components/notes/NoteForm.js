@@ -1,7 +1,7 @@
 import React from "react";
-import { Form, Container, Row, Col, Button } from 'react-bootstrap';
+import { Button, Col, Container, Form, Row } from 'react-bootstrap';
 
-import { addNote } from '../../services/apiNoteService'
+import { addNote } from '../../services/apiNoteService';
 
 class NoteForm extends React.Component{
     constructor(props)
@@ -26,7 +26,7 @@ class NoteForm extends React.Component{
 
         const requestBody ={
             description: this.state.description,
-            completeDate: this.state.completeDate,
+            completeDate: "2025-05-10 12:00:00",//this.state.completeDate + " 12:00:00",
             branchId: 1 //DEV
         }
         const response = addNote(requestBody);

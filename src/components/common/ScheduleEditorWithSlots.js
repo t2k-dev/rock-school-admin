@@ -21,8 +21,6 @@ export class ScheduleEditorWithSlots extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    console.log("componentDidUpdate SH");
-    console.log(this.props)
     if (this.props.periods !== prevProps.periods) {
       this.setState({ periods: this.props.periods });
     }
@@ -34,7 +32,6 @@ export class ScheduleEditorWithSlots extends React.Component {
 
   addPeriod = () => {
     const selectedSlot = this.state.availableSlots.filter(p => p.id === this.state.selectedSlotId)[0];
-
     this.setState(
       (prevState) => {
         const newPeriod = {
@@ -62,7 +59,8 @@ export class ScheduleEditorWithSlots extends React.Component {
 
   render() {
     const { periods, availableSlots } = this.state;
-
+    console.log("periods")
+    console.log(periods)
     let periodsList;
     if (periods && periods.length > 0) {
       periodsList = periods.map((item, index) => (
