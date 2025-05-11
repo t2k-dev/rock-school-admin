@@ -12,6 +12,7 @@ import MyNavbar from "./MyNavbar";
 import HomeScreen from "./home/HomeScreen";
 
 import { AttendanceCancelationForm } from "./attendances/AttendanceCancelationForm";
+import { AttendanceRescheduleForm } from "./attendances/AttendanceRescheduleForm";
 
 import StudentForm from "./students/StudentForm";
 import StudentScreen from "./students/StudentScreen";
@@ -34,7 +35,8 @@ function App() {
       <MyNavbar />
       <Route exact path="/"><HomeScreen /></Route>
       <Route exact path="/home"><HomeScreen /></Route>
-
+      
+      <Route exact path="/attendance/:id/rescheduleForm" render={(props) => <AttendanceRescheduleForm {...props}/>}/>
       <Route exact path="/attendance/:id/cancelationForm" render={(props) => <AttendanceCancelationForm {...props}/>}/>
 
       <Route exact path="/branchScreen/:id" render={(props) => <BranchScreen {...props}/>}/>

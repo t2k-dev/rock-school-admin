@@ -73,7 +73,9 @@ export class SlotDetailsModal extends React.Component {
       <>
         <Modal show={this.props.show} onHide={this.props.handleClose} size="md">
           <Modal.Header closeButton>
-            <Modal.Title>{this.props.selectedSlotDetails.isTrial ? "Пробное занятие" : "Занятие"} ({getAttendanceStatusName(status)})</Modal.Title>
+            <Modal.Title>
+              {this.props.selectedSlotDetails.isTrial ? "Пробное занятие" : "Занятие"} ({getAttendanceStatusName(status)})
+            </Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <Container className="mb-3">
@@ -118,32 +120,35 @@ export class SlotDetailsModal extends React.Component {
             </Container>
             <hr></hr>
             <div className="text-center mt-5 mb-5">
-                <Button
-                  onClick={(s) => this.handleStatusChange(AttendanceStatus.ATTENDED)}
-                  variant={status === AttendanceStatus.ATTENDED ? "primary" : "outline-primary"}
-                  style={{ width: "120px", marginRight:"10px" }}
-                >
-                  Посещено
-                </Button>
-                <Button
-                  onClick={(s) => this.handleStatusChange(AttendanceStatus.MISSED)}
-                  variant={status === AttendanceStatus.MISSED ? "danger" : "outline-danger"}
-                  style={{ width: "120px", marginRight:"10px" }}
-                >
-                  Пропуск
-                </Button>
-                <Button
-                  as={Link}
-                  to={{
-                    pathname: `/attendance/${this.props.selectedSlotDetails.attendanceId}/cancelationForm`,
-                    state: { disciplineId: "??" },
-                  }}
-                  variant={status === AttendanceStatus.CANCELED_BY_STUDENT ? "secondary" : "outline-secondary"}
-                  style={{ width: "120px" }}
-                >
-                  Перенести
-                </Button>
-              
+              <Button
+                onClick={(s) => this.handleStatusChange(AttendanceStatus.ATTENDED)}
+                variant={status === AttendanceStatus.ATTENDED ? "primary" : "outline-primary"}
+                style={{ width: "120px", marginRight: "10px" }}
+              >
+                Посещено
+              </Button>
+              <Button
+                as={Link}
+                to={{
+                  pathname: `/attendance/${this.props.selectedSlotDetails.attendanceId}/cancelationForm`,
+                  state: { attendance: this.props.selectedSlotDetails },
+                }}
+                variant={status === AttendanceStatus.MISSED ? "danger" : "outline-danger"}
+                style={{ width: "120px", marginRight: "10px" }}
+              >
+                Пропуск
+              </Button>
+              <Button
+                as={Link}
+                to={{
+                  pathname: `/attendance/${this.props.selectedSlotDetails.attendanceId}/rescheduleForm`,
+                  state: { attendance: this.props.selectedSlotDetails },
+                }}
+                variant={status === AttendanceStatus.CANCELED_BY_STUDENT ? "secondary" : "outline-secondary"}
+                style={{ width: "120px" }}
+              >
+                Перенести
+              </Button>
             </div>
 
             {showTrialStatus && (
