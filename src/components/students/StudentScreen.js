@@ -10,7 +10,7 @@ import { DisciplineIcon } from "../common/DisciplineIcon";
 import { getDisciplineName } from "../constants/disciplines";
 import { getSubscriptionStatusName } from "../constants/subscriptions";
 
-import { StudentAttendanceDetailsModal } from "./StudentAttendanceDetailsModal";
+import { SlotDetailsModal } from "../home//SlotDetailsModal";
 import StudentScreenCard from "./StudentScreenCard";
 
 class StudentScreen extends React.Component {
@@ -58,6 +58,7 @@ class StudentScreen extends React.Component {
   };
 
   handleSelectEvent = (slotInfo) => {
+    console.log(slotInfo);
     const newSelectedSlotDetails = this.state.attendances.filter((a) => a.attendanceId === slotInfo.id)[0];
     this.setState({ showAttendanceDetailsModal: true, selectedAttendanceDetails: newSelectedSlotDetails });
   };
@@ -73,7 +74,7 @@ class StudentScreen extends React.Component {
     let subscriptionsTable;
 
     if (subscriptions && subscriptions.length > 0) {
-      const nonTrialSubscriptions = subscriptions.filter((s) => s.trialStatus === null)
+      const nonTrialSubscriptions = subscriptions.filter((s) => s.trialStatus === null);
       subscriptionsTable = (
         <Table striped bordered hover>
           <thead>
@@ -189,18 +190,19 @@ class StudentScreen extends React.Component {
               this.handleSelectEvent(slotInfo);
             }}
           />
-          <StudentAttendanceDetailsModal
-            selectedAttendanceDetails={selectedAttendanceDetails}
+          <SlotDetailsModal
+            selectedSlotDetails={selectedAttendanceDetails}
             show={showAttendanceDetailsModal}
             handleClose={() => {
               this.handleCloseModal();
             }}
           />
+
         </Row>
         <Row>
           <Tabs defaultActiveKey="subscriptions" id="uncontrolled-tab-example" className="mb-3">
             <Tab eventKey="subscriptions" title="Абонементы">
-                {subscriptionsTable}
+              {subscriptionsTable}
             </Tab>
             <Tab eventKey="trials" title="Пробные">
               {trialsTable}

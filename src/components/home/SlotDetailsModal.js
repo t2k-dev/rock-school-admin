@@ -1,19 +1,21 @@
 import { format } from "date-fns";
+import { ru } from "date-fns/locale";
 import React from "react";
 import { Button, Container, Form, Modal, Row, Stack } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 import { DisciplineIcon } from "../common/DisciplineIcon";
 
-import { updateStatus } from "../../services/apiAttendanceService";
-
 import { Avatar } from "../common/Avatar";
 import { CalendarIcon } from "../icons/CalendarIcon";
+import { TimeIcon } from "../icons/TimeIcon";
 
 import AttendanceStatus from "../constants/AttendanceStatus";
 import { getAttendanceStatusName } from "../constants/attendancies";
 import { getDisciplineName } from "../constants/disciplines";
 import { getRoomName } from "../constants/rooms";
+
+import { updateStatus } from "../../services/apiAttendanceService";
 
 export class SlotDetailsModal extends React.Component {
   constructor(props) {
@@ -46,7 +48,7 @@ export class SlotDetailsModal extends React.Component {
   }
 
   async handleStatusChange(status) {
-    const response = await updateStatus(this.props.selectedSlotDetails.attendanceId, status)
+    const response = await updateStatus(this.props.selectedSlotDetails.attendanceId, status);
   }
 
   getAvailableSlots() {
@@ -65,18 +67,18 @@ export class SlotDetailsModal extends React.Component {
     if (!this.props.selectedSlotDetails) {
       return <></>;
     }
-    const { teacher, student, startDate, disciplineId, roomId, comment } = this.props.selectedSlotDetails;
+    const { teacher, student, startDate, endDate, disciplineId, roomId, comment } = this.props.selectedSlotDetails;
 
     return (
       <>
         <Modal show={this.props.show} onHide={this.props.handleClose} size="md">
           <Modal.Header closeButton>
-            <Modal.Title>{this.props.selectedSlotDetails.isTrial ? "Пробное занятие" : "Занятие"}</Modal.Title>
+            <Modal.Title>{this.props.selectedSlotDetails.isTrial ? "Пробное занятие" : "Занятие"} ({getAttendanceStatusName(status)})</Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <Container className="mb-3">
               <Row>
-                <div className="d-flex">
+                <div className="d-flex" style={{ padding: "0 50px" }}>
                   <Container style={{ width: "100px", padding: "0" }}>
                     <Avatar style={{ width: "100px", height: "100px" }} />
                     <div className="text-center mt-1">
@@ -84,24 +86,26 @@ export class SlotDetailsModal extends React.Component {
                     </div>
                   </Container>
                   <Container>
-                    <Container className="mt-2" style={{ fontSize: "14px" }}>
-                      <Stack direction="vertical" gap={0}>
-                        <div>
-                          <CalendarIcon /> <span style={{ fontSize: "14px" }}>{format(startDate, "HH:mm - dd.MM.yyyy")}</span>
+                    <Container className="mt-2 text-center" style={{ fontSize: "14px" }}>
+                      <div className="d-flex">
+                        <div style={{ marginTop: "10px" }}>
+                          <DisciplineIcon disciplineId={disciplineId} size="60px" />
                         </div>
-                        <div>
-                          Направление:{" "}
-                          <span>
-                            <DisciplineIcon disciplineId={disciplineId} />{" "}
-                          </span>{" "}
-                          {getDisciplineName(disciplineId)}
-                        </div>
-                        <div>
-                          Преподаватель: <Link to={"/teacher/" + teacher.teacherId}>{teacher.firstName}</Link>
-                        </div>
-                        <div>Комната: {getRoomName(roomId)}</div>
-                        <div>Статус: {getAttendanceStatusName(status)}</div>
-                      </Stack>
+                        <Stack direction="vertical" gap={0} className="mb-2 text-center">
+                          <div style={{ fontWeight: "bold", fontSize: "18px" }}>{getDisciplineName(disciplineId)}</div>
+                          <div>
+                            <Link to={"/teacher/" + teacher.teacherId}>{teacher.firstName}</Link>
+                          </div>
+                          <div>{getRoomName(roomId)} комната</div>
+                        </Stack>
+                      </div>
+                      <div>
+                        <CalendarIcon />
+                        <span style={{ fontSize: "14px" }}>{format(startDate, "d MMMM, EEEE", { locale: ru })}</span>
+                      </div>
+                      <div>
+                        <TimeIcon /> С {format(startDate, "HH:mm")} - {format(endDate, "HH:mm")}
+                      </div>
                     </Container>
                     <Link to={`/student/${this.props.selectedSlotDetails.studentId}`}>
                       <h3>
@@ -114,26 +118,38 @@ export class SlotDetailsModal extends React.Component {
             </Container>
             <hr></hr>
             <div className="text-center mt-5 mb-5">
-                <Button onClick={(s) => this.handleStatusChange(AttendanceStatus.ATTENDED)} variant={status === AttendanceStatus.ATTENDED ? 'primary' : 'outline-primary'}>Посещено</Button>
-                <Button onClick={(s) => this.handleStatusChange(AttendanceStatus.MISSED)} variant={status === AttendanceStatus.MISSED ? 'danger' : 'outline-danger'} style={{marginLeft:"10px"}}>Пропущено</Button>
+                <Button
+                  onClick={(s) => this.handleStatusChange(AttendanceStatus.ATTENDED)}
+                  variant={status === AttendanceStatus.ATTENDED ? "primary" : "outline-primary"}
+                  style={{ width: "120px", marginRight:"10px" }}
+                >
+                  Посещено
+                </Button>
+                <Button
+                  onClick={(s) => this.handleStatusChange(AttendanceStatus.MISSED)}
+                  variant={status === AttendanceStatus.MISSED ? "danger" : "outline-danger"}
+                  style={{ width: "120px", marginRight:"10px" }}
+                >
+                  Пропуск
+                </Button>
                 <Button
                   as={Link}
                   to={{
                     pathname: `/attendance/${this.props.selectedSlotDetails.attendanceId}/cancelationForm`,
                     state: { disciplineId: "??" },
                   }}
-                  variant={status === AttendanceStatus.CANCELED_BY_STUDENT ? 'secondary' : 'outline-secondary'}
-                  style={{marginLeft:"10px"}}
-                  
+                  variant={status === AttendanceStatus.CANCELED_BY_STUDENT ? "secondary" : "outline-secondary"}
+                  style={{ width: "120px" }}
                 >
-                  Перенесено
+                  Перенести
                 </Button>
+              
             </div>
 
             {showTrialStatus && (
               <Form.Group className="mb-4">
-                {                
-                  showAddSubscription && <div className="text-center">
+                {showAddSubscription && (
+                  <div className="text-center">
                     <h4>Результат пробного занятия</h4>
                     <Button
                       as={Link}
@@ -149,7 +165,7 @@ export class SlotDetailsModal extends React.Component {
                       Отказаться
                     </Button>
                   </div>
-                }
+                )}
               </Form.Group>
             )}
           </Modal.Body>

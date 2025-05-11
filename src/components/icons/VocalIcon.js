@@ -1,12 +1,12 @@
 import React from "react";
 
-export function VocalIcon({ onIconClick, color = "#000000" }) {
+export function VocalIcon({ onIconClick, color = "#000000", size = "24px" }) {
   return (
     <span title="Вокал">
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        width="18px"
-        height="18px"
+        width={size}
+        height={size}
         version="1.1"
         style={{shapeRendering:"geometricPrecision",
             textRendering:"geometricPrecision",

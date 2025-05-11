@@ -1,13 +1,13 @@
 import React from "react";
 
-export function GuitarIcon({ onIconClick, color = "#000000" }) {
+export function GuitarIcon({ onIconClick, color = "#000000", size = "24px" }) {
 
   return (
     <span title="Гитара">
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        width="24px"
-        height="24px"
+        width={size}
+        height={size}
         version="1.1"
         style={{ shapeRendering:'geometricPrecision',
             textRendering:'geometricPrecision',

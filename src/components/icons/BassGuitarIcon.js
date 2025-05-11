@@ -1,12 +1,12 @@
 import React from "react";
 
-export function BassGuitarIcon({ onIconClick, color = "#000000"}) {
+export function BassGuitarIcon({ onIconClick, color = "#000000", size = "24px"}) {
   return (
     <span title="Басс гитара">
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        width="23px"
-        height="24px"
+        width={size}
+        height={size}
         version="1.1"
         style={{
           shapeRendering:"geometricPrecision",
