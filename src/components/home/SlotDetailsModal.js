@@ -62,8 +62,6 @@ export class SlotDetailsModal extends React.Component {
   render() {
     const { status } = this.state;
 
-    const showAddSubscription = status === AttendanceStatus.ATTENDED;
-    const showTrialStatus = this.props.selectedSlotDetails?.isTrial === true;
     if (!this.props.selectedSlotDetails) {
       return <></>;
     }
@@ -119,58 +117,49 @@ export class SlotDetailsModal extends React.Component {
               </Row>
             </Container>
             <hr></hr>
-            <div className="text-center mt-5 mb-5">
-              <Button
-                onClick={(s) => this.handleStatusChange(AttendanceStatus.ATTENDED)}
-                variant={status === AttendanceStatus.ATTENDED ? "primary" : "outline-primary"}
-                style={{ width: "120px", marginRight: "10px" }}
-              >
-                Посещено
-              </Button>
-              <Button
-                as={Link}
-                to={{
-                  pathname: `/attendance/${this.props.selectedSlotDetails.attendanceId}/cancelationForm`,
-                  state: { attendance: this.props.selectedSlotDetails },
-                }}
-                variant={status === AttendanceStatus.MISSED ? "danger" : "outline-danger"}
-                style={{ width: "120px", marginRight: "10px" }}
-              >
-                Пропуск
-              </Button>
-              <Button
-                as={Link}
-                to={{
-                  pathname: `/attendance/${this.props.selectedSlotDetails.attendanceId}/rescheduleForm`,
-                  state: { attendance: this.props.selectedSlotDetails },
-                }}
-                variant={status === AttendanceStatus.CANCELED_BY_STUDENT ? "secondary" : "outline-secondary"}
-                style={{ width: "120px" }}
-              >
-                Перенести
-              </Button>
-            </div>
 
-            {showTrialStatus && (
-              <Form.Group className="mb-4">
-                {showAddSubscription && (
-                  <div className="text-center">
-                    <h4>Результат пробного занятия</h4>
-                    <Button
-                      as={Link}
-                      to={{
-                        pathname: `/student/${student.studentId}/subscriptionForm`,
-                        state: { disciplineId: disciplineId, teacher: teacher, student: student },
-                      }}
-                      variant="outline-success"
-                    >
-                      Оформить абонемент
-                    </Button>
-                    <Button variant="outline-danger" style={{ marginLeft: "10px" }}>
-                      Отказаться
-                    </Button>
-                  </div>
-                )}
+            {this.props.selectedSlotDetails.status === AttendanceStatus.NEW && (
+              <div className="text-center mt-5 mb-5">
+                <Button
+                  as={Link}
+                  to={{
+                    pathname: `/attendance/${this.props.selectedSlotDetails.attendanceId}/attendedForm`,
+                    state: { attendance: this.props.selectedSlotDetails },
+                  }}
+                  variant={"outline-primary"}
+                  style={{ width: "120px", marginRight: "10px" }}
+                >
+                  Посещено
+                </Button>
+                <Button
+                  as={Link}
+                  to={{
+                    pathname: `/attendance/${this.props.selectedSlotDetails.attendanceId}/cancelationForm`,
+                    state: { attendance: this.props.selectedSlotDetails },
+                  }}
+                  variant={"outline-danger"}
+                  style={{ width: "120px", marginRight: "10px" }}
+                >
+                  Пропуск
+                </Button>
+                <Button
+                  as={Link}
+                  to={{
+                    pathname: `/attendance/${this.props.selectedSlotDetails.attendanceId}/rescheduleForm`,
+                    state: { attendance: this.props.selectedSlotDetails },
+                  }}
+                  variant={"outline-secondary"}
+                  style={{ width: "120px" }}
+                >
+                  Перенести
+                </Button>
+              </div>
+            )}
+
+            {this.props.selectedSlotDetails.status !== AttendanceStatus.NEW && (
+              <Form.Group className="mb-3" controlId="comment">
+                <Form.Label>Комментарий</Form.Label>
+                <Form.Control as="textarea" onChange={this.handleChange} value={comment} placeholder="введите..." autoComplete="off" disabled="true"/>
               </Form.Group>
             )}
           </Modal.Body>

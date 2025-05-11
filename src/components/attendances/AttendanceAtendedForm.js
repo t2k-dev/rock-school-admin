@@ -9,10 +9,9 @@ import { CalendarIcon } from "../icons/CalendarIcon";
 import AttendanceStatus from "../constants/AttendanceStatus";
 import { getDisciplineName } from "../constants/disciplines";
 
-import { updateStatus } from "../../services/apiAttendanceService";
+import { declineTrial, updateStatus } from "../../services/apiAttendanceService";
 
-
-export class AttendanceCancelationForm extends React.Component {
+export class AttendanceAtendedForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -23,6 +22,8 @@ export class AttendanceCancelationForm extends React.Component {
     // AvailableTeachersModal
     this.handleSave = this.handleSave.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.handleConfirmAndSubscribe = this.handleConfirmAndSubscribe.bind(this);
+    this.handleDecline = this.handleDecline.bind(this);
   }
 
   componentDidMount() {
@@ -32,10 +33,33 @@ export class AttendanceCancelationForm extends React.Component {
     }
   }
 
+  handleConfirmAndSubscribe = async (e) => {
+    e.preventDefault();
+    
+    const response = await updateStatus(this.state.attendance.attendanceId, AttendanceStatus.ATTENDED);
+    const { student, teacher, disciplineId } = this.state.attendance;
+    this.props.navigate(`/student/${student.studentId}/subscriptionForm`, {
+      state: { disciplineId: disciplineId, teacher: teacher, student: student },
+    });
+
+    //    this.props.history.push(`/studentScreen/${this.state.student.studentId}`);
+  };
+
+  handleDecline = async (e) =>{
+    e.preventDefault();
+
+    const request = {
+        statusReason: this.state.statusReason,
+    }
+
+    const response = await declineTrial(this.state.attendance.attendanceId, request);
+    console.log(response);
+  }
+
   handleSave = async (e) => {
     e.preventDefault();
 
-    const response = await updateStatus(this.state.attendance.attendanceId, AttendanceStatus.MISSED);
+    const response = await updateStatus(this.state.attendance.attendanceId, AttendanceStatus.ATTENDED);
     window.history.back();
   };
 
@@ -55,7 +79,7 @@ export class AttendanceCancelationForm extends React.Component {
         <Row>
           <Col md="4"></Col>
           <Col md="4">
-            <h2 className="text-center mb-4">Пропуск занятия</h2>
+            <h2 className="text-center mb-4">{attendance?.isTrial ? "Пробное занятие посещено" : "Занятие посещено"}</h2>
             <Stack className="mb-3" gap={2} style={{ backgroundColor: "#e7e7e7", padding: "15px", borderRadius: "10px" }}>
               <div>
                 <CalendarIcon />
@@ -73,7 +97,7 @@ export class AttendanceCancelationForm extends React.Component {
 
             <Form>
               <Form.Group className="mb-3" controlId="statusReason">
-                <Form.Label>Причина</Form.Label>
+                <Form.Label>Описание</Form.Label>
                 <Form.Control
                   onChange={this.handleChange}
                   value={statusReason}
@@ -85,9 +109,16 @@ export class AttendanceCancelationForm extends React.Component {
               </Form.Group>
               <hr></hr>
               <div className="text-center">
-                <Button variant="success" type="null" onClick={this.handleSave}>
-                  Подтвердить пропуск
-                </Button>
+                {attendance.isTrial && (
+                  <>
+                    <Button variant="outline-secondary" type="null" onClick={this.handleDecline}>
+                      Отказаться
+                    </Button>
+                    <Button onClick={this.handleConfirmAndSubscribe} variant="outline-success" style={{ marginLeft: "10px" }}>
+                      Оформить абонемент
+                    </Button>
+                  </>
+                )}
               </div>
             </Form>
           </Col>

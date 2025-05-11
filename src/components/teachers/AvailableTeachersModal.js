@@ -3,9 +3,10 @@ import { Badge, Button, Form, Modal } from "react-bootstrap";
 import { v4 as uuidv4 } from "uuid";
 
 import { CalendarWeek } from "../common/CalendarWeek";
-import { getSlotDescription } from "../common/attendanceHelper";
+import { formatDate, formatTime } from "../common/DateTimeHelper";
 
-/* TO REMOVE */
+import { getRoomName } from "../constants/rooms";
+
 export class AvailableTeachersModal extends React.Component {
   constructor(props) {
     super(props);
@@ -33,13 +34,21 @@ export class AvailableTeachersModal extends React.Component {
     this.setState({ show: false });
   }
 
-  getAvailableSlotsText() {
+  getAvailableSlotsText(availableSlots) {
     let result = "";
-    this.state.availableSlots.forEach((element) => {
-      result = `${result}${getSlotDescription(element.teacherFullName, element.start)} \n`;
+    availableSlots.forEach((element) => {
+      result = `${result} ${element.description}\n`;
     });
-    this.setState({ availableSlotsText: result });
+    return result;
   }
+
+  handleCopy = () => {
+    // Use the Clipboard API to copy the text
+    navigator.clipboard
+      .writeText(this.state.availableSlotsText)
+      .then(() => this.setState({ copySuccess: "Text copied to clipboard!" })) // Success feedback
+      .catch(() => this.setState({ copySuccess: "Failed to copy text." })); // Error feedback
+  };
 
   handleSelectSlot = (teacher, slotInfo) => {
     const teacherId = teacher.teacherId;
@@ -59,7 +68,6 @@ export class AvailableTeachersModal extends React.Component {
       };
 
       const currentAttendancies = updatedTeachers[teacherIndex].attendancies ?? [];
-
       // Update the teacher's events array
       updatedTeachers[teacherIndex] = {
         ...updatedTeachers[teacherIndex],
@@ -68,26 +76,45 @@ export class AvailableTeachersModal extends React.Component {
     }
 
     // Add the selected slot to the availableSlots array
+
+    const dayName = new Intl.DateTimeFormat("ru-RU", { weekday: "long" }).format(slotInfo.start);
+
+    // Find the matching backgroundEvent based on the slot's start and end times
+    const matchingBackgroundEvent = teacher.scheduledWorkingPeriods?.find(
+      (backgroundEvent) =>
+        new Date(backgroundEvent.startDate).getTime() <= new Date(slotInfo.start).getTime() &&
+        new Date(backgroundEvent.endDate).getTime() >= new Date(slotInfo.end).getTime()
+    );
+
+    const roomId = matchingBackgroundEvent?.roomId;
+
     const newSlot = {
       id: slotId,
       teacherId: teacherId,
       teacherFullName: teacher.firstName + " " + teacher.lastName,
       start: slotInfo.start,
       end: slotInfo.end,
+      roomId: roomId,
+      description: `${teacher.firstName}: ${dayName}, ${formatDate(slotInfo.start)} в ${formatTime(slotInfo.start)} (${getRoomName(roomId)})`,
     };
 
     const updatedAvailableSlots = [...this.state.availableSlots, newSlot];
+
+    const slotsTxt = this.getAvailableSlotsText(updatedAvailableSlots);
 
     // Update the state with the modified array
     this.setState({
       availableTeachers: updatedTeachers,
       availableSlots: updatedAvailableSlots,
+      availableSlotsText: slotsTxt,
     });
-
+    console.log("updatedAvailableSlots")
+    console.log(updatedAvailableSlots)
     this.props.updateAvailableSlots(updatedAvailableSlots);
   };
 
   handleSelectEvent = (teacherId, slotInfo) => {
+    console.log("handleSelectEvent");
     if (!slotInfo.isNew) {
       return;
     }
@@ -105,8 +132,9 @@ export class AvailableTeachersModal extends React.Component {
         attendancies: [...updatedTeachers[teacherIndex].attendancies.filter((a) => a.attendanceId !== slotInfo.id)],
       };
     }
+    const slotsTxt = this.getAvailableSlotsText(updatedSlots);
 
-    this.setState({ availableSlots: updatedSlots, availableTeachers: updatedTeachers });
+    this.setState({ availableSlots: updatedSlots, availableTeachers: updatedTeachers, availableSlotsText: slotsTxt });
     this.props.updateAvailableSlots(updatedSlots);
   };
 
@@ -116,25 +144,27 @@ export class AvailableTeachersModal extends React.Component {
   };
 
   render() {
+    console.log("render");
     const { availableTeachers, availableSlotsText } = this.state;
 
     let availableTeachersList;
     if (availableTeachers && availableTeachers.length > 0) {
+      let backgroundEvents;
+      let events;
       availableTeachersList = availableTeachers.map((teacher, index) => {
         // Working periods
-        let backgroundEvents;
         if (teacher.scheduledWorkingPeriods) {
           backgroundEvents = teacher.scheduledWorkingPeriods.map((period) => ({
             id: period.scheduledWorkingPeriodId,
             start: period.startDate,
             end: period.endDate,
+            roomId: period.roomId,
           }));
         } else {
           backgroundEvents = [];
         }
 
         // Events
-        let events;
         if (teacher.attendancies) {
           events = teacher.attendancies.map((attendance) => ({
             id: attendance.attendanceId,
@@ -142,6 +172,7 @@ export class AvailableTeachersModal extends React.Component {
             start: new Date(attendance.startDate),
             end: new Date(attendance.endDate),
             isNew: attendance.isNew,
+            roomId: attendance.roomId,
           }));
         } else {
           events = [];

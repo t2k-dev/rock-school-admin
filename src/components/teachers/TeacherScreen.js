@@ -8,7 +8,7 @@ import { CalendarWeek } from "../common/CalendarWeek";
 import TeacherScreenCard from "./TeacherScreenCard";
 
 import { getDisciplineName } from "../constants/disciplines";
-import { getSubscriptionStatusName } from "../constants/subscriptions";
+import { getSubscriptionStatusName, getTrialSubscriptionStatusName } from "../constants/subscriptions";
 
 class TeacherScreen extends React.Component {
   constructor(props) {
@@ -131,7 +131,7 @@ class TeacherScreen extends React.Component {
                   </Link>
                 </td>
                 <td>{getDisciplineName(item.disciplineId)}</td>
-                <td>{getSubscriptionStatusName(item.status)}</td>
+                <td>{getTrialSubscriptionStatusName(item.trialStatus)}</td>
               </tr>
             ))}
           </tbody>

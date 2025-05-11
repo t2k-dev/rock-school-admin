@@ -9,7 +9,7 @@ import { ScheduleEditorWithSlots } from "../common/ScheduleEditorWithSlots";
 import { addSubscription } from "../../services/apiSubscriptionService";
 import { getAvailableTeachers, getWorkingPeriods } from "../../services/apiTeacherService";
 
-import { AvailableTeachersTrialModal } from "../teachers/AvailableTeachersTrialModal";
+import { AvailableTeachersModal } from "../teachers/AvailableTeachersModal";
 
 const backgroundEvents = [
   {
@@ -238,7 +238,7 @@ console.log(availableSlots)
                   Доступные окна...
                 </Button>
               </InputGroup>
-              <AvailableTeachersTrialModal
+              <AvailableTeachersModal
                 show={showAvailableTeacherModal}
                 availableTeachers={availableTeachers}
                 updateAvailableSlots={this.updateAvailableSlots}

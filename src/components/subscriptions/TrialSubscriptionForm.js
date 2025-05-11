@@ -3,7 +3,7 @@ import { Button, Col, Container, Form, InputGroup, Nav, Row } from "react-bootst
 import InputMask from "react-input-mask";
 
 import { DisciplinesDropDownControl } from "../common/DisciplinesDropDownControl";
-import { AvailableTeachersTrialModal } from "../teachers/AvailableTeachersTrialModal";
+import { AvailableTeachersModal } from "../teachers/AvailableTeachersModal";
 
 import { addTrialSubscription } from "../../services/apiSubscriptionService";
 import { getAvailableTeachers } from "../../services/apiTeacherService";
@@ -246,7 +246,7 @@ export class TrialSubscriptionForm extends React.Component {
                 <Button variant="outline-secondary" type="null" onClick={(e) => this.generateAvailablePeriods(e)} disabled={false}>
                   Доступыне окна...
                 </Button>
-                <AvailableTeachersTrialModal
+                <AvailableTeachersModal
                   show={showAvailableTeacherModal}
                   availableTeachers={availableTeachers}
                   updateAvailableSlots={this.updateAvailableSlots}

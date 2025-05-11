@@ -18,3 +18,13 @@ export const updateStatus = async (id, status) => {
   }
 };
 
+export const declineTrial = async (id, data) => {
+  try {
+    const response = await apiClient.post(`/attendance/${id}/declineTrial`, data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+};
+
+

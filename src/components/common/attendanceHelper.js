@@ -1,10 +1,19 @@
 
 import AttendanceStatus from "../constants/AttendanceStatus";
+import { getRoomName } from "../constants/rooms";
+
 import { formatDate, formatTime } from "./DateTimeHelper";
 
-export function getSlotDescription(teacherName, date) {
+export function getSlotDescriptionWithTeacherName(slot) {
+  const date = slot.start;
   const dayName = new Intl.DateTimeFormat("ru-RU", { weekday: "long" }).format(date);
-  return `${teacherName}: ${dayName}, ${formatDate(date)} в ${formatTime(date)}`;
+  return `${slot.teacherFullName}: ${dayName}, ${formatDate(date)} в ${formatTime(date)} (${getRoomName(slot.roomId)})`;
+}
+
+export function getSlotDescription(slot) {
+  const date = slot.start;
+  const dayName = new Intl.DateTimeFormat("ru-RU", { weekday: "long" }).format(date);
+  return `${dayName}, ${formatDate(date)} в ${formatTime(date)} (${getRoomName(slot.roomId)})`;
 }
 
 export function isCancelledAttendanceStatus(status){

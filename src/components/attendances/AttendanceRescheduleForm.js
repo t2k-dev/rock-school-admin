@@ -6,23 +6,19 @@ import { Button, Col, Container, Form, InputGroup, Row, Stack } from "react-boot
 
 import { AvailableTeachersModal } from "../teachers/AvailableTeachersModal";
 
-import { getAttendance } from "../../services/apiAttendanceService";
 import { getNextAvailableSlot, rescheduleAttendance } from "../../services/apiSubscriptionService";
 import { getWorkingPeriods } from "../../services/apiTeacherService";
 
-import { formatDate, formatTime } from "../common/DateTimeHelper";
 import { getSlotDescription } from "../common/attendanceHelper";
-import { getRoomName } from "../constants/rooms";
+import { getDisciplineName } from "../constants/disciplines";
+
 import { CalendarIcon } from "../icons/CalendarIcon";
 
 export class AttendanceRescheduleForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      isExistingStudent: false,
-
       branchId: 0,
-      disciplineId: "",
 
       backgroundEvents: [],
 
@@ -30,9 +26,10 @@ export class AttendanceRescheduleForm extends React.Component {
       availableSlots: [],
       showAvailableTeacherModal: false,
       selectedSlotId: 0,
+
+      notificationDate: format(new Date(), "yyyy-MM-dd HH:mm"),
     };
 
-    // AvailableTeachersModal
     this.handleCloseAvailableTeachersModal = this.handleCloseAvailableTeachersModal.bind(this);
 
     this.handleSave = this.handleSave.bind(this);
@@ -40,23 +37,17 @@ export class AttendanceRescheduleForm extends React.Component {
   }
 
   componentDidMount() {
-    this.onFormLoad();
-  }
-
-  async onFormLoad() {
-    const id = this.props.match.params.id;
-    const attendance = await getAttendance(id);
-
-    this.setState({
-      attendance: attendance,
-    });
+    const { state } = this.props.location;
+    if (state && state.attendance) {
+      this.setState({ attendance: state.attendance });
+    }
   }
 
   generateAvailablePeriods = async (e) => {
     e.preventDefault();
 
     let teachers;
-    const response = await getWorkingPeriods(this.state.attendance.teacherId);
+    const response = await getWorkingPeriods(this.state.attendance.teacher.teacherId);
     teachers = response.data.availableTeachers;
 
     this.setState({
@@ -76,14 +67,14 @@ export class AttendanceRescheduleForm extends React.Component {
   handleGetNextAvailableSlot = async (e) => {
     e.preventDefault();
 
-    const data = (await getNextAvailableSlot(this.state.attendance.subscriptionId)).data;
+    const response = (await getNextAvailableSlot(this.state.attendance.subscriptionId)).data;
+   
+    const date = new Date(response.startDate);
+    const roomId = response.roomId
 
-    const date = new Date(data.startDate);
-
-    const dayName = new Intl.DateTimeFormat("ru-RU", { weekday: "long" }).format(date);
     const slot = {
-      startDate: data.startDate,
-      description: `${dayName}, ${formatDate(date)} в ${formatTime(date)} - ${getRoomName(data.roomId)}`,
+      start: date,
+      roomId: roomId,
     };
 
     this.setState({ availableSlots: [slot], selectedSlotId: 1 });
@@ -101,7 +92,7 @@ export class AttendanceRescheduleForm extends React.Component {
 
     const response = await rescheduleAttendance(requestBody);
 
-    this.props.history.push(`/studentScreen/${this.state.attendance.studentId}`);
+    window.history.back();
   };
 
   handleChange = (e) => {
@@ -110,7 +101,7 @@ export class AttendanceRescheduleForm extends React.Component {
   };
 
   render() {
-    const { attendance, lastName, showAvailableTeacherModal, availableTeachers, availableSlots, selectedSlotId, level } = this.state;
+    const { attendance, lastName, showAvailableTeacherModal, availableTeachers, availableSlots, selectedSlotId, notificationDate, cancalationType } = this.state;
     if (!attendance) {
       return;
     }
@@ -119,7 +110,7 @@ export class AttendanceRescheduleForm extends React.Component {
     if (availableSlots && availableSlots.length > 0) {
       availableSlotsList = availableSlots.map((item, index) => (
         <option key={index} value={item.id}>
-          {getSlotDescription(item.teacherFullName, item.start)}
+          {getSlotDescription(item)}
         </option>
       ));
     }
@@ -183,27 +174,27 @@ export class AttendanceRescheduleForm extends React.Component {
                   {format(attendance.endDate, "HH:mm")}
                 </span>
               </div>
-              <div>Направление: Вокал</div>
-              <div>Преподаватель: Варавара</div>
+              <div>Ученик: {attendance.student.firstName}</div>
+              <div>Направление: {getDisciplineName(attendance.disciplineId)} ({attendance.teacher.firstName})</div>
             </Stack>
             <hr></hr>
 
             <Form>
               <Form.Group className="mb-3" controlId="cancalationType">
-                <Form.Label>Причина</Form.Label>
-                <Form.Select name="level" aria-label="Веберите..." value={level} onChange={(e) => this.setState({ level: e.target.value })}>
+                <Form.Label>Тип</Form.Label>
+                <Form.Select name="level" aria-label="Веберите..." value={cancalationType} onChange={(e) => this.setState({ cancalationType: e.target.value })}>
                   <option>выберите...</option>
                   <option value="0">Отмена ученика</option>
                   <option value="1">Отмена преподавателя</option>
                   <option value="2">Отмена школы</option>
                 </Form.Select>
               </Form.Group>
-              <Form.Group className="mb-3" controlId="comment">
+              <Form.Group className="mb-3" controlId="notificationDate">
                 <Form.Label>Дата уведомления</Form.Label>
-                <Form.Control onChange={this.handleChange} value={lastName} placeholder="введите..." autoComplete="off" />
+                <Form.Control onChange={this.handleChange} value={notificationDate} placeholder="введите..." autoComplete="off" />
               </Form.Group>
               <Form.Group className="mb-3" controlId="comment">
-                <Form.Label>Комментарий</Form.Label>
+                <Form.Label>Причина</Form.Label>
                 <Form.Control onChange={this.handleChange} value={lastName} placeholder="введите..." autoComplete="off" />
               </Form.Group>
               {availableSlotsSelection}
