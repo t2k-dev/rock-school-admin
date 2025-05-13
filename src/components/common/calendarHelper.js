@@ -30,6 +30,18 @@ export function applyCalendarStyle(event) {
       };
     }
 
+    if (event.status === AttendanceStatus.ATTENDED) {
+      return {
+        style: {
+          backgroundColor: "#f5ee87",
+          color: "black",
+          borderRadius: "5px",
+          border: "0",
+          textAlign: "center",
+        },
+      };
+    }
+
     return {
       style: {
         backgroundColor: "#e1da77",

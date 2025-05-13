@@ -68,7 +68,7 @@ class TeacherScreen extends React.Component {
 
     // Subscriptions
     let subscriptionsTable;
-    const nonTrialSubscriptions = subscriptions.filter(s => s.isTrial === false);
+    const nonTrialSubscriptions = subscriptions.filter(s => s.trialStatus === null);
     if (nonTrialSubscriptions && nonTrialSubscriptions.length > 0) {
       subscriptionsTable = (
         <Table striped bordered hover>
@@ -84,6 +84,9 @@ class TeacherScreen extends React.Component {
           <tbody>
             {subscriptions.map((item, index) => (
               <tr key={index}>
+                <td>
+                  {format(item.startDate, "yyyy-MM-dd")}
+                </td>
                 <td>
                   <Link to={"/student/" + item.student.studentId}>
                     {item.student.firstName} {item.student.lastName}
@@ -109,7 +112,7 @@ class TeacherScreen extends React.Component {
 
     // Trials
     let trialsTable;
-    const trialSubscriptions = subscriptions.filter(s => s.isTrial === true);
+    const trialSubscriptions = subscriptions.filter(s => s.trialStatus === true);
     if (trialSubscriptions && trialSubscriptions.length > 0) {
       trialsTable = (
         <Table striped bordered hover>

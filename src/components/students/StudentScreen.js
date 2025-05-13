@@ -1,6 +1,6 @@
 import { format } from "date-fns";
 import React from "react";
-import { Button, Container, Row, Tab, Table, Tabs } from "react-bootstrap";
+import { Container, Row, Tab, Table, Tabs } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { getStudentScreenDetails } from "../../services/apiStudentService";
 
@@ -101,9 +101,14 @@ class StudentScreen extends React.Component {
                 <td>{item.attendanceCount}</td>
                 <td>{getSubscriptionStatusName(item.status)}</td>
                 <td>
-                  <Button size="sm" variant="success">
+                  <Link
+                    to={{
+                      pathname: `/student/${student.studentId}/subscriptionForm`,
+                      state: { disciplineId: item.disciplineId, teacher: item.teacher, student },
+                    }}
+                  >
                     Продлить
-                  </Button>
+                  </Link>
                 </td>
               </tr>
             ))}
@@ -197,7 +202,6 @@ class StudentScreen extends React.Component {
               this.handleCloseModal();
             }}
           />
-
         </Row>
         <Row>
           <Tabs defaultActiveKey="subscriptions" id="uncontrolled-tab-example" className="mb-3">

@@ -57,9 +57,10 @@ const backgroundEvents = [
 export class SubscriptionForm extends React.Component {
   constructor(props) {
     super(props);
+
     this.state = {
       studentId: this.props.match.params.id,
-      disciplineId: 0,
+      disciplineId: "",
       teacherId: "",
       startDate: "",
       attendanceCount: "",
@@ -90,10 +91,10 @@ export class SubscriptionForm extends React.Component {
     }
 
     this.setState({
-      student: this.props.location.state.student,
-      disciplineId: this.props.location.state.disciplineId,
-      teacherId: this.props.location.state.teacher?.teacherId,
-      availableTeachers: updatedAvailableTeachers,
+      student: this.props.location.state.student || {},
+      disciplineId: this.props.location.state.disciplineId || "",
+      teacherId: this.props.location.state.teacher?.teacherId || "",
+      availableTeachers: updatedAvailableTeachers || [],
     });
   }
 
@@ -154,14 +155,14 @@ export class SubscriptionForm extends React.Component {
 
   updateAvailableSlots = (availableSlots) => {
     this.setState({ availableSlots: availableSlots });
-    console.log("this.state.availableSlots");
-    console.log(this.state.availableSlots);
   };
 
   render() {
+  console.log("render Form");
+  //console.log(this.props.location);
+  console.log(this.state.disciplineId);
+
     const { disciplineId, teacherId, availableSlots, attendanceCount, attendanceLength, startDate, availableTeachers, showAvailableTeacherModal } = this.state;
-console.log("render");
-console.log(availableSlots)
     return (
       <Container style={{ marginTop: "40px", paddingBottom: "50px" }}>
         <Row>

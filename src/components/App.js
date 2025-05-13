@@ -26,6 +26,8 @@ import { SubscriptionForm } from "./subscriptions/SubscriptionForm";
 import { TrialSubscriptionForm } from "./subscriptions/TrialSubscriptionForm";
 import { TrialSubscriptionForm2 } from "./subscriptions/TrialSubscriptionForm2";
 
+import { TestComponent } from "./TestComponent";
+import { TestComponent2 } from "./TestComponent2";
 import { CalendarWeek } from "./common/CalendarWeek";
 import NoteForm from "./notes/NoteForm";
 
@@ -64,6 +66,8 @@ function App() {
       <Route exact path="/notes/addNote" render={(props) => <NoteForm {...props} />}/>
       
       <Route exact path="/bigCalendarTest"><CalendarWeek /></Route>
+      <Route exact path="/TestComponent" render={(props) => <TestComponent {...props}/>}/>
+      <Route exact path="/TestComponent2" render={(props) => <TestComponent2 {...props}/>}/>
       
     </BrowserRouter>
   );

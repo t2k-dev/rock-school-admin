@@ -9,7 +9,7 @@ import { CalendarIcon } from "../icons/CalendarIcon";
 import AttendanceStatus from "../constants/AttendanceStatus";
 import { getDisciplineName } from "../constants/disciplines";
 
-import { declineTrial, updateStatus } from "../../services/apiAttendanceService";
+import { acceptTrial, declineTrial, updateStatus } from "../../services/apiAttendanceService";
 
 export class AttendanceAtendedForm extends React.Component {
   constructor(props) {
@@ -35,14 +35,17 @@ export class AttendanceAtendedForm extends React.Component {
 
   handleConfirmAndSubscribe = async (e) => {
     e.preventDefault();
-    
-    const response = await updateStatus(this.state.attendance.attendanceId, AttendanceStatus.ATTENDED);
-    const { student, teacher, disciplineId } = this.state.attendance;
-    this.props.navigate(`/student/${student.studentId}/subscriptionForm`, {
-      state: { disciplineId: disciplineId, teacher: teacher, student: student },
-    });
 
-    //    this.props.history.push(`/studentScreen/${this.state.student.studentId}`);
+    const request = {
+        statusReason: this.state.statusReason,
+    }
+
+    const response = await acceptTrial(this.state.attendance.attendanceId, request);
+
+    const { student, teacher, disciplineId } = this.state.attendance;
+    this.props.history.push(`/student/${student.studentId}/subscriptionForm`, {
+         disciplineId, teacher, student 
+      });
   };
 
   handleDecline = async (e) =>{
