@@ -8,7 +8,7 @@ import { CalendarWeek } from "../common/CalendarWeek";
 import { DisciplineIcon } from "../common/DisciplineIcon";
 
 import { getDisciplineName } from "../constants/disciplines";
-import { getSubscriptionStatusName } from "../constants/subscriptions";
+import { getSubscriptionStatusName, getTrialSubscriptionStatusName } from "../constants/subscriptions";
 
 import { SlotDetailsModal } from "../home//SlotDetailsModal";
 import StudentScreenCard from "./StudentScreenCard";
@@ -70,15 +70,22 @@ class StudentScreen extends React.Component {
   render() {
     const { student, subscriptions, attendances, selectedAttendanceDetails, showAttendanceDetailsModal } = this.state;
 
+    const sortedSubscriptions = subscriptions.sort((a, b) => {
+      const dateA = new Date(a.startDate);
+      const dateB = new Date(b.startDate);
+      return dateB - dateA; // Descending order
+    });
+
     // Subscriptions
     let subscriptionsTable;
 
-    if (subscriptions && subscriptions.length > 0) {
-      const nonTrialSubscriptions = subscriptions.filter((s) => s.trialStatus === null);
+    const nonTrialSubscriptions = sortedSubscriptions.filter((s) => s.trialStatus === null);
+    if (nonTrialSubscriptions && nonTrialSubscriptions.length > 0) {
       subscriptionsTable = (
         <Table striped bordered hover>
           <thead>
             <tr>
+              <th>Дата начала</th>
               <th>Преподаватель</th>
               <th>Направление</th>
               <th>Занятий</th>
@@ -89,6 +96,7 @@ class StudentScreen extends React.Component {
           <tbody>
             {nonTrialSubscriptions.map((item, index) => (
               <tr key={index}>
+                <td>{format(item.startDate, "yyyy-MM-dd")}</td>
                 <td>
                   <Link to={`/teacher/${item.teacher.teacherId}`}>
                     {item.teacher.firstName} {item.teacher.lastName}
@@ -127,7 +135,7 @@ class StudentScreen extends React.Component {
 
     // Trials
     let trialsTable;
-    const trialSubscriptions = subscriptions.filter((s) => s.trialStatus !== null);
+    const trialSubscriptions = sortedSubscriptions.filter((s) => s.trialStatus !== null);
     if (trialSubscriptions && trialSubscriptions.length > 0) {
       trialsTable = (
         <Table striped bordered hover>
@@ -136,7 +144,7 @@ class StudentScreen extends React.Component {
               <th style={{ width: "100px" }}>Дата</th>
               <th>Преподаватель</th>
               <th>Направление</th>
-              <th>Статус</th>
+              <th>Результат</th>
             </tr>
           </thead>
           <tbody>
@@ -144,7 +152,7 @@ class StudentScreen extends React.Component {
               <tr key={index}>
                 <td>{format(item.startDate, "yyyy-MM-dd")}</td>
                 <td>
-                  <Link to={`/teacherScreen/${item.teacher.teacherId}`}>
+                  <Link to={`/teacher/${item.teacher.teacherId}`}>
                     {item.teacher.firstName} {item.teacher.lastName}
                   </Link>
                 </td>
@@ -152,7 +160,7 @@ class StudentScreen extends React.Component {
                   <DisciplineIcon disciplineId={item.disciplineId} />
                   <span style={{ marginLeft: "10px" }}>{getDisciplineName(item.disciplineId)}</span>
                 </td>
-                <td>{getSubscriptionStatusName(item.status)}</td>
+                <td>{getTrialSubscriptionStatusName(item.trialStatus)}</td>
               </tr>
             ))}
           </tbody>

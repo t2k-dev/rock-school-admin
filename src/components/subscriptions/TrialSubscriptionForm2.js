@@ -95,7 +95,7 @@ export class TrialSubscriptionForm2 extends React.Component {
     const response = await addTrialSubscription2(requestBody);
     const newStudentId = response.data;
 
-    this.props.history.push(`/studentScreen/${newStudentId}`);
+    this.props.history.push(`/student/${newStudentId}`);
   };
 
   handleChange = (e) => {

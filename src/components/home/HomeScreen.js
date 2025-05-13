@@ -84,8 +84,6 @@ class HomeScreen extends React.Component {
     // Notes
     const activeNotes = notes?.filter((n) => n.status === 1);
     const completedNotes = notes?.filter((n) => n.status === 2);
-    console.log("activeNotes");
-console.log(activeNotes);
 
     let activeNotesTable;
     if (activeNotes && activeNotes?.length > 0) {
@@ -115,15 +113,9 @@ console.log(activeNotes);
     }
 
     let completedNotesTable;
-    if (completedNotes) {
+    if (completedNotes && completedNotes?.length > 0) {
       completedNotesTable = (
         <Table striped bordered hover>
-          <thead>
-            <tr>
-              <th style={{ width: "100px" }}>Дата</th>
-              <th>Описание</th>
-            </tr>
-          </thead>
           <tbody>
             {completedNotes.map((item, index) => (
               <tr key={index}>

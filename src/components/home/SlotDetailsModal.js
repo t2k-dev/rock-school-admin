@@ -82,7 +82,7 @@ export class SlotDetailsModal extends React.Component {
                   <Container style={{ width: "100px", padding: "0" }}>
                     <Avatar style={{ width: "100px", height: "100px" }} />
                     <div className="text-center mt-1">
-                      <Link to={`/studentScreen/${student.studentId}`}>{student.firstName}</Link>
+                      <Link to={`/student/${student.studentId}`}>{student.firstName}</Link>
                     </div>
                   </Container>
                   <Container>

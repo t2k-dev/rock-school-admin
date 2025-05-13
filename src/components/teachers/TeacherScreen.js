@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { getTeacherScreenDetails } from "../../services/apiTeacherService";
 
 import { CalendarWeek } from "../common/CalendarWeek";
+import { DisciplineIcon } from "../common/DisciplineIcon";
 import TeacherScreenCard from "./TeacherScreenCard";
 
 import { getDisciplineName } from "../constants/disciplines";
@@ -52,6 +53,12 @@ class TeacherScreen extends React.Component {
   render() {
     const { teacher, backgroundEvents, subscriptions, attendances } = this.state;
 
+    const sortedSubscriptions = subscriptions.sort((a, b) => {
+      const dateA = new Date(a.startDate);
+      const dateB = new Date(b.startDate);
+      return dateB - dateA; // Descending order
+    });
+
     // Events
     let events;
     if (attendances) {
@@ -68,32 +75,33 @@ class TeacherScreen extends React.Component {
 
     // Subscriptions
     let subscriptionsTable;
-    const nonTrialSubscriptions = subscriptions.filter(s => s.trialStatus === null);
+    const nonTrialSubscriptions = sortedSubscriptions.filter((s) => s.trialStatus === null);
     if (nonTrialSubscriptions && nonTrialSubscriptions.length > 0) {
       subscriptionsTable = (
         <Table striped bordered hover>
           <thead>
             <tr>
-              <th>Дата</th>
+              <th>Дата начала</th>
               <th>Ученик</th>
               <th>Направление</th>
-              <th>Осталось занятий</th>
+              <th>Занятий</th>
               <th>Статус</th>
             </tr>
           </thead>
           <tbody>
             {subscriptions.map((item, index) => (
               <tr key={index}>
-                <td>
-                  {format(item.startDate, "yyyy-MM-dd")}
-                </td>
+                <td>{format(item.startDate, "yyyy-MM-dd")}</td>
                 <td>
                   <Link to={"/student/" + item.student.studentId}>
                     {item.student.firstName} {item.student.lastName}
                   </Link>
                 </td>
-                <td>{getDisciplineName(item.disciplineId)}</td>
-                <td>{item.description}</td>
+                <td>
+                  <DisciplineIcon disciplineId={item.disciplineId} />
+                  <span style={{ marginLeft: "10px" }}>{getDisciplineName(item.disciplineId)}</span>
+                </td>
+                <td>{item.attendanceCount}</td>
                 <td>{getSubscriptionStatusName(item.status)}</td>
               </tr>
             ))}
@@ -112,13 +120,13 @@ class TeacherScreen extends React.Component {
 
     // Trials
     let trialsTable;
-    const trialSubscriptions = subscriptions.filter(s => s.trialStatus === true);
+    const trialSubscriptions = sortedSubscriptions.filter((s) => s.trialStatus !== null);
     if (trialSubscriptions && trialSubscriptions.length > 0) {
       trialsTable = (
         <Table striped bordered hover>
           <thead>
             <tr>
-              <th style={{width:"100px"}}>Дата</th>
+              <th style={{ width: "100px" }}>Дата</th>
               <th>Ученик</th>
               <th>Направление</th>
               <th>Статус</th>
@@ -129,7 +137,7 @@ class TeacherScreen extends React.Component {
               <tr key={index}>
                 <td>{format(item.startDate, "yyyy-MM-dd")}</td>
                 <td>
-                  <Link to={`/studentScreen/${item.student.studentId}`}>
+                  <Link to={`/student/${item.student.studentId}`}>
                     {item.student.firstName} {item.student.lastName}
                   </Link>
                 </td>
@@ -162,14 +170,10 @@ class TeacherScreen extends React.Component {
         <Row className="mt-3">
           <Tabs defaultActiveKey="subscriptions" id="uncontrolled-tab-example" className="mb-3">
             <Tab eventKey="subscriptions" title="Абонементы">
-              <Table>
-                {subscriptionsTable}
-              </Table>
+              <Table>{subscriptionsTable}</Table>
             </Tab>
             <Tab eventKey="trials" title="Пробные занятия">
-              <Table>
-                {trialsTable}
-              </Table>
+              <Table>{trialsTable}</Table>
             </Tab>
           </Tabs>
         </Row>

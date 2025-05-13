@@ -51,7 +51,7 @@ function App() {
       <Route exact path="/admin/registerTeacher" render={(props) => <TeacherForm type="New" {...props} />}/>
       
       <Route exact path="/students"><Students /></Route>
-      <Route exact path="/studentScreen/:id" render={(props) => <StudentScreen {...props}/>}/>
+      <Route exact path="/student/:id" render={(props) => <StudentScreen {...props}/>}/>
       <Route exact path="/student/new" render={(props) => <StudentForm type="New" {...props} />}/>
       <Route exact path="/student/edit/:id" render={(props) => <StudentForm type="Edit" {...props} />}/>
       <Route exact path="/student/:id/addTrial" render={(props) => <TrialSubscriptionForm2 {...props} />}/>

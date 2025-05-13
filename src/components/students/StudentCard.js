@@ -1,7 +1,7 @@
 import React from "react";
-import { Card, Row, Col, Image, Button } from 'react-bootstrap';
-import noImage from '../../images/user.jpg';
+import { Card, Col, Image, Row } from 'react-bootstrap';
 import { Link } from "react-router-dom";
+import noImage from '../../images/user.jpg';
 
 class StudentCard extends React.Component{
 
@@ -13,7 +13,7 @@ class StudentCard extends React.Component{
                             <Col md="1">
                                 <Image src={noImage} className='img-preview' fluid='true'/>
                             </Col>
-                            <Col as={Link} to={`/studentScreen/${this.props.item.studentId}`}>
+                            <Col as={Link} to={`/student/${this.props.item.studentId}`}>
                                 <h3>{this.props.item.firstName} {this.props.item.lastName}</h3>
                             </Col>
                         </Row>
