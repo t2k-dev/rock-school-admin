@@ -13,7 +13,7 @@ export class ScheduleEditor extends React.Component {
       periodDay: "",
       periodStart: "",
       periodEnd: "",
-      roomId: "",
+      roomId: 0,
     };
   }
 
@@ -136,10 +136,10 @@ export class ScheduleEditor extends React.Component {
             <Form.Select aria-label="Веберите день..." value={this.state.roomId} onChange={(e) => this.setState({ roomId: e.target.value })}>
               <option>выберите комнату...</option>
               <option value="1">Красная</option>
-              <option value="2">Вокальная</option>
-              <option value="4">Барабанная</option>
-              <option value="5">Желтая</option>
-              <option value="6">Зеленая</option>
+              <option value={2}>Вокальная</option>
+              <option value={4}>Барабанная</option>
+              <option value={5}>Желтая</option>
+              <option value={6}>Зеленая</option>
             </Form.Select>
           </Container>
         </Row>

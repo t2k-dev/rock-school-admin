@@ -52,7 +52,7 @@ function App() {
       
       <Route exact path="/students"><Students /></Route>
       <Route exact path="/student/:id" render={(props) => <StudentScreen {...props}/>}/>
-      <Route exact path="/student/new" render={(props) => <StudentForm type="New" {...props} />}/>
+      <Route exact path="/student" render={(props) => <StudentForm type="New" {...props} />}/>
       <Route exact path="/student/edit/:id" render={(props) => <StudentForm type="Edit" {...props} />}/>
       <Route exact path="/student/:id/addTrial" render={(props) => <TrialSubscriptionForm2 {...props} />}/>
       <Route exact path="/student/:id/waitingSchedule" render={(props) => <WaitingScheduleForm {...props} />}/>

@@ -51,7 +51,7 @@ class Students extends React.Component {
                 <div style={{ fontWeight: "bold", fontSize: "28px" }}>Ученики</div>
               </div>
               <div>
-                <Link to="/student/new">
+                <Link to="/student">
                   <Button variant="outline-success">+ Новый ученик</Button>
                 </Link>
               </div>

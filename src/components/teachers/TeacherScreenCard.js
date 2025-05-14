@@ -1,9 +1,19 @@
 import React from "react";
 import { Card, Container } from "react-bootstrap";
-import { Avatar } from "../common/Avatar";
-import { EditIcon } from "../icons/EditIcon";
 import { Doughnut } from "react-chartjs-2";
+import { Avatar } from "../common/Avatar";
 import { DisciplineIcon } from "../common/DisciplineIcon";
+import { EditIcon } from "../icons/EditIcon";
+
+import {
+  ArcElement,
+  Chart as ChartJS,
+  Legend,
+  Tooltip,
+} from "chart.js";
+
+// Register required components
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 class TeacherScreenCard extends React.Component {
   constructor(props) {
@@ -36,7 +46,7 @@ class TeacherScreenCard extends React.Component {
                 {item.disciplines && item.disciplines.map((id) => <DisciplineIcon disciplineId={id} />)}
               </Container>
             </Container>
-            {/*
+
             <Container className="d-flex p-0">
               <Container className="p-0" style={{ width: "120px" }}>
                 <div style={{ textAlign: "center" }}>Загрузка</div>
@@ -94,7 +104,6 @@ class TeacherScreenCard extends React.Component {
                 </div>
               </Container>
             </Container>
-            */}
           </Container>
         </Card.Body>
       </Card>

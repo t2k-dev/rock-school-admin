@@ -1,15 +1,17 @@
 import React from "react";
-import { Form, Container, Row, Col, FormCheck, Button } from "react-bootstrap";
+import { Button, Col, Container, Form, FormCheck, InputGroup, Row } from "react-bootstrap";
 
-import { DisciplinesListControl } from "../common/DisciplinesListControl";
-import { SexControl } from "../common/SexControl";
-import InputMask from "react-input-mask";
-import { ScheduleEditor } from "../common/ScheduleEditor";
 import { format, parse } from "date-fns";
+import InputMask from "react-input-mask";
+import { DisciplinesListControl } from "../common/DisciplinesListControl";
+import { ScheduleEditor } from "../common/ScheduleEditor";
+import { SexControl } from "../common/SexControl";
 
-import { addTeacher, saveTeacher, getTeacher } from "../../services/apiTeacherService";
+import { addTeacher, getTeacher, saveTeacher } from "../../services/apiTeacherService";
 
-
+import { ru } from "date-fns/locale";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 class TeacherForm extends React.Component {
   constructor(props) {
@@ -61,7 +63,7 @@ class TeacherForm extends React.Component {
         //email: teacher.email,
         firstName: teacher.firstName,
         lastName: teacher.lastName,
-        birthDate: format(teacher.birthDate, "dd-MM-yyyy"),
+        birthDate: new Date(teacher.birthDate),
         phone: "7" + teacher.phone,
         disciplines: teacher.disciplines,
         sex: teacher.sex,
@@ -84,14 +86,14 @@ class TeacherForm extends React.Component {
   handleSave = async (e) => {
     console.log("handleSave");
     console.log(this.state);
-    
+
     e.preventDefault();
     const requestBody = {
       teacher: {
         email: this.state.teacher.email,
         firstName: this.state.teacher.firstName,
         lastName: this.state.teacher.lastName,
-        birthDate: parse(this.state.teacher.birthDate, "dd-MM-yyyy", new Date()),
+        birthDate: this.state.teacher.birthDate,
         sex: this.state.teacher.sex,
         phone: this.state.teacher.phone.replace("+7 ", "").replace(/\s/g, ""),
         disciplines: this.state.teacher.disciplines,
@@ -102,15 +104,15 @@ class TeacherForm extends React.Component {
       workingPeriods: this.state.workingPeriods,
     };
 
-    let response;
+    let teacherId;
     if (this.state.isNew) {
-      response = await addTeacher(requestBody);
-
+      const response = await addTeacher(requestBody);
+      teacherId = response.data.teacherId;
     } else {
-      response = await saveTeacher(this.state.teacher.teacherId, requestBody);
+      const response = await saveTeacher(this.state.teacher.teacherId, requestBody);
+      teacherId = this.state.teacher.teacherId;
     }
 
-    const teacherId = response.data.teacherId;
     this.props.history.push(`/teacher/${teacherId}`);
   };
 
@@ -118,10 +120,13 @@ class TeacherForm extends React.Component {
     const { id, value } = e.target;
     const teacher = { ...this.state.teacher };
     teacher[id] = value;
-    //this.setState({ [id]: value });
     this.setState({ teacher });
   };
-
+  handleUpdateBirthDate = (date) => {
+      const teacher = { ...this.state.teacher };
+      teacher.birthDate = date;
+      this.setState({ teacher });
+  }
   handleSexChange = (isChecked) => {
     const teacher = { ...this.state.teacher };
     teacher.sex = isChecked;
@@ -130,12 +135,12 @@ class TeacherForm extends React.Component {
 
   handleDisciplineCheck = (id, isChecked) => {
     const teacher = { ...this.state.teacher };
-  
+
     // Update disciplines array based on the isChecked value
     const newDisciplines = isChecked
       ? [...new Set([...teacher.disciplines, id])] // Add ID, ensuring no duplicates
       : teacher.disciplines.filter((discipline) => discipline !== id); // Remove ID
-  
+
     teacher.disciplines = newDisciplines;
     this.setState({ teacher });
   };
@@ -151,16 +156,14 @@ class TeacherForm extends React.Component {
     this.setState({ workingPeriods: periods });
   };
 
-  handleDateChange = (date) =>{
-    console.log(date);
-
+  handleDateChange = (date) => {
     this.setState((prevState) => ({
       teacher: {
         ...prevState.teacher,
-        birthDate: format(date, "dd-MM-yyyy"),
-      }
+        birthDate: format(date, "dd.MM.yyyy"),
+      },
     }));
-  }
+  };
 
   render() {
     const { email, firstName, lastName, birthDate, phone, sex, ageLimit, allowGroupLessons, disciplines, branchId } = this.state.teacher;
@@ -178,20 +181,44 @@ class TeacherForm extends React.Component {
                 </Form.Group>
                 <Form.Group as={Col} controlId="lastName">
                   <Form.Label>Фамилия</Form.Label>
-                  <Form.Control onChange={this.handleChange} value={lastName} placeholder="введите фамилию..." autoComplete="off"/>
+                  <Form.Control onChange={this.handleChange} value={lastName} placeholder="введите фамилию..." autoComplete="off" />
                 </Form.Group>
               </Row>
               <Row>
+                <InputGroup className="mb-3 " controlId="birthDate">
+
+                </InputGroup>
+
                 <Form.Group className="mb-3" controlId="birthDate">
                   <Form.Label>Дата рождения</Form.Label>
+                  <div>
                   <Form.Control
-                    as={InputMask}
-                    mask="99-99-9999"
-                    maskChar=" "
-                    onChange={this.handleChange}
-                    value={birthDate}
-                    placeholder="введите дату..."
+                    as={DatePicker}
+                    locale={ru} // Russian locale for date
+                    selected={birthDate} // Correctly bind the date object
+                    onChange={(date) => {
+                      if (date) {
+                        this.handleUpdateBirthDate(date)
+                      }
+                    }}
+                    onChangeRaw={(e) => {
+                      const rawValue = e.target.value;
+                      try {
+                        // Parse the raw input based on the expected format
+                        const parsedDate = parse(rawValue, "dd.MM.yyyy", new Date());
+                        if (!isNaN(parsedDate)) {
+                          this.handleUpdateBirthDate(parsedDate); // Only set valid dates
+                        }
+                      } catch (error) {
+                        console.error("Invalid date format"); // Handle invalid format
+                      }
+                    }}
+                    dateFormat="dd.MM.yyyy" // Format for the displayed date
+                    placeholderText="дд.мм.гггг" // Input placeholder
+                    shouldCloseOnSelect={true}
+                    autoComplete="off"
                   />
+                  </div>
                 </Form.Group>
               </Row>
 
@@ -248,10 +275,7 @@ class TeacherForm extends React.Component {
                 </Form.Select>
               </Form.Group>
 
-              <ScheduleEditor 
-                periods={this.state.workingPeriods} 
-                handlePeriodsChange={this.handlePeriodsChange} 
-              />
+              <ScheduleEditor periods={this.state.workingPeriods} handlePeriodsChange={this.handlePeriodsChange} />
 
               <hr></hr>
               <Button variant="primary" type="null" onClick={this.handleSave}>

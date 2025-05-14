@@ -153,7 +153,7 @@ class HomeScreen extends React.Component {
               <Button as={Link} to="/admin/addTrial" variant="outline-success"  style={{ marginRight: "10px" }}>
                 + Пробное занятие
               </Button>
-              <Button as={Link} to="/student/new" variant="outline-success">
+              <Button as={Link} to="/student" variant="outline-success">
                 + Новый ученик
               </Button>
             </div>
