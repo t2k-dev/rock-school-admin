@@ -68,7 +68,7 @@ export function applyCalendarStyle(event) {
   if (event.status === AttendanceStatus.ATTENDED) {
     return {
       style: {
-        backgroundColor: "#8d9bdd",
+        backgroundColor: "#44c072",
         color: "white",
         borderRadius: "5px",
         border: "0",

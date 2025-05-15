@@ -6,10 +6,9 @@ import { Button, Col, Container, Form, Row, Stack } from "react-bootstrap";
 
 import { CalendarIcon } from "../icons/CalendarIcon";
 
-import AttendanceStatus from "../constants/AttendanceStatus";
 import { getDisciplineName } from "../constants/disciplines";
 
-import { updateStatus } from "../../services/apiAttendanceService";
+import { missed } from "../../services/apiAttendanceService";
 
 
 export class AttendanceCancelationForm extends React.Component {
@@ -34,8 +33,12 @@ export class AttendanceCancelationForm extends React.Component {
 
   handleSave = async (e) => {
     e.preventDefault();
-
-    const response = await updateStatus(this.state.attendance.attendanceId, AttendanceStatus.MISSED);
+    
+    const request = {
+      statusReason: this.state.statusReason
+    }
+    const response = await missed(this.state.attendance.attendanceId, request);
+    
     window.history.back();
   };
 
@@ -45,7 +48,7 @@ export class AttendanceCancelationForm extends React.Component {
   };
 
   render() {
-    const { attendance, notificationDate, statusReason } = this.state;
+    const { attendance, statusReason } = this.state;
     if (!attendance) {
       return;
     }

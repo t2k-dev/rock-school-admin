@@ -6,10 +6,9 @@ import { Button, Col, Container, Form, Row, Stack } from "react-bootstrap";
 
 import { CalendarIcon } from "../icons/CalendarIcon";
 
-import AttendanceStatus from "../constants/AttendanceStatus";
 import { getDisciplineName } from "../constants/disciplines";
 
-import { acceptTrial, declineTrial, updateStatus } from "../../services/apiAttendanceService";
+import { acceptTrial, attend, declineTrial } from "../../services/apiAttendanceService";
 
 export class AttendanceAtendedForm extends React.Component {
   constructor(props) {
@@ -19,8 +18,6 @@ export class AttendanceAtendedForm extends React.Component {
       statusReason: "",
     };
 
-    // AvailableTeachersModal
-    this.handleSave = this.handleSave.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleConfirmAndSubscribe = this.handleConfirmAndSubscribe.bind(this);
     this.handleDecline = this.handleDecline.bind(this);
@@ -42,10 +39,7 @@ export class AttendanceAtendedForm extends React.Component {
 
     const response = await acceptTrial(this.state.attendance.attendanceId, request);
 
-    const { student, teacher, disciplineId } = this.state.attendance;
-    this.props.history.push(`/student/${student.studentId}/subscriptionForm`, {
-         disciplineId, teacher, student 
-      });
+    window.history.back();
   };
 
   handleDecline = async (e) =>{
@@ -59,10 +53,15 @@ export class AttendanceAtendedForm extends React.Component {
     console.log(response);
   }
 
-  handleSave = async (e) => {
+  handleAttend = async (e) => {
     e.preventDefault();
 
-    const response = await updateStatus(this.state.attendance.attendanceId, AttendanceStatus.ATTENDED);
+    const request = {
+        statusReason: this.state.statusReason,
+    }
+
+    const response = await attend(this.state.attendance.attendanceId, request);
+
     window.history.back();
   };
 
@@ -72,7 +71,7 @@ export class AttendanceAtendedForm extends React.Component {
   };
 
   render() {
-    const { attendance, notificationDate, statusReason } = this.state;
+    const { attendance, statusReason } = this.state;
     if (!attendance) {
       return;
     }
@@ -119,6 +118,14 @@ export class AttendanceAtendedForm extends React.Component {
                     </Button>
                     <Button onClick={this.handleConfirmAndSubscribe} variant="outline-success" style={{ marginLeft: "10px" }}>
                       Оформить абонемент
+                    </Button>
+                  </>
+                )}
+
+                {attendance.isTrial === false && (
+                  <>
+                    <Button onClick={this.handleAttend} variant="outline-success" style={{ marginLeft: "10px" }}>
+                      Подтвердить посещение
                     </Button>
                   </>
                 )}

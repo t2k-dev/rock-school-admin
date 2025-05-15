@@ -65,7 +65,7 @@ export class SlotDetailsModal extends React.Component {
     if (!this.props.selectedSlotDetails) {
       return <></>;
     }
-    const { teacher, student, startDate, endDate, disciplineId, roomId, comment } = this.props.selectedSlotDetails;
+    const { teacher, student, startDate, endDate, disciplineId, roomId, statusReason, comment } = this.props.selectedSlotDetails;
 
     return (
       <>
@@ -159,7 +159,7 @@ export class SlotDetailsModal extends React.Component {
             {this.props.selectedSlotDetails.status !== AttendanceStatus.NEW && (
               <Form.Group className="mb-3" controlId="comment">
                 <Form.Label>Комментарий</Form.Label>
-                <Form.Control as="textarea" onChange={this.handleChange} value={comment} placeholder="введите..." autoComplete="off" disabled="true"/>
+                <Form.Control as="textarea" onChange={this.handleChange} value={statusReason} placeholder="введите..." autoComplete="off" disabled="true"/>
               </Form.Group>
             )}
           </Modal.Body>

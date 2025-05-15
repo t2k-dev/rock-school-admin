@@ -64,7 +64,7 @@ export class SubscriptionForm extends React.Component {
       studentId: this.props.match.params.id,
       disciplineId: "",
       teacherId: "",
-      startDate: null,
+      startDate: "",
       attendanceCount: "",
       attendanceLength: 0,
 
@@ -194,30 +194,14 @@ export class SubscriptionForm extends React.Component {
                   <InputGroup className="mb-3 " controlId="startDate">
                     <Form.Control
                       as={DatePicker}
-                      locale={ru} // Russian locale for date
-                      selected={startDate} // Correctly bind the date object
-                      onChange={(date) => {
-                        if (date) {
-                          this.setState({ startDate: date }); // Store the Date object in state
-                        }
-                      }}
-                      onChangeRaw={(e) => {
-                        const rawValue = e.target.value;
-                        try {
-                          // Parse the raw input based on the expected format
-                          const parsedDate = parse(rawValue, "dd.MM.yyyy", new Date());
-                          if (!isNaN(parsedDate)) {
-                            this.setState({ startDate: parsedDate }); // Only set valid dates
-                          }
-                        } catch (error) {
-                          console.error("Invalid date format"); // Handle invalid format
-                        }
-                      }}
-                      dateFormat="dd.MM.yyyy" // Format for the displayed date
-                      placeholderText="дд.мм.гггг" // Input placeholder
-                      shouldCloseOnSelect={true}
+                      value={startDate}
+                      locale={ru}
+                      selected={this.state.startDate ? parse(this.state.startDate, "dd-MM-yyyy", new Date()) : null}
+                      onChange={(date) => this.setState({ startDate: format(date, "dd-MM-yyyy") })}
+                      placeholderText="дд/мм/гггг"
+                      
                     />
-                    <Button variant="outline-secondary" onClick={() => this.setState({ startDate: new Date() })}>
+                    <Button variant="outline-secondary" onClick={() => this.setState({ startDate: format(new Date(), "dd-MM-yyyy") })}>
                       Сегодня
                     </Button>
                   </InputGroup>

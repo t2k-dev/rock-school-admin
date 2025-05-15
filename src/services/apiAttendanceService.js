@@ -36,4 +36,21 @@ export const declineTrial = async (id, data) => {
   }
 };
 
+export const attend = async (id, data) => {
+  try {
+    const response = await apiClient.post(`/attendance/${id}/attend`, data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+};
+
+export const missed = async (id, data) => {
+  try {
+    const response = await apiClient.post(`/attendance/${id}/missed`, data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+};
 

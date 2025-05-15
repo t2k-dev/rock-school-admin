@@ -82,8 +82,13 @@ class HomeScreen extends React.Component {
     }
 
     // Notes
-    const activeNotes = notes?.filter((n) => n.status === 1);
-    const completedNotes = notes?.filter((n) => n.status === 2);
+    const sortedNotes = notes?.sort((a, b) => {
+      const dateA = new Date(a.completeDate);
+      const dateB = new Date(b.completeDate);
+      return dateB - dateA;
+    });
+    const activeNotes = sortedNotes?.filter((n) => n.status === 1);
+    const completedNotes = sortedNotes?.filter((n) => n.status === 2);
 
     let activeNotesTable;
     if (activeNotes && activeNotes?.length > 0) {
@@ -119,10 +124,10 @@ class HomeScreen extends React.Component {
           <tbody>
             {completedNotes.map((item, index) => (
               <tr key={index}>
-                <td>{format(item.completeDate, "dd-MM-yyyy")}</td>
+                <td style={{ width: "100px" }}>{format(item.completeDate, "HH:mm")}</td>
                 <td>
                   <Container className="d-flex p-0">
-                    <div className="flex-grow-1">{item.description}</div>
+                    <div className="flex-grow-1 text-decoration-line-through">{item.description}</div>
                     <div className="flex-shrink-1">
                       <Button variant="secondary" size="sm" onClick={(e) => this.handleMarkComplete(item.noteId)} disabled>
                         Не выполнено
@@ -202,9 +207,11 @@ class HomeScreen extends React.Component {
           <Tabs defaultActiveKey="active" id="uncontrolled-tab-example" className="mb-3">
             <Tab eventKey="active" title="На сегодня">
               {activeNotesTable}
-            </Tab>
-            <Tab eventKey="completed" title="Выполненные">
+              <hr></hr>
               {completedNotesTable}
+            </Tab>
+            <Tab eventKey="completed" title="Другие">
+              
             </Tab>
           </Tabs>
         </Row>
