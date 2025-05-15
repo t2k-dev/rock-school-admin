@@ -24,7 +24,6 @@ import TeacherScreen from "./teachers/TeacherScreen";
 
 import { SubscriptionForm } from "./subscriptions/SubscriptionForm";
 import { TrialSubscriptionForm } from "./subscriptions/TrialSubscriptionForm";
-import { TrialSubscriptionForm2 } from "./subscriptions/TrialSubscriptionForm2";
 
 import { TestComponent } from "./TestComponent";
 import { TestComponent2 } from "./TestComponent2";
@@ -54,9 +53,8 @@ function App() {
       <Route exact path="/student/:id" render={(props) => <StudentScreen {...props}/>}/>
       <Route exact path="/student" render={(props) => <StudentForm type="New" {...props} />}/>
       <Route exact path="/student/edit/:id" render={(props) => <StudentForm type="Edit" {...props} />}/>
-      <Route exact path="/student/:id/addTrial" render={(props) => <TrialSubscriptionForm2 {...props} />}/>
+      <Route exact path="/student/:id/addTrial" render={(props) => <TrialSubscriptionForm {...props} />}/>
       <Route exact path="/student/:id/waitingSchedule" render={(props) => <WaitingScheduleForm {...props} />}/>
-      <Route exact path="/admin/addTrial" render={(props) => <TrialSubscriptionForm {...props} />}/>
       <Route exact path="/admin/addSubscription" render={(props) => <SubscriptionForm {...props} />}/>
       
       <Route exact path="/student/:id/subscriptionForm" render={(props) => <SubscriptionForm type="New" {...props} />}/>

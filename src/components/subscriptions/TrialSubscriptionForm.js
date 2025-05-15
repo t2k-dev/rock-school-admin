@@ -1,6 +1,5 @@
 import React from "react";
-import { Button, Col, Container, Form, InputGroup, Nav, Row } from "react-bootstrap";
-import InputMask from "react-input-mask";
+import { Button, Col, Container, Form, InputGroup, Row } from "react-bootstrap";
 
 import { DisciplinesDropDownControl } from "../common/DisciplinesDropDownControl";
 import { AvailableTeachersModal } from "../teachers/AvailableTeachersModal";
@@ -18,7 +17,7 @@ export class TrialSubscriptionForm extends React.Component {
       lastName: "",
       age: "",
       level: 0,
-      phone:"",
+      phone: "",
       branchId: 0,
       disciplineId: "",
 
@@ -78,22 +77,18 @@ export class TrialSubscriptionForm extends React.Component {
   handleSave = async (e) => {
     e.preventDefault();
 
-    const selectedSlot = this.state.availableSlots.filter((s)=> s.id === this.state.selectedSlotId)[0];
-    console.log("selectedSlot2");
-    console.log(selectedSlot);
+    console.log(this.state)
+
+    const selectedSlot = this.state.availableSlots.filter((s) => s.id === this.state.selectedSlotId)[0];
     const requestBody = {
       disciplineId: this.state.disciplineId,
-      branchId: 1,// DEV: map after clarification
+      branchId: 1, // DEV: map after clarification
       teacherId: selectedSlot.teacherId,
       trialDate: selectedSlot.start,
       roomId: selectedSlot.roomId,
-      student:{
-        firstName: this.state.firstName,
-        lastName: this.state.lastName,
-        age: this.state.age,
-        phone: this.state.phone.replace("+7 ", "").replace(/\s/g, ""),
-        level: this.state.level,
-      }
+      student: {
+        studentId: this.props.match.params.id,
+      },
     };
 
     const response = await addTrialSubscription(requestBody);
@@ -118,17 +113,12 @@ export class TrialSubscriptionForm extends React.Component {
 
   render() {
     const {
-      isExistingStudent,
-      firstName,
-      lastName,
-      phone,
       age,
       disciplineId,
       showAvailableTeacherModal,
       availableTeachers,
       availableSlots,
       selectedSlotId,
-      level,
       fakeId,
     } = this.state;
 
@@ -148,94 +138,13 @@ export class TrialSubscriptionForm extends React.Component {
           <Col md="4">
             <h2 className="text-center mb-4">Пробное занятие</h2>
             <Form>
-              <Nav variant="tabs" defaultActiveKey="new" className="mb-3" fill="true">
-                <Nav.Item>
-                  <Nav.Link
-                    eventKey="new"
-                    onClick={() => {
-                      this.newStudentSelected();
-                    }}
-                  >
-                    Новый ученик
-                  </Nav.Link>
-                </Nav.Item>
-                <Nav.Item>
-                  <Nav.Link
-                    eventKey="existing"
-                    onClick={() => {
-                      this.existingStudentSelected();
-                    }}
-                    disabled
-                  >
-                    Существующий
-                  </Nav.Link>
-                </Nav.Item>
-              </Nav>
-              {!isExistingStudent && (
-                <>
-                  {" "}
-                  <Form.Group className="mb-3" controlId="firstName">
-                    <Form.Label>Имя</Form.Label>
-                    <Form.Control onChange={this.handleChange} value={firstName} placeholder="введите имя..." autoComplete="off"/>
-                  </Form.Group>
-                  <Form.Group className="mb-3" controlId="lastName">
-                    <Form.Label>Фамилия</Form.Label>
-                    <Form.Control onChange={this.handleChange} value={lastName} placeholder="введите фамилию..." autoComplete="off"/>
-                  </Form.Group>
-                  <Form.Group className="mb-3" controlId="phone">
-                    <Form.Label>Телефон</Form.Label>
-                    <Form.Control
-                      as={InputMask}
-                      mask="+7 999 999 99 99"
-                      maskChar=" "
-                      onChange={this.handleChange}
-                      value={phone}
-                      placeholder="введите телефон..."
-                    />
-                  </Form.Group>
-                  <Form.Group className="mb-3" controlId="age">
-                    <Form.Label>Возраст</Form.Label>
-                    <Form.Control as={InputMask} mask="999" maskChar="" onChange={this.handleChange} value={age} placeholder="введите число..." autoComplete="off"/>
-                  </Form.Group>
-                  <Form.Group className="mb-3" controlId="level">
-                    <Form.Label>Уровень</Form.Label>
-                    <Form.Select name="level" aria-label="Веберите..." value={level} onChange={(e) => this.setState({ level: e.target.value })}>
-                        <option>выберите...</option>
-                        <option value="0">0 - Начинающий</option>
-                        <option value="1">1 - Начинающий</option>
-                        <option value="2">2 - Начинающий</option>
-                        <option value="3">3 - Продолжающий</option>
-                        <option value="4">4 - Продолжающий</option>
-                        <option value="5">5 - Продолжающий</option>
-                        <option value="6">6</option>
-                        <option value="7">7</option>
-                        <option value="8">8</option>
-                        <option value="9">9</option>
-                        <option value="10">10 - Бог</option>
-                    </Form.Select>
-                  </Form.Group>
-                </>
-              )}
-              {isExistingStudent && (
-                <>
-                  {" "}
-                  <Form.Group className="mb-3" controlId="studentId">
-                    <Form.Label>Ученик</Form.Label>
-                    <Form.Select aria-label="Веберите..." value={fakeId} onChange={(e) => this.setState({ fakeId: e.target.value })}>
-                      <option>выберите...</option>
-                      <option value="1">Аделаида</option>
-                      <option value="2">Семён</option>
-                    </Form.Select>
-                  </Form.Group>
-                </>
-              )}
 
               <DisciplinesDropDownControl value={disciplineId} onChange={(e) => this.handleDisciplineChange(e)} />
               <label for="GenerteSchedule">Окно для занятия</label>
               <InputGroup className="mb-3 mt-2 text-center" controlId="GenerteSchedule">
                 <Form.Select
                   aria-label="Веберите..."
-                  value={selectedSlotId} 
+                  value={selectedSlotId}
                   onChange={(e) => this.setState({ selectedSlotId: e.target.value })}
                   style={{ width: "200px" }}
                 >

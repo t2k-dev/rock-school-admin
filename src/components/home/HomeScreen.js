@@ -155,9 +155,6 @@ class HomeScreen extends React.Component {
               </div>
             </div>
             <div>
-              <Button as={Link} to="/admin/addTrial" variant="outline-success"  style={{ marginRight: "10px" }}>
-                + Пробное занятие
-              </Button>
               <Button as={Link} to="/student" variant="outline-success">
                 + Новый ученик
               </Button>
