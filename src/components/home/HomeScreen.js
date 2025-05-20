@@ -26,7 +26,7 @@ class HomeScreen extends React.Component {
 
       selectedSlotDetails: null,
     };
-    this.handleMarkComplete = this.handleMarkComplete.bind(this);
+    this.handleChangeNoteStatus = this.handleChangeNoteStatus.bind(this);
     this.handleShowCanceled = this.handleShowCanceled.bind(this);
   }
   componentDidMount() {
@@ -57,8 +57,19 @@ class HomeScreen extends React.Component {
     this.setState({ showSlotDetailsModal: false });
   };
 
-  async handleMarkComplete(noteId) {
+  async handleChangeNoteStatus(noteId, status) {
     await markComplete(noteId);
+
+    this.setState((prevState) => {
+      // Create a new array with updated notes
+      const updatedNotes = prevState.notes.map((note) =>
+        note.noteId === noteId ? { ...note, status: status } : note
+      );
+
+      // Return the new state object
+      return { notes: updatedNotes };
+    });
+
   }
 
   render() {
@@ -100,10 +111,32 @@ class HomeScreen extends React.Component {
                 <td style={{ width: "100px" }}>{format(item.completeDate, "HH:mm")}</td>
                 <td>
                   <Container className="d-flex p-0">
-                    <div className="flex-grow-1">{item.description}</div>
+                    <div className="flex-grow-1">
+                      <Link
+                        to={{
+                          pathname: `/notes/${item.noteId}/edit`,
+                          state: { note: item },
+                        }}
+                      >
+                        {item.description}
+                      </Link>
+                    </div>
                     <div className="flex-shrink-1">
-                      <Button variant="primary" size="sm" onClick={(e) => this.handleMarkComplete(item.noteId)}>
+                      <Button
+                        variant="outline-primary"
+                        size="sm"
+                        onClick={(e) => this.handleChangeNoteStatus(item.noteId, 2)}
+                        style={{ marginLeft: "10px" }}
+                      >
                         Выполнено
+                      </Button>
+                      <Button
+                        variant="outline-danger"
+                        size="sm"
+                        onClick={(e) => this.handleChangeNoteStatus(item.noteId, 3)}
+                        style={{ marginLeft: "10px", marginRight: "10px" }}
+                      >
+                        Отменено
                       </Button>
                     </div>
                   </Container>
@@ -127,9 +160,23 @@ class HomeScreen extends React.Component {
                 <td style={{ width: "100px" }}>{format(item.completeDate, "HH:mm")}</td>
                 <td>
                   <Container className="d-flex p-0">
-                    <div className="flex-grow-1 text-decoration-line-through">{item.description}</div>
+                    <div className="flex-grow-1 text-decoration-line-through">
+                      <Link
+                        to={{
+                          pathname: `/notes/${item.noteId}/edit`,
+                          state: { note: item },
+                        }}
+                      >
+                        {item.description}
+                      </Link>
+                    </div>
                     <div className="flex-shrink-1">
-                      <Button variant="secondary" size="sm" onClick={(e) => this.handleMarkComplete(item.noteId)} disabled>
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        onClick={(e) => this.handleChangeNoteStatus(item.noteId, 1)}
+                        style={{ marginRight: "10px" }}
+                      >
                         Не выполнено
                       </Button>
                     </div>
@@ -175,7 +222,7 @@ class HomeScreen extends React.Component {
               id="custom-switch"
               label="Показывать отмененные"
               checked={showCanceled}
-              onClick={(e) => {
+              onChange={(e) => {
                 this.setState({ showCanceled: e.target.checked });
               }}
               className=""
@@ -207,9 +254,7 @@ class HomeScreen extends React.Component {
               <hr></hr>
               {completedNotesTable}
             </Tab>
-            <Tab eventKey="completed" title="Другие">
-              
-            </Tab>
+            <Tab eventKey="completed" title="Другие"></Tab>
           </Tabs>
         </Row>
       </Container>

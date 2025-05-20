@@ -61,7 +61,8 @@ function App() {
       <Route path="/about" element={<About />} />
       <Route path="/contact" element={<Contact />} />
 
-      <Route exact path="/notes/addNote" render={(props) => <NoteForm {...props} />}/>
+      <Route exact path="/notes/addNote" render={(props) => <NoteForm type="New" {...props} />}/>
+      <Route exact path="/notes/:id/edit" render={(props) => <NoteForm {...props} />}/>
       
       <Route exact path="/bigCalendarTest"><CalendarWeek /></Route>
       <Route exact path="/TestComponent" render={(props) => <TestComponent {...props}/>}/>

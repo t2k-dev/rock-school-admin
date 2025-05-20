@@ -89,7 +89,7 @@ class TeacherScreen extends React.Component {
             </tr>
           </thead>
           <tbody>
-            {subscriptions.map((item, index) => (
+            {nonTrialSubscriptions.map((item, index) => (
               <tr key={index}>
                 <td>{format(item.startDate, "yyyy-MM-dd")}</td>
                 <td>
