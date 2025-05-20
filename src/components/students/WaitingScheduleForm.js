@@ -34,7 +34,7 @@ export class WaitingScheduleForm extends React.Component {
                   <option value="3">Бас гитара</option>
                   <option value="4">Укулеле</option>
                   <option value="5">Вокал</option>
-                  <option value="6">Ударные</option>
+                  <option value="6">Барабаны</option>
                   <option value="7">Фортепиано</option>
                   <option value="8">Скрипка</option>
                   <option value="9">Экстрим вокал</option>

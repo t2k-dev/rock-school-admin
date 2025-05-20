@@ -1,4 +1,4 @@
-import { format, parse } from "date-fns";
+import { format, getDay, parse } from "date-fns";
 import React from "react";
 import { Button, Col, Container, Form, InputGroup, Row } from "react-bootstrap";
 
@@ -127,7 +127,7 @@ export class SubscriptionForm extends React.Component {
   handleSave = async (e) => {
     e.preventDefault();
 
-    const startDate = parse(this.state.startDate, "dd-MM-yyyy", new Date());
+    const startDate = parse(this.state.startDate, "dd.MM.yyyy", new Date());
 
     const requestBody = {
       studentId: this.state.student.studentId,
@@ -135,7 +135,7 @@ export class SubscriptionForm extends React.Component {
       teacherId: this.state.teacherId,
       attendanceCount: this.state.attendanceCount,
       attendanceLength: this.state.attendanceLength,
-      startDate: format(startDate, "yyyy-MM-dd"),
+      startDate: format(startDate, "yyyy.MM.dd"),
       schedules: this.state.schedules,
       branchId: 1,
     };
@@ -155,14 +155,21 @@ export class SubscriptionForm extends React.Component {
   };
 
   updateAvailableSlots = (availableSlots) => {
-    this.setState({ availableSlots: availableSlots });
+    let periods = [];
+    availableSlots.forEach((slot) => {
+      const newPeriod = {
+        weekDay: getDay(slot.start),
+        startTime: format(slot.start, "HH:mm"),
+        endTime: format(slot.end, "HH:mm"),
+        roomId: slot.roomId,
+      };
+      periods.push(newPeriod);
+    });
+
+    this.setState({ availableSlots: availableSlots, schedules: periods });
   };
 
   render() {
-    console.log("render Form");
-    //console.log(this.props.location);
-    console.log(this.state.disciplineId);
-
     const { disciplineId, teacherId, availableSlots, attendanceCount, attendanceLength, startDate, availableTeachers, showAvailableTeacherModal } =
       this.state;
     return (
@@ -181,7 +188,7 @@ export class SubscriptionForm extends React.Component {
                   <option value="3">Бас гитара</option>
                   <option value="4">Укулеле</option>
                   <option value="5">Вокал</option>
-                  <option value="6">Ударные</option>
+                  <option value="6">Барабаны</option>
                   <option value="7">Фортепиано</option>
                   <option value="8">Скрипка</option>
                   <option value="9">Экстрим вокал</option>
@@ -196,12 +203,11 @@ export class SubscriptionForm extends React.Component {
                       as={DatePicker}
                       value={startDate}
                       locale={ru}
-                      selected={this.state.startDate ? parse(this.state.startDate, "dd-MM-yyyy", new Date()) : null}
-                      onChange={(date) => this.setState({ startDate: format(date, "dd-MM-yyyy") })}
-                      placeholderText="дд/мм/гггг"
-                      
+                      selected={this.state.startDate ? parse(this.state.startDate, "dd.MM.yyyy", new Date()) : null}
+                      onChange={(date) => this.setState({ startDate: format(date, "dd.MM.yyyy") })}
+                      placeholderText="дд.мм.гггг"
                     />
-                    <Button variant="outline-secondary" onClick={() => this.setState({ startDate: format(new Date(), "dd-MM-yyyy") })}>
+                    <Button variant="outline-secondary" onClick={() => this.setState({ startDate: format(new Date(), "dd.MM.yyyy") })}>
                       Сегодня
                     </Button>
                   </InputGroup>

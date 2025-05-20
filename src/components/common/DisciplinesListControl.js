@@ -1,5 +1,5 @@
 import React from "react";
-import { Form, Row, Col, FormCheck } from "react-bootstrap";
+import { Col, Form, FormCheck, Row } from "react-bootstrap";
 
 export class DisciplinesListControl extends React.Component {
   constructor(props) {
@@ -12,7 +12,7 @@ export class DisciplinesListControl extends React.Component {
         { id: 3, name: "Бас-гитара", isChecked: false },
         { id: 4, name: "Укулеле", isChecked: false },
         { id: 5, name: "Вокал", isChecked: false },
-        { id: 6, name: "Ударные", isChecked: false },
+        { id: 6, name: "Барабаны", isChecked: false },
         { id: 7, name: "Фортепиано", isChecked: false },
         { id: 8, name: "Скрипка", isChecked: false },
         { id: 9, name: "Экстрим Вокал", isChecked: false },
@@ -62,7 +62,7 @@ export class DisciplinesListControl extends React.Component {
             <FormCheck id={5} key={5} label="Вокал" checked={this.state.checkboxes[4].isChecked} onChange={() => this.handleChange(5)} style={{ marginTop: "10px" }}/>
             <FormCheck id={9} key={9} label="Экстрим Вокал" checked={this.state.checkboxes[8].isChecked} onChange={() => this.handleChange(9)} style={{ marginTop: "10px" }}/>
 
-            <FormCheck id={6} key={6} label="Ударные" checked={this.state.checkboxes[5].isChecked} onChange={() => this.handleChange(6)} style={{ marginTop: "20px" }}/>
+            <FormCheck id={6} key={6} label="Барабаны" checked={this.state.checkboxes[5].isChecked} onChange={() => this.handleChange(6)} style={{ marginTop: "20px" }}/>
             <FormCheck id={7} key={7} label="Фортепиано" checked={this.state.checkboxes[6].isChecked} onChange={() => this.handleChange(7)} style={{ marginTop: "10px" }}/>
             <FormCheck id={8} key={8} label="Скрипка" checked={this.state.checkboxes[7].isChecked} onChange={() => this.handleChange(8)} style={{ marginTop: "10px" }}/>
           </Col>

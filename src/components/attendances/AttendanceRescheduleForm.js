@@ -1,5 +1,6 @@
 import { format } from "date-fns";
 import { ru } from "date-fns/locale";
+import { v4 as uuidv4 } from "uuid";
 
 import React from "react";
 import { Button, Col, Container, Form, InputGroup, Row, Stack } from "react-bootstrap";
@@ -71,13 +72,14 @@ export class AttendanceRescheduleForm extends React.Component {
    
     const date = new Date(response.startDate);
     const roomId = response.roomId
-
+    const slotId = uuidv4();
     const slot = {
+      id: slotId,
       start: date,
       roomId: roomId,
     };
 
-    this.setState({ availableSlots: [slot], selectedSlotId: 1 });
+    this.setState({ availableSlots: [slot], selectedSlotId: slotId });
   };
 
   handleSave = async (e) => {

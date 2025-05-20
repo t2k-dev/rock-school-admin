@@ -107,7 +107,7 @@ class StudentForm extends React.Component {
 
               <Form.Group className="mb-3" controlId="lastName">
                 <Form.Label>Фамилия</Form.Label>
-                <Form.Control onChange={this.handleChange} value={lastName} placeholder="введите фамилию..." />
+                <Form.Control onChange={this.handleChange} value={lastName} placeholder="введите фамилию..." autoComplete="off" />
               </Form.Group>
 
               <Form.Group className="mb-3" controlId="birthDate">
