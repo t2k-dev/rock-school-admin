@@ -2,13 +2,13 @@ import { format } from "date-fns";
 import React from "react";
 import { Container, Row, Tab, Table, Tabs } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { getStudentScreenDetails } from "../../services/apiStudentService";
 
+import { getStudentScreenDetails } from "../../services/apiStudentService";
 import { CalendarWeek } from "../common/CalendarWeek";
 import { DisciplineIcon } from "../common/DisciplineIcon";
-
 import { getDisciplineName } from "../constants/disciplines";
 import { getSubscriptionStatusName, getTrialSubscriptionStatusName } from "../constants/subscriptions";
+import { EditIcon } from "../icons/EditIcon";
 
 import { SlotDetailsModal } from "../home//SlotDetailsModal";
 import StudentScreenCard from "./StudentScreenCard";
@@ -67,6 +67,11 @@ class StudentScreen extends React.Component {
     this.setState({ showAttendanceDetailsModal: false });
   };
 
+  handleEditSubscriptionClick = (e, item) => {
+    e.preventDefault();
+    this.props.history.push(`/subscription/${item.subscriptionId}/edit`);
+  };
+
   render() {
     const { student, subscriptions, attendances, selectedAttendanceDetails, showAttendanceDetailsModal } = this.state;
 
@@ -109,6 +114,7 @@ class StudentScreen extends React.Component {
                 <td>{item.attendanceCount}</td>
                 <td>{getSubscriptionStatusName(item.status)}</td>
                 <td>
+                  <EditIcon onIconClick={(e, _item) => this.handleEditSubscriptionClick(e, item)} />
                   <Link
                     to={{
                       pathname: `/student/${student.studentId}/subscriptionForm`,

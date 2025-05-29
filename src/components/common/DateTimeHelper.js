@@ -12,9 +12,8 @@ export function formatTime(date) {
 }
 
 export function formatDate(sourceDate) {
-
-  console.log("sourceDate")
-  console.log(sourceDate)
+  console.log("sourceDate");
+  console.log(sourceDate);
   const month = sourceDate.getMonth();
   const date = sourceDate.getDate();
 
@@ -65,7 +64,7 @@ export function formatDateDot(sourceDate) {
   const month = sourceDate.getMonth();
   const date = sourceDate.getDate();
 
-  return `${date}.${month+1}.${sourceDate.getYear()}`;
+  return `${date}.${month + 1}.${sourceDate.getYear()}`;
 }
 
 export function calculateAge(birthDate) {
@@ -81,8 +80,14 @@ export function calculateAge(birthDate) {
   }
 
   return age;
-};
+}
 
-export function getWeekDayNameLong(date){
+export function getWeekDayNameLong(date) {
   return new Intl.DateTimeFormat("ru-RU", { weekday: "long" }).format(date);
+}
+
+export function calculateDateFromAge(age) {
+  const now = new Date();
+  const birthDate = new Date();
+  return birthDate.setFullYear(now.getFullYear() - age);
 }

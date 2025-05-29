@@ -1,14 +1,14 @@
 import { parse } from "date-fns";
-
+import { ru } from "date-fns/locale";
 import React from "react";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
-import InputMask from "react-input-mask";
-import { addStudent, getStudent, saveStudent } from "../../services/apiStudentService";
-import { SexControl } from "../common/SexControl";
-
-import { ru } from "date-fns/locale";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import InputMask from "react-input-mask";
+
+import { addStudent, getStudent, saveStudent } from "../../services/apiStudentService";
+import { calculateDateFromAge } from "../common/DateTimeHelper";
+import { SexControl } from "../common/SexControl";
 
 class StudentForm extends React.Component {
   constructor(props) {
@@ -47,6 +47,7 @@ class StudentForm extends React.Component {
       lastName: student.data.lastName,
       birthDate: student.data.birthDate,
       phone: "7" + student.data.phone,
+      age: 0,
       sex: student.data.sex,
       level: student.data.level,
     });
@@ -85,6 +86,12 @@ class StudentForm extends React.Component {
     this.setState({ [id]: value });
   };
 
+  handleAgeChange = (e) => {
+    const age = e.target.value;
+    const birthDate = calculateDateFromAge(age);
+    this.setState({ birthDate: birthDate });
+  };
+
   handleSexChange = (isChecked) => {
     this.setState({
       sex: isChecked,
@@ -92,7 +99,7 @@ class StudentForm extends React.Component {
   };
 
   render() {
-    const { email, firstName, lastName, birthDate, phone, level, sex } = this.state;
+    const { isNew, email, firstName, lastName, birthDate, phone, level, sex, age } = this.state;
     return (
       <Container style={{ marginTop: "40px" }}>
         <Row>
@@ -109,38 +116,44 @@ class StudentForm extends React.Component {
                 <Form.Label>Фамилия</Form.Label>
                 <Form.Control onChange={this.handleChange} value={lastName} placeholder="введите фамилию..." autoComplete="off" />
               </Form.Group>
-
-              <Form.Group className="mb-3" controlId="birthDate">
-                <Form.Label>Дата рождения</Form.Label>
-                <div>
-                  <Form.Control
-                    as={DatePicker}
-                    locale={ru}
-                    selected={birthDate}
-                    onChange={(date) => {
-                      if (date) {
-                        this.setState({ birthDate: date });
-                      }
-                    }}
-                    onChangeRaw={(e) => {
-                      const rawValue = e.target.value;
-                      try {
-                        // Parse the raw input based on the expected format
-                        const parsedDate = parse(rawValue, "dd.MM.yyyy", new Date());
-                        if (!isNaN(parsedDate)) {
-                          this.setState({ birthDate: parsedDate }); // Only set valid dates
+              {isNew === false && (
+                <Form.Group className="mb-3" controlId="birthDate">
+                  <Form.Label>Дата рождения</Form.Label>
+                  <div>
+                    <Form.Control
+                      as={DatePicker}
+                      locale={ru}
+                      selected={birthDate}
+                      onChange={(date) => {
+                        if (date) {
+                          this.setState({ birthDate: date });
                         }
-                      } catch (error) {
-                        console.error("Invalid date format"); // Handle invalid format
-                      }
-                    }}
-                    dateFormat="dd.MM.yyyy" // Format for the displayed date
-                    placeholderText="дд.мм.гггг" // Input placeholder
-                    shouldCloseOnSelect={true}
-                  />
-                </div>
-              </Form.Group>
-
+                      }}
+                      onChangeRaw={(e) => {
+                        const rawValue = e.target.value;
+                        try {
+                          // Parse the raw input based on the expected format
+                          const parsedDate = parse(rawValue, "dd.MM.yyyy", new Date());
+                          if (!isNaN(parsedDate)) {
+                            this.setState({ birthDate: parsedDate }); // Only set valid dates
+                          }
+                        } catch (error) {
+                          console.error("Invalid date format"); // Handle invalid format
+                        }
+                      }}
+                      dateFormat="dd.MM.yyyy" // Format for the displayed date
+                      placeholderText="дд.мм.гггг" // Input placeholder
+                      shouldCloseOnSelect={true}
+                    />
+                  </div>
+                </Form.Group>
+              )}
+              {isNew && (
+                <Form.Group className="mb-3" controlId="age">
+                  <Form.Label>Возраст</Form.Label>
+                  <Form.Control onChange={this.handleAgeChange} value={age} placeholder="введите возраст..." autoComplete="off" />
+                </Form.Group>
+              )}
               <SexControl value={sex} onChange={this.handleSexChange}></SexControl>
 
               <Form.Group className="mb-3" controlId="email">

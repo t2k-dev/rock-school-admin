@@ -1,60 +1,16 @@
 import { format, getDay, parse } from "date-fns";
+import { ru } from "date-fns/locale";
 import React from "react";
 import { Button, Col, Container, Form, InputGroup, Row } from "react-bootstrap";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 import { calculateAge } from "../common/DateTimeHelper";
 import { ScheduleEditorWithSlots } from "../common/ScheduleEditorWithSlots";
 
 import { addSubscription } from "../../services/apiSubscriptionService";
 import { getAvailableTeachers, getWorkingPeriods } from "../../services/apiTeacherService";
-
-import { ru } from "date-fns/locale";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-
 import { AvailableTeachersModal } from "../teachers/AvailableTeachersModal";
-const backgroundEvents = [
-  {
-    title: "",
-    start: new Date(1900, 0, 2, 11, 0, 0, 0),
-    end: new Date(1900, 0, 2, 15, 0, 0, 0),
-  },
-  {
-    title: "",
-    start: new Date(1900, 0, 2, 16, 0, 0, 0),
-    end: new Date(1900, 0, 2, 21, 0, 0, 0),
-  },
-  {
-    title: "",
-    start: new Date(1900, 0, 3, 10, 0, 0, 0),
-    end: new Date(1900, 0, 3, 15, 0, 0, 0),
-  },
-  {
-    title: "",
-    start: new Date(1900, 0, 3, 16, 0, 0, 0),
-    end: new Date(1900, 0, 3, 21, 0, 0, 0),
-  },
-  {
-    title: "",
-    start: new Date(1900, 0, 4, 10, 0, 0, 0),
-    end: new Date(1900, 0, 4, 15, 0, 0, 0),
-  },
-  {
-    title: "",
-    start: new Date(1900, 0, 4, 16, 0, 0, 0),
-    end: new Date(1900, 0, 4, 21, 0, 0, 0),
-  },
-  {
-    title: "",
-    start: new Date(1900, 0, 7, 10, 0, 0, 0),
-    end: new Date(1900, 0, 7, 15, 0, 0, 0),
-  },
-  {
-    title: "",
-    start: new Date(1900, 0, 7, 16, 0, 0, 0),
-    end: new Date(1900, 0, 7, 21, 0, 0, 0),
-  },
-];
 
 export class SubscriptionForm extends React.Component {
   constructor(props) {
@@ -67,8 +23,6 @@ export class SubscriptionForm extends React.Component {
       startDate: "",
       attendanceCount: "",
       attendanceLength: 0,
-
-      backgroundEvents: backgroundEvents,
       generatedSchedule: "",
       availableTeachers: [],
       teachers: [],
@@ -86,6 +40,11 @@ export class SubscriptionForm extends React.Component {
   }
 
   componentDidMount() {
+    console.log("this.props")
+    console.log(this.props)
+    if (this.props.type === "Edit")
+      return;
+
     let updatedAvailableTeachers = this.state.availableTeachers;
 
     if (this.props.location.state.teacher) {
