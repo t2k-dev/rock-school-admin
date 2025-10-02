@@ -107,7 +107,8 @@ class TeacherForm extends React.Component {
     let teacherId;
     if (this.state.isNew) {
       const response = await addTeacher(requestBody);
-      teacherId = response.data.teacherId;
+      console.log(response);
+      teacherId = response.data;
     } else {
       const response = await saveTeacher(this.state.teacher.teacherId, requestBody);
       teacherId = this.state.teacher.teacherId;

@@ -87,7 +87,12 @@ export function getWeekDayNameLong(date) {
 }
 
 export function calculateDateFromAge(age) {
-  const now = new Date();
-  const birthDate = new Date();
-  return birthDate.setFullYear(now.getFullYear() - age);
+    const today = new Date();
+    const currentYear = today.getFullYear();
+    
+    // Calculate
+    const birthYear = currentYear - age;
+    const birthDate = new Date(birthYear, today.getMonth(), today.getDate());
+    
+    return birthDate;
 }

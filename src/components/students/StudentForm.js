@@ -55,6 +55,22 @@ class StudentForm extends React.Component {
     console.log(this.state);
   }
 
+  getBirthDate(age) {
+    // Get the current date
+    const today = new Date();
+    
+    // Get the current year
+    const currentYear = today.getFullYear();
+    
+    // Calculate the birth year
+    const birthYear = currentYear - age;
+    
+    // Create a new Date object for the birth date
+    const birthDate = new Date(birthYear, today.getMonth(), today.getDate());
+    
+    return birthDate;
+  }
+
   handleSave = async (e) => {
     e.preventDefault();
 
@@ -89,6 +105,7 @@ class StudentForm extends React.Component {
   handleAgeChange = (e) => {
     const age = e.target.value;
     const birthDate = calculateDateFromAge(age);
+    console.log(birthDate);
     this.setState({ birthDate: birthDate });
   };
 
