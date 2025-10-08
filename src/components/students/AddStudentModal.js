@@ -1,10 +1,11 @@
 import React from "react";
-import { Button, Modal, Tab, Tabs } from "react-bootstrap";
+import { Modal, Tab, Tabs } from "react-bootstrap";
 
 import { sub } from "date-fns";
 
 import { addStudent } from "../../services/apiStudentService";
 import { StudentFormFields } from "./StudentFormFields";
+import { StudentsSearch } from "./StudentsSearch";
 
 export class AddStudentModal extends React.Component {
   constructor(props) {
@@ -76,6 +77,14 @@ export class AddStudentModal extends React.Component {
     this.props.handleClose();
   };
 
+  handleAddExisting = (student) => {
+    if (this.props.onAddStudent) {
+      this.props.onAddStudent(student);
+    }
+
+    this.props.handleClose();
+  };
+
   render() {
     const { show, handleClose } = this.props;
     const { email, firstName, lastName, birthDate, phone, level, sex, age } = this.state;
@@ -101,16 +110,14 @@ export class AddStudentModal extends React.Component {
                 handleChange={this.handleChange}
                 handleAgeChange={this.handleAgeChange}
                 handleSexChange={this.handleSexChange}
+                handleSave={this.handleSave}
               />
             </Tab>
-            <Tab eventKey="existing" title="Существующий"></Tab>
+            <Tab eventKey="existing" title="Существующий">
+              <StudentsSearch handleOnSelect={this.handleAddExisting} />
+            </Tab>
           </Tabs>
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="primary" onClick={this.handleSave}>
-            Сохранить
-          </Button>
-        </Modal.Footer>
       </Modal>
     );
   }

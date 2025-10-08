@@ -1,6 +1,6 @@
 import { parse } from "date-fns";
 import { ru } from "date-fns/locale";
-import { Button, Form } from "react-bootstrap";
+import { Button, Container, Form } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import InputMask from "react-input-mask";
@@ -19,7 +19,7 @@ export const StudentFormFields = ({
   handleChange,
   handleAgeChange,
   handleSexChange,
-  onSave,
+  handleSave,
 }) => {
   return (
     <Form>
@@ -128,12 +128,12 @@ export const StudentFormFields = ({
           <option value="10">10 - Бог</option>
         </Form.Select>
       </Form.Group>
-
-      {onSave && (
-        <Button variant="primary" onClick={onSave} type="button">
+      <hr />
+      <Container className="text-center">
+        <Button variant="primary" onClick={handleSave} type="button">
           Сохранить
         </Button>
-      )}
+      </Container>
     </Form>
   );
 };

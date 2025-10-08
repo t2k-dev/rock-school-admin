@@ -155,6 +155,12 @@ export class SubscriptionForm extends React.Component {
     this.setState({ availableSlots: availableSlots, schedules: periods });
   };
 
+  deleteStudent = (index) => {
+    const updatedStudents = [...this.state.students];
+    updatedStudents.splice(index, 1);
+    this.setState({ students: updatedStudents });
+  }
+
   render() {
     const {
       disciplineId,
@@ -183,7 +189,7 @@ export class SubscriptionForm extends React.Component {
                 <Button
                   variant="outline-danger"
                   style={{ fontSize: "10px", marginLeft: "10px", borderRadius: "25px" }}
-                  /*onClick={() => this.deletePeriod(index)}*/
+                  onClick={() => this.deleteStudent(index)}
                 >
                   X
                 </Button>
