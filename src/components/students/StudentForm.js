@@ -42,14 +42,14 @@ class StudentForm extends React.Component {
 
     this.setState({
       studentId: id,
-      email: student.data.email,
-      firstName: student.data.firstName,
-      lastName: student.data.lastName,
-      birthDate: student.data.birthDate,
-      phone: "7" + student.data.phone,
+      email: student.email,
+      firstName: student.firstName,
+      lastName: student.lastName,
+      birthDate: student.birthDate,
+      phone: "7" + student.phone,
       age: 0,
-      sex: student.data.sex,
-      level: student.data.level,
+      sex: student.sex,
+      level: student.level,
     });
 
     console.log(this.state);

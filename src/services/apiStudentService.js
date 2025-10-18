@@ -13,7 +13,7 @@ export const saveStudent = async (id, data) =>{
 export const getStudent = async (id) => {
   try {
     const response = await apiClient.get('/student/' + id);
-    return response;
+    return response.data;
   } 
   catch (error) {
     console.error('Error fetching data:', error);

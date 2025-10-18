@@ -108,13 +108,10 @@ export class AvailableTeachersModal extends React.Component {
       availableSlots: updatedAvailableSlots,
       availableSlotsText: slotsTxt,
     });
-    console.log("updatedAvailableSlots")
-    console.log(updatedAvailableSlots)
     this.props.updateAvailableSlots(updatedAvailableSlots);
   };
 
   handleSelectEvent = (teacherId, slotInfo) => {
-    console.log("handleSelectEvent");
     if (!slotInfo.isNew) {
       return;
     }

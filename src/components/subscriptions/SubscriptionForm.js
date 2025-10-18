@@ -8,8 +8,9 @@ import "react-datepicker/dist/react-datepicker.css";
 import { calculateAge } from "../common/DateTimeHelper";
 import { ScheduleEditorWithSlots } from "../common/ScheduleEditorWithSlots";
 
-import { addSubscription } from "../../services/apiSubscriptionService";
-import { getAvailableTeachers, getWorkingPeriods } from "../../services/apiTeacherService";
+import { getStudent } from "../../services/apiStudentService";
+import { addSubscription, getSubscription } from "../../services/apiSubscriptionService";
+import { getAvailableTeachers, getTeacher, getWorkingPeriods } from "../../services/apiTeacherService";
 import { AddStudentModal } from "../students/AddStudentModal";
 import { AvailableTeachersModal } from "../teachers/AvailableTeachersModal";
 
@@ -18,6 +19,7 @@ export class SubscriptionForm extends React.Component {
     super(props);
 
     this.state = {
+      isNew: props.type === "New",
       studentId: this.props.match.params.id,
       student: null,
       students: [],
@@ -28,7 +30,6 @@ export class SubscriptionForm extends React.Component {
       attendanceLength: 0,
       generatedSchedule: "",
       availableTeachers: [],
-      teachers: [],
       schedules: [],
 
       showAvailableTeacherModal: false,
@@ -45,49 +46,57 @@ export class SubscriptionForm extends React.Component {
   }
 
   componentDidMount() {
+    this.onFormLoad();
+  }
+
+  async onFormLoad() {
     console.log("this.props");
     console.log(this.props);
-    if (this.props.type === "Edit") return;
+    console.log(this.props.location.state);
 
-    let updatedAvailableTeachers = this.state.availableTeachers;
+    // New
+    if (this.state.isNew) {
+      const student = await getStudent(this.state.studentId);
+      let students = [];
+      students.push(student);
 
-    if (this.props.location.state.teacher) {
-      updatedAvailableTeachers.push(this.props.location.state.teacher);
+      this.setState({
+          students: students,
+      });
+
+      return;
     }
     
-    const student = this.props.location.state.student;
+    // Edit
+    const id = this.props.match.params.id;
+    const subscription = await getSubscription(id);
+    
+    const student = await getStudent(subscription.studentId);
     let students = [];
-    if (student != null) students.push(student);
+    if (student != null) 
+      students.push(student);
+
+    const teacher = await getTeacher(subscription.teacherId);
+    let teachers = [];
+    if (teacher != null) 
+      teachers.push(teacher);
 
     this.setState({
       student: student || {},
       students: students,
-      disciplineId: this.props.location.state.disciplineId || "",
-      teacherId: this.props.location.state.teacher?.teacherId || "",
-      availableTeachers: updatedAvailableTeachers || [],
-    });
+      disciplineId: subscription.disciplineId || "",
+      teacherId: subscription.teacherId || "",
+      startDate: subscription.startDate ? format(new Date(subscription.startDate), "dd.MM.yyyy") : "",
+      attendanceCount: subscription.attendanceCount || "",
+      attendanceLength: subscription.attendanceLength || 0,
+      teacherId: subscription.teacherId || "",
+      availableTeachers: teachers,
+      schedules: subscription.schedules || [],
+      });
+    console.log("onFormLoad done");
   }
 
-  showAvailableTeachersModal = async (e) => {
-    e.preventDefault();
-
-    let teachers;
-    if (this.props.location.state.teacher) {
-      // TODO: refactor for non array
-      const response = await getWorkingPeriods(this.props.location.state.teacher.teacherId);
-      teachers = response.data.availableTeachers;
-    } else {
-      // TODO: branchId
-      const response = await getAvailableTeachers(this.state.disciplineId, calculateAge(this.state.student.birthDate), 1);
-      teachers = response.data.availableTeachers;
-    }
-
-    this.setState({
-      availableTeachers: teachers,
-      showAvailableTeacherModal: true,
-    });
-  };
-
+  // AddStudentModal
   showAddStudentModal = async (e) => {
     e.preventDefault();
 
@@ -102,12 +111,51 @@ export class SubscriptionForm extends React.Component {
     }));
   };
 
+  handleCloseAddStudentModal = () => {
+    this.setState({ showAddStudentModal: false });
+  };
+
+  // AvailableTeachersModal
+  showAvailableTeachersModal = async (e) => {
+    e.preventDefault();
+    
+    let teachers;
+    if (this.state.teacher) {
+      // TODO: refactor for non array
+      const response = await getWorkingPeriods(this.state.teacher.teacherId);
+      teachers = response.data.availableTeachers;
+    } else {
+      // TODO: branchId
+      const sortedStudents = this.sortStudentsByBirthDate(this.state.students);
+      const age = calculateAge(sortedStudents[0].birthDate);
+
+      const response = await getAvailableTeachers(this.state.disciplineId, age, 1);
+      teachers = response.data.availableTeachers;
+    }
+
+    this.setState({
+      availableTeachers: teachers,
+      showAvailableTeacherModal: true,
+    });
+  };
+
   handleCloseAvailableTeachersModal = () => {
     this.setState({ showAvailableTeacherModal: false });
   };
 
-  handleCloseAddStudentModal = () => {
-    this.setState({ showAddStudentModal: false });
+  updateAvailableSlots = (availableSlots) => {
+    let periods = [];
+    availableSlots.forEach((slot) => {
+      const newPeriod = {
+        weekDay: getDay(slot.start),
+        startTime: format(slot.start, "HH:mm"),
+        endTime: format(slot.end, "HH:mm"),
+        roomId: slot.roomId,
+      };
+      periods.push(newPeriod);
+    });
+
+    this.setState({ availableSlots: availableSlots, schedules: periods });
   };
 
   handleSave = async (e) => {
@@ -140,19 +188,11 @@ export class SubscriptionForm extends React.Component {
     this.setState({ schedules: periods });
   };
 
-  updateAvailableSlots = (availableSlots) => {
-    let periods = [];
-    availableSlots.forEach((slot) => {
-      const newPeriod = {
-        weekDay: getDay(slot.start),
-        startTime: format(slot.start, "HH:mm"),
-        endTime: format(slot.end, "HH:mm"),
-        roomId: slot.roomId,
-      };
-      periods.push(newPeriod);
+  sortStudentsByBirthDate = (students) => {
+    return students.sort((a, b) => {
+      if (!a.birthDate || !b.birthDate) return 0;
+      return new Date(b.birthDate) - new Date(a.birthDate);
     });
-
-    this.setState({ availableSlots: availableSlots, schedules: periods });
   };
 
   deleteStudent = (index) => {
@@ -164,7 +204,6 @@ export class SubscriptionForm extends React.Component {
   render() {
     const {
       disciplineId,
-      student,
       students,
       teacherId,
       availableSlots,
@@ -177,8 +216,6 @@ export class SubscriptionForm extends React.Component {
     } = this.state;
 
     let studentsList;
-    console.log("students");
-    console.log(students);
     if (students && students.length > 0) {
       studentsList = students.map((student, index) => (
         <tr id={index}>
@@ -204,7 +241,7 @@ export class SubscriptionForm extends React.Component {
         <Row>
           <Col md="4"></Col>
           <Col md="4">
-            <h2 style={{ textAlign: "center" }}>Новый абонемент</h2>
+            <h2 className="mb-4 text-center">{this.state.isNew ? "Новый абонемент" : "Редактировать абонемент"}</h2>
 
             <Form>
               <Form.Group className="mb-3" controlId="discipline">
@@ -217,7 +254,7 @@ export class SubscriptionForm extends React.Component {
                     + Добавить ещё ученика
                   </Button>
                 </div>
-                <AddStudentModal show={showAddStudentModal} availableTeachers={availableTeachers} handleClose={this.handleCloseAddStudentModal} onAddStudent={this.handleAddStudent}/>
+                <AddStudentModal show={showAddStudentModal} handleClose={this.handleCloseAddStudentModal} onAddStudent={this.handleAddStudent}/>
               </Form.Group>
               <hr></hr>
               <Form.Group className="mb-3" controlId="discipline">
