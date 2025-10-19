@@ -160,11 +160,12 @@ export class SubscriptionForm extends React.Component {
 
   handleSave = async (e) => {
     e.preventDefault();
-
+console.log("handleSave");
+console.log(this.state);
     const startDate = parse(this.state.startDate, "dd.MM.yyyy", new Date());
 
     const requestBody = {
-      studentId: this.state.student.studentId,
+      studentId: this.state.studentId,
       disciplineId: this.state.disciplineId,
       teacherId: this.state.teacherId,
       attendanceCount: this.state.attendanceCount,
@@ -176,7 +177,7 @@ export class SubscriptionForm extends React.Component {
 
     await addSubscription(requestBody);
 
-    this.props.history.push(`/student/${this.state.student.studentId}`);
+    this.props.history.push(`/student/${this.state.studentId}`);
   };
 
   handleChange = (e) => {
