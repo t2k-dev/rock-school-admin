@@ -158,28 +158,6 @@ export class SubscriptionForm extends React.Component {
     this.setState({ availableSlots: availableSlots, schedules: periods });
   };
 
-  handleSave = async (e) => {
-    e.preventDefault();
-console.log("handleSave");
-console.log(this.state);
-    const startDate = parse(this.state.startDate, "dd.MM.yyyy", new Date());
-
-    const requestBody = {
-      studentId: this.state.studentId,
-      disciplineId: this.state.disciplineId,
-      teacherId: this.state.teacherId,
-      attendanceCount: this.state.attendanceCount,
-      attendanceLength: this.state.attendanceLength,
-      startDate: format(startDate, "yyyy.MM.dd"),
-      schedules: this.state.schedules,
-      branchId: 1,
-    };
-
-    await addSubscription(requestBody);
-
-    this.props.history.push(`/student/${this.state.studentId}`);
-  };
-
   handleChange = (e) => {
     const { id, value } = e.target;
     this.setState({ [id]: value });
@@ -202,8 +180,37 @@ console.log(this.state);
     this.setState({ students: updatedStudents });
   }
 
+  handleSave = async (e) => {
+    e.preventDefault();
+
+    const startDate = parse(this.state.startDate, "dd.MM.yyyy", new Date());
+
+    let studentIds = [];
+    this.state.students.forEach((student) => {
+      studentIds.push(student.studentId);
+    });
+
+    const requestBody = {
+      studentIds: studentIds,
+      subscription: {
+        disciplineId: this.state.disciplineId,
+        teacherId: this.state.teacherId,
+        attendanceCount: this.state.attendanceCount,
+        attendanceLength: this.state.attendanceLength,
+        startDate: format(startDate, "yyyy.MM.dd"),
+        branchId: 1,
+      },
+      schedules: this.state.schedules,
+    };
+
+    await addSubscription(requestBody);
+
+    this.props.history.push(`/student/${this.state.studentId}`);
+  };
+
   render() {
     const {
+      isNew,
       disciplineId,
       students,
       teacherId,
@@ -211,6 +218,7 @@ console.log(this.state);
       attendanceCount,
       attendanceLength,
       startDate,
+      schedules,
       availableTeachers,
       showAvailableTeacherModal,
       showAddStudentModal,
@@ -242,7 +250,7 @@ console.log(this.state);
         <Row>
           <Col md="4"></Col>
           <Col md="4">
-            <h2 className="mb-4 text-center">{this.state.isNew ? "Новый абонемент" : "Редактировать абонемент"}</h2>
+            <h2 className="mb-4 text-center">{isNew ? "Новый абонемент" : "Редактировать абонемент"}</h2>
 
             <Form>
               <Form.Group className="mb-3" controlId="discipline">
@@ -282,7 +290,7 @@ console.log(this.state);
                       as={DatePicker}
                       value={startDate}
                       locale={ru}
-                      selected={this.state.startDate ? parse(this.state.startDate, "dd.MM.yyyy", new Date()) : null}
+                      selected={startDate ? parse(startDate, "dd.MM.yyyy", new Date()) : null}
                       onChange={(date) => this.setState({ startDate: format(date, "dd.MM.yyyy") })}
                       placeholderText="дд.мм.гггг"
                     />
@@ -345,10 +353,10 @@ console.log(this.state);
               <hr></hr>
               <Form.Group className="mb-3 mt-3" controlId="Schedule">
                 <ScheduleEditorWithSlots
-                  periods={this.state.schedules}
+                  periods={schedules}
                   availableSlots={availableSlots}
                   handlePeriodsChange={this.handlePeriodsChange}
-                  attendanceLength={this.state.attendanceLength}
+                  attendanceLength={attendanceLength}
                 />
               </Form.Group>
 
