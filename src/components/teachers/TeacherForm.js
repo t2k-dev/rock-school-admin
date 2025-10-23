@@ -19,6 +19,8 @@ class TeacherForm extends React.Component {
 
     this.state = {
       isNew: props.type == "New",
+      disciplinesChanged: false,
+      periodsChanged: false,
       teacher: {
         teacherId: "",
         //email: "",
@@ -55,8 +57,6 @@ class TeacherForm extends React.Component {
     const id = this.props.match.params.id;
     const teacher = await getTeacher(id);
 
-    console.log("on Teacher FormLoad");
-    console.log(teacher);
     this.setState({
       teacher: {
         teacherId: this.props.match.params.id,
@@ -83,11 +83,64 @@ class TeacherForm extends React.Component {
     return "";
   };
 
+  handleChange = (e) => {
+    const { id, value } = e.target;
+    const teacher = { ...this.state.teacher };
+    teacher[id] = value;
+    this.setState({ teacher });
+  };
+
+  handleUpdateBirthDate = (date) => {
+      const teacher = { ...this.state.teacher };
+      teacher.birthDate = date;
+      this.setState({ teacher });
+  }
+
+  handleSexChange = (isChecked) => {
+    const teacher = { ...this.state.teacher };
+    teacher.sex = isChecked;
+    this.setState({ teacher });
+  };
+
+  handleDisciplineCheck = (id, isChecked) => {
+    const teacher = { ...this.state.teacher };
+
+    // Update disciplines array based on the isChecked value
+    const newDisciplines = isChecked
+      ? [...new Set([...teacher.disciplines, id])] // Add ID, ensuring no duplicates
+      : teacher.disciplines.filter((discipline) => discipline !== id); // Remove ID
+    teacher.disciplines = newDisciplines;
+
+    const disciplinesChanged = true;
+    this.setState({ teacher, disciplinesChanged });
+  }
+
+  handleAllowGroupLessonsChange = (e) => {
+    const teacher = { ...this.state.teacher };
+    teacher.allowGroupLessons = e.target.isChecked;
+
+    this.setState({ teacher });
+  };
+
+  handlePeriodsChange = (periods) => {
+    this.setState({ workingPeriods: periods, periodsChanged: true });
+  };
+
+  handleDateChange = (date) => {
+    this.setState((prevState) => ({
+      teacher: {
+        ...prevState.teacher,
+        birthDate: format(date, "dd.MM.yyyy"),
+      },
+    }));
+  };
+
   handleSave = async (e) => {
     console.log("handleSave");
     console.log(this.state);
 
     e.preventDefault();
+
     const requestBody = {
       teacher: {
         email: this.state.teacher.email,
@@ -102,12 +155,13 @@ class TeacherForm extends React.Component {
         allowGroupLessons: this.state.teacher.allowGroupLessons,
       },
       workingPeriods: this.state.workingPeriods,
+      disciplinesChanged: this.state.disciplinesChanged,
+      periodsChanged: this.state.periodsChanged,
     };
 
     let teacherId;
     if (this.state.isNew) {
       const response = await addTeacher(requestBody);
-      console.log(response);
       teacherId = response.data;
     } else {
       const response = await saveTeacher(this.state.teacher.teacherId, requestBody);
@@ -117,63 +171,14 @@ class TeacherForm extends React.Component {
     this.props.history.push(`/teacher/${teacherId}`);
   };
 
-  handleChange = (e) => {
-    const { id, value } = e.target;
-    const teacher = { ...this.state.teacher };
-    teacher[id] = value;
-    this.setState({ teacher });
-  };
-  handleUpdateBirthDate = (date) => {
-      const teacher = { ...this.state.teacher };
-      teacher.birthDate = date;
-      this.setState({ teacher });
-  }
-  handleSexChange = (isChecked) => {
-    const teacher = { ...this.state.teacher };
-    teacher.sex = isChecked;
-    this.setState({ teacher });
-  };
-
-  handleDisciplineCheck = (id, isChecked) => {
-    const teacher = { ...this.state.teacher };
-
-    // Update disciplines array based on the isChecked value
-    const newDisciplines = isChecked
-      ? [...new Set([...teacher.disciplines, id])] // Add ID, ensuring no duplicates
-      : teacher.disciplines.filter((discipline) => discipline !== id); // Remove ID
-
-    teacher.disciplines = newDisciplines;
-    this.setState({ teacher });
-  };
-
-  handleAllowGroupLessonsChange = (e) => {
-    const teacher = { ...this.state.teacher };
-    teacher.allowGroupLessons = e.target.isChecked;
-
-    this.setState({ teacher });
-  };
-
-  handlePeriodsChange = (periods) => {
-    this.setState({ workingPeriods: periods });
-  };
-
-  handleDateChange = (date) => {
-    this.setState((prevState) => ({
-      teacher: {
-        ...prevState.teacher,
-        birthDate: format(date, "dd.MM.yyyy"),
-      },
-    }));
-  };
-
   render() {
-    const { email, firstName, lastName, birthDate, phone, sex, ageLimit, allowGroupLessons, disciplines, branchId } = this.state.teacher;
+    const { isNew, email, firstName, lastName, birthDate, phone, sex, ageLimit, allowGroupLessons, disciplines, branchId } = this.state.teacher;
     return (
       <Container style={{ marginTop: "40px" }}>
         <Row>
           <Col md="4"></Col>
           <Col md="4">
-            <h2 className="mb-4 text-center">{this.state.isNew ? "Новый преподаватель" : "Редактировать преподавателя"}</h2>
+            <h2 className="mb-4 text-center">{isNew ? "Новый преподаватель" : "Редактировать преподавателя"}</h2>
             <Form>
               <Row className="mb-3">
                 <Form.Group as={Col} controlId="firstName">
