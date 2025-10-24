@@ -38,8 +38,21 @@ export class AttendanceAtendedForm extends React.Component {
     }
 
     const response = await acceptTrial(this.state.attendance.attendanceId, request);
+    console.log("this.state.attendance");
+    console.log(this.state.attendance)
+    this.props.history.push({
+      pathname: `/student/${this.state.attendance.student.studentId}/subscriptionForm`,
+      state: {
+        studentId: this.state.attendance.student.studentId,
+        disciplineId: this.state.attendance.disciplineId,
+        teacher: {
+          teacherId: this.state.attendance.teacher.teacherId,
+          firstName: this.state.attendance.teacher.firstName
+        }
+      }
+    });
 
-    window.history.back();
+    //window.history.back();
   };
 
   handleDecline = async (e) =>{

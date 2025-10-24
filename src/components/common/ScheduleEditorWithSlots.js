@@ -59,8 +59,6 @@ export class ScheduleEditorWithSlots extends React.Component {
 
   render() {
     const { periods, availableSlots } = this.state;
-    console.log("periods")
-    console.log(periods)
     let periodsList;
     if (periods && periods.length > 0) {
       periodsList = periods.map((item, index) => (

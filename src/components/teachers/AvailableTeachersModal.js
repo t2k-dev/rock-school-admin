@@ -141,7 +141,6 @@ export class AvailableTeachersModal extends React.Component {
   };
 
   render() {
-    console.log("render");
     const { availableTeachers, availableSlotsText } = this.state;
 
     let availableTeachersList;

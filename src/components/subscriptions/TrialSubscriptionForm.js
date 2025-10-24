@@ -13,38 +13,22 @@ export class TrialSubscriptionForm extends React.Component {
     this.state = {
       isExistingStudent: false,
 
-      firstName: "",
-      lastName: "",
-      age: "",
-      level: 0,
-      phone: "",
       branchId: 0,
       disciplineId: "",
 
       backgroundEvents: [],
-
       availableTeachers: [],
       availableSlots: [],
       showAvailableTeacherModal: false,
-      fakeId: "",
       selectedSlotId: 0,
     };
 
-    // AvailableTeachersModal
     this.handleCloseAvailableTeachersModal = this.handleCloseAvailableTeachersModal.bind(this);
-
-    this.handleSave = this.handleSave.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.handleSave = this.handleSave.bind(this);
   }
 
-  newStudentSelected = () => {
-    this.setState({ isExistingStudent: false });
-  };
-
-  existingStudentSelected = () => {
-    this.setState({ isExistingStudent: true });
-  };
-
+  // AvailableTeachersModal
   generateAvailablePeriods = async (e) => {
     e.preventDefault();
     const response = await getAvailableTeachers(this.state.disciplineId, this.state.age, 1);
@@ -55,23 +39,22 @@ export class TrialSubscriptionForm extends React.Component {
   };
 
   handleCloseAvailableTeachersModal = () => {
-    this.setState({ showAvailableTeacherModal: false });
+    const { selectedSlotId, availableSlots } = this.state;
+    const newSelectedSlotId = selectedSlotId === 0 && availableSlots.length > 0 && availableSlots[0].id;
+    this.setState({ showAvailableTeacherModal: false, selectedSlotId: newSelectedSlotId });
   };
 
   updateAvailableSlots = (availableSlots) => {
     this.setState({ availableSlots: availableSlots });
   };
 
-  handleDisciplineCheck = (id, isChecked) => {
-    const teacher = { ...this.state.teacher };
-    let newDisciplines = teacher.disciplines;
-    if (isChecked) {
-      newDisciplines.push(id);
-    } else {
-      newDisciplines = newDisciplines.filter((discipline) => discipline !== id);
-    }
-    teacher.disciplines = newDisciplines;
-    this.setState({ teacher });
+  handleChange = (e) => {
+    const { id, value } = e.target;
+    this.setState({ [id]: value });
+  };
+
+  handleDisciplineChange = (e) => {
+    this.setState({ disciplineId: e.target.value });
   };
 
   handleSave = async (e) => {
@@ -97,29 +80,14 @@ export class TrialSubscriptionForm extends React.Component {
     this.props.history.push(`/student/${newStudentId}`);
   };
 
-  handleChange = (e) => {
-    const { id, value } = e.target;
-    this.setState({ [id]: value });
-  };
-
-  handleSexChange = (isChecked) => {
-    this.setState({
-      sex: isChecked,
-    });
-  };
-  handleDisciplineChange = (e) => {
-    this.setState({ disciplineId: e.target.value });
-  };
-
   render() {
+    console.log(this.state)
     const {
-      age,
       disciplineId,
       showAvailableTeacherModal,
       availableTeachers,
       availableSlots,
       selectedSlotId,
-      fakeId,
     } = this.state;
 
     let availableSlotsList;

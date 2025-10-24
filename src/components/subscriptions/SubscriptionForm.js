@@ -62,6 +62,7 @@ export class SubscriptionForm extends React.Component {
 
       this.setState({
           students: students,
+          disciplineId: this.props.location.state.disciplineId,
       });
 
       return;
@@ -140,7 +141,10 @@ export class SubscriptionForm extends React.Component {
   };
 
   handleCloseAvailableTeachersModal = () => {
-    this.setState({ showAvailableTeacherModal: false });
+    console.log("handleCloseAvailableTeachersModal");
+    console.log(this.state);
+    const newSelectedTeacherId = this.state.availableTeachers.length > 0 && this.state.availableTeachers[0].teacherId;
+    this.setState({ showAvailableTeacherModal: false, teacherId: newSelectedTeacherId });
   };
 
   updateAvailableSlots = (availableSlots) => {
