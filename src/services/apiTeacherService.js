@@ -10,6 +10,16 @@ export const saveTeacher = async (id, data) =>{
   return result;
 }
 
+export const deactivateTeacher = async (id) =>{
+  const result = await apiClient.post(`/teacher/${id}/deactivate`);
+  return result;
+}
+
+export const activateTeacher = async (id) =>{
+  const result = await apiClient.post(`/teacher/${id}/activate`);
+  return result;
+}
+
 export const getTeacher = async (id) => {
   try {
     const response = await apiClient.get('/teacher/' + id);

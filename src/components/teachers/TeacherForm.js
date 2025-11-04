@@ -7,7 +7,7 @@ import { DisciplinesListControl } from "../common/DisciplinesListControl";
 import { ScheduleEditor } from "../common/ScheduleEditor";
 import { SexControl } from "../common/SexControl";
 
-import { addTeacher, getTeacher, saveTeacher } from "../../services/apiTeacherService";
+import { activateTeacher, addTeacher, deactivateTeacher, getTeacher, saveTeacher } from "../../services/apiTeacherService";
 
 import { ru } from "date-fns/locale";
 import DatePicker from "react-datepicker";
@@ -135,6 +135,18 @@ class TeacherForm extends React.Component {
     }));
   };
 
+  handleDeactivate = async (e) => {
+    e.preventDefault();
+    await deactivateTeacher(this.state.teacher.teacherId);
+    this.props.history.push(`/teachers`);
+  };
+
+  handleActivate = async (e) => {
+    e.preventDefault();
+    await activateTeacher(this.state.teacher.teacherId);
+    this.props.history.push(`/teachers`);
+  };
+
   handleSave = async (e) => {
     console.log("handleSave");
     console.log(this.state);
@@ -172,7 +184,7 @@ class TeacherForm extends React.Component {
   };
 
   render() {
-    const { isNew, email, firstName, lastName, birthDate, phone, sex, ageLimit, allowGroupLessons, disciplines, branchId } = this.state.teacher;
+    const { isNew, isActive, email, firstName, lastName, birthDate, phone, sex, ageLimit, allowGroupLessons, disciplines, branchId } = this.state.teacher;
     return (
       <Container style={{ marginTop: "40px" }}>
         <Row>
@@ -284,9 +296,13 @@ class TeacherForm extends React.Component {
               <ScheduleEditor periods={this.state.workingPeriods} handlePeriodsChange={this.handlePeriodsChange} />
 
               <hr></hr>
-              <Button variant="primary" type="null" onClick={this.handleSave}>
-                Сохранить
-              </Button>
+              <Form.Group className="mb-3 d-flex justify-content-between">
+                {isActive 
+                  ? <Button variant="outline-danger" onClick={this.handleDeactivate}>Отключить</Button> 
+                  : <Button variant="outline-success" onClick={this.handleActivate}>Включить</Button>
+                }
+                <Button variant="primary" type="null" onClick={this.handleSave}>Сохранить</Button>
+              </Form.Group>
             </Form>
           </Col>
         </Row>

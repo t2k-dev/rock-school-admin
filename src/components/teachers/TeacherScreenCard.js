@@ -39,7 +39,7 @@ class TeacherScreenCard extends React.Component {
             <Container style={{ flexDirection: "column" }} className="flex-fill">
               <Container>
                 <div style={{ fontWeight: "bold", fontSize: "28px", width: "500px" }}>
-                  {item.firstName} {item.lastName}
+                  {item.firstName} {item.lastName} {item.isActive ? "" : "(Отключен)"}
                   <EditIcon onIconClick={this.handleEditClick} />
                 </div>
                 <div className="mt-2">Преподаватель</div>

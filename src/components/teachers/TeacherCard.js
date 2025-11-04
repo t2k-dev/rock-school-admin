@@ -17,7 +17,9 @@ class TeacherCard extends React.Component{
                             <Image src={noImage} className='img-preview' fluid='true'/>
                             </Col>
                             <Col>
-                                <Link to={`/teacher/${this.props.item.teacherId}`} ><h3>{this.props.item.firstName} {this.props.item.lastName}</h3></Link>
+                                <Link to={`/teacher/${this.props.item.teacherId}`} >
+                                    <h3>{this.props.item.firstName} {this.props.item.lastName} {this.props.item.isActive ? "" : "(Отключен)"}</h3>
+                                </Link>
                                 <div>
                                     <Stack gap={0} className="mt-2">
                                         {
