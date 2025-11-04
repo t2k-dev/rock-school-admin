@@ -20,7 +20,7 @@ class HomeScreen extends React.Component {
       notes: null,
       attendances: null,
 
-      showCanceled: false,
+      showCanceled: true,
 
       showSlotDetailsModal: false,
 
@@ -79,10 +79,16 @@ class HomeScreen extends React.Component {
 
     let events;
     if (attendances) {
-      const filteredAttendancies = showCanceled === false ? attendances.filter((a) => !isCancelledAttendanceStatus(a.status)) : attendances;
+
+      const filteredAttendancies = showCanceled === false 
+        ? attendances.filter((a) => !isCancelledAttendanceStatus(a.status)) 
+        : attendances;
+
       events = filteredAttendancies.map((attendance) => ({
         id: attendance.attendanceId,
-        title: attendance.student.firstName + " " + attendance.student.lastName,
+        title: attendance.childAttendances !== null && attendance.childAttendances && attendance.childAttendances.length > 0
+          ? attendance.childAttendances.map(childAttendance => childAttendance.student.firstName).join(", ")
+          : attendance.student.firstName + " " + attendance.student.lastName,
         start: new Date(attendance.startDate),
         end: new Date(attendance.endDate),
         resourceId: attendance.roomId,

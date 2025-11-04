@@ -4,7 +4,9 @@ import { DrumsIcon } from "../icons/DrumsIcon";
 import { ElectroGuitarIcon } from "../icons/ElectroGuitarIcon";
 import { ExtremeVocalIcon } from "../icons/ExtremeVocalIcon";
 import { GuitarIcon } from "../icons/GuitarIcon";
+import { PianoIcon } from "../icons/PianoIcon";
 import { UkuleleIcon } from "../icons/UkuleleIcon";
+import { ViolaIcon } from "../icons/ViolaIcon";
 import { VocalIcon } from "../icons/VocalIcon";
 
 export class DisciplineIcon extends React.Component {
@@ -32,6 +34,12 @@ export class DisciplineIcon extends React.Component {
         break;
       case 6:
         iconControl = <DrumsIcon color={this.props.color} size={this.props.size} />;
+        break;
+      case 7:
+        iconControl = <PianoIcon color={this.props.color} size={this.props.size} />;
+        break;
+      case 8:
+        iconControl = <ViolaIcon color={this.props.color} size={this.props.size} />;
         break;
       case 9:
         iconControl = <ExtremeVocalIcon color={this.props.color} size={this.props.size} />;

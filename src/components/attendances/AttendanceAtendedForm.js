@@ -38,8 +38,8 @@ export class AttendanceAtendedForm extends React.Component {
     }
 
     const response = await acceptTrial(this.state.attendance.attendanceId, request);
-    console.log("this.state.attendance");
-    console.log(this.state.attendance)
+    
+    // Redirect
     this.props.history.push({
       pathname: `/student/${this.state.attendance.student.studentId}/subscriptionForm`,
       state: {
@@ -51,8 +51,6 @@ export class AttendanceAtendedForm extends React.Component {
         }
       }
     });
-
-    //window.history.back();
   };
 
   handleDecline = async (e) =>{
