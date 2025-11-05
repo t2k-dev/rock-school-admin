@@ -155,6 +155,7 @@ export class AvailableTeachersModal extends React.Component {
             start: period.startDate,
             end: period.endDate,
             roomId: period.roomId,
+            teacherId: teacher.teacherId,
           }));
         } else {
           backgroundEvents = [];

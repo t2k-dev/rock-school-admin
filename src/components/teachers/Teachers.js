@@ -24,6 +24,7 @@ class Teachers extends React.Component {
   };
   
   async onFormLoad() {
+    console.log("Loading teachers...");
     const returnedTeachers = await getTeachers();
     this.setState({ teachers: returnedTeachers });
     console.log(this.state.teachers);
@@ -35,6 +36,16 @@ class Teachers extends React.Component {
     let teachersList;
     if (teachers) {
       const filteredTeachers = teachers.filter((s) => s.firstName.includes(searchText));
+
+      filteredTeachers.sort((a, b) => {
+        if (!a.isActive && b.isActive) return 1;
+        if (a.isActive && !b.isActive) return -1;
+        if (a.firstName < b.firstName) return -1;
+        if (a.firstName > b.firstName) return 1;
+        
+        return 0;
+      });
+
       teachersList = filteredTeachers.map((item, index) => <TeacherCard key={index} item={item} />);
     } else {
       teachersList = <Col>Нет записей</Col>;

@@ -25,6 +25,7 @@ export class SubscriptionForm extends React.Component {
       students: [],
       disciplineId: "",
       teacherId: "",
+      selectedTeachers: [],
       startDate: "",
       attendanceCount: "",
       attendanceLength: 0,
@@ -141,10 +142,13 @@ export class SubscriptionForm extends React.Component {
   };
 
   handleCloseAvailableTeachersModal = () => {
-    console.log("handleCloseAvailableTeachersModal");
-    console.log(this.state);
-    const newSelectedTeacherId = this.state.availableTeachers.length > 0 && this.state.availableTeachers[0].teacherId;
-    this.setState({ showAvailableTeacherModal: false, teacherId: newSelectedTeacherId });
+    // get distinct teacherIds from availableSlots
+    const selectedTeacherIds = Array.from(new Set(this.state.availableSlots.map(slot => slot.teacherId)));
+    // get objects for selected teacherIds
+    const selectedTeachers = this.state.availableTeachers.filter(teacher => selectedTeacherIds.includes(teacher.teacherId)); 
+
+    const newSelectedTeacherId = selectedTeachers.length > 0 && selectedTeachers[0].teacherId;
+    this.setState({ showAvailableTeacherModal: false, teacherId: newSelectedTeacherId , selectedTeachers: selectedTeachers });
   };
 
   updateAvailableSlots = (availableSlots) => {
@@ -155,6 +159,7 @@ export class SubscriptionForm extends React.Component {
         startTime: format(slot.start, "HH:mm"),
         endTime: format(slot.end, "HH:mm"),
         roomId: slot.roomId,
+        teacherId: slot.teacherId,
       };
       periods.push(newPeriod);
     });
@@ -224,14 +229,22 @@ export class SubscriptionForm extends React.Component {
       startDate,
       schedules,
       availableTeachers,
+      selectedTeachers,
       showAvailableTeacherModal,
       showAddStudentModal,
     } = this.state;
 
+    let filteredSchedules;
+    if (schedules && schedules.length > 0){
+      filteredSchedules = schedules.filter(schedule => schedule.teacherId === teacherId) ;
+    }
+    console.log("filteredSchedules");
+    console.log(schedules);
+
     let studentsList;
     if (students && students.length > 0) {
       studentsList = students.map((student, index) => (
-        <tr id={index}>
+        <tr key={index}>
           <td>
             <Container className="d-flex p-0">
               <div className="flex-grow-1">{`${student.firstName}`}</div>
@@ -326,6 +339,7 @@ export class SubscriptionForm extends React.Component {
               </Form.Group>
 
               <hr></hr>
+
               <b>Преподаватель</b>
               <InputGroup className="mb-3 mt-4 text-center" controlId="GenerteSchedule">
                 <Form.Select
@@ -335,7 +349,7 @@ export class SubscriptionForm extends React.Component {
                   style={{ width: "200px" }}
                 >
                   <option>выберите...</option>
-                  {availableTeachers.map((teacher, index) => (
+                  {selectedTeachers.map((teacher, index) => (
                     <option key={index} value={teacher.teacherId}>
                       {teacher.firstName} {teacher.lastName}
                     </option>
@@ -357,7 +371,7 @@ export class SubscriptionForm extends React.Component {
               <hr></hr>
               <Form.Group className="mb-3 mt-3" controlId="Schedule">
                 <ScheduleEditorWithSlots
-                  periods={schedules}
+                  periods={filteredSchedules}
                   availableSlots={availableSlots}
                   handlePeriodsChange={this.handlePeriodsChange}
                   attendanceLength={attendanceLength}
