@@ -1,4 +1,3 @@
-import React from "react";
 import { BrowserRouter, Route } from "react-router-dom";
 
 import { BranchScreen } from "./branches/BranchScreen";
@@ -22,6 +21,7 @@ import { WaitingScheduleForm } from "./students/WaitingScheduleForm";
 import TeacherForm from "./teachers/TeacherForm";
 import TeacherScreen from "./teachers/TeacherScreen";
 
+import { SubscriptionFormEditable } from "./subscriptions/SubscriptioFormEditable";
 import { SubscriptionForm } from "./subscriptions/SubscriptionForm";
 import { TrialSubscriptionForm } from "./subscriptions/TrialSubscriptionForm";
 
@@ -58,7 +58,7 @@ function App() {
       <Route exact path="/admin/addSubscription" render={(props) => <SubscriptionForm {...props} />}/>
       
       <Route exact path="/student/:id/subscriptionForm" render={(props) => <SubscriptionForm type="New" {...props} />}/>
-      <Route exact path="/subscription/:id/edit" render={(props) => <SubscriptionForm type="Edit" {...props} />}/>
+      <Route exact path="/subscription/:id/edit" render={(props) => <SubscriptionFormEditable {...props} />}/>
       <Route path="/about" element={<About />} />
       <Route path="/contact" element={<Contact />} />
 

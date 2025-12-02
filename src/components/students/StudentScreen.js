@@ -115,14 +115,6 @@ class StudentScreen extends React.Component {
                 <td>{getSubscriptionStatusName(item.status)}</td>
                 <td>
                   <EditIcon onIconClick={(e, _item) => this.handleEditSubscriptionClick(e, item)} />
-                  {/*<Link
-                    to={{
-                      pathname: `/student/${student.studentId}/subscriptionForm`,
-                      state: { disciplineId: item.disciplineId, teacher: item.teacher, student },
-                    }}
-                  >
-                    Продлить
-                  </Link>*/}
                 </td>
               </tr>
             ))}

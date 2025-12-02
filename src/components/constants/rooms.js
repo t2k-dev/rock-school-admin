@@ -9,7 +9,6 @@ export function getRoomName(id) {
   ];
 
   var room = roomsRu.find((status) => status.id === parseInt(id));
-  console.log(room)
   if (!room) {
     return `not found (id:${id})`;
   }

@@ -61,7 +61,6 @@ export class AttendanceAtendedForm extends React.Component {
     }
 
     const response = await declineTrial(this.state.attendance.attendanceId, request);
-    console.log(response);
   }
 
   handleAttend = async (e) => {

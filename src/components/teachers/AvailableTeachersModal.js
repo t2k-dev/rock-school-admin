@@ -155,7 +155,7 @@ export class AvailableTeachersModal extends React.Component {
             start: period.startDate,
             end: period.endDate,
             roomId: period.roomId,
-            teacherId: teacher.teacherId,
+            
           }));
         } else {
           backgroundEvents = [];
@@ -219,7 +219,7 @@ export class AvailableTeachersModal extends React.Component {
                   <Form.Control
                     as="textarea"
                     value={availableSlotsText}
-                    style={{ height: "100px" }}
+                    style={{ height: "300px" }}
                     placeholder=""
                     onChange={(e) => this.setState({ availableSlotsText: e.target.value })}
                   />

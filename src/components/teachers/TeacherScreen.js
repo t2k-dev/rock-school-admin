@@ -3,6 +3,7 @@ import React from "react";
 import { Col, Container, Row, Tab, Table, Tabs } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { getTeacherScreenDetails } from "../../services/apiTeacherService";
+import { EditIcon } from "../icons/EditIcon";
 
 import { CalendarWeek } from "../common/CalendarWeek";
 import { DisciplineIcon } from "../common/DisciplineIcon";
@@ -23,6 +24,7 @@ class TeacherScreen extends React.Component {
     };
 
     this.handleEditClick = this.handleEditClick.bind(this);
+    this.handleEditSubscriptionClick = this.handleEditSubscriptionClick.bind(this);
   }
 
   componentDidMount() {
@@ -48,6 +50,11 @@ class TeacherScreen extends React.Component {
   handleEditClick = (e) => {
     e.preventDefault();
     this.props.history.push("/teachers/edit/" + this.props.match.params.id);
+  };
+
+  handleEditSubscriptionClick = (e, item) => {
+    e.preventDefault();
+    this.props.history.push(`/subscription/${item.subscriptionId}/edit`);
   };
 
   render() {
@@ -86,6 +93,7 @@ class TeacherScreen extends React.Component {
               <th>Направление</th>
               <th>Занятий</th>
               <th>Статус</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -103,6 +111,9 @@ class TeacherScreen extends React.Component {
                 </td>
                 <td>{item.attendanceCount}</td>
                 <td>{getSubscriptionStatusName(item.status)}</td>
+                <td>
+                  <EditIcon onIconClick={(e, _item) => this.handleEditSubscriptionClick(e, item)} />
+                </td>
               </tr>
             ))}
           </tbody>
@@ -130,6 +141,7 @@ class TeacherScreen extends React.Component {
               <th>Ученик</th>
               <th>Направление</th>
               <th>Статус</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -143,6 +155,9 @@ class TeacherScreen extends React.Component {
                 </td>
                 <td>{getDisciplineName(item.disciplineId)}</td>
                 <td>{getTrialSubscriptionStatusName(item.trialStatus)}</td>
+                <td>
+                  <EditIcon onIconClick={(e, _item) => this.handleEditSubscriptionClick(e, item)} />
+                </td>
               </tr>
             ))}
           </tbody>

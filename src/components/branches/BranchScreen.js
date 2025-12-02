@@ -1,7 +1,7 @@
-import React from "react";
-import { Tab, Tabs, Container, Row, Table, Button } from "react-bootstrap";
-import { Link } from "react-router-dom";
 import { format } from "date-fns";
+import React from "react";
+import { Button, Container, Row, Tab, Table, Tabs } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 import { CalendarDay } from "../common/CalendarDay";
 import { EditIcon } from "../icons/EditIcon";
@@ -58,9 +58,7 @@ export class BranchScreen extends React.Component {
   };
 
   async handleMarkComplete(noteId) {
-    console.log("Start");
     await markComplete(noteId);
-    console.log("Done");
   }
 
   render() {

@@ -1,12 +1,12 @@
 import { format } from "date-fns";
 import { ru } from "date-fns/locale";
 import React from "react";
-import { Button, Container, Form, Modal, Row, Stack } from "react-bootstrap";
+import { Badge, Button, Container, Form, Modal, Row, Stack, Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
-import { DisciplineIcon } from "../common/DisciplineIcon";
+import { submit } from "../../services/apiAttendanceService";
 
-import { Avatar } from "../common/Avatar";
+import { DisciplineIcon } from "../common/DisciplineIcon";
 import { CalendarIcon } from "../icons/CalendarIcon";
 import { TimeIcon } from "../icons/TimeIcon";
 
@@ -15,7 +15,6 @@ import { getAttendanceStatusName } from "../constants/attendancies";
 import { getDisciplineName } from "../constants/disciplines";
 import { getRoomName } from "../constants/rooms";
 
-import { updateStatus } from "../../services/apiAttendanceService";
 
 export class GroupSlotDetailsModal extends React.Component {
   constructor(props) {
@@ -24,22 +23,26 @@ export class GroupSlotDetailsModal extends React.Component {
       show: this.props.show,
 
       status: 0,
-      trialStatus: 0,
       comment: "",
-      availableTeachers: [],
-      availableSlots: [],
-      availableSlotsText: "",
+      childAttendances: [],
     };
 
     this.handleClose = this.handleClose.bind(this);
     this.handleStatusChange = this.handleStatusChange.bind(this);
-    this.getAvailableSlots = this.getAvailableSlots.bind(this);
-    this.handleStatusChange = this.handleStatusChange.bind(this);
+    this.handleSave = this.handleSave.bind(this);
   }
 
   componentDidUpdate(prevProps) {
     if (this.props.selectedSlotDetails?.status !== prevProps.selectedSlotDetails?.status) {
-      this.setState({ status: this.props.selectedSlotDetails.status });
+      this.setState({ 
+        status: this.props.selectedSlotDetails.status 
+      });
+    }
+    
+    if (this.props.selectedSlotDetails?.childAttendances !== prevProps.selectedSlotDetails?.childAttendances) {
+      this.setState({ 
+        childAttendances: this.props.selectedSlotDetails?.childAttendances || []
+      });
     }
   }
 
@@ -47,44 +50,89 @@ export class GroupSlotDetailsModal extends React.Component {
     this.setState({ show: false });
   }
 
-  async handleStatusChange(status) {
-    const response = await updateStatus(this.props.selectedSlotDetails.attendanceId, status);
+  async handleStatusChange(attendanceId, status) {
+    if (!this.state.childAttendances){
+      console.warn('childAttendances is not an array:', this.state.childAttendances);
+      return;
+    }
+    
+    const updatedChildAttendances = this.state.childAttendances.map((child) => {
+      if (child.attendanceId === attendanceId) {
+        return { ...child, status: status };
+      }
+      return child;
+    });
+
+    this.setState({ childAttendances: updatedChildAttendances });
   }
 
-  getAvailableSlots() {
-    let result = "";
-    this.state.availableSlots.forEach((element) => {
-      result = result + element.description + "\n";
-    });
-    this.setState({ availableSlotsText: result });
+  async handleSave() {
+   const request = {
+      childAttendances: this.state.childAttendances,
+      comment: this.props.selectedSlotDetails.statusReason,
+    };
+
+    await submit(request);
+
+    this.props.handleClose();
   }
 
   render() {
-    const { status } = this.state;
-
-    if (!this.props.selectedSlotDetails) {
+    if (!this.props.show) {
       return <></>;
     }
-    const { teacher, student, startDate, endDate, disciplineId, roomId, statusReason, comment } = this.props.selectedSlotDetails;
+
+    const { teacher, startDate, endDate, disciplineId, roomId, statusReason } = this.props.selectedSlotDetails;
+    const { status } = this.state;
+    const childAttendances = this.state.childAttendances || [];
+console.log('render')    
+console.log(childAttendances)
+
+    let childAttendancesList;
+    childAttendancesList = (
+      <Table striped bordered hover>
+          <tbody>
+            {childAttendances.map((attendance) => (
+              <tr key={attendance.attendanceId}>
+                <td><Link to={`/student/${attendance.student.studentId}`}>{attendance.student.firstName}</Link>
+                {attendance.status}
+                </td>
+                <td>
+                    <Button
+                      onClick={() => this.handleStatusChange(attendance.attendanceId, AttendanceStatus.ATTENDED)}
+                      variant={attendance.status === AttendanceStatus.ATTENDED ? "primary" : "outline-primary"}
+                      style={{ width: "120px", marginRight: "10px" }}
+                    >
+                      Посещено
+                    </Button>
+                    <Button
+                      onClick={() => this.handleStatusChange(attendance.attendanceId, AttendanceStatus.MISSED)}
+                      variant={attendance.status === AttendanceStatus.MISSED ? "danger" : "outline-danger"}
+                      style={{ width: "120px", marginRight: "10px" }}
+                    >
+                      Пропуск
+                    </Button>
+                  </td>
+              </tr>
+            ))}
+        </tbody>
+      </Table>
+      );
 
     return (
       <>
         <Modal show={this.props.show} onHide={this.props.handleClose} size="md">
           <Modal.Header closeButton>
             <Modal.Title>
-              {this.props.selectedSlotDetails.isTrial ? "Пробное занятие" : "Занятие"} ({getAttendanceStatusName(status)})
+              Групповое занятие
+              <Badge style={{ marginLeft: "10px"}} bg="success">{getAttendanceStatusName(status)}</Badge>
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <Container className="mb-3">
               <Row>
                 <div className="d-flex" style={{ padding: "0 50px" }}>
-                  <Container style={{ width: "100px", padding: "0" }}>
-                    <Avatar style={{ width: "100px", height: "100px" }} />
-                    <div className="text-center mt-1">
-                      <Link to={`/student/${student.studentId}`}>{student.firstName}</Link>
-                    </div>
-                  </Container>
+
                   <Container>
                     <Container className="mt-2 text-center" style={{ fontSize: "14px" }}>
                       <div className="d-flex">
@@ -117,55 +165,16 @@ export class GroupSlotDetailsModal extends React.Component {
               </Row>
             </Container>
             <hr></hr>
-
-            {this.props.selectedSlotDetails.status === AttendanceStatus.NEW && (
-              <div className="text-center mt-5 mb-5">
-                <Button
-                  as={Link}
-                  to={{
-                    pathname: `/attendance/${this.props.selectedSlotDetails.attendanceId}/attendedForm`,
-                    state: { attendance: this.props.selectedSlotDetails },
-                  }}
-                  variant={"outline-primary"}
-                  style={{ width: "120px", marginRight: "10px" }}
-                >
-                  Посещено
-                </Button>
-                <Button
-                  as={Link}
-                  to={{
-                    pathname: `/attendance/${this.props.selectedSlotDetails.attendanceId}/cancelationForm`,
-                    state: { attendance: this.props.selectedSlotDetails },
-                  }}
-                  variant={"outline-danger"}
-                  style={{ width: "120px", marginRight: "10px" }}
-                >
-                  Пропуск
-                </Button>
-                <Button
-                  as={Link}
-                  to={{
-                    pathname: `/attendance/${this.props.selectedSlotDetails.attendanceId}/rescheduleForm`,
-                    state: { attendance: this.props.selectedSlotDetails },
-                  }}
-                  variant={"outline-secondary"}
-                  style={{ width: "120px" }}
-                >
-                  Перенести
-                </Button>
-              </div>
-            )}
-
-            {this.props.selectedSlotDetails.status !== AttendanceStatus.NEW && (
+            {childAttendancesList}
               <Form.Group className="mb-3" controlId="comment">
                 <Form.Label>Комментарий</Form.Label>
-                <Form.Control as="textarea" onChange={this.handleChange} value={statusReason} placeholder="введите..." autoComplete="off" disabled="true"/>
+                <Form.Control as="textarea" onChange={this.handleChange} value={statusReason} placeholder="введите..." autoComplete="off"/>
               </Form.Group>
-            )}
+            
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={this.props.handleClose}>
-              Закрыть
+            <Button variant="primary" onClick={this.handleSave}>
+              Сохранить
             </Button>
           </Modal.Footer>
         </Modal>

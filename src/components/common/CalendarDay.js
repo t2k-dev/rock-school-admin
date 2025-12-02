@@ -12,7 +12,6 @@ moment.locale("ru");
 const localizer = momentLocalizer(moment);
 
 const EventComponent = ({ event }) => {
-  console.log(event);
   return (
     <div style={{ display: "flex", alignItems: "center", marginTop:"5px", marginLeft:"5px" }}>
       <DisciplineIcon disciplineId={event.disciplineId} color="white"/>

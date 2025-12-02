@@ -23,7 +23,6 @@ export const activateTeacher = async (id) =>{
 export const getTeacher = async (id) => {
   try {
     const response = await apiClient.get('/teacher/' + id);
-    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error('Error fetching data:', error);
@@ -33,7 +32,6 @@ export const getTeacher = async (id) => {
 export const getTeachers = async () => {
   try {
     const response = await apiClient.get('/teacher');
-    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error('Error fetching data:', error);

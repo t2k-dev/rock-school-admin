@@ -1,7 +1,7 @@
 import { format } from "date-fns";
 import { ru } from "date-fns/locale";
 import React from "react";
-import { Button, Container, Form, Modal, Row, Stack } from "react-bootstrap";
+import { Badge, Button, Container, Form, Modal, Row, Stack } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 import { DisciplineIcon } from "../common/DisciplineIcon";
@@ -62,9 +62,10 @@ export class SlotDetailsModal extends React.Component {
   render() {
     const { status } = this.state;
 
-    if (!this.props.selectedSlotDetails) {
+    if (!this.props.show) {
       return <></>;
     }
+
     const { teacher, student, startDate, endDate, disciplineId, roomId, statusReason, comment } = this.props.selectedSlotDetails;
 
     return (
@@ -72,7 +73,8 @@ export class SlotDetailsModal extends React.Component {
         <Modal show={this.props.show} onHide={this.props.handleClose} size="md">
           <Modal.Header closeButton>
             <Modal.Title>
-              {this.props.selectedSlotDetails.isTrial ? "Пробное занятие" : "Занятие"} ({getAttendanceStatusName(status)})
+              {this.props.selectedSlotDetails.isTrial ? "Пробное занятие" : "Занятие"}
+              <Badge style={{ marginLeft: "10px"}} bg="success">{getAttendanceStatusName(status)}</Badge>
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>

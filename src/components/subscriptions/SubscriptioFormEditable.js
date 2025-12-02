@@ -1,29 +1,25 @@
 import { format, getDay, parse } from "date-fns";
-import { ru } from "date-fns/locale";
 import React from "react";
 import { Button, Col, Container, Form, InputGroup, Row, Table } from "react-bootstrap";
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 import { calculateAge } from "../common/DateTimeHelper";
 import { ScheduleEditorNew } from "../common/ScheduleEditorNew";
+import { getDisciplineName } from "../constants/disciplines";
 
-import { getStudent } from "../../services/apiStudentService";
-import { addSubscription, getSubscription } from "../../services/apiSubscriptionService";
-import { getAvailableTeachers, getTeacher, getWorkingPeriods } from "../../services/apiTeacherService";
-import { AddStudentModal } from "../students/AddStudentModal";
+import { addSubscription, getSubscriptionFormData } from "../../services/apiSubscriptionService";
+import { getAvailableTeachers, getWorkingPeriods } from "../../services/apiTeacherService";
 import { AvailableTeachersModal } from "../teachers/AvailableTeachersModal";
 
-export class SubscriptionForm extends React.Component {
+export class SubscriptionFormEditable extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      isNew: props.type === "New",
       studentId: this.props.match.params.id,
       student: null,
       students: [],
-      disciplineId: "",
+      disciplineId: 0,
       teacherId: "",
       selectedTeachers: [],
       startDate: "",
@@ -51,71 +47,22 @@ export class SubscriptionForm extends React.Component {
   }
 
   async onFormLoad() {
-    console.log("this.props");
-    console.log(this.props);
-    console.log(this.props.location.state);
-
-    // New
-    if (this.state.isNew) {
-      const student = await getStudent(this.state.studentId);
-      let students = [];
-      students.push(student);
-
-      this.setState({
-          students: students,
-          disciplineId: this.props.location.state.disciplineId,
-      });
-
-      return;
-    }
-    
-    // Edit
     const id = this.props.match.params.id;
-    const subscription = await getSubscription(id);
     
-    const student = await getStudent(subscription.studentId);
-    let students = [];
-    if (student != null) 
-      students.push(student);
-
-    const teacher = await getTeacher(subscription.teacherId);
-    let teachers = [];
-    if (teacher != null) 
-      teachers.push(teacher);
-
+    const formData = await getSubscriptionFormData(id);
+    
+    const subscription = formData.subscription || {};
+    
     this.setState({
-      student: student || {},
-      students: students,
+      students: formData.students,
       disciplineId: subscription.disciplineId || "",
-      teacherId: subscription.teacherId || "",
+      teacher: formData.teacher || {},
       startDate: subscription.startDate ? format(new Date(subscription.startDate), "dd.MM.yyyy") : "",
       attendanceCount: subscription.attendanceCount || "",
       attendanceLength: subscription.attendanceLength || 0,
-      teacherId: subscription.teacherId || "",
-      availableTeachers: teachers,
       schedules: subscription.schedules || [],
       });
-    console.log("onFormLoad done");
   }
-
-  // AddStudentModal
-  showAddStudentModal = async (e) => {
-    e.preventDefault();
-
-    this.setState({
-      showAddStudentModal: true,
-    });
-  };
-
-  handleAddStudent = (newStudent) => {
-    this.setState((prevState) => ({
-      students: [...prevState.students, newStudent],
-    }));
-  };
-
-  handleCloseAddStudentModal = () => {
-    this.setState({ showAddStudentModal: false });
-  };
 
   // AvailableTeachersModal
   showAvailableTeachersModal = async (e) => {
@@ -217,8 +164,8 @@ export class SubscriptionForm extends React.Component {
 
   render() {
     const {
-      isNew,
       disciplineId,
+      teacher,
       students,
       teacherId,
       availableSlots,
@@ -227,17 +174,15 @@ export class SubscriptionForm extends React.Component {
       startDate,
       schedules,
       availableTeachers,
-      selectedTeachers,
       showAvailableTeacherModal,
-      showAddStudentModal,
     } = this.state;
 
-    let filteredSchedules;
-    if (schedules && schedules.length > 0){
-      filteredSchedules = schedules.filter(schedule => schedule.teacherId === teacherId) ;
+    if (!teacher){
+        return <div>Loading...</div>;
     }
-    console.log("filteredSchedules");
-    console.log(schedules);
+
+    console.log("this.state");
+    console.log(this.state);
 
     let studentsList;
     if (students && students.length > 0) {
@@ -246,15 +191,6 @@ export class SubscriptionForm extends React.Component {
           <td>
             <Container className="d-flex p-0">
               <div className="flex-grow-1">{`${student.firstName} ${student.lastName}`}</div>
-              <div className="flex-shrink-1">
-                <Button
-                  variant="outline-danger"
-                  style={{ fontSize: "10px", marginLeft: "10px", borderRadius: "25px" }}
-                  onClick={() => this.deleteStudent(index)}
-                >
-                  X
-                </Button>
-              </div>
             </Container>
           </td>
         </tr>
@@ -266,99 +202,42 @@ export class SubscriptionForm extends React.Component {
         <Row>
           <Col md="4"></Col>
           <Col md="4">
-            <h2 className="mb-4 text-center">{isNew ? "Новый абонемент" : "Редактировать абонемент"}</h2>
+            <h2 className="mb-4 text-center">Редактировать абонемент</h2>
 
             <Form>
               <Form.Group className="mb-3" controlId="discipline">
-                <Form.Label>Для</Form.Label>
-                <Table striped bordered hover>
+                <Form.Label>Ученик(и)</Form.Label>
+                <Table striped bordered>
                   <tbody>{studentsList}</tbody>
                 </Table>
-                <div className="text-center">
-                  <Button size="sm" variant="outline-success" style={{ marginTop: "10px" }} onClick={this.showAddStudentModal}>
-                    + Добавить ещё ученика
-                  </Button>
-                </div>
-                <AddStudentModal show={showAddStudentModal} handleClose={this.handleCloseAddStudentModal} onAddStudent={this.handleAddStudent}/>
               </Form.Group>
-              <hr></hr>
+              
               <Form.Group className="mb-3" controlId="discipline">
-                <Form.Label>Направление</Form.Label>
-                <Form.Select aria-label="Веберите..." value={disciplineId} onChange={(e) => this.setState({ disciplineId: e.target.value })}>
-                  <option>выберите...</option>
-                  <option value="1">Гитара</option>
-                  <option value="2">Электро гитара</option>
-                  <option value="3">Бас гитара</option>
-                  <option value="4">Укулеле</option>
-                  <option value="5">Вокал</option>
-                  <option value="6">Барабаны</option>
-                  <option value="7">Фортепиано</option>
-                  <option value="8">Скрипка</option>
-                  <option value="9">Экстрим вокал</option>
-                </Form.Select>
+                <Form.Label>Направление: {getDisciplineName(disciplineId)}</Form.Label>
               </Form.Group>
 
-              <Form.Group>
-                <Form.Label>Дата начала</Form.Label>
-                <div style={{ display: "block" }}>
-                  <InputGroup className="mb-3 " controlId="startDate">
-                    <Form.Control
-                      as={DatePicker}
-                      value={startDate}
-                      locale={ru}
-                      selected={startDate ? parse(startDate, "dd.MM.yyyy", new Date()) : null}
-                      onChange={(date) => this.setState({ startDate: format(date, "dd.MM.yyyy") })}
-                      placeholderText="дд.мм.гггг"
-                    />
-                    <Button variant="outline-secondary" onClick={() => this.setState({ startDate: format(new Date(), "dd.MM.yyyy") })}>
-                      Сегодня
-                    </Button>
-                  </InputGroup>
-                </div>
+              <Form.Group className="mb-3" controlId="StartDate">
+                <Form.Label>Дата начала: {startDate}</Form.Label>
               </Form.Group>
 
               <Form.Group className="mb-3" controlId="Subscription">
-                <Form.Label>Количество занятий</Form.Label>
-                <Form.Select aria-label="Веберите..." value={attendanceCount} onChange={(e) => this.setState({ attendanceCount: e.target.value })}>
-                  <option>выберите...</option>
-                  <option value="1">1</option>
-                  <option value="4">4</option>
-                  <option value="8">8</option>
-                  <option value="12">12</option>
-                </Form.Select>
+                <Form.Label>Количество занятий: {attendanceCount}</Form.Label>
               </Form.Group>
 
               <Form.Group className="mb-3" controlId="AttendanceLength">
-                <Form.Label>Длительность урока</Form.Label>
-                <Form.Select aria-label="Веберите..." value={attendanceLength} onChange={(e) => this.setState({ attendanceLength: e.target.value })}>
-                  <option>выберите...</option>
-                  <option value="1">Час</option>
-                  <option value="2">Полтора часа</option>
-                </Form.Select>
+                <Form.Label>Длительность урока: {attendanceLength}</Form.Label>
               </Form.Group>
-
-              <hr></hr>
-
               <b>Преподаватель</b>
-              <InputGroup className="mb-3 mt-4 text-center" controlId="GenerteSchedule">
-                <Form.Select
-                  aria-label="Веберите..."
-                  value={teacherId}
-                  onChange={(e) => this.setState({ teacherId: e.target.value })}
-                  style={{ width: "200px" }}
-                >
-                  <option>выберите...</option>
-                  {selectedTeachers.map((teacher, index) => (
-                    <option key={index} value={teacher.teacherId}>
-                      {teacher.firstName} {teacher.lastName}
-                    </option>
-                  ))}
-                </Form.Select>
-
+              <Form.Group className="mb-3" controlId="Teacher">
+                
+              </Form.Group>
+              <InputGroup className="mb-3 text-center" controlId="GenerteSchedule">
+                <Form.Label>{teacher.firstName} {teacher.lastName}</Form.Label>
+              </InputGroup>
                 <Button variant="outline-secondary" type="null" onClick={this.showAvailableTeachersModal}>
                   Доступные окна...
                 </Button>
-              </InputGroup>
+
               <AvailableTeachersModal
                 show={showAvailableTeacherModal}
                 availableTeachers={availableTeachers}
@@ -370,7 +249,7 @@ export class SubscriptionForm extends React.Component {
               <hr></hr>
               <Form.Group className="mb-3 mt-3" controlId="Schedule">
                 <ScheduleEditorNew
-                  periods={filteredSchedules}
+                  periods={schedules}
                   availableSlots={availableSlots}
                   handlePeriodsChange={this.handlePeriodsChange}
                   attendanceLength={attendanceLength}

@@ -10,6 +10,7 @@ import { isCancelledAttendanceStatus } from "../common/attendanceHelper";
 
 import { getHomeScreenDetails } from "../../services/apiHomeService";
 import { markComplete } from "../../services/apiNoteService";
+import { GroupSlotDetailsModal } from "./GroupSlotDetailsModal";
 import { SlotDetailsModal } from "./SlotDetailsModal";
 
 class HomeScreen extends React.Component {
@@ -23,6 +24,7 @@ class HomeScreen extends React.Component {
       showCanceled: true,
 
       showSlotDetailsModal: false,
+      showGroupSlotDetailsModal: false,
 
       selectedSlotDetails: null,
     };
@@ -41,6 +43,7 @@ class HomeScreen extends React.Component {
       attendances: details.attendances,
 
       showSlotDetailsModal: false,
+      showGroupSlotDetailsModal: false,
     });
   }
 
@@ -50,11 +53,19 @@ class HomeScreen extends React.Component {
 
   handleSelectEvent = (teacherId, slotInfo) => {
     const newSelectedSlotDetails = this.state.attendances.filter((a) => a.attendanceId === slotInfo.id)[0];
-    this.setState({ showSlotDetailsModal: true, selectedSlotDetails: newSelectedSlotDetails });
+    if (newSelectedSlotDetails.groupId !== null) {
+      this.setState({ showGroupSlotDetailsModal: true, selectedSlotDetails: newSelectedSlotDetails });
+    } else {
+      this.setState({ showSlotDetailsModal: true, selectedSlotDetails: newSelectedSlotDetails });
+    }
   };
 
   handleCloseSlotDetailsModal = () => {
     this.setState({ showSlotDetailsModal: false });
+  };
+
+  handleCloseGroupSlotDetailsModal = () => {
+    this.setState({ showGroupSlotDetailsModal: false });
   };
 
   async handleChangeNoteStatus(noteId, status) {
@@ -73,7 +84,14 @@ class HomeScreen extends React.Component {
   }
 
   render() {
-    const { attendances, showCanceled, selectedSlotDetails, notes, showSlotDetailsModal } = this.state;
+    const { 
+      attendances, 
+      showCanceled, 
+      selectedSlotDetails, 
+      notes, 
+      showSlotDetailsModal, 
+      showGroupSlotDetailsModal 
+    } = this.state;
 
     // Events
 
@@ -240,6 +258,13 @@ class HomeScreen extends React.Component {
             show={showSlotDetailsModal}
             handleClose={() => {
               this.handleCloseSlotDetailsModal();
+            }}
+          />
+          <GroupSlotDetailsModal
+            selectedSlotDetails={selectedSlotDetails}
+            show={showGroupSlotDetailsModal}
+            handleClose={() => {
+              this.handleCloseGroupSlotDetailsModal();
             }}
           />
         </Row>

@@ -18,6 +18,15 @@ export const updateStatus = async (id, status) => {
   }
 };
 
+export const submit = async (data) => {
+  try {
+    const response = await apiClient.post(`/attendance/submit`, data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+};
+
 export const acceptTrial = async (id, data) => {
   try {
     const response = await apiClient.post(`/attendance/${id}/acceptTrial`, data);
