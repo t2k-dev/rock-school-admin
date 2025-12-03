@@ -71,7 +71,9 @@ class TeacherScreen extends React.Component {
     if (attendances) {
       events = attendances.map((attendance) => ({
         id: attendance.attendanceId,
-        title: attendance.student.firstName + " " + attendance.student.lastName,
+        title: attendance.childAttendances !== null && attendance.childAttendances && attendance.childAttendances.length > 0
+          ? attendance.childAttendances.map(childAttendance => childAttendance.student.firstName).join(", ")
+          : attendance.student.firstName + " " + attendance.student.lastName,
         start: new Date(attendance.startDate),
         end: new Date(attendance.endDate),
         resourceId: attendance.roomId,
@@ -83,6 +85,9 @@ class TeacherScreen extends React.Component {
     // Subscriptions
     let subscriptionsTable;
     const nonTrialSubscriptions = sortedSubscriptions.filter((s) => s.trialStatus === null);
+console.log("nonTrialSubscriptions");
+console.log(nonTrialSubscriptions);
+
     if (nonTrialSubscriptions && nonTrialSubscriptions.length > 0) {
       subscriptionsTable = (
         <Table striped bordered hover>
@@ -97,13 +102,22 @@ class TeacherScreen extends React.Component {
             </tr>
           </thead>
           <tbody>
-            {nonTrialSubscriptions.map((item, index) => (
-              <tr key={index}>
+            {nonTrialSubscriptions.map((item, idx) => (
+              <tr key={idx}>
                 <td>{format(item.startDate, "yyyy-MM-dd")}</td>
                 <td>
-                  <Link to={"/student/" + item.student.studentId}>
-                    {item.student.firstName} {item.student.lastName}
-                  </Link>
+                  {item.childSubscriptions && item.childSubscriptions.length > 0 
+                    ? item.childSubscriptions.map((childItem, idx) => (
+                        <Link key={idx} to={"/student/" + childItem.student.studentId}>
+                          {childItem.student.firstName} {childItem.student.lastName}
+                          {idx < item.childSubscriptions.length - 1 && ", "}
+                        </Link>
+                      ))
+                    : 
+                    <Link key={idx} to={"/student/" + item.student.studentId}>
+                        {item.student.firstName} {item.student.lastName}
+                    </Link>
+                  }
                 </td>
                 <td>
                   <DisciplineIcon disciplineId={item.disciplineId} />

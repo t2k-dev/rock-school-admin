@@ -40,7 +40,7 @@ export const getTeachers = async () => {
 
 export const getTeacherScreenDetails = async (id) => {
   try {
-    const response = await apiClient.get(`/teacher/getTeacherScreenDetails/${id}`);
+    const response = await apiClient.get(`/teacher/${id}/screen-details`);
     return response.data;
   } 
   catch (error) {
