@@ -111,7 +111,7 @@ class StudentScreen extends React.Component {
                   <DisciplineIcon disciplineId={item.disciplineId} />
                   <span style={{ marginLeft: "10px" }}>{getDisciplineName(item.disciplineId)}</span>
                 </td>
-                <td>{item.attendanceCount}</td>
+                <td>{item.attendancesLeft} из {item.attendanceCount}</td>
                 <td>{getSubscriptionStatusName(item.status)}</td>
                 <td>
                   <EditIcon onIconClick={(e, _item) => this.handleEditSubscriptionClick(e, item)} />

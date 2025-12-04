@@ -32,7 +32,7 @@ export const getStudents = async () => {
 
 export const getStudentScreenDetails = async (id) => {
   try {
-    const response = await apiClient.get('/student/getStudentScreenDetails/' + id);
+    const response = await apiClient.get(`/student/${id}/screen-details`);
     return response.data;
   } 
   catch (error) {

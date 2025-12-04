@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 
 import { submit } from "../../services/apiAttendanceService";
 
+import { Avatar } from "../common/Avatar";
 import { DisciplineIcon } from "../common/DisciplineIcon";
 import { CalendarIcon } from "../icons/CalendarIcon";
 import { TimeIcon } from "../icons/TimeIcon";
@@ -58,7 +59,7 @@ export class GroupSlotDetailsModal extends React.Component {
     
     const updatedChildAttendances = this.state.childAttendances.map((child) => {
       if (child.attendanceId === attendanceId) {
-        return { ...child, status: status };
+        return { ...child, status: status, isCompleted: true };
       }
       return child;
     });
@@ -94,8 +95,9 @@ console.log(childAttendances)
           <tbody>
             {childAttendances.map((attendance) => (
               <tr key={attendance.attendanceId}>
-                <td><Link to={`/student/${attendance.student.studentId}`}>{attendance.student.firstName}</Link>
-                {attendance.status}
+                <td>
+                  <Avatar style={{ width: "20px", height: "20px", marginRight: "5px" }} />
+                  <Link to={`/student/${attendance.student.studentId}`}>{attendance.student.firstName} {attendance.student.lastName}</Link>
                 </td>
                 <td>
                     <Button
