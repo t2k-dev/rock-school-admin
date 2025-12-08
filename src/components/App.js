@@ -35,9 +35,9 @@ function App() {
     <BrowserRouter>
       
       <MyNavbar />
-      <Route exact path="/"><HomeScreen /></Route>
-      <Route exact path="/home"><HomeScreen /></Route>
-      
+      <Route exact path="/" render={(props) => <HomeScreen {...props} />}/>
+      <Route exact path="/home" render={(props) => <HomeScreen {...props} />}/>
+
       <Route exact path="/attendance/:id/rescheduleForm" render={(props) => <AttendanceRescheduleForm {...props}/>}/>
       <Route exact path="/attendance/:id/cancelationForm" render={(props) => <AttendanceCancelationForm {...props}/>}/>
       <Route exact path="/attendance/:id/attendedForm" render={(props) => <AttendanceAtendedForm {...props}/>}/>

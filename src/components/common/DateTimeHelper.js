@@ -12,8 +12,6 @@ export function formatTime(date) {
 }
 
 export function formatDate(sourceDate) {
-  console.log("sourceDate");
-  console.log(sourceDate);
   const month = sourceDate.getMonth();
   const date = sourceDate.getDate();
 

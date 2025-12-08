@@ -11,13 +11,10 @@ export class AvailableTeachersModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      show: this.props.show,
       availableTeachers: [],
       availableSlots: [],
       availableSlotsText: "",
     };
-
-    this.handleClose = this.handleClose.bind(this);
   }
 
   componentDidUpdate(prevProps) {
@@ -28,10 +25,6 @@ export class AvailableTeachersModal extends React.Component {
         availableSlotsText: "",
       });
     }
-  }
-
-  handleClose() {
-    this.setState({ show: false });
   }
 
   getAvailableSlotsText(availableSlots) {
@@ -58,6 +51,7 @@ export class AvailableTeachersModal extends React.Component {
 
     let slotId = uuidv4();
 
+    // Add new attendance
     if (teacherIndex !== -1) {
       const newAttendance = {
         attendanceId: slotId,
@@ -76,28 +70,7 @@ export class AvailableTeachersModal extends React.Component {
     }
 
     // Add the selected slot to the availableSlots array
-
-    const dayName = new Intl.DateTimeFormat("ru-RU", { weekday: "long" }).format(slotInfo.start);
-
-    // Find the matching backgroundEvent based on the slot's start and end times
-    const matchingBackgroundEvent = teacher.scheduledWorkingPeriods?.find(
-      (backgroundEvent) =>
-        new Date(backgroundEvent.startDate).getTime() <= new Date(slotInfo.start).getTime() &&
-        new Date(backgroundEvent.endDate).getTime() >= new Date(slotInfo.end).getTime()
-    );
-
-    const roomId = matchingBackgroundEvent?.roomId;
-
-    const newSlot = {
-      id: slotId,
-      teacherId: teacherId,
-      teacherFullName: teacher.firstName + " " + teacher.lastName,
-      start: slotInfo.start,
-      end: slotInfo.end,
-      roomId: roomId,
-      description: `${teacher.firstName}: ${dayName}, ${formatDate(slotInfo.start)} в ${formatTime(slotInfo.start)} (${getRoomName(roomId)})`,
-    };
-
+    const newSlot = this.createNewSlot(teacher, slotInfo, slotId);
     const updatedAvailableSlots = [...this.state.availableSlots, newSlot];
 
     const slotsTxt = this.getAvailableSlotsText(updatedAvailableSlots);
@@ -110,6 +83,29 @@ export class AvailableTeachersModal extends React.Component {
     });
     this.props.updateAvailableSlots(updatedAvailableSlots);
   };
+
+  createNewSlot = (teacher, slotInfo, slotId) =>{
+      const dayName = new Intl.DateTimeFormat("ru-RU", { weekday: "long" }).format(slotInfo.start);
+
+    // Find the matching backgroundEvent based on the slot's start and end times
+    const matchingBackgroundEvent = teacher.scheduledWorkingPeriods?.find(
+      (backgroundEvent) =>
+        new Date(backgroundEvent.startDate).getTime() <= new Date(slotInfo.start).getTime() &&
+        new Date(backgroundEvent.endDate).getTime() >= new Date(slotInfo.end).getTime()
+    );
+
+    const roomId = matchingBackgroundEvent?.roomId;
+
+    return {
+      id: slotId,
+      teacherId: teacher.teacherId,
+      teacherFullName: teacher.firstName + " " + teacher.lastName,
+      start: slotInfo.start,
+      end: slotInfo.end,
+      roomId: roomId,
+      description: `${teacher.firstName}: ${dayName}, ${formatDate(slotInfo.start)} в ${formatTime(slotInfo.start)} (${getRoomName(roomId)})`,
+    };
+  }
 
   handleSelectEvent = (teacherId, slotInfo) => {
     if (!slotInfo.isNew) {
@@ -138,6 +134,24 @@ export class AvailableTeachersModal extends React.Component {
   handleCloseModal = () => {
     this.props.handleClose();
     this.props.updateAvailableSlots(this.state.availableSlots);
+  };
+
+  getWorkloadBadgeColor = (workload) => {
+    if (workload < 50) {
+      return "danger";
+    }
+
+    if (workload >= 50 && workload < 65) {
+      return "warning";
+    }
+    if (workload >= 65 && workload < 85) {
+      return "warning";
+    } 
+    if (workload >= 85) {
+      return "success";
+    }
+
+    return "secondary";
   };
 
   render() {
@@ -181,8 +195,8 @@ export class AvailableTeachersModal extends React.Component {
               <span style={{ fontWeight: "bold" }}>
                 {teacher.firstName} {teacher.lastName}
               </span>
-              <Badge className="ms-1" bg="danger">
-                Загруженность {teacher.workLoad} %
+              <Badge className="ms-1" bg={this.getWorkloadBadgeColor(teacher.workload)}>
+                Загруженность {teacher.workload} %
               </Badge>
             </div>
             <CalendarWeek
@@ -199,7 +213,7 @@ export class AvailableTeachersModal extends React.Component {
         );
       });
     } else {
-      <h3>Нет доступных преподавателей.</h3>;
+      availableTeachersList = <div className="text-center p-4">Нет доступных преподавателей.</div>;
     }
 
     return (

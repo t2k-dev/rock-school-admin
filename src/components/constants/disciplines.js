@@ -11,6 +11,6 @@ export function getDisciplineName(disciplineId) {
     { id: 8, name: "Скрипка" },
     { id: 9, name: "Экстрим Вокал" },
   ];
-console.log(disciplineId)
+  
   return disciplinesRu.find((discipline) => discipline.id === disciplineId).name;
 }

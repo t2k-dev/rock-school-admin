@@ -4,8 +4,6 @@ import React from "react";
 import { Badge, Button, Container, Form, Modal, Row, Stack, Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
-import { submit } from "../../services/apiAttendanceService";
-
 import { Avatar } from "../common/Avatar";
 import { DisciplineIcon } from "../common/DisciplineIcon";
 import { CalendarIcon } from "../icons/CalendarIcon";
@@ -16,6 +14,7 @@ import { getAttendanceStatusName } from "../constants/attendancies";
 import { getDisciplineName } from "../constants/disciplines";
 import { getRoomName } from "../constants/rooms";
 
+import { submitGroup } from "../../services/apiAttendanceService";
 
 export class GroupSlotDetailsModal extends React.Component {
   constructor(props) {
@@ -73,7 +72,7 @@ export class GroupSlotDetailsModal extends React.Component {
       comment: this.props.selectedSlotDetails.statusReason,
     };
 
-    await submit(request);
+    await submitGroup(request);
 
     this.props.handleClose();
   }

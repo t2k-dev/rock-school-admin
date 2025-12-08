@@ -2,7 +2,7 @@ import apiClient from "./apiClient";
 
 export const getHomeScreenDetails = async (id) => {
   try {
-    const response = await apiClient.get('/home/getHomeScreenDetails/'+ id);
+    const response = await apiClient.get(`/home/${id}`);
     return response.data;
   } 
   catch (error) {

@@ -15,66 +15,147 @@ import { getAttendanceStatusName } from "../constants/attendancies";
 import { getDisciplineName } from "../constants/disciplines";
 import { getRoomName } from "../constants/rooms";
 
-import { updateStatus } from "../../services/apiAttendanceService";
+import { acceptTrial, declineTrial, missedTrial, submit } from "../../services/apiAttendanceService";
 
 export class SlotDetailsModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       show: this.props.show,
-
       status: 0,
       trialStatus: 0,
       comment: "",
-      availableTeachers: [],
-      availableSlots: [],
-      availableSlotsText: "",
     };
 
+    this.handleStatusChange = this.handleStatusChange.bind(this);
     this.handleClose = this.handleClose.bind(this);
-    this.handleStatusChange = this.handleStatusChange.bind(this);
-    this.getAvailableSlots = this.getAvailableSlots.bind(this);
-    this.handleStatusChange = this.handleStatusChange.bind(this);
+    this.handleSave = this.handleSave.bind(this);
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.selectedSlotDetails?.status !== prevProps.selectedSlotDetails?.status) {
-      this.setState({ status: this.props.selectedSlotDetails.status });
+    if (this.props.selectedSlotDetails !== prevProps.selectedSlotDetails) {
+      this.setState(
+        { 
+          status: this.props.selectedSlotDetails.status,
+          attendanceId: this.props.selectedSlotDetails.attendanceId
+         }
+      );
     }
   }
+
+  handleStatusChange(status) {
+    this.setState({ status: status });
+  }
+
+  handleChange = (e) => {
+    const { id, value } = e.target;
+    this.setState({ [id]: value });
+  };
 
   handleClose() {
     this.setState({ show: false });
   }
 
-  async handleStatusChange(status) {
-    const response = await updateStatus(this.props.selectedSlotDetails.attendanceId, status);
+  async handleSave() {
+    const submitRequest = {
+      status: this.state.status,
+      statusReason: this.props.selectedSlotDetails.statusReason,
+    };
+    const attendanceId = this.props.selectedSlotDetails?.attendanceId;
+
+    await submit(attendanceId, submitRequest);
+
+    this.props.handleClose();
   }
 
-  getAvailableSlots() {
-    let result = "";
-    this.state.availableSlots.forEach((element) => {
-      result = result + element.description + "\n";
-    });
-    this.setState({ availableSlotsText: result });
-  }
+  handleConfirmAndSubscribe = async (e) => {
+      e.preventDefault();
+  
+      const request = {
+          statusReason: this.state.statusReason,
+          comment: this.state.comment,
+      }
 
-  render() {
-    const { status } = this.state;
+      // Accept
+      const response = await acceptTrial(this.props.selectedSlotDetails.attendanceId, request);
+console.log('acceptTrial response', response);
+      // Redirect
+      this.props.history.push({
+        pathname: `/student/${this.props.selectedSlotDetails.student.studentId}/subscriptionForm`,
+        state: {
+          studentId: this.props.selectedSlotDetails.student.studentId,
+          disciplineId: this.props.selectedSlotDetails.disciplineId,
+          teacher: {
+            teacherId: this.props.selectedSlotDetails.teacher.teacherId,
+            firstName: this.props.selectedSlotDetails.teacher.firstName
+          }
+        }
+      });
+      
+      this.props.handleClose();
+    };
 
-    if (!this.props.show) {
-      return <></>;
+  handleDecline = async (e) =>{
+    e.preventDefault();
+
+    const request = {
+        statusReason: this.state.statusReason,
+        comment: this.state.comment,
     }
 
-    const { teacher, student, startDate, endDate, disciplineId, roomId, statusReason, comment } = this.props.selectedSlotDetails;
+    const response = await declineTrial(this.props.selectedSlotDetails.attendanceId, request);
 
+    this.props.handleClose();
+  }
+
+  handleMissed = async (e) =>{
+    e.preventDefault();
+
+    const request = {
+        statusReason: this.state.statusReason,
+        comment: this.state.comment,
+    }
+
+    const response = await missedTrial(this.props.selectedSlotDetails.attendanceId, request);
+
+    this.props.handleClose();
+  }
+
+  getStatusBadgeVariant = (status) => {
+    switch (status) {
+      case AttendanceStatus.ATTENDED:
+        return "success";
+      case AttendanceStatus.MISSED:
+        return "danger";
+      case AttendanceStatus.CANCELED_BY_ADMIN:
+      case AttendanceStatus.CANCELED_BY_TEACHER:
+      case AttendanceStatus.CANCELED_BY_STUDENT:
+        return "default";
+      default:
+        return "secondary";
+    }
+  };
+  
+
+  render() {
+    
+    if (!this.props.show) {
+      return null;
+    }
+
+    const { status } = this.state;
+    const { attendanceId, teacher, student, isTrial, startDate, endDate, disciplineId, roomId, statusReason } = this.props.selectedSlotDetails;
+console.log('render SlotDetailsModal')
+console.log(this.props.selectedSlotDetails)
     return (
       <>
         <Modal show={this.props.show} onHide={this.props.handleClose} size="md">
           <Modal.Header closeButton>
             <Modal.Title>
-              {this.props.selectedSlotDetails.isTrial ? "Пробное занятие" : "Занятие"}
-              <Badge style={{ marginLeft: "10px"}} bg="success">{getAttendanceStatusName(status)}</Badge>
+              {isTrial ? "Пробное занятие" : "Занятие"}
+              <span style={{ marginLeft: "10px", fontSize: "16px" }}>
+                <Badge pill bg={this.getStatusBadgeVariant(status)}>{getAttendanceStatusName(status)}</Badge>
+              </span>
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
@@ -102,73 +183,74 @@ export class SlotDetailsModal extends React.Component {
                         </Stack>
                       </div>
                       <div>
-                        <CalendarIcon />
-                        <span style={{ fontSize: "14px" }}>{format(startDate, "d MMMM, EEEE", { locale: ru })}</span>
-                      </div>
-                      <div>
-                        <TimeIcon /> С {format(startDate, "HH:mm")} - {format(endDate, "HH:mm")}
+                        <div>
+                          <CalendarIcon />
+                          <span style={{ fontSize: "14px" }}>{format(startDate, "d MMMM, EEEE", { locale: ru })}</span>
+                        </div>
+                        <div>
+                          <TimeIcon /> С {format(startDate, "HH:mm")} - {format(endDate, "HH:mm")}
+                        </div>
+                          <Link
+                            to={{
+                              pathname: `/attendance/${attendanceId}/rescheduleForm`,
+                              state: { attendance: this.props.selectedSlotDetails },
+                            }}
+                            style={{ width: "120px" }}
+                          >
+                            Перенести
+                        </Link>
                       </div>
                     </Container>
-                    <Link to={`/student/${this.props.selectedSlotDetails.studentId}`}>
-                      <h3>
-                        {this.props.selectedSlotDetails.firstName} {this.props.selectedSlotDetails.lastName}
-                      </h3>
-                    </Link>
                   </Container>
                 </div>
               </Row>
             </Container>
             <hr></hr>
 
-            {this.props.selectedSlotDetails.status === AttendanceStatus.NEW && (
+            {this.props.selectedSlotDetails.status === AttendanceStatus.NEW && !isTrial &&(
               <div className="text-center mt-5 mb-5">
                 <Button
-                  as={Link}
-                  to={{
-                    pathname: `/attendance/${this.props.selectedSlotDetails.attendanceId}/attendedForm`,
-                    state: { attendance: this.props.selectedSlotDetails },
-                  }}
-                  variant={"outline-primary"}
+                  onClick={() => this.handleStatusChange(AttendanceStatus.ATTENDED)}
+                  variant={status === AttendanceStatus.ATTENDED ? "success" : "outline-success"}
                   style={{ width: "120px", marginRight: "10px" }}
                 >
                   Посещено
                 </Button>
                 <Button
-                  as={Link}
-                  to={{
-                    pathname: `/attendance/${this.props.selectedSlotDetails.attendanceId}/cancelationForm`,
-                    state: { attendance: this.props.selectedSlotDetails },
-                  }}
-                  variant={"outline-danger"}
+                  onClick={() => this.handleStatusChange(AttendanceStatus.MISSED)}
+                  variant={status === AttendanceStatus.MISSED ? "danger" : "outline-danger"}
                   style={{ width: "120px", marginRight: "10px" }}
                 >
                   Пропуск
                 </Button>
-                <Button
-                  as={Link}
-                  to={{
-                    pathname: `/attendance/${this.props.selectedSlotDetails.attendanceId}/rescheduleForm`,
-                    state: { attendance: this.props.selectedSlotDetails },
-                  }}
-                  variant={"outline-secondary"}
-                  style={{ width: "120px" }}
-                >
-                  Перенести
-                </Button>
               </div>
             )}
-
-            {this.props.selectedSlotDetails.status !== AttendanceStatus.NEW && (
-              <Form.Group className="mb-3" controlId="comment">
-                <Form.Label>Комментарий</Form.Label>
-                <Form.Control as="textarea" onChange={this.handleChange} value={statusReason} placeholder="введите..." autoComplete="off" disabled="true"/>
-              </Form.Group>
-            )}
+            <Form.Group className="mb-3" controlId="comment">
+              <Form.Label>Комментарий</Form.Label>
+              <Form.Control as="textarea" onChange={this.handleChange} value={statusReason} placeholder="введите..." autoComplete="off"/>
+            </Form.Group>
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={this.props.handleClose}>
-              Закрыть
-            </Button>
+            {isTrial && (
+              <>
+                <Button variant="outline-danger" type="null" onClick={this.handleMissed}>
+                  Пропущено
+                </Button>
+                <Button variant="outline-secondary" type="null" onClick={this.handleDecline}>
+                  Отказаться
+                </Button>
+                <Button onClick={this.handleConfirmAndSubscribe} variant="outline-success" style={{ marginLeft: "10px" }}>
+                  Оформить абонемент
+                </Button>
+              </>
+            )}
+            {isTrial === false && (
+              <>
+                <Button onClick={this.handleSave} variant="primary">
+                  Сохранить
+                </Button>
+              </>
+            )}
           </Modal.Footer>
         </Modal>
       </>

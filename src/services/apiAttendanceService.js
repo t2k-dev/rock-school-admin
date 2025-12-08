@@ -18,9 +18,18 @@ export const updateStatus = async (id, status) => {
   }
 };
 
-export const submit = async (data) => {
+export const submitGroup = async (data) => {
   try {
     const response = await apiClient.post(`/attendance/submit`, data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+};
+
+export const submit = async (id, data) => {
+  try {
+    const response = await apiClient.post(`/attendance/${id}/submit`, data);
     return response.data;
   } catch (error) {
     console.error("Error fetching data:", error);
@@ -39,6 +48,15 @@ export const acceptTrial = async (id, data) => {
 export const declineTrial = async (id, data) => {
   try {
     const response = await apiClient.post(`/attendance/${id}/declineTrial`, data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+};
+
+export const missedTrial = async (id, data) => {
+  try {
+    const response = await apiClient.post(`/attendance/${id}/missedTrial`, data);
     return response.data;
   } catch (error) {
     console.error("Error fetching data:", error);

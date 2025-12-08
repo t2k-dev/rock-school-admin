@@ -142,6 +142,11 @@ export class SubscriptionForm extends React.Component {
   };
 
   handleCloseAvailableTeachersModal = () => {
+    if (!this.state.availableSlots || this.state.availableSlots.length === 0) {
+      this.setState({ showAvailableTeacherModal: false, teacherId: "" , selectedTeachers: [] });
+      return;
+    }
+
     const selectedTeacherIds = Array.from(new Set(this.state.availableSlots.map(slot => slot.teacherId)));
     const selectedTeachers = this.state.availableTeachers.filter(teacher => selectedTeacherIds.includes(teacher.teacherId)); 
     const newSelectedTeacherId = selectedTeachers.length > 0 && selectedTeachers[0].teacherId;
@@ -236,9 +241,7 @@ export class SubscriptionForm extends React.Component {
     if (schedules && schedules.length > 0){
       filteredSchedules = schedules.filter(schedule => schedule.teacherId === teacherId) ;
     }
-    console.log("filteredSchedules");
-    console.log(schedules);
-
+    
     let studentsList;
     if (students && students.length > 0) {
       studentsList = students.map((student, index) => (

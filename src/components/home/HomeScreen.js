@@ -31,6 +31,7 @@ class HomeScreen extends React.Component {
     this.handleChangeNoteStatus = this.handleChangeNoteStatus.bind(this);
     this.handleShowCanceled = this.handleShowCanceled.bind(this);
   }
+
   componentDidMount() {
     this.onFormLoad();
   }
@@ -254,6 +255,7 @@ class HomeScreen extends React.Component {
           </div>
 
           <SlotDetailsModal
+            history={this.props.history}
             selectedSlotDetails={selectedSlotDetails}
             show={showSlotDetailsModal}
             handleClose={() => {
