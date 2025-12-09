@@ -8,6 +8,7 @@ import { DisciplineIcon } from "../common/DisciplineIcon";
 
 import { Avatar } from "../common/Avatar";
 import { CalendarIcon } from "../icons/CalendarIcon";
+import { DoorIcon } from "../icons/DoorIcon";
 import { TimeIcon } from "../icons/TimeIcon";
 
 import AttendanceStatus from "../constants/AttendanceStatus";
@@ -15,20 +16,18 @@ import { getAttendanceStatusName } from "../constants/attendancies";
 import { getDisciplineName } from "../constants/disciplines";
 import { getRoomName } from "../constants/rooms";
 
-import { acceptTrial, declineTrial, missedTrial, submit } from "../../services/apiAttendanceService";
+import { acceptTrial, declineTrial, missedTrial, submit, updateComment } from "../../services/apiAttendanceService";
 
 export class SlotDetailsModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      show: this.props.show,
       status: 0,
       trialStatus: 0,
       comment: "",
     };
 
     this.handleStatusChange = this.handleStatusChange.bind(this);
-    this.handleClose = this.handleClose.bind(this);
     this.handleSave = this.handleSave.bind(this);
   }
 
@@ -37,7 +36,8 @@ export class SlotDetailsModal extends React.Component {
       this.setState(
         { 
           status: this.props.selectedSlotDetails.status,
-          attendanceId: this.props.selectedSlotDetails.attendanceId
+          attendanceId: this.props.selectedSlotDetails.attendanceId,
+          comment: this.props.selectedSlotDetails.comment
          }
       );
     }
@@ -52,16 +52,21 @@ export class SlotDetailsModal extends React.Component {
     this.setState({ [id]: value });
   };
 
-  handleClose() {
-    this.setState({ show: false });
-  }
-
   async handleSave() {
+    const attendanceId = this.props.selectedSlotDetails?.attendanceId;
+
+    // Completed attendance
+    if (this.props.selectedSlotDetails.isCompleted){
+      await updateComment(attendanceId, this.state.comment);
+      this.props.handleClose();
+      return;
+    }
+
+    // Not completed
     const submitRequest = {
       status: this.state.status,
       statusReason: this.props.selectedSlotDetails.statusReason,
     };
-    const attendanceId = this.props.selectedSlotDetails?.attendanceId;
 
     await submit(attendanceId, submitRequest);
 
@@ -78,7 +83,7 @@ export class SlotDetailsModal extends React.Component {
 
       // Accept
       const response = await acceptTrial(this.props.selectedSlotDetails.attendanceId, request);
-console.log('acceptTrial response', response);
+
       // Redirect
       this.props.history.push({
         pathname: `/student/${this.props.selectedSlotDetails.student.studentId}/subscriptionForm`,
@@ -95,7 +100,7 @@ console.log('acceptTrial response', response);
       this.props.handleClose();
     };
 
-  handleDecline = async (e) =>{
+  handleDeclineTrial = async (e) =>{
     e.preventDefault();
 
     const request = {
@@ -108,7 +113,7 @@ console.log('acceptTrial response', response);
     this.props.handleClose();
   }
 
-  handleMissed = async (e) =>{
+  handleMissedTrial = async (e) =>{
     e.preventDefault();
 
     const request = {
@@ -117,6 +122,21 @@ console.log('acceptTrial response', response);
     }
 
     const response = await missedTrial(this.props.selectedSlotDetails.attendanceId, request);
+
+    this.props.handleClose();
+  }
+
+  handleCompleted = async (e, status) =>{
+    e.preventDefault();
+
+    const attendanceId = this.props.selectedSlotDetails?.attendanceId;
+    const submitRequest = {
+      status: status,
+      statusReason: this.props.selectedSlotDetails.statusReason,
+      comment: this.state.comment,
+    };
+
+    await submit(attendanceId, submitRequest);
 
     this.props.handleClose();
   }
@@ -143,8 +163,8 @@ console.log('acceptTrial response', response);
       return null;
     }
 
-    const { status } = this.state;
-    const { attendanceId, teacher, student, isTrial, startDate, endDate, disciplineId, roomId, statusReason } = this.props.selectedSlotDetails;
+    
+    const { attendanceId, teacher, student, isTrial, startDate, endDate, disciplineId, roomId, comment, isCompleted, status } = this.props.selectedSlotDetails;
 console.log('render SlotDetailsModal')
 console.log(this.props.selectedSlotDetails)
     return (
@@ -165,24 +185,25 @@ console.log(this.props.selectedSlotDetails)
                   <Container style={{ width: "100px", padding: "0" }}>
                     <Avatar style={{ width: "100px", height: "100px" }} />
                     <div className="text-center mt-1">
-                      <Link to={`/student/${student.studentId}`}>{student.firstName}</Link>
+                      <Link to={`/student/${student.studentId}`}>{student.firstName} {student.lastName}</Link>
                     </div>
                   </Container>
                   <Container>
-                    <Container className="mt-2 text-center" style={{ fontSize: "14px" }}>
+                    <Container className="mt-1 text-center" style={{ fontSize: "14px" }}>
                       <div className="d-flex">
-                        <div style={{ marginTop: "10px" }}>
-                          <DisciplineIcon disciplineId={disciplineId} size="60px" />
+                        <div style={{ marginRight: "10px" }}>
+                          <DisciplineIcon disciplineId={disciplineId} size="40px" />
                         </div>
-                        <Stack direction="vertical" gap={0} className="mb-2 text-center">
-                          <div style={{ fontWeight: "bold", fontSize: "18px" }}>{getDisciplineName(disciplineId)}</div>
+                        <Stack direction="vertical" gap={0} className="mb-2 text-start">
+                          <div style={{ fontWeight: "bold", fontSize: "16px" }}>{getDisciplineName(disciplineId)}</div>
                           <div>
                             <Link to={"/teacher/" + teacher.teacherId}>{teacher.firstName}</Link>
                           </div>
-                          <div>{getRoomName(roomId)} комната</div>
+                          
                         </Stack>
                       </div>
-                      <div>
+                      <div className="text-start">
+                        <div> <DoorIcon/> {getRoomName(roomId)}</div>
                         <div>
                           <CalendarIcon />
                           <span style={{ fontSize: "14px" }}>{format(startDate, "d MMMM, EEEE", { locale: ru })}</span>
@@ -190,6 +211,8 @@ console.log(this.props.selectedSlotDetails)
                         <div>
                           <TimeIcon /> С {format(startDate, "HH:mm")} - {format(endDate, "HH:mm")}
                         </div>
+                        
+                        {!isCompleted &&
                           <Link
                             to={{
                               pathname: `/attendance/${attendanceId}/rescheduleForm`,
@@ -198,59 +221,51 @@ console.log(this.props.selectedSlotDetails)
                             style={{ width: "120px" }}
                           >
                             Перенести
-                        </Link>
-                      </div>
+                          </Link>
+  }
+                        </div>
                     </Container>
                   </Container>
                 </div>
               </Row>
             </Container>
             <hr></hr>
-
-            {this.props.selectedSlotDetails.status === AttendanceStatus.NEW && !isTrial &&(
-              <div className="text-center mt-5 mb-5">
-                <Button
-                  onClick={() => this.handleStatusChange(AttendanceStatus.ATTENDED)}
-                  variant={status === AttendanceStatus.ATTENDED ? "success" : "outline-success"}
-                  style={{ width: "120px", marginRight: "10px" }}
-                >
-                  Посещено
-                </Button>
-                <Button
-                  onClick={() => this.handleStatusChange(AttendanceStatus.MISSED)}
-                  variant={status === AttendanceStatus.MISSED ? "danger" : "outline-danger"}
-                  style={{ width: "120px", marginRight: "10px" }}
-                >
-                  Пропуск
-                </Button>
-              </div>
-            )}
             <Form.Group className="mb-3" controlId="comment">
               <Form.Label>Комментарий</Form.Label>
-              <Form.Control as="textarea" onChange={this.handleChange} value={statusReason} placeholder="введите..." autoComplete="off"/>
+              <Form.Control as="textarea" onChange={this.handleChange} value={comment} placeholder="введите..." autoComplete="off"/>
             </Form.Group>
           </Modal.Body>
           <Modal.Footer>
-            {isTrial && (
-              <>
-                <Button variant="outline-danger" type="null" onClick={this.handleMissed}>
-                  Пропущено
-                </Button>
-                <Button variant="outline-secondary" type="null" onClick={this.handleDecline}>
-                  Отказаться
-                </Button>
-                <Button onClick={this.handleConfirmAndSubscribe} variant="outline-success" style={{ marginLeft: "10px" }}>
-                  Оформить абонемент
-                </Button>
-              </>
-            )}
-            {isTrial === false && (
-              <>
-                <Button onClick={this.handleSave} variant="primary">
+            {!isCompleted ? 
+              isTrial ? (
+                <>
+                  <Button onClick={this.handleMissedTrial} variant="outline-danger" type="null" >
+                    Пропущено
+                  </Button>
+                  <Button onClick={this.handleDeclineTrial} variant="outline-secondary" type="null">
+                    Отказаться
+                  </Button>
+                  <Button onClick={this.handleConfirmAndSubscribe} variant="outline-success" style={{ marginLeft: "10px" }}>
+                    Оформить абонемент
+                  </Button>
+                </>
+              )
+              : (
+                <>
+                  <Button onClick={(e) =>this.handleCompleted(e, AttendanceStatus.ATTENDED)} variant="outline-success">
+                    Посещено
+                  </Button>
+                  <Button onClick={(e) =>this.handleCompleted(e, AttendanceStatus.MISSED)} variant="outline-danger" type="null" style={{ marginLeft: "10px" }}>
+                    Пропущено
+                  </Button>
+                </>
+              )
+              : (
+                <Button variant="primary" onClick={this.handleSave}>
                   Сохранить
                 </Button>
-              </>
-            )}
+              )
+            }
           </Modal.Footer>
         </Modal>
       </>

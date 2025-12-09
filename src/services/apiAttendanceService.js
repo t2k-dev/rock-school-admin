@@ -18,6 +18,15 @@ export const updateStatus = async (id, status) => {
   }
 };
 
+export const updateComment = async (id, comment) => {
+  try {
+    const response = await apiClient.put(`/attendance/${id}/comment/${comment}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+};
+
 export const submitGroup = async (data) => {
   try {
     const response = await apiClient.post(`/attendance/submit`, data);
