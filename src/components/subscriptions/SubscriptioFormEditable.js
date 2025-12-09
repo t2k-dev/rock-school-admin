@@ -3,12 +3,11 @@ import React from "react";
 import { Button, Col, Container, Form, InputGroup, Row, Table } from "react-bootstrap";
 import "react-datepicker/dist/react-datepicker.css";
 
-import { calculateAge } from "../common/DateTimeHelper";
 import { ScheduleEditorNew } from "../common/ScheduleEditorNew";
 import { getDisciplineName } from "../constants/disciplines";
 
 import { addSubscription, getSubscriptionFormData } from "../../services/apiSubscriptionService";
-import { getAvailableTeachers, getWorkingPeriods } from "../../services/apiTeacherService";
+import { getWorkingPeriods } from "../../services/apiTeacherService";
 import { AvailableTeachersModal } from "../teachers/AvailableTeachersModal";
 
 export class SubscriptionFormEditable extends React.Component {
@@ -68,19 +67,12 @@ export class SubscriptionFormEditable extends React.Component {
   showAvailableTeachersModal = async (e) => {
     e.preventDefault();
     
-    let teachers;
+    let teachers = [];
     if (this.state.teacher) {
       // TODO: refactor for non array
       const response = await getWorkingPeriods(this.state.teacher.teacherId);
-      teachers = response.data.availableTeachers;
-    } else {
-      // TODO: branchId
-      const sortedStudents = this.sortStudentsByBirthDate(this.state.students);
-      const age = calculateAge(sortedStudents[0].birthDate);
-
-      const response = await getAvailableTeachers(this.state.disciplineId, age, 1);
-      teachers = response.data.availableTeachers;
-    }
+      teachers.push(response.data.teacher);
+    } 
 
     this.setState({
       availableTeachers: teachers,
@@ -89,6 +81,11 @@ export class SubscriptionFormEditable extends React.Component {
   };
 
   handleCloseAvailableTeachersModal = () => {
+    if (!this.state.availableSlots || this.state.availableSlots.length === 0) {
+      this.setState({ showAvailableTeacherModal: false, teacherId: "" , selectedTeachers: [] });
+      return;
+    }
+
     const selectedTeacherIds = Array.from(new Set(this.state.availableSlots.map(slot => slot.teacherId)));
     const selectedTeachers = this.state.availableTeachers.filter(teacher => selectedTeacherIds.includes(teacher.teacherId)); 
     const newSelectedTeacherId = selectedTeachers.length > 0 && selectedTeachers[0].teacherId;
@@ -178,7 +175,7 @@ export class SubscriptionFormEditable extends React.Component {
     } = this.state;
 
     if (!teacher){
-        return <div>Loading...</div>;
+        return <div>Загрузка...</div>;
     }
 
     console.log("this.state");
