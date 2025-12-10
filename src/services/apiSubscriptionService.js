@@ -35,6 +35,16 @@ export const addTrialSubscription = async (data) =>{
   return result;
 }
 
+export const updateSubscription = async (data) =>{
+  const result = await apiClient.put('/subscription', data);
+  return result;
+}
+
+export const updateSubscriptionSchedules = async (id, data) =>{
+  const result = await apiClient.put(`/subscription/${id}/schedules`, data);
+  return result;
+}
+
 export const rescheduleAttendance = async (data) =>{
   const result = await apiClient.post('/subscription/rescheduleAttendance', data);
   return result;

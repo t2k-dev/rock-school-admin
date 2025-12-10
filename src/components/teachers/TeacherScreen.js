@@ -96,7 +96,7 @@ console.log(nonTrialSubscriptions);
               <th>Дата начала</th>
               <th>Ученик</th>
               <th>Направление</th>
-              <th>Занятий</th>
+              <th>Занятий осталось</th>
               <th>Статус</th>
               <th></th>
             </tr>

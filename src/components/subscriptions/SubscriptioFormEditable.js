@@ -1,4 +1,4 @@
-import { format, getDay, parse } from "date-fns";
+import { format, getDay } from "date-fns";
 import React from "react";
 import { Button, Col, Container, Form, InputGroup, Row, Table } from "react-bootstrap";
 import "react-datepicker/dist/react-datepicker.css";
@@ -6,7 +6,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { ScheduleEditorNew } from "../common/ScheduleEditorNew";
 import { getDisciplineName } from "../constants/disciplines";
 
-import { addSubscription, getSubscriptionFormData } from "../../services/apiSubscriptionService";
+import { getSubscriptionFormData, updateSubscriptionSchedules } from "../../services/apiSubscriptionService";
 import { getWorkingPeriods } from "../../services/apiTeacherService";
 import { AvailableTeachersModal } from "../teachers/AvailableTeachersModal";
 
@@ -15,7 +15,7 @@ export class SubscriptionFormEditable extends React.Component {
     super(props);
 
     this.state = {
-      studentId: this.props.match.params.id,
+      subscriptionId: this.props.match.params.id,
       student: null,
       students: [],
       disciplineId: 0,
@@ -37,7 +37,6 @@ export class SubscriptionFormEditable extends React.Component {
     this.handleCloseAvailableTeachersModal = this.handleCloseAvailableTeachersModal.bind(this);
 
     this.handleSave = this.handleSave.bind(this);
-    this.handleChange = this.handleChange.bind(this);
     this.handlePeriodsChange = this.handlePeriodsChange.bind(this);
   }
 
@@ -53,6 +52,7 @@ export class SubscriptionFormEditable extends React.Component {
     const subscription = formData.subscription || {};
     
     this.setState({
+      subscriptionId: subscription.subscriptionId,
       students: formData.students,
       disciplineId: subscription.disciplineId || "",
       teacher: formData.teacher || {},
@@ -109,54 +109,25 @@ export class SubscriptionFormEditable extends React.Component {
     this.setState({ availableSlots: availableSlots, schedules: periods });
   };
 
-  handleChange = (e) => {
-    const { id, value } = e.target;
-    this.setState({ [id]: value });
-  };
-
   handlePeriodsChange = (periods) => {
     this.setState({ schedules: periods });
   };
 
-  sortStudentsByBirthDate = (students) => {
-    return students.sort((a, b) => {
-      if (!a.birthDate || !b.birthDate) return 0;
-      return new Date(b.birthDate) - new Date(a.birthDate);
-    });
-  };
-
-  deleteStudent = (index) => {
-    const updatedStudents = [...this.state.students];
-    updatedStudents.splice(index, 1);
-    this.setState({ students: updatedStudents });
-  }
-
   handleSave = async (e) => {
     e.preventDefault();
-
-    const startDate = parse(this.state.startDate, "dd.MM.yyyy", new Date());
-
-    let studentIds = [];
-    this.state.students.forEach((student) => {
-      studentIds.push(student.studentId);
-    });
+    
+    const { subscriptionId, students, schedules } = this.state;
+    const studentIds = students.map(student => student.studentId);
 
     const requestBody = {
-      studentIds: studentIds,
-      subscription: {
-        disciplineId: this.state.disciplineId,
-        teacherId: this.state.teacherId,
-        attendanceCount: this.state.attendanceCount,
-        attendanceLength: this.state.attendanceLength,
-        startDate: format(startDate, "yyyy.MM.dd"),
-        branchId: 1,
-      },
-      schedules: this.state.schedules,
+      subscriptionId: subscriptionId,
+      schedules: schedules,
     };
 
-    await addSubscription(requestBody);
-
-    this.props.history.push(`/student/${this.state.studentId}`);
+    await updateSubscriptionSchedules(subscriptionId, requestBody);
+    
+    const firstStudentId = studentIds[0];
+    this.props.history.push(`/student/${firstStudentId}`);
   };
 
   render() {
@@ -164,7 +135,6 @@ export class SubscriptionFormEditable extends React.Component {
       disciplineId,
       teacher,
       students,
-      teacherId,
       availableSlots,
       attendanceCount,
       attendanceLength,
@@ -177,9 +147,6 @@ export class SubscriptionFormEditable extends React.Component {
     if (!teacher){
         return <div>Загрузка...</div>;
     }
-
-    console.log("this.state");
-    console.log(this.state);
 
     let studentsList;
     if (students && students.length > 0) {
