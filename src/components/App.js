@@ -1,34 +1,30 @@
 import { BrowserRouter, Route } from "react-router-dom";
 
-import { BranchScreen } from "./branches/BranchScreen";
-import Students from "./students/Students";
-import Teachers from "./teachers/Teachers";
+import { BranchScreen } from "./features/branches/BranchScreen";
+import HomeScreen from "./features/home/HomeScreen";
+import Students from "./features/students/Students";
+import Teachers from "./features/teachers/Teachers";
 
-import About from "./About";
-import Contact from "./Contact";
-import MyNavbar from "./MyNavbar";
+import { AttendanceCancelationForm } from "./features/attendances/AttendanceCancelationForm";
+import { AttendanceRescheduleForm } from "./features/attendances/AttendanceRescheduleForm";
 
-import HomeScreen from "./home/HomeScreen";
+import StudentForm from "./features/students/StudentForm";
+import StudentScreen from "./features/students/StudentScreen";
+import { WaitingScheduleForm } from "./features/students/WaitingScheduleForm";
 
-import { AttendanceAtendedForm } from "./attendances/AttendanceAtendedForm";
-import { AttendanceCancelationForm } from "./attendances/AttendanceCancelationForm";
-import { AttendanceRescheduleForm } from "./attendances/AttendanceRescheduleForm";
+import TeacherForm from "./features/teachers/TeacherForm";
+import TeacherScreen from "./features/teachers/TeacherScreen";
 
-import StudentForm from "./students/StudentForm";
-import StudentScreen from "./students/StudentScreen";
-import { WaitingScheduleForm } from "./students/WaitingScheduleForm";
-
-import TeacherForm from "./teachers/TeacherForm";
-import TeacherScreen from "./teachers/TeacherScreen";
-
-import { SubscriptionFormEditable } from "./subscriptions/SubscriptioFormEditable";
-import { SubscriptionForm } from "./subscriptions/SubscriptionForm";
-import { TrialSubscriptionForm } from "./subscriptions/TrialSubscriptionForm";
+import { SubscriptionFormEditable } from "./features/subscriptions/SubscriptioFormEditable";
+import { SubscriptionForm } from "./features/subscriptions/SubscriptionForm";
+import { TrialSubscriptionForm } from "./features/subscriptions/TrialSubscriptionForm";
 
 import { TestComponent } from "./TestComponent";
 import { TestComponent2 } from "./TestComponent2";
-import { CalendarWeek } from "./common/CalendarWeek";
-import NoteForm from "./notes/NoteForm";
+import NoteForm from "./features/notes/NoteForm";
+
+import MyNavbar from "./MyNavbar";
+import { CalendarWeek } from "./shared/calendar/CalendarWeek";
 
 function App() {
   return (
@@ -40,8 +36,7 @@ function App() {
 
       <Route exact path="/attendance/:id/rescheduleForm" render={(props) => <AttendanceRescheduleForm {...props}/>}/>
       <Route exact path="/attendance/:id/cancelationForm" render={(props) => <AttendanceCancelationForm {...props}/>}/>
-      <Route exact path="/attendance/:id/attendedForm" render={(props) => <AttendanceAtendedForm {...props}/>}/>
-      
+
       <Route exact path="/branchScreen/:id" render={(props) => <BranchScreen {...props}/>}/>
 
       <Route exact path="/teachers"><Teachers /></Route>
@@ -59,8 +54,6 @@ function App() {
       
       <Route exact path="/student/:id/subscriptionForm" render={(props) => <SubscriptionForm type="New" {...props} />}/>
       <Route exact path="/subscription/:id/edit" render={(props) => <SubscriptionFormEditable {...props} />}/>
-      <Route path="/about" element={<About />} />
-      <Route path="/contact" element={<Contact />} />
 
       <Route exact path="/notes/addNote" render={(props) => <NoteForm type="New" {...props} />}/>
       <Route exact path="/notes/:id/edit" render={(props) => <NoteForm {...props} />}/>

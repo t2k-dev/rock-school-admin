@@ -1,8 +1,8 @@
 
-import AttendanceStatus from "../constants/AttendanceStatus";
-import { getRoomName } from "../constants/rooms";
+import AttendanceStatus from "../../constants/AttendanceStatus";
+import { getRoomName } from "../../constants/rooms";
 
-import { formatDate, formatTime } from "./DateTimeHelper";
+import { formatDate, formatTime } from "../../utils/dateTime";
 
 export function getSlotDescriptionWithTeacherName(slot) {
   const date = slot.start;
