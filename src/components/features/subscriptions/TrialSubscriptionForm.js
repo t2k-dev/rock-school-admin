@@ -126,7 +126,7 @@ export class TrialSubscriptionForm extends React.Component {
                 <AvailableTeachersModal
                   show={showAvailableTeacherModal}
                   availableTeachers={availableTeachers}
-                  updateAvailableSlots={this.updateAvailableSlots}
+                  onSlotsChange={this.updateAvailableSlots}
                   onClose={this.handleCloseAvailableTeachersModal}
                 />
               </InputGroup>

@@ -1,21 +1,30 @@
 import { format } from "date-fns";
 import React from "react";
-import { Col, Container, Row, Tab, Table, Tabs } from "react-bootstrap";
+import { Alert, Button, Col, Container, Row, Tab, Table, Tabs } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { getTeacherScreenDetails } from "../../../services/apiTeacherService";
 import { EditIcon } from "../../shared/icons/EditIcon";
 
 import { DisciplineIcon } from "../../common/DisciplineIcon";
 import { CalendarWeek } from "../../shared/calendar/CalendarWeek";
+import { Loading } from "../../shared/Loading";
 import TeacherScreenCard from "./TeacherScreenCard";
 
 import { getDisciplineName } from "../../../constants/disciplines";
 import { getSubscriptionStatusName, getTrialSubscriptionStatusName } from "../../../constants/subscriptions";
 
+// Constants
+const ERROR_MESSAGES = {
+  LOAD_FAILED: "Не удалось загрузить данные преподавателя",
+  TEACHER_NOT_FOUND: "Преподаватель не найден",
+  NO_TEACHER_ID: "Не указан ID преподавателя",
+};
+
 class TeacherScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      teacherId: "",
       teacher: {
         firstName: "",
         phone: "",
@@ -28,23 +37,34 @@ class TeacherScreen extends React.Component {
   }
 
   componentDidMount() {
-    this.onFormLoad();
+    this.loadTeacherData();
   }
 
-  async onFormLoad() {
-    const details = await getTeacherScreenDetails(this.props.match.params.id);
+  async loadTeacherData() {
+    try{
+      this.setState({ isLoading: true, error: null });
 
-    const backgroundEvents = details.teacher.scheduledWorkingPeriods.map((item) => ({
-      start: item.startDate,
-      end: item.endDate,
-    }));
+      const details = await getTeacherScreenDetails(this.props.match.params.id);
 
-    this.setState({
-      teacher: details.teacher,
-      subscriptions: details.subscriptions,
-      attendances: details.attendances,
-      backgroundEvents: backgroundEvents,
+      const backgroundEvents = details.teacher.scheduledWorkingPeriods.map((item) => ({
+        start: item.startDate,
+        end: item.endDate,
+      }));
+
+      this.setState({
+        teacher: details.teacher,
+        subscriptions: details.subscriptions,
+        attendances: details.attendances,
+        backgroundEvents: backgroundEvents,
+        isLoading: false,
     });
+
+    } catch (error){
+      this.setState({
+        error: error.message || ERROR_MESSAGES.LOAD_FAILED,
+        isLoading: false,
+      });
+    }
   }
 
   handleEditClick = (e) => {
@@ -57,8 +77,41 @@ class TeacherScreen extends React.Component {
     this.props.history.push(`/subscription/${item.subscriptionId}/edit`);
   };
 
+  renderErrorState = () => (
+    <Container style={{ marginTop: "40px" }}>
+      <Row>
+        <Col md={{ span: 8, offset: 2 }}>
+          <Alert variant="danger">
+            <Alert.Heading>Ошибка</Alert.Heading>
+            <p>{this.state.error}</p>
+            <hr />
+            <div className="d-flex justify-content-end">
+              <Button 
+                onClick={this.handleRetry} 
+                variant="outline-danger"
+                disabled={this.state.isLoading}
+              >
+                Попробовать снова
+              </Button>
+            </div>
+          </Alert>
+        </Col>
+      </Row>
+    </Container>
+  );
+
   render() {
-    const { teacher, backgroundEvents, subscriptions, attendances } = this.state;
+    const { isLoading, error, teacher, backgroundEvents, subscriptions, attendances } = this.state;
+
+    if (isLoading) {
+      return <Loading
+        message="Загрузка данных преподавателя..."
+      />
+    }
+
+    if (error) {
+      return this.renderErrorState();
+    }
 
     const sortedSubscriptions = subscriptions.sort((a, b) => {
       const dateA = new Date(a.startDate);
@@ -85,8 +138,6 @@ class TeacherScreen extends React.Component {
     // Subscriptions
     let subscriptionsTable;
     const nonTrialSubscriptions = sortedSubscriptions.filter((s) => s.trialStatus === null);
-console.log("nonTrialSubscriptions");
-console.log(nonTrialSubscriptions);
 
     if (nonTrialSubscriptions && nonTrialSubscriptions.length > 0) {
       subscriptionsTable = (

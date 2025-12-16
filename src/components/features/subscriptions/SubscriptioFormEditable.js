@@ -6,6 +6,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { getDisciplineName } from "../../../constants/disciplines";
 import { DisciplineIcon } from "../../common/DisciplineIcon";
 import { CalendarIcon } from "../../shared/icons/CalendarIcon";
+import { Loading } from "../../shared/Loading";
 import { ScheduleEditorWithDelete } from "../../shared/schedule/ScheduleEditorWithDelete";
 import { SubscriptionStudents } from "./SubscriptionStudents";
 
@@ -167,7 +168,7 @@ export class SubscriptionFormEditable extends React.Component {
       <Spinner animation="border" role="status" className="mb-3">
         <span className="visually-hidden">Загрузка...</span>
       </Spinner>
-      <div>Загрузка данных абонемента...</div>
+      <div>Загрузка данных...</div>
     </Container>
   );
 
@@ -271,7 +272,7 @@ export class SubscriptionFormEditable extends React.Component {
     } = this.state;
 
     if (isLoading) {
-      return this.renderLoadingState();
+      return <Loading />;
     }
 
     if (error && !teacher) {
@@ -319,7 +320,7 @@ export class SubscriptionFormEditable extends React.Component {
               <AvailableTeachersModal
                 show={showAvailableTeacherModal}
                 availableTeachers={availableTeachers}
-                updateAvailableSlots={this.updateAvailableSlots}
+                onSlotsChange={this.updateAvailableSlots}
                 onClose={this.handleCloseAvailableTeachersModal}
               />
 

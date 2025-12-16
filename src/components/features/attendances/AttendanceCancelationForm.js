@@ -19,7 +19,6 @@ export class AttendanceCancelationForm extends React.Component {
       statusReason: "",
     };
 
-    // AvailableTeachersModal
     this.handleSave = this.handleSave.bind(this);
     this.handleChange = this.handleChange.bind(this);
   }

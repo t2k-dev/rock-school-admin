@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 
 import { formatDate, formatTime } from "../../../utils/dateTime";
 import { CalendarWeek } from "../../shared/calendar/CalendarWeek";
+import { CopyIcon } from "../../shared/icons/CopyIcon";
 
 
 export class AvailableTeachersModal extends React.Component {
@@ -12,7 +13,8 @@ export class AvailableTeachersModal extends React.Component {
     this.state = {
       teachers: [],
       availableSlots: [],
-      availableSlotsText: "",
+      selectedSlotsText: "",
+      singleSelection: false,
       copySuccess: "",
       isLoading: false,
       error: null,
@@ -29,18 +31,18 @@ export class AvailableTeachersModal extends React.Component {
     }
   }
 
-    // Lifecycle and State Management
+  // Lifecycle and State Management
   resetState = () => {
     const initialSlots = this.props.initialSlots || [];
     this.setState({
       teachers: this.props.availableTeachers || [],
       availableSlots: initialSlots,
-      availableSlotsText: this.generateAvailableSlotsText(initialSlots),
+      selectedSlotsText: this.generateSelectedSlotsText(initialSlots),
       copySuccess: "",
     });
   };
 
-  generateAvailableSlotsText(availableSlots) {
+  generateSelectedSlotsText(availableSlots) {
     return availableSlots
           .map(slot => slot.description)
           .join('\n');
@@ -55,7 +57,6 @@ export class AvailableTeachersModal extends React.Component {
     return "secondary";
   };
 
-  
   createNewSlot = (teacher, slotInfo, slotId) =>{
       const dayName = new Intl.DateTimeFormat("ru-RU", { weekday: "long" }).format(slotInfo.start);
 
@@ -75,11 +76,11 @@ export class AvailableTeachersModal extends React.Component {
       start: slotInfo.start,
       end: slotInfo.end,
       roomId: roomId,
-      description: this.createSlotDescription(teacher, dayName, slotInfo),
+      description: this.generateSlotDescription(teacher, dayName, slotInfo),
     };
   }
 
-  createSlotDescription = (teacher, dayName, slotInfo) => {
+  generateSlotDescription = (teacher, dayName, slotInfo) => {
     const timeString = `${formatDate(slotInfo.start)} в ${formatTime(slotInfo.start)}`;
     return `${teacher.firstName}: ${dayName}, ${timeString}`;
   };
@@ -104,6 +105,17 @@ export class AvailableTeachersModal extends React.Component {
     });
   };
 
+  removeAttendanceFromTeacher = (teachers, teacherId, attendanceId) => {
+    return teachers.map(teacher => {
+      if (teacher.teacherId !== teacherId) return teacher;
+
+      return {
+        ...teacher,
+        attendances: teacher.attendances?.filter(a => a.attendanceId !== attendanceId) || [],
+      };
+    });
+  };
+
   // Event Handlers
 
   handleError = (message, error) => {
@@ -113,10 +125,10 @@ export class AvailableTeachersModal extends React.Component {
   };
 
   handleCopy = async () => {
-    if (!this.state.availableSlotsText.trim()) return;
+    if (!this.state.selectedSlotsText.trim()) return;
 
     try {
-      await navigator.clipboard.writeText(this.state.availableSlotsText);
+      await navigator.clipboard.writeText(this.state.selectedSlotsText);
       this.setState({ copySuccess: "Текст скопирован в буфер обмена!" });
       
       // Clear success message after 3 seconds
@@ -128,14 +140,38 @@ export class AvailableTeachersModal extends React.Component {
     }
   };
 
-  handleSelectSlot = (teacher, slotInfo) => {
+  notifyParent = (slots) => {
+    // New prop pattern
+    if (this.props.onSlotsChange) {
+      this.props.onSlotsChange(slots);
+    }
+    
+    // Legacy prop pattern (for backward compatibility)
+    if (this.props.updateAvailableSlots) {
+      this.props.updateAvailableSlots(slots);
+    }
+  };
 
-    let slotId = uuidv4();
+  handleSelectSlot = (teacher, slotInfo) => {
+    const { singleSelection } = this.props;
+
+    if (singleSelection && this.state.availableSlots.length > 0) {
+      this.clearAllSlots();
+      // Wait for state to update before adding new slot
+      setTimeout(() => {
+        this.addSlot(teacher, slotInfo);
+      }, 0);
+      return;
+    }
+
+    this.addSlot(teacher, slotInfo);
+  };
+
+  addSlot = (teacher, slotInfo) => {
+    const slotId = uuidv4();
 
     // Add new attendance
-
     const newAttendance = this.createNewAttendance(slotId, slotInfo);
-
     const updatedTeachers = this.updateTeacherAttendances(
       this.state.teachers,
       teacher.teacherId,
@@ -145,17 +181,36 @@ export class AvailableTeachersModal extends React.Component {
     // Add the selected slot to the availableSlots array
     const newSlot = this.createNewSlot(teacher, slotInfo, slotId);
     const updatedAvailableSlots = [...this.state.availableSlots, newSlot];
-
-    const availableSlotsTxt = this.generateAvailableSlotsText(updatedAvailableSlots);
+    const availableSlotsTxt = this.generateSelectedSlotsText(updatedAvailableSlots);
 
     // Update the state with the modified array
     this.setState({
       teachers: updatedTeachers,
       availableSlots: updatedAvailableSlots,
-      availableSlotsText: availableSlotsTxt,
+      selectedSlotsText: availableSlotsTxt,
+      error: null, // Clear any previous errors
     });
 
-    this.props.updateAvailableSlots(updatedAvailableSlots);
+    // Notify parent components
+    this.notifyParent(updatedAvailableSlots);
+  };
+
+  clearAllSlots = () => {
+    // Remove all new attendances from teachers
+    const updatedTeachers = this.state.teachers.map(teacher => ({
+      ...teacher,
+      attendances: teacher.attendances?.filter(a => !a.isNew) || [],
+    }));
+
+    this.setState({
+      teachers: updatedTeachers,
+      availableSlots: [],
+      selectedSlotsText: "",
+      error: null,
+    });
+
+    // Notify parent components
+    this.notifyParent([]);
   };
 
   handleSelectEvent = (teacherId, slotInfo) => {
@@ -165,24 +220,21 @@ export class AvailableTeachersModal extends React.Component {
     const updatedSlots = this.state.availableSlots.filter((s) => s.id !== slotInfo.id);
 
     // update teacher events
-    const updatedTeachers = [...this.state.teachers];
-    const teacherIndex = updatedTeachers.findIndex((teacher) => teacher.teacherId === teacherId);
+    const updatedTeachers = this.removeAttendanceFromTeacher(
+      this.state.teachers,
+      teacherId,
+      slotInfo.id
+    );
 
-    if (teacherIndex !== -1) {
-      updatedTeachers[teacherIndex] = {
-        ...updatedTeachers[teacherIndex],
-        attendances: [...updatedTeachers[teacherIndex].attendances.filter((a) => a.attendanceId !== slotInfo.id)],
-      };
-    }
-    const slotsTxt = this.generateAvailableSlotsText(updatedSlots);
+    const slotsTxt = this.generateSelectedSlotsText(updatedSlots);
 
-    this.setState({ availableSlots: updatedSlots, teachers: updatedTeachers, availableSlotsText: slotsTxt });
-    this.props.updateAvailableSlots(updatedSlots);
+    this.setState({ availableSlots: updatedSlots, teachers: updatedTeachers, selectedSlotsText: slotsTxt });
+    this.props.onSlotsChange(updatedSlots);
   };
 
   handleCloseModal = () => {
     this.props.onClose();
-    this.props.updateAvailableSlots(this.state.availableSlots);
+    this.props.onSlotsChange(this.state.availableSlots);
   };
 
   // Render Methods
@@ -259,46 +311,32 @@ export class AvailableTeachersModal extends React.Component {
   };
 
   renderSidebar = () => {
-    const { availableSlotsText, copySuccess } = this.state;
+    const { selectedSlotsText, copySuccess } = this.state;
 
     return (
       <div style={{ width: "330px", paddingLeft: "15px" }}>
-        <Form.Group className="mb-3" controlId="availableSlotsText">
-          <Form.Label>Свободные окна</Form.Label>
+        <Form.Group className="mb-3" controlId="selectedSlotsText">
+          <div className="d-flex mb-1">
+            <span className="flex-grow-1">Свободные окна</span>
+              <Button
+                size="sm"
+                variant="outline-secondary"
+                onClick={this.handleCopy}
+                disabled={!selectedSlotsText.trim()}
+                id="copy-help-text"
+                aria-describedby="copy-button-help"
+              >
+              <CopyIcon size="15px" style={{ cursor: "pointer" }} onClick={this.handleCopy}></CopyIcon>
+            </Button>
+          </div>
+
           <Form.Control
             as="textarea"
-            value={availableSlotsText}
+            value={selectedSlotsText}
             style={{ height: "300px" }}
-            placeholder="Выберите свободные окна для отображения здесь"
-            onChange={this.handleTextareaChange}
             aria-describedby="copy-help-text"
+            readOnly
           />
-        </Form.Group>
-
-        {/*copySuccess && (
-          <Alert 
-            variant={copySuccess.includes("скопирован") ? "success" : "danger"}
-            className="mb-3"
-            role="status"
-            aria-live="polite"
-          >
-            {copySuccess}
-          </Alert>
-        )*/}
-
-        <Form.Group style={{ textAlign: "center" }}>
-          <Button
-            variant="outline-secondary"
-            onClick={this.handleCopy}
-            disabled={!availableSlotsText.trim()}
-            id="copy-help-text"
-            aria-describedby="copy-button-help"
-          >
-            Скопировать текст
-          </Button>
-          <Form.Text id="copy-button-help" className="d-block mt-2 text-muted">
-            Скопирует текст в буфер обмена
-          </Form.Text>
         </Form.Group>
       </div>
     );

@@ -366,7 +366,7 @@ export class SubscriptionForm extends React.Component {
               <AvailableTeachersModal
                 show={showAvailableTeacherModal}
                 availableTeachers={availableTeachers}
-                updateAvailableSlots={this.updateAvailableSlots}
+                onSlotsChange={this.updateAvailableSlots}
                 onClose={this.handleCloseAvailableTeachersModal}
               />
 

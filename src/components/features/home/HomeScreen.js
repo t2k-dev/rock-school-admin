@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 
 import { CalendarDay } from "../../shared/calendar/CalendarDay";
 import { EditIcon } from "../../shared/icons/EditIcon";
+import { Loading } from "../../shared/Loading";
 
 import { isCancelledAttendanceStatus } from "../../common/attendanceHelper";
 
@@ -22,38 +23,52 @@ class HomeScreen extends React.Component {
       attendances: null,
 
       showCanceled: true,
-
       showSlotDetailsModal: false,
       showGroupSlotDetailsModal: false,
-
       selectedSlotDetails: null,
+
+      isLoading: true,
     };
+    
     this.handleChangeNoteStatus = this.handleChangeNoteStatus.bind(this);
     this.handleShowCanceled = this.handleShowCanceled.bind(this);
   }
 
   componentDidMount() {
-    this.onFormLoad();
+    this.loadHomeScreen();
   }
 
-  async onFormLoad() {
-    const details = await getHomeScreenDetails(1);
-    this.setState({
-      rooms: details.rooms,
-      notes: details.notes,
-      attendances: details.attendances,
+  async loadHomeScreen() {
+    try {
+      this.setState({ isLoading: true, error: null, noteError: null });
 
-      showSlotDetailsModal: false,
-      showGroupSlotDetailsModal: false,
-    });
+      const details = await getHomeScreenDetails(1);
+      
+      this.setState({
+        rooms: details.rooms,
+        notes: details.notes,
+        attendances: details.attendances,
+
+        showSlotDetailsModal: false,
+        showGroupSlotDetailsModal: false,
+        isLoading: false,
+      });
+    } catch (error) {
+      this.setState({
+        error: error.message || "Не удалось загрузить данные",
+        isLoading: false,
+      });
+    }
+    
   }
 
   handleShowCanceled = (e) => {
     this.setState({ showCanceled: e.target.checked });
   };
 
-  handleSelectEvent = (teacherId, slotInfo) => {
+  handleSelectEvent = (slotInfo) => {
     const newSelectedSlotDetails = this.state.attendances.filter((a) => a.attendanceId === slotInfo.id)[0];
+
     if (newSelectedSlotDetails.groupId !== null) {
       this.setState({ showGroupSlotDetailsModal: true, selectedSlotDetails: newSelectedSlotDetails });
     } else {
@@ -84,8 +99,19 @@ class HomeScreen extends React.Component {
 
   }
 
+  getEventTitle = (attendance) => {
+    if (attendance.childAttendances?.length > 0) {
+      return attendance.childAttendances
+        .map(childAttendance => childAttendance.student.firstName)
+        .join(", ");
+    }
+    
+    return `${attendance.student.firstName} ${attendance.student.lastName}`;
+  };
+
   render() {
     const { 
+      isLoading,
       attendances, 
       showCanceled, 
       selectedSlotDetails, 
@@ -93,6 +119,12 @@ class HomeScreen extends React.Component {
       showSlotDetailsModal, 
       showGroupSlotDetailsModal 
     } = this.state;
+
+    if (isLoading) {
+      return <Loading
+        message="Загрузка данных ..."
+      />
+    }
 
     // Events
 
@@ -105,9 +137,7 @@ class HomeScreen extends React.Component {
 
       events = filteredAttendancies.map((attendance) => ({
         id: attendance.attendanceId,
-        title: attendance.childAttendances !== null && attendance.childAttendances && attendance.childAttendances.length > 0
-          ? attendance.childAttendances.map(childAttendance => childAttendance.student.firstName).join(", ")
-          : attendance.student.firstName + " " + attendance.student.lastName,
+        title: this.getEventTitle(attendance),
         start: new Date(attendance.startDate),
         end: new Date(attendance.endDate),
         resourceId: attendance.roomId,
@@ -237,7 +267,7 @@ class HomeScreen extends React.Component {
           <CalendarDay
             events={events}
             onSelectEvent={(slotInfo) => {
-              this.handleSelectEvent(1, slotInfo);
+              this.handleSelectEvent(slotInfo);
             }}
           />
           <div className="d-flex mt-2">
