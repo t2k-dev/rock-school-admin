@@ -84,6 +84,26 @@ export class AvailableTeachersModal extends React.Component {
     return `${teacher.firstName}: ${dayName}, ${timeString}`;
   };
   
+  createNewAttendance = (slotId, slotInfo) => ({
+    attendanceId: slotId,
+    title: "Окно",
+    startDate: slotInfo.start,
+    endDate: slotInfo.end,
+    isNew: true,
+  });
+
+  updateTeacherAttendances = (teachers, teacherId, newAttendance) => {
+    return teachers.map(teacher => {
+      if (teacher.teacherId !== teacherId) return teacher;
+
+      const currentAttendances = teacher.attendances || [];
+      return {
+        ...teacher,
+        attendances: [...currentAttendances, newAttendance],
+      };
+    });
+  };
+
   // Event Handlers
 
   handleError = (message, error) => {
@@ -109,30 +129,18 @@ export class AvailableTeachersModal extends React.Component {
   };
 
   handleSelectSlot = (teacher, slotInfo) => {
-    const teacherId = teacher.teacherId;
-
-    const updatedTeachers = [...this.state.teachers];
-    const teacherIndex = updatedTeachers.findIndex((teacher) => teacher.teacherId === teacherId);
 
     let slotId = uuidv4();
 
     // Add new attendance
-    if (teacherIndex !== -1) {
-      const newAttendance = {
-        attendanceId: slotId,
-        title: "Окно",
-        startDate: slotInfo.start,
-        endDate: slotInfo.end,
-        isNew: true,
-      };
 
-      const currentAttendances = updatedTeachers[teacherIndex].attendances ?? [];
-      // Update the teacher's events array
-      updatedTeachers[teacherIndex] = {
-        ...updatedTeachers[teacherIndex],
-        attendances: [...currentAttendances, newAttendance],
-      };
-    }
+    const newAttendance = this.createNewAttendance(slotId, slotInfo);
+
+    const updatedTeachers = this.updateTeacherAttendances(
+      this.state.teachers,
+      teacher.teacherId,
+      newAttendance
+    );
 
     // Add the selected slot to the availableSlots array
     const newSlot = this.createNewSlot(teacher, slotInfo, slotId);
@@ -166,14 +174,14 @@ export class AvailableTeachersModal extends React.Component {
         attendances: [...updatedTeachers[teacherIndex].attendances.filter((a) => a.attendanceId !== slotInfo.id)],
       };
     }
-    const slotsTxt = this.getAvailableSlotsText(updatedSlots);
+    const slotsTxt = this.generateAvailableSlotsText(updatedSlots);
 
     this.setState({ availableSlots: updatedSlots, teachers: updatedTeachers, availableSlotsText: slotsTxt });
     this.props.updateAvailableSlots(updatedSlots);
   };
 
   handleCloseModal = () => {
-    this.props.handleClose();
+    this.props.onClose();
     this.props.updateAvailableSlots(this.state.availableSlots);
   };
 
@@ -297,7 +305,7 @@ export class AvailableTeachersModal extends React.Component {
   };
 
   render() {
-        const { show } = this.props;
+    const { show } = this.props;
 
     if (!show) return null;
 
@@ -305,7 +313,7 @@ export class AvailableTeachersModal extends React.Component {
       <Modal 
         size="xl" 
         show={show} 
-        onHide={this.props.handleClose}
+        onHide={this.props.onClose}
         aria-labelledby="available-teachers-modal-title"
       >
         <Modal.Header closeButton>

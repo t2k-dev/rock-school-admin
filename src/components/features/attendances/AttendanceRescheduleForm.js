@@ -205,7 +205,7 @@ export class AttendanceRescheduleForm extends React.Component {
                 show={showAvailableTeacherModal}
                 availableTeachers={availableTeachers}
                 updateAvailableSlots={this.updateAvailableSlots}
-                handleClose={this.handleCloseAvailableTeachersModal}
+                onClose={this.handleCloseAvailableTeachersModal}
               />
               <hr></hr>
               <div className="text-center">

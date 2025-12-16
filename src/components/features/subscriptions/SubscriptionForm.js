@@ -6,7 +6,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 import { calculateAge } from "../../../utils/dateTime";
-import { ScheduleEditorNew } from "../../shared/schedule/ScheduleEditorNew";
+import { ScheduleEditorWithDelete } from "../../shared/schedule/ScheduleEditorWithDelete";
 
 import { getStudent } from "../../../services/apiStudentService";
 import { addSubscription, getSubscription } from "../../../services/apiSubscriptionService";
@@ -44,7 +44,7 @@ export class SubscriptionForm extends React.Component {
 
     this.handleSave = this.handleSave.bind(this);
     this.handleChange = this.handleChange.bind(this);
-    this.handlePeriodsChange = this.handlePeriodsChange.bind(this);
+    this.onChange = this.onChange.bind(this);
   }
 
   componentDidMount() {
@@ -176,7 +176,7 @@ export class SubscriptionForm extends React.Component {
     this.setState({ [id]: value });
   };
 
-  handlePeriodsChange = (periods) => {
+  onChange = (periods) => {
     this.setState({ schedules: periods });
   };
 
@@ -367,16 +367,15 @@ export class SubscriptionForm extends React.Component {
                 show={showAvailableTeacherModal}
                 availableTeachers={availableTeachers}
                 updateAvailableSlots={this.updateAvailableSlots}
-                handleClose={this.handleCloseAvailableTeachersModal}
+                onClose={this.handleCloseAvailableTeachersModal}
               />
 
               <Form.Group className="mb-3" controlId="Teacher"></Form.Group>
               <hr></hr>
               <Form.Group className="mb-3 mt-3" controlId="Schedule">
-                <ScheduleEditorNew
-                  periods={filteredSchedules}
-                  availableSlots={availableSlots}
-                  handlePeriodsChange={this.handlePeriodsChange}
+                <ScheduleEditorWithDelete
+                  schedules={filteredSchedules}
+                  onChange={this.handlePeriodsChange}
                   attendanceLength={attendanceLength}
                 />
               </Form.Group>
