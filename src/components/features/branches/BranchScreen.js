@@ -8,7 +8,7 @@ import { EditIcon } from "../../shared/icons/EditIcon";
 
 import { getHomeScreenDetails } from "../../../services/apiHomeService";
 import { markComplete } from "../../../services/apiNoteService";
-import { SlotDetailsModal } from "../home/SlotDetailsModal";
+import { AttendanceModal } from "../../shared/slots/AttendanceModal";
 
 export class BranchScreen extends React.Component {
   constructor(props) {
@@ -169,7 +169,7 @@ export class BranchScreen extends React.Component {
               this.handleSelectEvent(1, slotInfo);
             }}
           />
-          <SlotDetailsModal
+          <AttendanceModal
             selectedSlotDetails={selectedSlotDetails}
             show={showSlotDetailsModal}
             handleClose={() => {

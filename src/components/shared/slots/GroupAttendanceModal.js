@@ -1,22 +1,18 @@
-import { format } from "date-fns";
-import { ru } from "date-fns/locale";
 import React from "react";
 import { Badge, Button, Container, Form, Modal, Row, Stack, Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 import { DisciplineIcon } from "../../common/DisciplineIcon";
-import { Avatar } from "../../shared/Avatar";
-import { CalendarIcon } from "../../shared/icons/CalendarIcon";
-import { TimeIcon } from "../../shared/icons/TimeIcon";
+import { Avatar } from "../Avatar";
+import { AttendanceDateAndRoom } from "./AttendanceDateAndRoom";
 
 import AttendanceStatus from "../../../constants/AttendanceStatus";
 import { getAttendanceStatusName } from "../../../constants/attendancies";
 import { getDisciplineName } from "../../../constants/disciplines";
-import { getRoomName } from "../../../constants/rooms";
 
 import { submitGroup } from "../../../services/apiAttendanceService";
 
-export class GroupSlotDetailsModal extends React.Component {
+export class GroupAttendanceModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -145,16 +141,13 @@ console.log(childAttendances)
                           <div>
                             <Link to={"/teacher/" + teacher.teacherId}>{teacher.firstName}</Link>
                           </div>
-                          <div>{getRoomName(roomId)} комната</div>
                         </Stack>
                       </div>
-                      <div>
-                        <CalendarIcon />
-                        <span style={{ fontSize: "14px" }}>{format(startDate, "d MMMM, EEEE", { locale: ru })}</span>
-                      </div>
-                      <div>
-                        <TimeIcon /> С {format(startDate, "HH:mm")} - {format(endDate, "HH:mm")}
-                      </div>
+                      <AttendanceDateAndRoom 
+                        {...this.props.selectedSlotDetails}
+                        attendance={this.props.selectedSlotDetails}
+                        className="text-center"
+                      />
                     </Container>
                     <Link to={`/student/${this.props.selectedSlotDetails.studentId}`}>
                       <h3>

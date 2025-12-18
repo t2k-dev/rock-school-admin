@@ -10,7 +10,7 @@ import { DisciplineIcon } from "../../common/DisciplineIcon";
 import { CalendarWeek } from "../../shared/calendar/CalendarWeek";
 import { EditIcon } from "../../shared/icons/EditIcon";
 
-import { SlotDetailsModal } from "../home/SlotDetailsModal";
+import { AttendanceModal } from "../../shared/slots/AttendanceModal";
 import StudentScreenCard from "./StudentScreenCard";
 
 class StudentScreen extends React.Component {
@@ -201,7 +201,7 @@ class StudentScreen extends React.Component {
               this.handleSelectEvent(slotInfo);
             }}
           />
-          <SlotDetailsModal
+          <AttendanceModal
             selectedSlotDetails={selectedAttendanceDetails}
             show={showAttendanceDetailsModal}
             handleClose={() => {

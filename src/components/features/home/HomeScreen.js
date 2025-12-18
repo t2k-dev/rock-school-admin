@@ -6,13 +6,13 @@ import { Link } from "react-router-dom";
 import { CalendarDay } from "../../shared/calendar/CalendarDay";
 import { EditIcon } from "../../shared/icons/EditIcon";
 import { Loading } from "../../shared/Loading";
+import { AttendanceModal } from "../../shared/slots/AttendanceModal";
+import { GroupAttendanceModal } from "../../shared/slots/GroupAttendanceModal";
 
 import { isCancelledAttendanceStatus } from "../../common/attendanceHelper";
 
 import { getHomeScreenDetails } from "../../../services/apiHomeService";
 import { markComplete } from "../../../services/apiNoteService";
-import { GroupSlotDetailsModal } from "./GroupSlotDetailsModal";
-import { SlotDetailsModal } from "./SlotDetailsModal";
 
 class HomeScreen extends React.Component {
   constructor(props) {
@@ -23,9 +23,9 @@ class HomeScreen extends React.Component {
       attendances: null,
 
       showCanceled: true,
-      showSlotDetailsModal: false,
+      showAttendanceModal: false,
       showGroupSlotDetailsModal: false,
-      selectedSlotDetails: null,
+      selectedAttendance: null,
 
       isLoading: true,
     };
@@ -49,7 +49,7 @@ class HomeScreen extends React.Component {
         notes: details.notes,
         attendances: details.attendances,
 
-        showSlotDetailsModal: false,
+        showAttendanceModal: false,
         showGroupSlotDetailsModal: false,
         isLoading: false,
       });
@@ -70,14 +70,14 @@ class HomeScreen extends React.Component {
     const newSelectedSlotDetails = this.state.attendances.filter((a) => a.attendanceId === slotInfo.id)[0];
 
     if (newSelectedSlotDetails.groupId !== null) {
-      this.setState({ showGroupSlotDetailsModal: true, selectedSlotDetails: newSelectedSlotDetails });
+      this.setState({ showGroupSlotDetailsModal: true, selectedAttendance: newSelectedSlotDetails });
     } else {
-      this.setState({ showSlotDetailsModal: true, selectedSlotDetails: newSelectedSlotDetails });
+      this.setState({ showAttendanceModal: true, selectedAttendance: newSelectedSlotDetails });
     }
   };
 
   handleCloseSlotDetailsModal = () => {
-    this.setState({ showSlotDetailsModal: false });
+    this.setState({ showAttendanceModal: false });
   };
 
   handleCloseGroupSlotDetailsModal = () => {
@@ -114,9 +114,9 @@ class HomeScreen extends React.Component {
       isLoading,
       attendances, 
       showCanceled, 
-      selectedSlotDetails, 
+      selectedAttendance, 
       notes, 
-      showSlotDetailsModal, 
+      showAttendanceModal, 
       showGroupSlotDetailsModal 
     } = this.state;
 
@@ -284,16 +284,16 @@ class HomeScreen extends React.Component {
             />
           </div>
 
-          <SlotDetailsModal
+          <AttendanceModal
             history={this.props.history}
-            selectedSlotDetails={selectedSlotDetails}
-            show={showSlotDetailsModal}
+            attendance={selectedAttendance}
+            show={showAttendanceModal}
             handleClose={() => {
               this.handleCloseSlotDetailsModal();
             }}
           />
-          <GroupSlotDetailsModal
-            selectedSlotDetails={selectedSlotDetails}
+          <GroupAttendanceModal
+            selectedSlotDetails={selectedAttendance}
             show={showGroupSlotDetailsModal}
             handleClose={() => {
               this.handleCloseGroupSlotDetailsModal();
