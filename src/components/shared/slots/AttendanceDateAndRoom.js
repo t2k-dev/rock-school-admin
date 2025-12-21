@@ -49,7 +49,7 @@ export const AttendanceDateAndRoom = ({
 
   const handleEditClick = (e) => {
     e.preventDefault();
-    console.log('Navigating:', attendance);
+
     history.push({
       pathname: `/attendance/${attendanceId}/rescheduleForm`,
       state: { attendance },
@@ -84,7 +84,7 @@ export const AttendanceDateAndRoom = ({
       {/* Time Information */}
       <div className="d-flex align-items-center mb-2">
         <TimeIcon />
-        <span className="ms-1">
+        <span className="ms-1" style={{ marginRight: "30px" }}>
           С {formatTime(startDate)} - {formatTime(endDate)}
         </span>
         {/* Reschedule Link */}

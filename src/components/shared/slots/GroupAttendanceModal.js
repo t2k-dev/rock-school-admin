@@ -1,14 +1,13 @@
 import React from "react";
-import { Badge, Button, Container, Form, Modal, Row, Stack, Table } from "react-bootstrap";
+import { Button, Container, Form, Modal, Row, Stack, Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
-import { DisciplineIcon } from "../../common/DisciplineIcon";
-import { Avatar } from "../Avatar";
-import { AttendanceDateAndRoom } from "./AttendanceDateAndRoom";
-
-import AttendanceStatus from "../../../constants/AttendanceStatus";
-import { getAttendanceStatusName } from "../../../constants/attendancies";
 import { getDisciplineName } from "../../../constants/disciplines";
+import { DisciplineIcon } from "../../common/DisciplineIcon";
+import { AttendanceDateAndRoom } from "./AttendanceDateAndRoom";
+import { AttendanceStatusBadge } from "./AttendanceStatusBadge";
+import ChildAttendanceRow from "./ChildAttendanceRow";
+import ChildAttendanceRowReadonly from "./ChildAttendanceRowReadonly";
 
 import { submitGroup } from "../../../services/apiAttendanceService";
 
@@ -29,21 +28,22 @@ export class GroupAttendanceModal extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.selectedSlotDetails?.status !== prevProps.selectedSlotDetails?.status) {
+    if (this.props.attendance !== prevProps.attendance) {
       this.setState({ 
-        status: this.props.selectedSlotDetails.status 
+        attendance: this.props.attendance,
+        status: this.props.attendance.status 
       });
     }
-    
-    if (this.props.selectedSlotDetails?.childAttendances !== prevProps.selectedSlotDetails?.childAttendances) {
+
+    if (this.props.attendance?.childAttendances !== prevProps.attendance?.childAttendances) {
       this.setState({ 
-        childAttendances: this.props.selectedSlotDetails?.childAttendances || []
+        childAttendances: this.props.attendance?.childAttendances || []
       });
     }
   }
 
   handleClose() {
-    this.setState({ show: false });
+    this.setState({ show: false, comment: "" });
   }
 
   async handleStatusChange(attendanceId, status) {
@@ -65,12 +65,32 @@ export class GroupAttendanceModal extends React.Component {
   async handleSave() {
    const request = {
       childAttendances: this.state.childAttendances,
-      comment: this.props.selectedSlotDetails.statusReason,
+      comment: this.props.attendance.statusReason,
     };
 
     await submitGroup(request);
 
     this.props.handleClose();
+  }
+  renderStudentList() {
+    const { childAttendances } = this.state;
+
+    return (
+      <Table striped bordered hover>
+        <tbody>
+          {childAttendances.map((attendance) => (
+            attendance.isCompleted 
+            ? 
+              <ChildAttendanceRowReadonly attendance={attendance} />
+            : 
+              <ChildAttendanceRow
+                attendance={attendance}
+                onStatusChange={this.handleStatusChange}
+                disabled={this.state.isSaving}
+              />
+          ))}
+        </tbody>
+      </Table>)
   }
 
   render() {
@@ -78,51 +98,19 @@ export class GroupAttendanceModal extends React.Component {
       return <></>;
     }
 
-    const { teacher, startDate, endDate, disciplineId, roomId, statusReason } = this.props.selectedSlotDetails;
+    const { teacher, disciplineId, comment } = this.props.attendance;
     const { status } = this.state;
-    const childAttendances = this.state.childAttendances || [];
-console.log('render')    
-console.log(childAttendances)
-
-    let childAttendancesList;
-    childAttendancesList = (
-      <Table striped bordered hover>
-          <tbody>
-            {childAttendances.map((attendance) => (
-              <tr key={attendance.attendanceId}>
-                <td>
-                  <Avatar style={{ width: "20px", height: "20px", marginRight: "5px" }} />
-                  <Link to={`/student/${attendance.student.studentId}`}>{attendance.student.firstName} {attendance.student.lastName}</Link>
-                </td>
-                <td>
-                    <Button
-                      onClick={() => this.handleStatusChange(attendance.attendanceId, AttendanceStatus.ATTENDED)}
-                      variant={attendance.status === AttendanceStatus.ATTENDED ? "primary" : "outline-primary"}
-                      style={{ width: "120px", marginRight: "10px" }}
-                    >
-                      Посещено
-                    </Button>
-                    <Button
-                      onClick={() => this.handleStatusChange(attendance.attendanceId, AttendanceStatus.MISSED)}
-                      variant={attendance.status === AttendanceStatus.MISSED ? "danger" : "outline-danger"}
-                      style={{ width: "120px", marginRight: "10px" }}
-                    >
-                      Пропуск
-                    </Button>
-                  </td>
-              </tr>
-            ))}
-        </tbody>
-      </Table>
-      );
 
     return (
       <>
-        <Modal show={this.props.show} onHide={this.props.handleClose} size="md">
+        <Modal show={this.props.show} onHide={this.props.handleClose} size="md" backdrop="static">
           <Modal.Header closeButton>
             <Modal.Title>
-              Групповое занятие
-              <Badge style={{ marginLeft: "10px"}} bg="success">{getAttendanceStatusName(status)}</Badge>
+              <span style={{ marginRight: "10px" }}>Групповое занятие</span>
+              <AttendanceStatusBadge 
+                status={status}
+                style={{ fontSize: "14px" }}
+              />
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
@@ -132,9 +120,9 @@ console.log(childAttendances)
 
                   <Container>
                     <Container className="mt-2 text-center" style={{ fontSize: "14px" }}>
-                      <div className="d-flex">
+                      <div className="d-flex mb-3">
                         <div style={{ marginTop: "10px" }}>
-                          <DisciplineIcon disciplineId={disciplineId} size="60px" />
+                          <DisciplineIcon disciplineId={disciplineId} size="40px" />
                         </div>
                         <Stack direction="vertical" gap={0} className="mb-2 text-center">
                           <div style={{ fontWeight: "bold", fontSize: "18px" }}>{getDisciplineName(disciplineId)}</div>
@@ -144,14 +132,14 @@ console.log(childAttendances)
                         </Stack>
                       </div>
                       <AttendanceDateAndRoom 
-                        {...this.props.selectedSlotDetails}
-                        attendance={this.props.selectedSlotDetails}
+                        {...this.props.attendance}
+                        attendance={this.props.attendance}
                         className="text-center"
                       />
                     </Container>
-                    <Link to={`/student/${this.props.selectedSlotDetails.studentId}`}>
+                    <Link to={`/student/${this.props.attendance.studentId}`}>
                       <h3>
-                        {this.props.selectedSlotDetails.firstName} {this.props.selectedSlotDetails.lastName}
+                        {this.props.attendance.firstName} {this.props.attendance.lastName}
                       </h3>
                     </Link>
                   </Container>
@@ -159,12 +147,13 @@ console.log(childAttendances)
               </Row>
             </Container>
             <hr></hr>
-            {childAttendancesList}
-              <Form.Group className="mb-3" controlId="comment">
-                <Form.Label>Комментарий</Form.Label>
-                <Form.Control as="textarea" onChange={this.handleChange} value={statusReason} placeholder="введите..." autoComplete="off"/>
-              </Form.Group>
-            
+
+            {this.renderStudentList()}
+
+            <Form.Group className="mb-3" controlId="comment">
+              <Form.Label>Комментарий</Form.Label>
+              <Form.Control as="textarea" onChange={this.handleChange} value={comment} placeholder="введите..." autoComplete="off"/>
+            </Form.Group>
           </Modal.Body>
           <Modal.Footer>
             <Button variant="primary" onClick={this.handleSave}>

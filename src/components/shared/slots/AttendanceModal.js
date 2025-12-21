@@ -451,7 +451,7 @@ export class AttendanceModal extends React.Component {
     if (!this.props.show || !this.state.attendance) {
       return null;
     }
-    console.log("ss", this.props.attendance);
+
     const { teacher, student, isTrial, disciplineId, status } = this.state.attendance;
     const { comment } = this.state;
 
@@ -479,13 +479,13 @@ export class AttendanceModal extends React.Component {
                       <Link to={`/student/${student.studentId}`}>{student.firstName} {student.lastName}</Link>
                     </div>
                   </Container>
-                  <Container className="mt-1 text-center" style={{ fontSize: "14px" }}>
-                    <div className="d-flex">
+                  <Container className="mt-1" style={{ fontSize: "14px", marginLeft: "60px" }}>
+                    <div className="d-flex mb-3 text-center">
                       <div style={{ marginRight: "10px" }}>
                         <DisciplineIcon disciplineId={disciplineId} size="40px" />
                       </div>
-                      <Stack direction="vertical" gap={0} className="mb-2 text-start">
-                        <div style={{ fontWeight: "bold", fontSize: "16px" }}>{getDisciplineName(disciplineId)}</div>
+                      <Stack direction="vertical" gap={0} className="mb-2">
+                        <div style={{ fontWeight: "bold", fontSize: "18px" }}>{getDisciplineName(disciplineId)}</div>
                         <div>
                           <Link to={"/teacher/" + teacher.teacherId}>{teacher.firstName}</Link>
                         </div>

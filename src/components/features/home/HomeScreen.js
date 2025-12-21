@@ -293,7 +293,7 @@ class HomeScreen extends React.Component {
             }}
           />
           <GroupAttendanceModal
-            selectedSlotDetails={selectedAttendance}
+            attendance={selectedAttendance}
             show={showGroupSlotDetailsModal}
             handleClose={() => {
               this.handleCloseGroupSlotDetailsModal();
