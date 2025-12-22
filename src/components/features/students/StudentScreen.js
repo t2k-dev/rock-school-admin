@@ -10,6 +10,7 @@ import { DisciplineIcon } from "../../common/DisciplineIcon";
 import { CalendarWeek } from "../../shared/calendar/CalendarWeek";
 import { EditIcon } from "../../shared/icons/EditIcon";
 
+import SubscriptionAttendancesModal from "../../shared/modals/SubscriptionAttendancesModal";
 import { AttendanceModal } from "../../shared/slots/AttendanceModal";
 import StudentScreenCard from "./StudentScreenCard";
 
@@ -26,7 +27,13 @@ class StudentScreen extends React.Component {
 
       // Attendance Details
       showAttendanceDetailsModal: false,
-      selectedAttendanceDetails: null,
+      selectedAttendance: null,
+      
+      // Subscription Attendances Modal
+      showSubscriptionAttendancesModal: false,
+      selectedSubscription: null,
+      subscriptionAttendances: [],
+      isLoadingAttendances: false,
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -59,17 +66,67 @@ class StudentScreen extends React.Component {
 
   handleSelectEvent = (slotInfo) => {
     console.log(slotInfo);
-    const newSelectedSlotDetails = this.state.attendances.filter((a) => a.attendanceId === slotInfo.id)[0];
-    this.setState({ showAttendanceDetailsModal: true, selectedAttendanceDetails: newSelectedSlotDetails });
+    const newSelectedAttendance = this.state.attendances.filter((a) => a.attendanceId === slotInfo.id)[0];
+    this.setState({ showAttendanceDetailsModal: true, selectedAttendance: newSelectedAttendance });
   };
 
   handleCloseModal = () => {
-    this.setState({ showAttendanceDetailsModal: false });
+    this.setState({ 
+      showAttendanceDetailsModal: false,
+      selectedAttendance: null
+    });
   };
 
   handleEditSubscriptionClick = (e, item) => {
     e.preventDefault();
     this.props.history.push(`/subscription/${item.subscriptionId}/edit`);
+  };
+
+  handleViewSubscriptionAttendances = async (subscription) => {
+    this.setState({
+      showSubscriptionAttendancesModal: true,
+      selectedSubscription: subscription,
+      isLoadingAttendances: true,
+      subscriptionAttendances: []
+    });
+
+    try {
+      // You'll need to implement this API call
+      // const attendances = await getSubscriptionAttendances(subscription.subscriptionId);
+      
+      // For now, filter from existing attendances (you can improve this later)
+      const filteredAttendances = this.state.attendances?.filter(
+        attendance => attendance.subscriptionId === subscription.subscriptionId
+      ) || [];
+      
+      this.setState({
+        subscriptionAttendances: filteredAttendances,
+        isLoadingAttendances: false
+      });
+    } catch (error) {
+      console.error('Failed to load subscription attendances:', error);
+      this.setState({
+        isLoadingAttendances: false,
+        subscriptionAttendances: []
+      });
+    }
+  };
+
+  handleCloseSubscriptionAttendancesModal = () => {
+    this.setState({
+      showSubscriptionAttendancesModal: false,
+      selectedSubscription: null,
+      subscriptionAttendances: [],
+      isLoadingAttendances: false
+    });
+  };
+
+  handleAttendanceClick = (attendance) => {
+    // Open the attendance modal when clicking on an attendance in the list
+    this.setState({
+      selectedAttendance: attendance,
+      showAttendanceDetailsModal: true
+    });
   };
 
   renderSubscriptionsTable(subscriptions) {
@@ -81,18 +138,28 @@ class StudentScreen extends React.Component {
           <tr key={index}>
             <td>{format(item.startDate, "yyyy-MM-dd")}</td>
             <td>
+              <DisciplineIcon disciplineId={item.disciplineId} />
+              <span style={{ marginLeft: "10px" }}>{getDisciplineName(item.disciplineId)}</span>
+            </td>
+            <td>
               <Link to={`/teacher/${item.teacher.teacherId}`}>
                 {item.teacher.firstName} {item.teacher.lastName}
               </Link>
             </td>
-            <td>
-              <DisciplineIcon disciplineId={item.disciplineId} />
-              <span style={{ marginLeft: "10px" }}>{getDisciplineName(item.disciplineId)}</span>
-            </td>
             <td>{item.attendancesLeft} из {item.attendanceCount}</td>
             <td>{getSubscriptionStatusName(item.status)}</td>
             <td>
-              <EditIcon onIconClick={(e, _item) => this.handleEditSubscriptionClick(e, item)} />
+              <div className="d-flex gap-2">
+                <EditIcon onIconClick={(e, _item) => this.handleEditSubscriptionClick(e, item)} />
+                <button
+                  type="button"
+                  className="btn btn-sm btn-outline-primary"
+                  onClick={() => this.handleViewSubscriptionAttendances(item)}
+                  title="Просмотреть занятия"
+                >
+                  Занятия
+                </button>
+              </div>
             </td>
           </tr>
         ))
@@ -100,7 +167,7 @@ class StudentScreen extends React.Component {
     } else {
       subscriptionsTable = (
           <tr key={1}>
-            <td colSpan="4" style={{ textAlign: "center" }}>
+            <td colSpan="6" style={{ textAlign: "center" }}>
               Нет записей
             </td>
           </tr>
@@ -112,8 +179,8 @@ class StudentScreen extends React.Component {
           <thead>
             <tr>
               <th>Дата начала</th>
-              <th>Преподаватель</th>
               <th>Направление</th>
+              <th>Преподаватель</th>
               <th>Занятий осталось</th>
               <th>Статус</th>
               <th></th>
@@ -172,7 +239,7 @@ class StudentScreen extends React.Component {
   }
 
   render() {
-    const { student, subscriptions, attendances, selectedAttendanceDetails, showAttendanceDetailsModal } = this.state;
+    const { student, subscriptions, attendances, selectedAttendance, showAttendanceDetailsModal } = this.state;
 
     const sortedSubscriptions = subscriptions.sort((a, b) => {
       const dateA = new Date(a.startDate);
@@ -206,33 +273,46 @@ class StudentScreen extends React.Component {
           <StudentScreenCard item={student} history={this.props.history} />
         </Row>
         <Row className="mb-3">
-          <h3>Расписание</h3>
-          <CalendarWeek
-            events={events}
-            onSelectEvent={(slotInfo) => {
-              this.handleSelectEvent(slotInfo);
-            }}
-          />
-          <AttendanceModal
-            selectedSlotDetails={selectedAttendanceDetails}
-            show={showAttendanceDetailsModal}
-            handleClose={() => {
-              this.handleCloseModal();
-            }}
+          <Tabs defaultActiveKey="products" id="uncontrolled-tab-example" className="mb-3">
+            <Tab eventKey="products" title="Продукты">
+                <h3>Абонементы</h3>
+                {this.renderSubscriptionsTable(nonTrialSubscriptions)}
+
+                <h3>Пробные занятия</h3>
+                {this.renderTrialsTable(trialSubscriptions)}  
+
+                <h3>Репетиции</h3>
+                  Нет записей
+
+            </Tab>
+            <Tab eventKey="calendar" title="Календарь">
+              <CalendarWeek
+                events={events}
+                onSelectEvent={(slotInfo) => {
+                  this.handleSelectEvent(slotInfo);
+                }}
+              />
+              <AttendanceModal
+                attendance={selectedAttendance}
+                show={showAttendanceDetailsModal}
+                handleClose={() => {
+                  this.handleCloseModal();
+                }}
+              />
+            </Tab>
+          </Tabs>
+
+          <SubscriptionAttendancesModal
+            show={this.state.showSubscriptionAttendancesModal}
+            onHide={this.handleCloseSubscriptionAttendancesModal}
+            subscription={this.state.selectedSubscription}
+            attendances={this.state.subscriptionAttendances}
+            isLoading={this.state.isLoadingAttendances}
+            onAttendanceClick={this.handleAttendanceClick}
           />
         </Row>
         <Row>
-          <Tabs defaultActiveKey="subscriptions" id="uncontrolled-tab-example" className="mb-3">
-            <Tab eventKey="subscriptions" title="Абонементы">
-              {this.renderSubscriptionsTable(nonTrialSubscriptions)}
-            </Tab>
-            <Tab eventKey="trials" title="Пробные">
-              {this.renderTrialsTable(trialSubscriptions)}
-            </Tab>
-            <Tab eventKey="rehersals" title="Репетиции">
-              Нет записей
-            </Tab>
-          </Tabs>
+          
         </Row>
       </Container>
     );
