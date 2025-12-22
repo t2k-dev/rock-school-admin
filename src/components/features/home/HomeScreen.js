@@ -32,6 +32,7 @@ class HomeScreen extends React.Component {
     
     this.handleChangeNoteStatus = this.handleChangeNoteStatus.bind(this);
     this.handleShowCanceled = this.handleShowCanceled.bind(this);
+    this.handleAttendanceUpdate = this.handleAttendanceUpdate.bind(this);
   }
 
   componentDidMount() {
@@ -67,21 +68,27 @@ class HomeScreen extends React.Component {
   };
 
   handleSelectEvent = (slotInfo) => {
-    const newSelectedSlotDetails = this.state.attendances.filter((a) => a.attendanceId === slotInfo.id)[0];
+    const newSelectedAttendance = this.state.attendances.filter((a) => a.attendanceId === slotInfo.id)[0];
 
-    if (newSelectedSlotDetails.groupId !== null) {
-      this.setState({ showGroupSlotDetailsModal: true, selectedAttendance: newSelectedSlotDetails });
+    if (newSelectedAttendance.groupId !== null) {
+      this.setState({ showGroupSlotDetailsModal: true, selectedAttendance: newSelectedAttendance });
     } else {
-      this.setState({ showAttendanceModal: true, selectedAttendance: newSelectedSlotDetails });
+      this.setState({ showAttendanceModal: true, selectedAttendance: newSelectedAttendance });
     }
   };
 
-  handleCloseSlotDetailsModal = () => {
-    this.setState({ showAttendanceModal: false });
+  handleCloseAttendanceModal = () => {
+    this.setState({ 
+      showAttendanceModal: false,
+      selectedAttendance: null,
+    });
   };
 
   handleCloseGroupSlotDetailsModal = () => {
-    this.setState({ showGroupSlotDetailsModal: false });
+    this.setState({ 
+      showGroupSlotDetailsModal: false,
+      selectedAttendance: null, 
+    });
   };
 
   async handleChangeNoteStatus(noteId, status) {
@@ -96,8 +103,27 @@ class HomeScreen extends React.Component {
       // Return the new state object
       return { notes: updatedNotes };
     });
-
   }
+
+  handleAttendanceUpdate = (updatedData) => {
+    if (!updatedData || !updatedData.attendanceId) return;
+
+    this.setState((prevState) => {
+      // Update the attendance in the attendances array
+      const updatedAttendances = prevState.attendances.map((attendance) =>
+        attendance.attendanceId === updatedData.attendanceId 
+          ? { ...attendance, ...updatedData }
+          : attendance
+      );
+
+      return { 
+        attendances: updatedAttendances,
+        selectedAttendance: prevState.selectedAttendance?.attendanceId === updatedData.attendanceId
+          ? { ...prevState.selectedAttendance, ...updatedData }
+          : prevState.selectedAttendance
+      };
+    });
+  };
 
   getEventTitle = (attendance) => {
     if (attendance.childAttendances?.length > 0) {
@@ -288,8 +314,9 @@ class HomeScreen extends React.Component {
             history={this.props.history}
             attendance={selectedAttendance}
             show={showAttendanceModal}
+            onAttendanceUpdate={this.handleAttendanceUpdate}
             handleClose={() => {
-              this.handleCloseSlotDetailsModal();
+              this.handleCloseAttendanceModal();
             }}
           />
           <GroupAttendanceModal

@@ -21,7 +21,7 @@ export const AttendanceDateAndRoom = ({
   showRescheduleLink = true,
   className = "",
   style = {},
-  attendance, // Full attendance object for reschedule state
+  attendance,
   dateFormat = "d MMMM, EEEE",
   timeFormat = "HH:mm",
 }) => {
@@ -111,14 +111,4 @@ AttendanceDateAndRoom.propTypes = {
   attendance: PropTypes.object.isRequired, // Full attendance object for reschedule
   dateFormat: PropTypes.string,
   timeFormat: PropTypes.string,
-};
-
-AttendanceDateAndRoom.defaultProps = {
-  isCompleted: false,
-  status: 0,
-  showRescheduleLink: true,
-  className: "",
-  style: {},
-  dateFormat: "d MMMM, EEEE",
-  timeFormat: "HH:mm",
 };

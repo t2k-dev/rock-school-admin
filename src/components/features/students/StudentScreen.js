@@ -72,22 +72,43 @@ class StudentScreen extends React.Component {
     this.props.history.push(`/subscription/${item.subscriptionId}/edit`);
   };
 
-  render() {
-    const { student, subscriptions, attendances, selectedAttendanceDetails, showAttendanceDetailsModal } = this.state;
-
-    const sortedSubscriptions = subscriptions.sort((a, b) => {
-      const dateA = new Date(a.startDate);
-      const dateB = new Date(b.startDate);
-      return dateB - dateA; // Descending order
-    });
-
-    // Subscriptions
+  renderSubscriptionsTable(subscriptions) {
     let subscriptionsTable;
 
-    const nonTrialSubscriptions = sortedSubscriptions.filter((s) => s.trialStatus === null);
-    if (nonTrialSubscriptions && nonTrialSubscriptions.length > 0) {
+    if (subscriptions && subscriptions.length > 0) {
       subscriptionsTable = (
-        <Table striped bordered hover>
+        subscriptions.map((item, index) => (
+          <tr key={index}>
+            <td>{format(item.startDate, "yyyy-MM-dd")}</td>
+            <td>
+              <Link to={`/teacher/${item.teacher.teacherId}`}>
+                {item.teacher.firstName} {item.teacher.lastName}
+              </Link>
+            </td>
+            <td>
+              <DisciplineIcon disciplineId={item.disciplineId} />
+              <span style={{ marginLeft: "10px" }}>{getDisciplineName(item.disciplineId)}</span>
+            </td>
+            <td>{item.attendancesLeft} из {item.attendanceCount}</td>
+            <td>{getSubscriptionStatusName(item.status)}</td>
+            <td>
+              <EditIcon onIconClick={(e, _item) => this.handleEditSubscriptionClick(e, item)} />
+            </td>
+          </tr>
+        ))
+      );
+    } else {
+      subscriptionsTable = (
+          <tr key={1}>
+            <td colSpan="4" style={{ textAlign: "center" }}>
+              Нет записей
+            </td>
+          </tr>
+      );
+    }
+
+    return (
+      <Table striped bordered hover>
           <thead>
             <tr>
               <th>Дата начала</th>
@@ -99,44 +120,44 @@ class StudentScreen extends React.Component {
             </tr>
           </thead>
           <tbody>
-            {nonTrialSubscriptions.map((item, index) => (
-              <tr key={index}>
-                <td>{format(item.startDate, "yyyy-MM-dd")}</td>
-                <td>
-                  <Link to={`/teacher/${item.teacher.teacherId}`}>
-                    {item.teacher.firstName} {item.teacher.lastName}
-                  </Link>
-                </td>
-                <td>
-                  <DisciplineIcon disciplineId={item.disciplineId} />
-                  <span style={{ marginLeft: "10px" }}>{getDisciplineName(item.disciplineId)}</span>
-                </td>
-                <td>{item.attendancesLeft} из {item.attendanceCount}</td>
-                <td>{getSubscriptionStatusName(item.status)}</td>
-                <td>
-                  <EditIcon onIconClick={(e, _item) => this.handleEditSubscriptionClick(e, item)} />
-                </td>
-              </tr>
-            ))}
+            {subscriptionsTable}
           </tbody>
-        </Table>
-      );
+      </Table>
+    )
+  }
+
+  renderTrialsTable(subscriptions) {
+    let trialsTable;
+
+    if (subscriptions && subscriptions.length > 0) {
+      trialsTable = (
+        subscriptions.map((item, index) => (
+          <tr key={index}>
+            <td>{format(item.startDate, "yyyy-MM-dd")}</td>
+            <td>
+              <Link to={`/teacher/${item.teacher.teacherId}`}>
+                {item.teacher.firstName} {item.teacher.lastName}
+              </Link>
+            </td>
+            <td>
+              <DisciplineIcon disciplineId={item.disciplineId} />
+              <span style={{ marginLeft: "10px" }}>{getDisciplineName(item.disciplineId)}</span>
+            </td>
+            <td>{getTrialSubscriptionStatusName(item.trialStatus)}</td>
+          </tr>
+      )));
     } else {
-      subscriptionsTable = (
-        <tr key={1}>
-          <td colSpan="4" style={{ textAlign: "center" }}>
-            Нет записей
-          </td>
-        </tr>
+      trialsTable = (
+          <tr key={1}>
+            <td colSpan="4" style={{ textAlign: "center" }}>
+              Нет записей
+            </td>
+          </tr>
       );
     }
 
-    // Trials
-    let trialsTable;
-    const trialSubscriptions = sortedSubscriptions.filter((s) => s.trialStatus !== null);
-    if (trialSubscriptions && trialSubscriptions.length > 0) {
-      trialsTable = (
-        <Table striped bordered hover>
+    return(
+      <Table striped bordered hover>
           <thead>
             <tr>
               <th style={{ width: "100px" }}>Дата</th>
@@ -145,34 +166,25 @@ class StudentScreen extends React.Component {
               <th>Результат</th>
             </tr>
           </thead>
-          <tbody>
-            {trialSubscriptions.map((item, index) => (
-              <tr key={index}>
-                <td>{format(item.startDate, "yyyy-MM-dd")}</td>
-                <td>
-                  <Link to={`/teacher/${item.teacher.teacherId}`}>
-                    {item.teacher.firstName} {item.teacher.lastName}
-                  </Link>
-                </td>
-                <td>
-                  <DisciplineIcon disciplineId={item.disciplineId} />
-                  <span style={{ marginLeft: "10px" }}>{getDisciplineName(item.disciplineId)}</span>
-                </td>
-                <td>{getTrialSubscriptionStatusName(item.trialStatus)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
-      );
-    } else {
-      trialsTable = (
-        <tr key={1}>
-          <td colSpan="4" style={{ textAlign: "center" }}>
-            Нет записей
-          </td>
-        </tr>
-      );
-    }
+          <tbody>{trialsTable}</tbody>
+      </Table>
+    )
+  }
+
+  render() {
+    const { student, subscriptions, attendances, selectedAttendanceDetails, showAttendanceDetailsModal } = this.state;
+
+    const sortedSubscriptions = subscriptions.sort((a, b) => {
+      const dateA = new Date(a.startDate);
+      const dateB = new Date(b.startDate);
+      return dateB - dateA; // Descending order
+    });
+
+    // Subscriptions
+    const nonTrialSubscriptions = sortedSubscriptions.filter((s) => s.trialStatus === null);
+
+    // Trials
+    const trialSubscriptions = sortedSubscriptions.filter((s) => s.trialStatus !== null);
 
     // Events
     let events;
@@ -212,10 +224,10 @@ class StudentScreen extends React.Component {
         <Row>
           <Tabs defaultActiveKey="subscriptions" id="uncontrolled-tab-example" className="mb-3">
             <Tab eventKey="subscriptions" title="Абонементы">
-              {subscriptionsTable}
+              {this.renderSubscriptionsTable(nonTrialSubscriptions)}
             </Tab>
             <Tab eventKey="trials" title="Пробные">
-              {trialsTable}
+              {this.renderTrialsTable(trialSubscriptions)}
             </Tab>
             <Tab eventKey="rehersals" title="Репетиции">
               Нет записей

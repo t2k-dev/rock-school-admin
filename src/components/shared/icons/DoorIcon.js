@@ -18,9 +18,9 @@ export function DoorIcon({ onIconClick }) {
             xmlns="http://www.w3.org/2000/svg"
         >
 
-            <g fill="none" fill-rule="evenodd">
+            <g fill="none" fillRule="evenodd">
                 <path d="m0 0h32v32h-32z"/>
-                <path d="m0 32v-2h5v-30h22v30h5v2zm25-30h-18v28h18zm-3 11v8h-2v-8z" fill="#000000" fill-rule="nonzero"/>
+                <path d="m0 32v-2h5v-30h22v30h5v2zm25-30h-18v28h18zm-3 11v8h-2v-8z" fill="#000000" fillRule="nonzero"/>
             </g>
         </svg>
     </span>

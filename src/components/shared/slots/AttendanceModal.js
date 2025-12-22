@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from "react";
 import { Alert, Button, Container, Form, Modal, Row, Spinner, Stack } from "react-bootstrap";
 import { Link } from "react-router-dom";
@@ -59,7 +60,7 @@ export class AttendanceModal extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.attendance !== prevProps.attendance) {
+    if (this.props.attendance && this.props.attendance !== prevProps.attendance) {
       const attendance = this.props.attendance;
       
       if (!attendance) {
@@ -71,8 +72,8 @@ export class AttendanceModal extends React.Component {
           attendance: attendance,
           status: attendance.status,
           attendanceId: attendance.attendanceId,
-          comment: attendance.comment,
-          statusReason: attendance.statusReason,
+          comment: attendance.comment || "",
+          statusReason: attendance.statusReason || "",
          }
       );
     }
@@ -89,7 +90,11 @@ export class AttendanceModal extends React.Component {
 
     // Completed attendance
     await updateComment(attendance.attendanceId, comment);
-    this.props.handleClose();
+    
+    // Update parent component with new comment
+    this.handleSuccess({ 
+      comment: comment 
+    });
   }
 
   handleError = (message, error) => {
@@ -110,8 +115,11 @@ export class AttendanceModal extends React.Component {
 
   handleSuccess = (updatedData = null) => {
     // Notify parent component about the update
-    if (this.props.onAttendanceUpdate && updatedData) {
-      this.props.onAttendanceUpdate(updatedData);
+    if (this.props.onAttendanceUpdate && updatedData && this.state.attendance) {
+      this.props.onAttendanceUpdate({
+        ...updatedData,
+        attendanceId: this.state.attendance.attendanceId
+      });
     }
 
     this.setState({
@@ -158,7 +166,11 @@ export class AttendanceModal extends React.Component {
         });
       }
 
-      this.handleSuccess({ status: 'accepted' });
+      this.handleSuccess({ 
+        status: AttendanceStatus.ATTENDED, 
+        comment: this.state.comment,
+        isCompleted: true 
+      });
 
     } catch(error){
       console.log("suda")
@@ -182,7 +194,12 @@ export class AttendanceModal extends React.Component {
       }
 
       await declineTrial(this.state.attendance.attendanceId, request);
-      this.handleSuccess({ status: 'declined' });
+      this.handleSuccess({ 
+        status: AttendanceStatus.MISSED, 
+        statusReason: this.state.statusReason,
+        comment: this.state.comment,
+        isCompleted: true 
+      });
 
     } catch(error){
       this.handleError(ERROR_MESSAGES.DECLINE_TRIAL_FAILED, error);
@@ -205,7 +222,12 @@ export class AttendanceModal extends React.Component {
       }
 
       await missedTrial(this.state.attendance.attendanceId, request);
-      this.handleSuccess({ status: 'missed' });
+      this.handleSuccess({ 
+        status: AttendanceStatus.MISSED,
+        statusReason: this.state.statusReason,
+        comment: this.state.comment,
+        isCompleted: true 
+      });
 
     } catch(error){
       this.handleError(ERROR_MESSAGES.MARK_MISSED_FAILED, error);
@@ -233,7 +255,11 @@ export class AttendanceModal extends React.Component {
       };
       await submit(attendance.attendanceId, submitRequest);
 
-      this.handleSuccess({ ...submitRequest, status: status });
+      this.handleSuccess({ 
+        status: status, 
+        comment: comment,
+        isCompleted: true 
+      });
 
     } catch(error){
       this.handleError(ERROR_MESSAGES.UPDATE_STATUS_FAILED, error);
@@ -521,3 +547,16 @@ export class AttendanceModal extends React.Component {
     );
   }
 }
+
+AttendanceModal.propTypes = {
+  show: PropTypes.bool.isRequired,
+  attendance: PropTypes.object,
+  history: PropTypes.object,
+  handleClose: PropTypes.func.isRequired,
+  onAttendanceUpdate: PropTypes.func, // Callback when attendance is updated
+};
+
+AttendanceModal.defaultProps = {
+  attendance: null,
+  onAttendanceUpdate: null,
+};

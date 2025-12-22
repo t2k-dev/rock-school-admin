@@ -19,19 +19,28 @@ export class GroupAttendanceModal extends React.Component {
 
       status: 0,
       comment: "",
+      attendance: null,
       childAttendances: [],
     };
 
     this.handleClose = this.handleClose.bind(this);
     this.handleStatusChange = this.handleStatusChange.bind(this);
     this.handleSave = this.handleSave.bind(this);
+    this.handleChange = this.handleChange.bind(this); 
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.attendance !== prevProps.attendance) {
+    if (this.props.attendance && this.props.attendance !== prevProps.attendance) {
+      const attendance = this.props.attendance;
+      
+      if (!attendance) {
+        return;
+      }
+
       this.setState({ 
-        attendance: this.props.attendance,
-        status: this.props.attendance.status 
+        attendance: attendance,
+        status: attendance.status,
+        comment: attendance.comment || "",
       });
     }
 
@@ -43,8 +52,15 @@ export class GroupAttendanceModal extends React.Component {
   }
 
   handleClose() {
-    this.setState({ show: false, comment: "" });
+    this.setState({ show: false, attendance: null, childAttendances: [], comment: "" });
   }
+
+  handleChange = (e) => {
+    const { value } = e.target;
+    this.setState({ 
+      comment: value
+    });
+  };
 
   async handleStatusChange(attendanceId, status) {
     if (!this.state.childAttendances){
@@ -72,6 +88,7 @@ export class GroupAttendanceModal extends React.Component {
 
     this.props.handleClose();
   }
+
   renderStudentList() {
     const { childAttendances } = this.state;
 
@@ -81,9 +98,13 @@ export class GroupAttendanceModal extends React.Component {
           {childAttendances.map((attendance) => (
             attendance.isCompleted 
             ? 
-              <ChildAttendanceRowReadonly attendance={attendance} />
+              <ChildAttendanceRowReadonly 
+                key={attendance.attendanceId}
+                attendance={attendance} 
+              />
             : 
               <ChildAttendanceRow
+                key={attendance.attendanceId}
                 attendance={attendance}
                 onStatusChange={this.handleStatusChange}
                 disabled={this.state.isSaving}
@@ -94,15 +115,14 @@ export class GroupAttendanceModal extends React.Component {
   }
 
   render() {
-    if (!this.props.show) {
-      return <></>;
+    if (!this.props.show || !this.props.attendance) {
+      return null;
     }
 
-    const { teacher, disciplineId, comment } = this.props.attendance;
-    const { status } = this.state;
+    const { teacher, disciplineId } = this.props.attendance;
+    const { status, comment } = this.state;
 
     return (
-      <>
         <Modal show={this.props.show} onHide={this.props.handleClose} size="md" backdrop="static">
           <Modal.Header closeButton>
             <Modal.Title>
@@ -161,7 +181,6 @@ export class GroupAttendanceModal extends React.Component {
             </Button>
           </Modal.Footer>
         </Modal>
-      </>
     );
   }
 }
