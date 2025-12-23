@@ -49,3 +49,8 @@ export const rescheduleAttendance = async (data) =>{
   const result = await apiClient.post('/subscription/rescheduleAttendance', data);
   return result;
 }
+
+export const pay = async (id, data) =>{
+  const result = await apiClient.post(`/subscription/${id}/pay`, data);
+  return result;
+}

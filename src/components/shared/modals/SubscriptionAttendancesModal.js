@@ -2,7 +2,7 @@ import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
-import { Button, Col, Form, Modal, Table } from 'react-bootstrap';
+import { Button, Col, Modal, Table } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 import { DisciplineIcon } from '../../common/DisciplineIcon';
@@ -167,14 +167,14 @@ const SubscriptionAttendancesModal = ({
                       )}
                     </small>*/}
                   </div>
-                  <Form.Check
+                  {/*<Form.Check
                     type="switch"
                     id="show-completed-switch"
                     label="Показывать законченные"
                     checked={showCompleted}
                     onChange={(e) => setShowCompleted(e.target.checked)}
                     className=""
-                  />
+                  />*/}
                 </div>
               </>
 

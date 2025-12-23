@@ -9,11 +9,12 @@ import SubscriptionStatus from "../../../constants/SubscriptionStatus";
 import { getStudentScreenDetails } from "../../../services/apiStudentService";
 import { DisciplineIcon } from "../../common/DisciplineIcon";
 import { CalendarWeek } from "../../shared/calendar/CalendarWeek";
-import { EditIcon } from "../../shared/icons/EditIcon";
 import { Loading } from "../../shared/Loading";
 
+import { CoinsIcon } from "../../shared/icons/CoinsIcon";
 import SubscriptionAttendancesModal from "../../shared/modals/SubscriptionAttendancesModal";
 import { AttendanceModal } from "../../shared/slots/AttendanceModal";
+import PaymentForm from "../payments/PaymentForm";
 import StudentScreenCard from "./StudentScreenCard";
 
 class StudentScreen extends React.Component {
@@ -39,6 +40,11 @@ class StudentScreen extends React.Component {
       selectedSubscription: null,
       subscriptionAttendances: [],
       isLoadingAttendances: false,
+
+      // Payment Modal
+      showPaymentModal: false,
+      selectedSubscriptionForPayment: null,
+      isLoadingPayment: false,
 
       isLoading: false,
     };
@@ -169,6 +175,46 @@ class StudentScreen extends React.Component {
     }));
   };
 
+  handlePayClick = (subscription) => {
+    this.setState({
+      showPaymentModal: true,
+      selectedSubscriptionForPayment: subscription
+    });
+  };
+
+  handleClosePaymentModal = () => {
+    this.setState({
+      showPaymentModal: false,
+      selectedSubscriptionForPayment: null
+    });
+  };
+
+  handlePaymentSubmit = async (paymentData) => {
+    this.setState({ isLoadingPayment: true });
+    
+    try {
+      // TODO: Add API call to submit payment
+      console.log('Payment data:', paymentData);
+      
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // For now, just log the payment data
+      // In the future, this would call an API service:
+      // await ApiPaymentService.createPayment(paymentData);
+      
+      // Optionally reload student data to reflect payment
+      // await this.loadStudentData();
+      
+      alert('Платеж успешно обработан!');
+    } catch (error) {
+      console.error('Payment submission error:', error);
+      throw error;
+    } finally {
+      this.setState({ isLoadingPayment: false });
+    }
+  };
+
   // Render Methods
   renderSubscriptionsTable(subscriptions) {
     let subscriptionsTable;
@@ -189,7 +235,6 @@ class StudentScreen extends React.Component {
             onMouseLeave={(e) => {
               e.currentTarget.style.backgroundColor = '';
             }}
-            title="Нажмите для просмотра занятий"
           >
             <td style={{width: "120px"}}>{format(item.startDate, "yyyy-MM-dd")}</td>
             <td>
@@ -208,7 +253,13 @@ class StudentScreen extends React.Component {
             <td>{getSubscriptionStatusName(item.status)}</td>
             <td>
               <div className="d-flex gap-2" onClick={(e) => e.stopPropagation()}>
-                <EditIcon onIconClick={(e, _item) => this.handleEditSubscriptionClick(e, item)} />
+                {item.status === SubscriptionStatus.DRAFT && (
+                  <CoinsIcon
+                    size="20px"
+                    title="Оплатить"
+                    onIconClick={() => this.handlePayClick(item)}
+                  />
+                )}
               </div>
             </td>
           </tr>
@@ -384,6 +435,14 @@ class StudentScreen extends React.Component {
             isLoading={this.state.isLoadingAttendances}
             onAttendanceClick={this.handleAttendanceClick}
             onEditSchedules={this.handleEditSubscriptionClick}
+          />
+
+          <PaymentForm
+            show={this.state.showPaymentModal}
+            onHide={this.handleClosePaymentModal}
+            subscription={this.state.selectedSubscriptionForPayment}
+            onPaymentSubmit={this.handlePaymentSubmit}
+            isLoading={this.state.isLoadingPayment}
           />
         </Row>
         <Row>

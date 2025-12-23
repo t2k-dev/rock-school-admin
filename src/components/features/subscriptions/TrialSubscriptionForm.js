@@ -1,11 +1,11 @@
 import React from "react";
 import { Button, Col, Container, Form, InputGroup, Row } from "react-bootstrap";
 
-import { DisciplinesDropDownControl } from "../../common/DisciplinesDropDownControl";
-import { AvailableTeachersModal } from "../teachers/AvailableTeachersModal";
-
 import { addTrialSubscription } from "../../../services/apiSubscriptionService";
 import { getAvailableTeachers } from "../../../services/apiTeacherService";
+import { DisciplineGridSelector } from "../../common/DisciplineGridSelector";
+import { CalendarIcon } from "../../shared/icons/CalendarIcon";
+import { AvailableTeachersModal } from "../teachers/AvailableTeachersModal";
 
 export class TrialSubscriptionForm extends React.Component {
   constructor(props) {
@@ -53,8 +53,12 @@ export class TrialSubscriptionForm extends React.Component {
     this.setState({ [id]: value });
   };
 
-  handleDisciplineChange = (e) => {
-    this.setState({ disciplineId: e.target.value });
+  handleDisciplineChange = (disciplineId) => {
+    this.setState({ 
+      disciplineId: disciplineId,
+      availableSlots: [],
+      selectedSlotId: 0,
+    });
   };
 
   handleSave = async (e) => {
@@ -104,11 +108,15 @@ export class TrialSubscriptionForm extends React.Component {
         <Row>
           <Col md="4"></Col>
           <Col md="4">
-            <h2 className="text-center mb-4">Пробное занятие</h2>
+            <h2 className="text-center mb-5">Пробное занятие</h2>
             <Form>
 
-              <DisciplinesDropDownControl value={disciplineId} onChange={(e) => this.handleDisciplineChange(e)} />
-              <label for="GenerteSchedule">Окно для занятия</label>
+              <DisciplineGridSelector
+                selectedDisciplineId={disciplineId}
+                onDisciplineChange={this.handleDisciplineChange}
+              />
+
+              <label htmlFor="GenerteSchedule"><CalendarIcon/> Расписание</label>
               <InputGroup className="mb-3 mt-2 text-center" controlId="GenerteSchedule">
                 <Form.Select
                   aria-label="Веберите..."
