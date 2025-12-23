@@ -14,6 +14,7 @@ export const AttendanceStatusBadge = ({
   const getStatusBadgeVariant = (status) => {
     switch (status) {
       case AttendanceStatus.NEW:
+        return "primary";
       case AttendanceStatus.ATTENDED:
         return "success";
       case AttendanceStatus.MISSED:

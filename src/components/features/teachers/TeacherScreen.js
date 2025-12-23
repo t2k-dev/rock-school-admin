@@ -132,6 +132,7 @@ class TeacherScreen extends React.Component {
         resourceId: attendance.roomId,
         status: attendance.status,
         isTrial: attendance.isTrial,
+        disciplineId: attendance.disciplineId,
       }));
     }
 

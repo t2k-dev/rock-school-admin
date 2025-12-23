@@ -4,11 +4,21 @@ import React from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
-
 import { applyCalendarStyle } from "../../../utils/calendar";
+import { DisciplineIcon } from "../../common/DisciplineIcon";
 
 moment.locale("ru");
 const localizer = momentLocalizer(moment);
+
+const EventComponent = ({ event }) => {
+  return (
+    <div style={{ display: "flex", alignItems: "center", marginTop:"5px", marginLeft:"5px" }}>
+      {event.disciplineId && <DisciplineIcon disciplineId={event.disciplineId} color="white"/>}
+      <span style={{marginLeft:"10px"}}>{event.title}</span> 
+      
+    </div>
+  );
+};
 
 export class CalendarWeek extends React.Component {
   constructor(props) {
@@ -63,6 +73,7 @@ export class CalendarWeek extends React.Component {
           onSelectSlot={this.props.onSelectSlot}
           onSelectEvent={this.props.onSelectEvent}
           eventPropGetter={(event) => applyCalendarStyle(event)}
+          components={{event: EventComponent}}
         />
       </div>
     );

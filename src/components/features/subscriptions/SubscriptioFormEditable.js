@@ -3,6 +3,7 @@ import React from "react";
 import { Alert, Button, Col, Container, Form, InputGroup, Row, Spinner, Table } from "react-bootstrap";
 import "react-datepicker/dist/react-datepicker.css";
 
+import { getAttendanceLengthName } from "../../../constants/attendancies";
 import { getDisciplineName } from "../../../constants/disciplines";
 import { DisciplineIcon } from "../../common/DisciplineIcon";
 import { CalendarIcon } from "../../shared/icons/CalendarIcon";
@@ -309,7 +310,7 @@ export class SubscriptionFormEditable extends React.Component {
               </Form.Group>
 
               <Form.Group className="mb-3">
-                <Form.Label>Длительность урока: {attendanceLength}</Form.Label>
+                <Form.Label>Длительность урока: {getAttendanceLengthName(attendanceLength)}</Form.Label>
               </Form.Group>
 
               <div className="mb-3"><b>Преподаватель</b></div>

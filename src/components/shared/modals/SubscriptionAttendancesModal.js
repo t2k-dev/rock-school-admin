@@ -1,16 +1,17 @@
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import PropTypes from 'prop-types';
-import { Button, Modal, Table } from 'react-bootstrap';
+import { useState } from 'react';
+import { Button, Col, Form, Modal, Table } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 import { DisciplineIcon } from '../../common/DisciplineIcon';
 import { Loading } from '../Loading';
 import { AttendanceStatusBadge } from '../slots/AttendanceStatusBadge';
 
-import AttendanceStatus from '../../../constants/AttendanceStatus';
 import { getDisciplineName } from '../../../constants/disciplines';
 import { getRoomName } from '../../../constants/rooms';
+import { CalendarIcon } from '../icons/CalendarIcon';
 
 const SubscriptionAttendancesModal = ({
   show,
@@ -18,8 +19,11 @@ const SubscriptionAttendancesModal = ({
   subscription,
   attendances = [],
   isLoading = false,
-  onAttendanceClick
+  onAttendanceClick,
+  onEditSchedules
 }) => {
+    const [showCompleted, setShowCompleted] = useState(true);
+
   const formatDate = (date) => {
     try {
       return format(new Date(date), 'd MMM yyyy', { locale: ru });
@@ -35,22 +39,7 @@ const SubscriptionAttendancesModal = ({
       return '--:--';
     }
   };
-
-  const getStatusVariant = (status) => {
-    switch (status) {
-      case AttendanceStatus.ATTENDED:
-        return 'success';
-      case AttendanceStatus.MISSED:
-        return 'danger';
-      case AttendanceStatus.CANCELLED:
-        return 'secondary';
-      case AttendanceStatus.RESCHEDULED:
-        return 'warning';
-      default:
-        return 'primary';
-    }
-  };
-
+  
   const handleAttendanceRowClick = (attendance) => {
     if (onAttendanceClick) {
       onAttendanceClick(attendance);
@@ -61,10 +50,12 @@ const SubscriptionAttendancesModal = ({
     return null;
   }
 
-    const sortedAttendances = attendances.sort((a, b) => {
+  const sortedAttendances = attendances
+    .filter(attendance => showCompleted || !attendance.isCompleted)
+    .sort((a, b) => {
     const dateA = new Date(a.startDate);
     const dateB = new Date(b.startDate);
-    return dateB - dateA; // Descending order
+    return dateA - dateB;
     });
 
   return (
@@ -100,6 +91,17 @@ const SubscriptionAttendancesModal = ({
               <strong>Осталось:</strong> {subscription.attendancesLeft}
             </div>
           </div>
+          <div className='row mt-2'>
+            <Col>
+            <Button variant="secondary" onClick={() => onEditSchedules && onEditSchedules(subscription)}>
+                <CalendarIcon color="white"/>
+                Редактировать расписание
+            </Button>
+
+            </Col>
+
+
+          </div>
         </div>
 
         {isLoading ? (
@@ -107,6 +109,7 @@ const SubscriptionAttendancesModal = ({
         ) : (
           <>
             {sortedAttendances && sortedAttendances.length > 0 ? (
+              <>
               <Table striped bordered hover>
                 <thead>
                   <tr>
@@ -122,10 +125,10 @@ const SubscriptionAttendancesModal = ({
                     <tr 
                       key={attendance.attendanceId}
                       style={{ 
-                        cursor: attendance.isCompleted ? 'default' : 'pointer',
+                        cursor: 'pointer',
                         opacity: attendance.isCompleted ? 0.8 : 1 
                       }}
-                      onClick={() => !attendance.isCompleted && handleAttendanceRowClick(attendance)}
+                      onClick={() => handleAttendanceRowClick(attendance)}
                     >
                       <td>{formatDate(attendance.startDate)}</td>
                       <td>
@@ -155,6 +158,26 @@ const SubscriptionAttendancesModal = ({
                   ))}
                 </tbody>
               </Table>
+                <div className="d-flex mt-2">
+                  <div className="flex-grow-1">
+                    {/*<small className="text-muted">
+                      Показано: {displayedCount} из {totalAttendances} занятий
+                      {completedAttendances > 0 && (
+                        <> ({completedAttendances} завершено)</>
+                      )}
+                    </small>*/}
+                  </div>
+                  <Form.Check
+                    type="switch"
+                    id="show-completed-switch"
+                    label="Показывать законченные"
+                    checked={showCompleted}
+                    onChange={(e) => setShowCompleted(e.target.checked)}
+                    className=""
+                  />
+                </div>
+              </>
+
             ) : (
               <div className="text-center py-4">
                 <p className="text-muted">

@@ -445,7 +445,7 @@ export class AttendanceModal extends React.Component {
   renderFooterButtons = () => {
     const { isSaving } = this.state;
     const { isCompleted, isTrial, status } = this.props.attendance;
-
+console.log('renderFooterButtons', isCompleted, isTrial, status)
     if (!isCompleted) {
       if (isCancelledAttendanceStatus(status)){
         return <Button variant="outline-primary" onClick={this.handleCancel}>Сохранить</Button>;

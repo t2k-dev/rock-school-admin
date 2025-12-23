@@ -31,11 +31,6 @@ export const getStudents = async () => {
 };
 
 export const getStudentScreenDetails = async (id) => {
-  try {
     const response = await apiClient.get(`/student/${id}/screen-details`);
     return response.data;
-  } 
-  catch (error) {
-    console.error('Error fetching data:', error);
-  }
 };
