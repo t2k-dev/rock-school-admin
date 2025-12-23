@@ -24,10 +24,8 @@ class Teachers extends React.Component {
   };
   
   async onFormLoad() {
-    console.log("Loading teachers...");
     const returnedTeachers = await getTeachers();
     this.setState({ teachers: returnedTeachers });
-    console.log(this.state.teachers);
   }
 
   render() {

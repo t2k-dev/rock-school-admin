@@ -1,9 +1,8 @@
 import React from "react";
-import { Button, Col, Container, Form, FormCheck, InputGroup, Row } from "react-bootstrap";
+import { Button, Col, Container, Form, FormCheck, Row } from "react-bootstrap";
 
 import { format, parse } from "date-fns";
-import InputMask from "react-input-mask";
-import { DisciplinesListControl } from "../../common/DisciplinesListControl";
+import { DisciplineGridSelector } from "../../common/DisciplineGridSelector";
 import { ScheduleEditor } from "../../shared/schedule/ScheduleEditor";
 import { SexControl } from "../../shared/SexControl";
 
@@ -18,7 +17,7 @@ class TeacherForm extends React.Component {
     super(props);
 
     this.state = {
-      isNew: props.type == "New",
+      isNew: props.type === "New",
       disciplinesChanged: false,
       periodsChanged: false,
       teacher: {
@@ -57,6 +56,9 @@ class TeacherForm extends React.Component {
     const id = this.props.match.params.id;
     const teacher = await getTeacher(id);
 
+    // Format the phone number properly
+    const formattedPhone = this.formatPhoneNumber("7" + teacher.phone);
+
     this.setState({
       teacher: {
         teacherId: this.props.match.params.id,
@@ -64,7 +66,7 @@ class TeacherForm extends React.Component {
         firstName: teacher.firstName,
         lastName: teacher.lastName,
         birthDate: new Date(teacher.birthDate),
-        phone: "7" + teacher.phone,
+        phone: formattedPhone,
         disciplines: teacher.disciplines,
         sex: teacher.sex,
         ageLimit: teacher.ageLimit,
@@ -83,10 +85,47 @@ class TeacherForm extends React.Component {
     return "";
   };
 
+  formatPhoneNumber = (phoneDigits) => {
+    if (!phoneDigits) return '';
+    
+    // Remove all non-digits and ensure it starts with 7
+    let value = phoneDigits.replace(/\D/g, '');
+    if (value.length > 0 && !value.startsWith('7')) {
+      value = '7' + value;
+    }
+    
+    // Format the phone number
+    let formattedPhone = '';
+    if (value.length >= 1) {
+      formattedPhone = '+7';
+      if (value.length > 1) {
+        formattedPhone += ' ' + value.substring(1, 4);
+      }
+      if (value.length > 4) {
+        formattedPhone += ' ' + value.substring(4, 7);
+      }
+      if (value.length > 7) {
+        formattedPhone += ' ' + value.substring(7, 9);
+      }
+      if (value.length > 9) {
+        formattedPhone += ' ' + value.substring(9, 11);
+      }
+    }
+    
+    return formattedPhone;
+  };
+
   handleChange = (e) => {
     const { id, value } = e.target;
     const teacher = { ...this.state.teacher };
     teacher[id] = value;
+    this.setState({ teacher });
+  };
+
+  handlePhoneChange = (e) => {
+    const formattedPhone = this.formatPhoneNumber(e.target.value);
+    const teacher = { ...this.state.teacher };
+    teacher.phone = formattedPhone;
     this.setState({ teacher });
   };
 
@@ -102,18 +141,18 @@ class TeacherForm extends React.Component {
     this.setState({ teacher });
   };
 
-  handleDisciplineCheck = (id, isChecked) => {
+  handleDisciplineSelect = (disciplineId, isSelected) => {
     const teacher = { ...this.state.teacher };
 
-    // Update disciplines array based on the isChecked value
-    const newDisciplines = isChecked
-      ? [...new Set([...teacher.disciplines, id])] // Add ID, ensuring no duplicates
-      : teacher.disciplines.filter((discipline) => discipline !== id); // Remove ID
+    // Update disciplines array based on the isSelected value
+    const newDisciplines = isSelected
+      ? [...new Set([...teacher.disciplines, disciplineId])] // Add ID, ensuring no duplicates
+      : teacher.disciplines.filter((discipline) => discipline !== disciplineId); // Remove ID
     teacher.disciplines = newDisciplines;
 
     const disciplinesChanged = true;
     this.setState({ teacher, disciplinesChanged });
-  }
+  };
 
   handleAllowGroupLessonsChange = (e) => {
     const teacher = { ...this.state.teacher };
@@ -184,7 +223,9 @@ class TeacherForm extends React.Component {
   };
 
   render() {
-    const { isNew, isActive, email, firstName, lastName, birthDate, phone, sex, ageLimit, allowGroupLessons, disciplines, branchId } = this.state.teacher;
+    const { isActive, email, firstName, lastName, birthDate, phone, sex, ageLimit, allowGroupLessons, disciplines, branchId } = this.state.teacher;
+    const { isNew } = this.state;
+    
     return (
       <Container style={{ marginTop: "40px" }}>
         <Row>
@@ -203,10 +244,6 @@ class TeacherForm extends React.Component {
                 </Form.Group>
               </Row>
               <Row>
-                <InputGroup className="mb-3 " controlId="birthDate">
-
-                </InputGroup>
-
                 <Form.Group className="mb-3" controlId="birthDate">
                   <Form.Label>Дата рождения</Form.Label>
                   <div>
@@ -247,12 +284,11 @@ class TeacherForm extends React.Component {
                 <Form.Group as={Col} controlId="phone">
                   <Form.Label>Телефон</Form.Label>
                   <Form.Control
-                    as={InputMask}
-                    mask="+7 999 999 99 99"
-                    maskChar=" "
-                    onChange={this.handleChange}
+                    type="tel"
+                    onChange={this.handlePhoneChange}
                     value={phone}
-                    placeholder="введите телефон..."
+                    placeholder="+7 999 999 99 99"
+                    maxLength="16"
                   />
                 </Form.Group>
 
@@ -261,6 +297,15 @@ class TeacherForm extends React.Component {
                   <Form.Control onChange={this.handleChange} value={email} placeholder="введите email..." autoComplete="off" />
                 </Form.Group>
               </Row>
+
+              <hr></hr>
+
+              <DisciplineGridSelector 
+                multiSelect={true}
+                selectedDisciplineIds={disciplines}
+                onMultiDisciplineChange={this.handleDisciplineSelect}
+                label="Направления"
+              />
 
               <hr></hr>
               <Form.Group className="mb-3" controlId="ageLimit">
@@ -278,9 +323,6 @@ class TeacherForm extends React.Component {
                   style={{ marginTop: "10px" }}
                 />
               </Form.Group>
-
-              <hr></hr>
-              <DisciplinesListControl onCheck={this.handleDisciplineCheck} disciplines={disciplines}></DisciplinesListControl>
 
               <hr></hr>
 

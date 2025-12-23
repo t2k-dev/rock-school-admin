@@ -85,7 +85,6 @@ export class TrialSubscriptionForm extends React.Component {
   };
 
   render() {
-    console.log(this.state)
     const {
       disciplineId,
       showAvailableTeacherModal,

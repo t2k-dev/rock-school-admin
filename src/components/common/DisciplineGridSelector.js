@@ -2,57 +2,103 @@ import PropTypes from "prop-types";
 import { SELECTABLE_DISCIPLINES } from "../../constants/disciplines";
 import { DisciplineIcon } from "./DisciplineIcon";
 
-export const DisciplineGridSelector = ({ selectedDisciplineId, onDisciplineChange}) => {
+export const DisciplineGridSelector = ({ 
+  selectedDisciplineId, 
+  selectedDisciplineIds = [], 
+  onDisciplineChange, 
+  onMultiDisciplineChange,
+  label = "",
+  multiSelect = false 
+}) => {
+  
+  const isDisciplineSelected = (disciplineId) => {
+    if (multiSelect) {
+      return selectedDisciplineIds.includes(disciplineId);
+    } else {
+      return selectedDisciplineId === disciplineId;
+    }
+  };
+
+  const handleDisciplineClick = (disciplineId) => {
+    if (multiSelect) {
+      // Multi-select mode: toggle selection
+      const isSelected = selectedDisciplineIds.includes(disciplineId);
+      if (onMultiDisciplineChange) {
+        onMultiDisciplineChange(disciplineId, !isSelected);
+      }
+    } else {
+      // Single-select mode
+      if (onDisciplineChange) {
+        onDisciplineChange(disciplineId);
+      }
+    }
+  };
+
   const handleMouseEnter = (e, disciplineId) => {
-    if (selectedDisciplineId !== disciplineId) {
+    if (!isDisciplineSelected(disciplineId)) {
       e.currentTarget.style.backgroundColor = '#f8f9fa';
     }
   };
 
   const handleMouseLeave = (e, disciplineId) => {
-    if (selectedDisciplineId !== disciplineId) {
+    if (!isDisciplineSelected(disciplineId)) {
       e.currentTarget.style.backgroundColor = '';
     }
   };
 
   return (
     <div className="mb-4">
+      {label && <label className="form-label mb-2">{label}</label>}
       <div 
         className="d-flex flex-wrap justify-content-center" 
         style={{ gap: '10px', maxWidth: '400px', margin: '0 auto' }}
       >
-        {SELECTABLE_DISCIPLINES.map((discipline) => (
-          <div
-            key={discipline.id}
-            className={`p-1 border rounded text-center ${
-              selectedDisciplineId === discipline.id 
-                ? 'border-primary bg-light' 
-                : 'border-secondary'
-            }`}
-            style={{
-              width: '100px',
-              height: '100px',
-              cursor: 'pointer',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              transition: 'all 0.2s ease'
-            }}
-            onClick={() => onDisciplineChange(discipline.id)}
-            onMouseEnter={(e) => handleMouseEnter(e, discipline.id)}
-            onMouseLeave={(e) => handleMouseLeave(e, discipline.id)}
-          >
-            <DisciplineIcon 
-              disciplineId={discipline.id} 
-              size="40px" 
-              color={selectedDisciplineId === discipline.id ? '#0d6efd' : '#6c757d'}
-            />
-            <small className="mt-2" style={{ fontSize: '12px', lineHeight: '1.2' }}>
-              {discipline.name}
-            </small>
-          </div>
-        ))}
+        {SELECTABLE_DISCIPLINES.map((discipline) => {
+          const isSelected = isDisciplineSelected(discipline.id);
+          return (
+            <div
+              key={discipline.id}
+              className={`p-1 border rounded text-center ${
+                isSelected 
+                  ? 'border-primary bg-light' 
+                  : 'border-secondary'
+              }`}
+              style={{
+                width: '100px',
+                height: '100px',
+                cursor: 'pointer',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'all 0.2s ease',
+                position: 'relative'
+              }}
+              onClick={() => handleDisciplineClick(discipline.id)}
+              onMouseEnter={(e) => handleMouseEnter(e, discipline.id)}
+              onMouseLeave={(e) => handleMouseLeave(e, discipline.id)}
+            >
+              {/* Multi-select indicator */}
+              {/*multiSelect && isSelected && (
+                <div 
+                  className="position-absolute top-0 end-0 bg-primary text-white rounded-circle d-flex align-items-center justify-content-center"
+                  style={{ width: '20px', height: '20px', fontSize: '12px', marginTop: '2px', marginRight: '2px' }}
+                >
+                  ✓
+                </div>
+              )*/}
+              
+              <DisciplineIcon 
+                disciplineId={discipline.id} 
+                size="40px" 
+                color={isSelected ? '#0d6efd' : '#6c757d'}
+              />
+              <small className="mt-1" style={{ fontSize: '11px', lineHeight: '1.2', textAlign: 'center' }}>
+                {discipline.name}
+              </small>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
@@ -60,8 +106,11 @@ export const DisciplineGridSelector = ({ selectedDisciplineId, onDisciplineChang
 
 DisciplineGridSelector.propTypes = {
   selectedDisciplineId: PropTypes.number,
-  onDisciplineChange: PropTypes.func.isRequired,
-  label: PropTypes.string
+  selectedDisciplineIds: PropTypes.array,
+  onDisciplineChange: PropTypes.func,
+  onMultiDisciplineChange: PropTypes.func,
+  label: PropTypes.string,
+  multiSelect: PropTypes.bool
 };
 
 export default DisciplineGridSelector;
