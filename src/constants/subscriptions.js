@@ -1,3 +1,5 @@
+import SubscriptionTrialStatus from "./SubscriptionTrialStatus";
+
 export function getSubscriptionStatusName(statusId) {
     const subscriptionStatusRu = [
       { id: 0, name: "Драфт" },
@@ -9,15 +11,15 @@ export function getSubscriptionStatusName(statusId) {
     return subscriptionStatusRu.find((status) => status.id === statusId).name;
   }
 
-  export function getTrialSubscriptionStatusName(statusId) {
+export function getTrialSubscriptionStatusName(statusId) {
     if (statusId === null){
       return "none";
     }
     const subscriptionStatusRu = [
-      { id: 0, name: "Создан" },
-      { id: 1, name: "Ожидает решения" },
-      { id: 2, name: "Отказ" },
-      { id: 3, name: "Оформился" },
+      { id: SubscriptionTrialStatus.CREATED, name: "Создано" },
+      { id: SubscriptionTrialStatus.PENDINGFEEDBACK, name: "Ожидает решения" },
+      { id: SubscriptionTrialStatus.NEGATIVE, name: "Отказ" },
+      { id: SubscriptionTrialStatus.POSITIVE, name: "Продолжил" },
     ];
   
     return subscriptionStatusRu.find((status) => status.id === statusId).name;

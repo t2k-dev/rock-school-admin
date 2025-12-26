@@ -5,15 +5,15 @@ import { Button, Col, Container, Form, InputGroup, Row, Table } from "react-boot
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-import { calculateAge } from "../../../utils/dateTime";
-import { ScheduleEditorWithDelete } from "../../shared/schedule/ScheduleEditorWithDelete";
-
 import { getStudent } from "../../../services/apiStudentService";
 import { addSubscription, getSubscription } from "../../../services/apiSubscriptionService";
 import { getAvailableTeachers, getTeacher, getWorkingPeriods } from "../../../services/apiTeacherService";
-
+import { calculateAge } from "../../../utils/dateTime";
+import { DisciplineGridSelector } from "../../common/DisciplineGridSelector";
+import { ScheduleEditorWithDelete } from "../../shared/schedule/ScheduleEditorWithDelete";
 import { AddStudentModal } from "../students/AddStudentModal";
 import { AvailableTeachersModal } from "../teachers/AvailableTeachersModal";
+import { SubscriptionStudents } from "./SubscriptionStudents";
 
 export class SubscriptionForm extends React.Component {
   constructor(props) {
@@ -33,6 +33,7 @@ export class SubscriptionForm extends React.Component {
       generatedSchedule: "",
       availableTeachers: [],
       schedules: [],
+      basedOnSubscriptionId: null,
 
       showAvailableTeacherModal: false,
       showAddStudentModal: false,
@@ -53,22 +54,44 @@ export class SubscriptionForm extends React.Component {
 
   async onFormLoad() {
     console.log("this.props");
-    console.log(this.props);
     console.log(this.props.location.state);
 
     // New
     if (this.state.isNew) {
-      const student = await getStudent(this.state.studentId);
-      let students = [];
-      students.push(student);
+    
+        // Based on prev subscription
+      if (this.props.location.state && this.props.location.state.baseSubscription) {
+        const baseSubscription = this.props.location.state.baseSubscription;
 
-      this.setState({
-          students: students,
-          disciplineId: this.props.location.state.disciplineId,
-      });
+        const student = await getStudent(this.state.studentId);
+        const students = student ? [student] : [];
+
+        this.setState({
+          students: students || [],
+          disciplineId: baseSubscription.disciplineId || "",
+          attendanceCount: baseSubscription.isTrial ? null : baseSubscription.attendanceCount,
+          attendanceLength: baseSubscription.attendanceLength || 0,
+          selectedTeachers: [baseSubscription.teacher] || [],
+          teacherId: baseSubscription.teacher.teacherId || "",
+          schedules: baseSubscription.schedules || [],
+          basedOnSubscriptionId: baseSubscription.subscriptionId || null,
+        });
+        
+      }
+      else{
+        const student = await getStudent(this.state.studentId);
+        const students = student ? [student] : [];
+
+        this.setState({
+            students: students,
+            disciplineId: this.props.location.state.disciplineId,
+        });
+      }
 
       return;
     }
+
+
     
     // Edit
     const id = this.props.match.params.id;
@@ -176,6 +199,14 @@ export class SubscriptionForm extends React.Component {
     this.setState({ [id]: value });
   };
 
+  handleDisciplineChange = (disciplineId) => {
+    this.setState({ 
+      disciplineId: disciplineId,
+      availableSlots: [],
+      selectedSlotId: 0,
+    });
+  };
+
   onChange = (periods) => {
     this.setState({ schedules: periods });
   };
@@ -228,6 +259,7 @@ export class SubscriptionForm extends React.Component {
       students,
       teacherId,
       availableSlots,
+      basedOnSubscriptionId,
       attendanceCount,
       attendanceLength,
       startDate,
@@ -238,9 +270,16 @@ export class SubscriptionForm extends React.Component {
       showAddStudentModal,
     } = this.state;
 
+console.log("baseSubscription", basedOnSubscriptionId);
+console.log("schedules", schedules);
+
     let filteredSchedules;
     if (schedules && schedules.length > 0){
-      filteredSchedules = schedules.filter(schedule => schedule.teacherId === teacherId) ;
+      if (basedOnSubscriptionId != null){
+        filteredSchedules = schedules;
+      } else{
+        filteredSchedules = schedules.filter(schedule => schedule.teacherId === teacherId) ;
+      }
     }
     
     let studentsList;
@@ -274,7 +313,13 @@ export class SubscriptionForm extends React.Component {
 
             <Form>
               <Form.Group className="mb-3" controlId="discipline">
-                <Form.Label>Для</Form.Label>
+                {basedOnSubscriptionId != null 
+                ? <SubscriptionStudents
+                  students={students}
+                  onRemoveStudent={this.deleteStudent}
+                  />
+                : 
+                <>
                 <Table striped bordered hover>
                   <tbody>{studentsList}</tbody>
                 </Table>
@@ -283,24 +328,23 @@ export class SubscriptionForm extends React.Component {
                     + Добавить ещё ученика
                   </Button>
                 </div>
-                <AddStudentModal show={showAddStudentModal} handleClose={this.handleCloseAddStudentModal} onAddStudent={this.handleAddStudent}/>
+                
+                <AddStudentModal 
+                  show={showAddStudentModal} 
+                  handleClose={this.handleCloseAddStudentModal} 
+                  onAddStudent={this.handleAddStudent}
+                  />
+                </>
+                }
+              
               </Form.Group>
               <hr></hr>
-              <Form.Group className="mb-3" controlId="discipline">
-                <Form.Label>Направление</Form.Label>
-                <Form.Select aria-label="Веберите..." value={disciplineId} onChange={(e) => this.setState({ disciplineId: e.target.value })}>
-                  <option>выберите...</option>
-                  <option value="1">Гитара</option>
-                  <option value="2">Электро гитара</option>
-                  <option value="3">Бас гитара</option>
-                  <option value="4">Укулеле</option>
-                  <option value="5">Вокал</option>
-                  <option value="6">Барабаны</option>
-                  <option value="7">Фортепиано</option>
-                  <option value="8">Скрипка</option>
-                  <option value="9">Экстрим вокал</option>
-                </Form.Select>
-              </Form.Group>
+
+              <div className="mb-3"><b>Направление</b></div>
+              <DisciplineGridSelector
+                selectedDisciplineId={disciplineId}
+                onDisciplineChange={this.handleDisciplineChange}
+              />
 
               <Form.Group>
                 <Form.Label>Дата начала</Form.Label>

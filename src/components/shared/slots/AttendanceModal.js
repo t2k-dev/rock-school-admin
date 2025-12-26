@@ -157,11 +157,12 @@ export class AttendanceModal extends React.Component {
           pathname: `/student/${attendance.student.studentId}/subscriptionForm`,
           state: {
             studentId: attendance.student.studentId,
-            disciplineId: attendance.disciplineId,
-            teacher: {
-              teacherId: attendance.teacher.teacherId,
-              firstName: attendance.teacher.firstName
-            }
+            baseSubscription: {
+              subscriptionId: attendance.subscriptionId,
+              disciplineId: attendance.disciplineId,
+              teacher: attendance.teacher,
+              isTrial: attendance.isTrial,
+            },
           }
         });
       }
@@ -439,8 +440,6 @@ export class AttendanceModal extends React.Component {
       </>
     );
   };
-
-
 
   renderFooterButtons = () => {
     const { isSaving } = this.state;

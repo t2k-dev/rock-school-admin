@@ -12,6 +12,8 @@ import { CalendarWeek } from "../../shared/calendar/CalendarWeek";
 import { Loading } from "../../shared/Loading";
 
 import { CoinsIcon } from "../../shared/icons/CoinsIcon";
+import { NextIcon } from "../../shared/icons/NextIcon";
+import { RefreshIcon } from "../../shared/icons/RefreshIcon";
 import SubscriptionAttendancesModal from "../../shared/modals/SubscriptionAttendancesModal";
 import { AttendanceModal } from "../../shared/slots/AttendanceModal";
 import PaymentForm from "../payments/PaymentForm";
@@ -189,6 +191,17 @@ class StudentScreen extends React.Component {
     });
   };
 
+  handleResubscribeClick = (subscription) => {
+    // Navigate to subscription form with existing subscription data for renewal/refresh
+    this.props.history.push({
+      pathname: `/student/${this.state.student.studentId}/subscriptionForm`,
+      state: {
+        isRefresh: true,
+        baseSubscription: subscription,
+      }
+    });
+  };
+
   handlePaymentSubmit = async (paymentData) => {
     this.setState({ isLoadingPayment: true });
     
@@ -260,6 +273,11 @@ class StudentScreen extends React.Component {
                     onIconClick={() => this.handlePayClick(item)}
                   />
                 )}
+                <RefreshIcon
+                  size="20px"
+                  title="Продлить"
+                  onIconClick={() => this.handleResubscribeClick(item)}
+                />
               </div>
             </td>
           </tr>
@@ -327,6 +345,13 @@ class StudentScreen extends React.Component {
               </Link>
             </td>
             <td>{getTrialSubscriptionStatusName(item.trialStatus)}</td>
+            <td>
+                <NextIcon 
+                  size="20px"
+                  onIconClick={() => this.handleResubscribeClick(item)}
+                />
+
+            </td>
           </tr>
       )));
     } else {
@@ -347,6 +372,7 @@ class StudentScreen extends React.Component {
               <th>Направление</th>
               <th>Преподаватель</th>
               <th>Результат</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>{trialsTable}</tbody>
