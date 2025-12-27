@@ -10,6 +10,8 @@ import { addSubscription, getSubscription } from "../../../services/apiSubscript
 import { getAvailableTeachers, getTeacher, getWorkingPeriods } from "../../../services/apiTeacherService";
 import { calculateAge } from "../../../utils/dateTime";
 import { DisciplineGridSelector } from "../../common/DisciplineGridSelector";
+import { DisciplinePlate } from "../../common/DisciplinePlate";
+import { Loading } from "../../shared/Loading";
 import { ScheduleEditorWithDelete } from "../../shared/schedule/ScheduleEditorWithDelete";
 import { AddStudentModal } from "../students/AddStudentModal";
 import { AvailableTeachersModal } from "../teachers/AvailableTeachersModal";
@@ -21,6 +23,7 @@ export class SubscriptionForm extends React.Component {
 
     this.state = {
       isNew: props.type === "New",
+      isLoading: false,
       studentId: this.props.match.params.id,
       student: null,
       students: [],
@@ -56,6 +59,8 @@ export class SubscriptionForm extends React.Component {
     console.log("this.props");
     console.log(this.props.location.state);
 
+    this.setState({ isLoading: true });
+
     // New
     if (this.state.isNew) {
     
@@ -75,6 +80,7 @@ export class SubscriptionForm extends React.Component {
           teacherId: baseSubscription.teacher.teacherId || "",
           schedules: baseSubscription.schedules || [],
           basedOnSubscriptionId: baseSubscription.subscriptionId || null,
+          isLoading: false,
         });
         
       }
@@ -85,6 +91,7 @@ export class SubscriptionForm extends React.Component {
         this.setState({
             students: students,
             disciplineId: this.props.location.state.disciplineId,
+            isLoading: false,
         });
       }
 
@@ -255,6 +262,7 @@ export class SubscriptionForm extends React.Component {
   render() {
     const {
       isNew,
+      isLoading,
       disciplineId,
       students,
       teacherId,
@@ -270,8 +278,11 @@ export class SubscriptionForm extends React.Component {
       showAddStudentModal,
     } = this.state;
 
-console.log("baseSubscription", basedOnSubscriptionId);
-console.log("schedules", schedules);
+    if (isLoading) {
+      return <Loading
+        message="Загрузка данных..."
+      />
+    }
 
     let filteredSchedules;
     if (schedules && schedules.length > 0){
@@ -281,7 +292,7 @@ console.log("schedules", schedules);
         filteredSchedules = schedules.filter(schedule => schedule.teacherId === teacherId) ;
       }
     }
-    
+
     let studentsList;
     if (students && students.length > 0) {
       studentsList = students.map((student, index) => (
@@ -341,10 +352,18 @@ console.log("schedules", schedules);
               <hr></hr>
 
               <div className="mb-3"><b>Направление</b></div>
-              <DisciplineGridSelector
-                selectedDisciplineId={disciplineId}
-                onDisciplineChange={this.handleDisciplineChange}
-              />
+              {basedOnSubscriptionId != null ? (
+                <DisciplinePlate 
+                  disciplineId={disciplineId}
+                  label=""
+                  size="medium"
+                />
+              ) : (
+                <DisciplineGridSelector
+                  selectedDisciplineId={disciplineId}
+                  onDisciplineChange={this.handleDisciplineChange}
+                />
+              )}
 
               <Form.Group>
                 <Form.Label>Дата начала</Form.Label>

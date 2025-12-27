@@ -13,7 +13,6 @@ import { Loading } from "../../shared/Loading";
 
 import { CoinsIcon } from "../../shared/icons/CoinsIcon";
 import { NextIcon } from "../../shared/icons/NextIcon";
-import { RefreshIcon } from "../../shared/icons/RefreshIcon";
 import SubscriptionAttendancesModal from "../../shared/modals/SubscriptionAttendancesModal";
 import { AttendanceModal } from "../../shared/slots/AttendanceModal";
 import PaymentForm from "../payments/PaymentForm";
@@ -273,7 +272,7 @@ class StudentScreen extends React.Component {
                     onIconClick={() => this.handlePayClick(item)}
                   />
                 )}
-                <RefreshIcon
+                <NextIcon
                   size="20px"
                   title="Продлить"
                   onIconClick={() => this.handleResubscribeClick(item)}
@@ -303,7 +302,7 @@ class StudentScreen extends React.Component {
                 <th>Преподаватель</th>
                 <th>Занятий осталось</th>
                 <th>Статус</th>
-                <th></th>
+                <th style={{ width: "50px" }}></th>
               </tr>
             </thead>
             <tbody>
@@ -372,7 +371,7 @@ class StudentScreen extends React.Component {
               <th>Направление</th>
               <th>Преподаватель</th>
               <th>Результат</th>
-              <th></th>
+              <th style={{ width: "50px" }}></th>
             </tr>
           </thead>
           <tbody>{trialsTable}</tbody>
