@@ -5,7 +5,7 @@ import "react-datepicker/dist/react-datepicker.css";
 
 import { getAttendanceLengthName } from "../../../constants/attendancies";
 import { getDisciplineName } from "../../../constants/disciplines";
-import { DisciplineIcon } from "../../common/DisciplineIcon";
+import { DisciplineIcon } from "../../shared/discipline/DisciplineIcon";
 import { CalendarIcon } from "../../shared/icons/CalendarIcon";
 import { Loading } from "../../shared/Loading";
 import { ScheduleEditorWithDelete } from "../../shared/schedule/ScheduleEditorWithDelete";

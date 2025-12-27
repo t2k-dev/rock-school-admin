@@ -9,7 +9,7 @@ import { Loading } from "../../shared/Loading";
 import { AttendanceModal } from "../../shared/slots/AttendanceModal";
 import { GroupAttendanceModal } from "../../shared/slots/GroupAttendanceModal";
 
-import { isCancelledAttendanceStatus } from "../../common/attendanceHelper";
+import { isCancelledAttendanceStatus } from "../../shared/slots/attendanceHelper";
 
 import { getHomeScreenDetails } from "../../../services/apiHomeService";
 import { markComplete } from "../../../services/apiNoteService";

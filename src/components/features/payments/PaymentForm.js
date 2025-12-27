@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import { useState } from 'react';
 import { Alert, Button, Form, Modal } from 'react-bootstrap';
 import { pay } from '../../../services/apiSubscriptionService';
-import DateTimeHelper from '../../common/DateTimeHelper';
+import DateTimeHelper from '../../../utils/DateTimeHelper';
 
 const PaymentForm = ({ 
   show, 

@@ -5,8 +5,8 @@ import { Link } from "react-router-dom";
 import { getTeacherScreenDetails } from "../../../services/apiTeacherService";
 import { EditIcon } from "../../shared/icons/EditIcon";
 
-import { DisciplineIcon } from "../../common/DisciplineIcon";
 import { CalendarWeek } from "../../shared/calendar/CalendarWeek";
+import { DisciplineIcon } from "../../shared/discipline/DisciplineIcon";
 import { Loading } from "../../shared/Loading";
 import TeacherScreenCard from "./TeacherScreenCard";
 

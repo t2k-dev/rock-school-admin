@@ -5,7 +5,7 @@ import { Calendar, momentLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
 import { applyCalendarStyle } from "../../../utils/calendar";
-import { DisciplineIcon } from "../../common/DisciplineIcon";
+import { DisciplineIcon } from "../discipline/DisciplineIcon";
 
 
 moment.locale("ru");

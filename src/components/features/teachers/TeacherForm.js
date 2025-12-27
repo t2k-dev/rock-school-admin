@@ -2,7 +2,7 @@ import React from "react";
 import { Button, Col, Container, Form, FormCheck, Row } from "react-bootstrap";
 
 import { format, parse } from "date-fns";
-import { DisciplineGridSelector } from "../../common/DisciplineGridSelector";
+import { DisciplineGridSelector } from "../../shared/discipline/DisciplineGridSelector";
 import { ScheduleEditor } from "../../shared/schedule/ScheduleEditor";
 import { SexControl } from "../../shared/SexControl";
 

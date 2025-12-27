@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { SELECTABLE_DISCIPLINES } from "../../constants/disciplines";
+import { SELECTABLE_DISCIPLINES } from "../../../constants/disciplines";
 import { DisciplineIcon } from "./DisciplineIcon";
 
 export const DisciplineGridSelector = ({ 

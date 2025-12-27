@@ -2,7 +2,7 @@ import React from "react";
 import { Card, Col, Image, Row, Stack } from 'react-bootstrap';
 import { Link } from "react-router-dom";
 import noImage from '../../../images/user.jpg';
-import { DisciplineIcon } from "../../common/DisciplineIcon";
+import { DisciplineIcon } from "../../shared/discipline/DisciplineIcon";
 
 import { getDisciplineName } from "../../../constants/disciplines";
 

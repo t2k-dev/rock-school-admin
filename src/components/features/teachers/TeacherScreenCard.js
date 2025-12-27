@@ -1,8 +1,8 @@
 import React from "react";
 import { Card, Container } from "react-bootstrap";
 import { Doughnut } from "react-chartjs-2";
-import { DisciplineIcon } from "../../common/DisciplineIcon";
 import { Avatar } from "../../shared/Avatar";
+import { DisciplineIcon } from "../../shared/discipline/DisciplineIcon";
 import { EditIcon } from "../../shared/icons/EditIcon";
 
 import {

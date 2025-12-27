@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import React from "react";
 import { Alert, Button, Container, Form, Modal, Row, Spinner, Stack } from "react-bootstrap";
 import { Link } from "react-router-dom";
@@ -38,12 +37,10 @@ const REGULAR_ACTIONS = {
   MISSED: 'missed',
 };
 
-export class AttendanceModal extends React.Component {
+export class SlotDetailsModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      attendance: null,
-
       status: 0,
       trialStatus: 0,
       comment: "",
@@ -60,20 +57,19 @@ export class AttendanceModal extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.attendance && this.props.attendance !== prevProps.attendance) {
-      const attendance = this.props.attendance;
+    if (this.props.selectedSlotDetails !== prevProps.selectedSlotDetails) {
+      const details = this.props.selectedSlotDetails;
       
-      if (!attendance) {
+      if (!details) {
         return;
       }
 
       this.setState(
         {
-          attendance: attendance,
-          status: attendance.status,
-          attendanceId: attendance.attendanceId,
-          comment: attendance.comment || "",
-          statusReason: attendance.statusReason || "",
+          status: details.status,
+          attendanceId: details.attendanceId,
+          comment: details.comment,
+          statusReason: details.statusReason,
          }
       );
     }
@@ -86,15 +82,24 @@ export class AttendanceModal extends React.Component {
   };
 
   handleSave = async () => {
-    const { attendance, comment } = this.state;
+    const attendanceId = this.props.selectedSlotDetails?.attendanceId;
 
     // Completed attendance
-    await updateComment(attendance.attendanceId, comment);
-    
-    // Update parent component with new comment
-    this.handleSuccess({ 
-      comment: comment 
-    });
+    if (this.props.selectedSlotDetails.isCompleted){
+      await updateComment(attendanceId, this.state.comment);
+      this.props.handleClose();
+      return;
+    }
+
+    // Not completed
+    const submitRequest = {
+      status: this.state.status,
+      statusReason: this.props.selectedSlotDetails.statusReason,
+    };
+
+    await submit(attendanceId, submitRequest);
+
+    this.props.handleClose();
   }
 
   handleError = (message, error) => {
@@ -115,11 +120,8 @@ export class AttendanceModal extends React.Component {
 
   handleSuccess = (updatedData = null) => {
     // Notify parent component about the update
-    if (this.props.onAttendanceUpdate && updatedData && this.state.attendance) {
-      this.props.onAttendanceUpdate({
-        ...updatedData,
-        attendanceId: this.state.attendance.attendanceId
-      });
+    if (this.props.onAttendanceUpdate && updatedData) {
+      this.props.onAttendanceUpdate(updatedData);
     }
 
     this.setState({
@@ -135,7 +137,6 @@ export class AttendanceModal extends React.Component {
 
   handleConfirmAndSubscribe = async (e) => {
     e.preventDefault();
-
     try{
       this.setState({ 
         isProcessingTrial: true,
@@ -145,33 +146,29 @@ export class AttendanceModal extends React.Component {
       });
 
       const request = {
+          statusReason: this.state.statusReason,
           comment: this.state.comment,
       }
-      const attendance = this.state.attendance;
+      const selectedSlotDetails = this.props.selectedSlotDetails;
       
-      await acceptTrial(attendance.attendanceId, request);
+      await acceptTrial(selectedSlotDetails.attendanceId, request);
 
       // Redirect to subscription form
       if (this.props.history) {
         this.props.history.push({
-          pathname: `/student/${attendance.student.studentId}/subscriptionForm`,
+          pathname: `/student/${selectedSlotDetails.student.studentId}/subscriptionForm`,
           state: {
-            studentId: attendance.student.studentId,
-            baseSubscription: {
-              subscriptionId: attendance.subscriptionId,
-              disciplineId: attendance.disciplineId,
-              teacher: attendance.teacher,
-              isTrial: attendance.isTrial,
-            },
+            studentId: selectedSlotDetails.student.studentId,
+            disciplineId: selectedSlotDetails.disciplineId,
+            teacher: {
+              teacherId: selectedSlotDetails.teacher.teacherId,
+              firstName: selectedSlotDetails.teacher.firstName
+            }
           }
         });
       }
 
-      this.handleSuccess({ 
-        status: AttendanceStatus.ATTENDED, 
-        comment: this.state.comment,
-        isCompleted: true 
-      });
+      this.handleSuccess({ status: 'accepted' });
 
     } catch(error){
       console.log("suda")
@@ -194,13 +191,8 @@ export class AttendanceModal extends React.Component {
         comment: this.state.comment,
       }
 
-      await declineTrial(this.state.attendance.attendanceId, request);
-      this.handleSuccess({ 
-        status: AttendanceStatus.MISSED, 
-        statusReason: this.state.statusReason,
-        comment: this.state.comment,
-        isCompleted: true 
-      });
+      await declineTrial(this.props.selectedSlotDetails.attendanceId, request);
+      this.handleSuccess({ status: 'declined' });
 
     } catch(error){
       this.handleError(ERROR_MESSAGES.DECLINE_TRIAL_FAILED, error);
@@ -222,13 +214,8 @@ export class AttendanceModal extends React.Component {
           comment: this.state.comment,
       }
 
-      await missedTrial(this.state.attendance.attendanceId, request);
-      this.handleSuccess({ 
-        status: AttendanceStatus.MISSED,
-        statusReason: this.state.statusReason,
-        comment: this.state.comment,
-        isCompleted: true 
-      });
+      await missedTrial(this.props.selectedSlotDetails.attendanceId, request);
+      this.handleSuccess({ status: 'missed' });
 
     } catch(error){
       this.handleError(ERROR_MESSAGES.MARK_MISSED_FAILED, error);
@@ -241,26 +228,20 @@ export class AttendanceModal extends React.Component {
     try{
       this.setState({ 
         isSaving: true,
-        currentAction: status === AttendanceStatus.ATTENDED 
-          ? REGULAR_ACTIONS.ATTENDED 
-          : REGULAR_ACTIONS.MISSED,
+        currentAction: status === AttendanceStatus.ATTENDED ? REGULAR_ACTIONS.ATTENDED : REGULAR_ACTIONS.MISSED,
         error: null,
         validationError: null,
       });
-      
-      const { attendance, comment } = this.state;
 
+      const attendanceId = this.props.selectedSlotDetails?.attendanceId;
       const submitRequest = {
         status: status,
-        comment: comment,
+        statusReason: this.state.statusReason,
+        comment: this.state.comment,
       };
-      await submit(attendance.attendanceId, submitRequest);
 
-      this.handleSuccess({ 
-        status: status, 
-        comment: comment,
-        isCompleted: true 
-      });
+      await submit(attendanceId, submitRequest);
+      this.handleSuccess({ ...submitRequest, status: status });
 
     } catch(error){
       this.handleError(ERROR_MESSAGES.UPDATE_STATUS_FAILED, error);
@@ -270,13 +251,11 @@ export class AttendanceModal extends React.Component {
   handleClose = () => {
     // Reset state when closing
     this.setState({
-      attendance: null,
       error: null,
       validationError: null,
       isSaving: false,
       isProcessingTrial: false,
       currentAction: null,
-      comment: "",
     });
 
     this.props.handleClose();
@@ -441,10 +420,12 @@ export class AttendanceModal extends React.Component {
     );
   };
 
+
+
   renderFooterButtons = () => {
     const { isSaving } = this.state;
-    const { isCompleted, isTrial, status } = this.props.attendance;
-console.log('renderFooterButtons', isCompleted, isTrial, status)
+    const { isCompleted, isTrial, status } = this.props.selectedSlotDetails;
+
     if (!isCompleted) {
       if (isCancelledAttendanceStatus(status)){
         return <Button variant="outline-primary" onClick={this.handleCancel}>Сохранить</Button>;
@@ -473,11 +454,11 @@ console.log('renderFooterButtons', isCompleted, isTrial, status)
 
   render() {
     
-    if (!this.props.show || !this.state.attendance) {
+    if (!this.props.show || !this.props.selectedSlotDetails) {
       return null;
     }
-
-    const { teacher, student, isTrial, disciplineId, status } = this.state.attendance;
+    console.log("ss", this.props.selectedSlotDetails);
+    const { teacher, student, isTrial, disciplineId, status } = this.props.selectedSlotDetails;
     const { comment } = this.state;
 
     return (
@@ -504,22 +485,19 @@ console.log('renderFooterButtons', isCompleted, isTrial, status)
                       <Link to={`/student/${student.studentId}`}>{student.firstName} {student.lastName}</Link>
                     </div>
                   </Container>
-                  <Container className="mt-1" style={{ fontSize: "14px", marginLeft: "60px" }}>
-                    <div className="d-flex mb-3 text-center">
+                  <Container className="mt-1 text-center" style={{ fontSize: "14px" }}>
+                    <div className="d-flex">
                       <div style={{ marginRight: "10px" }}>
                         <DisciplineIcon disciplineId={disciplineId} size="40px" />
                       </div>
-                      <Stack direction="vertical" gap={0} className="mb-2">
-                        <div style={{ fontWeight: "bold", fontSize: "18px" }}>{getDisciplineName(disciplineId)}</div>
+                      <Stack direction="vertical" gap={0} className="mb-2 text-start">
+                        <div style={{ fontWeight: "bold", fontSize: "16px" }}>{getDisciplineName(disciplineId)}</div>
                         <div>
                           <Link to={"/teacher/" + teacher.teacherId}>{teacher.firstName}</Link>
                         </div>
                       </Stack>
                     </div>
-                    <AttendanceDateAndRoom 
-                      {...this.props.attendance}
-                      attendance={this.props.attendance}
-                    />
+                    <AttendanceDateAndRoom {...this.props.selectedSlotDetails} />
                   </Container>
                 </div>
               </Row>
@@ -546,16 +524,3 @@ console.log('renderFooterButtons', isCompleted, isTrial, status)
     );
   }
 }
-
-AttendanceModal.propTypes = {
-  show: PropTypes.bool.isRequired,
-  attendance: PropTypes.object,
-  history: PropTypes.object,
-  handleClose: PropTypes.func.isRequired,
-  onAttendanceUpdate: PropTypes.func, // Callback when attendance is updated
-};
-
-AttendanceModal.defaultProps = {
-  attendance: null,
-  onAttendanceUpdate: null,
-};

@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { getDisciplineName } from "../../constants/disciplines";
+import { getDisciplineName } from "../../../constants/disciplines";
 import { DisciplineIcon } from "./DisciplineIcon";
 
 export const DisciplinePlate = ({ 

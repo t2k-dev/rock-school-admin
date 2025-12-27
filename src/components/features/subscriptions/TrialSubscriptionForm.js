@@ -3,7 +3,7 @@ import { Button, Col, Container, Form, InputGroup, Row } from "react-bootstrap";
 
 import { addTrialSubscription } from "../../../services/apiSubscriptionService";
 import { getAvailableTeachers } from "../../../services/apiTeacherService";
-import { DisciplineGridSelector } from "../../common/DisciplineGridSelector";
+import { DisciplineGridSelector } from "../../shared/discipline/DisciplineGridSelector";
 import { CalendarIcon } from "../../shared/icons/CalendarIcon";
 import { AvailableTeachersModal } from "../teachers/AvailableTeachersModal";
 

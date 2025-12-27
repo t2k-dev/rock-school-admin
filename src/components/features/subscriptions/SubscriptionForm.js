@@ -9,8 +9,8 @@ import { getStudent } from "../../../services/apiStudentService";
 import { addSubscription, getSubscription } from "../../../services/apiSubscriptionService";
 import { getAvailableTeachers, getTeacher, getWorkingPeriods } from "../../../services/apiTeacherService";
 import { calculateAge } from "../../../utils/dateTime";
-import { DisciplineGridSelector } from "../../common/DisciplineGridSelector";
-import { DisciplinePlate } from "../../common/DisciplinePlate";
+import { DisciplineGridSelector } from "../../shared/discipline/DisciplineGridSelector";
+import { DisciplinePlate } from "../../shared/discipline/DisciplinePlate";
 import { Loading } from "../../shared/Loading";
 import { ScheduleEditorWithDelete } from "../../shared/schedule/ScheduleEditorWithDelete";
 import { AddStudentModal } from "../students/AddStudentModal";
@@ -27,7 +27,7 @@ export class SubscriptionForm extends React.Component {
       studentId: this.props.match.params.id,
       student: null,
       students: [],
-      disciplineId: "",
+      disciplineId: null,
       teacherId: "",
       selectedTeachers: [],
       startDate: "",
@@ -73,7 +73,7 @@ export class SubscriptionForm extends React.Component {
 
         this.setState({
           students: students || [],
-          disciplineId: baseSubscription.disciplineId || "",
+          disciplineId: baseSubscription.disciplineId || null,
           attendanceCount: baseSubscription.isTrial ? null : baseSubscription.attendanceCount,
           attendanceLength: baseSubscription.attendanceLength || 0,
           selectedTeachers: [baseSubscription.teacher] || [],
@@ -117,7 +117,7 @@ export class SubscriptionForm extends React.Component {
     this.setState({
       student: student || {},
       students: students,
-      disciplineId: subscription.disciplineId || "",
+      disciplineId: subscription.disciplineId || null,
       teacherId: subscription.teacherId || "",
       startDate: subscription.startDate ? format(new Date(subscription.startDate), "dd.MM.yyyy") : "",
       attendanceCount: subscription.attendanceCount || "",

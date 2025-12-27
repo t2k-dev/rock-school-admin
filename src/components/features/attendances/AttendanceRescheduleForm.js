@@ -12,9 +12,9 @@ import { getNextAvailableSlot, rescheduleAttendance } from "../../../services/ap
 import { getWorkingPeriods } from "../../../services/apiTeacherService";
 
 import { getDisciplineName } from "../../../constants/disciplines";
-import { getSlotDescription } from "../../common/attendanceHelper";
+import { getSlotDescription } from "../../shared/slots/attendanceHelper";
 
-import { DisciplineIcon } from "../../common/DisciplineIcon";
+import { DisciplineIcon } from "../../shared/discipline/DisciplineIcon";
 import { CalendarIcon } from "../../shared/icons/CalendarIcon";
 
 export class AttendanceRescheduleForm extends React.Component {

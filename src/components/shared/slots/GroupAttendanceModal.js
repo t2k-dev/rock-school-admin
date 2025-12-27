@@ -3,7 +3,7 @@ import { Button, Container, Form, Modal, Row, Stack, Table } from "react-bootstr
 import { Link } from "react-router-dom";
 
 import { getDisciplineName } from "../../../constants/disciplines";
-import { DisciplineIcon } from "../../common/DisciplineIcon";
+import { DisciplineIcon } from "../discipline/DisciplineIcon";
 import { AttendanceDateAndRoom } from "./AttendanceDateAndRoom";
 import { AttendanceStatusBadge } from "./AttendanceStatusBadge";
 import ChildAttendanceRow from "./ChildAttendanceRow";

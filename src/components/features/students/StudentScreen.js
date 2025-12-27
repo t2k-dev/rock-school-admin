@@ -7,8 +7,8 @@ import { getDisciplineName } from "../../../constants/disciplines";
 import { getSubscriptionStatusName, getTrialSubscriptionStatusName } from "../../../constants/subscriptions";
 import SubscriptionStatus from "../../../constants/SubscriptionStatus";
 import { getStudentScreenDetails } from "../../../services/apiStudentService";
-import { DisciplineIcon } from "../../common/DisciplineIcon";
 import { CalendarWeek } from "../../shared/calendar/CalendarWeek";
+import { DisciplineIcon } from "../../shared/discipline/DisciplineIcon";
 import { Loading } from "../../shared/Loading";
 
 import { CoinsIcon } from "../../shared/icons/CoinsIcon";
@@ -103,6 +103,15 @@ class StudentScreen extends React.Component {
   handleEditSubscriptionClick = (subscription) => {
     this.props.history.push(`/subscription/${subscription.subscriptionId}/edit`);
   };
+
+  handleTrialSubscriptionClick = (subscription) => {
+    const selectedAttendance = this.state.attendances.find(a => a.subscriptionId === subscription.subscriptionId);
+
+    this.setState({
+      selectedAttendance: selectedAttendance,
+      showAttendanceDetailsModal: true
+    });
+  }
 
   handleViewSubscriptionAttendances = async (subscription) => {
     this.setState({
@@ -332,7 +341,10 @@ class StudentScreen extends React.Component {
     if (subscriptions && subscriptions.length > 0) {
       trialsTable = (
         subscriptions.map((item, index) => (
-          <tr key={index}>
+          <tr 
+            key={index}
+            onClick={() => this.handleTrialSubscriptionClick(item)}
+            >
             <td>{format(item.startDate, "yyyy-MM-dd")}</td>
             <td>
               <DisciplineIcon disciplineId={item.disciplineId} />
@@ -448,6 +460,7 @@ class StudentScreen extends React.Component {
                 show={showAttendanceDetailsModal}
                 handleClose={this.handleCloseModal}
                 onAttendanceUpdate={this.handleAttendanceUpdate}
+                history={this.props.history}
               />
             </Tab>
           </Tabs>

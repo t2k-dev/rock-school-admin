@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { Button, Col, Modal, Table } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
-import { DisciplineIcon } from '../../common/DisciplineIcon';
+import { DisciplineIcon } from '../discipline/DisciplineIcon';
 import { Loading } from '../Loading';
 import { AttendanceStatusBadge } from '../slots/AttendanceStatusBadge';
 

@@ -1,13 +1,13 @@
 import React from "react";
-import { BassGuitarIcon } from "../shared/icons/BassGuitarIcon";
-import { DrumsIcon } from "../shared/icons/DrumsIcon";
-import { ElectroGuitarIcon } from "../shared/icons/ElectroGuitarIcon";
-import { ExtremeVocalIcon } from "../shared/icons/ExtremeVocalIcon";
-import { GuitarIcon } from "../shared/icons/GuitarIcon";
-import { PianoIcon } from "../shared/icons/PianoIcon";
-import { UkuleleIcon } from "../shared/icons/UkuleleIcon";
-import { ViolaIcon } from "../shared/icons/ViolaIcon";
-import { VocalIcon } from "../shared/icons/VocalIcon";
+import { BassGuitarIcon } from "../icons/BassGuitarIcon";
+import { DrumsIcon } from "../icons/DrumsIcon";
+import { ElectroGuitarIcon } from "../icons/ElectroGuitarIcon";
+import { ExtremeVocalIcon } from "../icons/ExtremeVocalIcon";
+import { GuitarIcon } from "../icons/GuitarIcon";
+import { PianoIcon } from "../icons/PianoIcon";
+import { UkuleleIcon } from "../icons/UkuleleIcon";
+import { ViolaIcon } from "../icons/ViolaIcon";
+import { VocalIcon } from "../icons/VocalIcon";
 
 export class DisciplineIcon extends React.Component {
   constructor(props) {
