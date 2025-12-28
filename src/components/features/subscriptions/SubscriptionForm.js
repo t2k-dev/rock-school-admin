@@ -1,9 +1,6 @@
 import { format, getDay, parse } from "date-fns";
-import { ru } from "date-fns/locale";
 import React from "react";
 import { Button, Col, Container, Form, InputGroup, Row, Table } from "react-bootstrap";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 
 import { getStudent } from "../../../services/apiStudentService";
 import { addSubscription, getSubscription } from "../../../services/apiSubscriptionService";
@@ -30,7 +27,7 @@ export class SubscriptionForm extends React.Component {
       disciplineId: null,
       teacherId: "",
       selectedTeachers: [],
-      startDate: "",
+      startDate: format(new Date(), "dd.MM.yyyy"),
       attendanceCount: "",
       attendanceLength: 0,
       generatedSchedule: "",
@@ -56,8 +53,6 @@ export class SubscriptionForm extends React.Component {
   }
 
   async onFormLoad() {
-    console.log("this.props");
-    console.log(this.props.location.state);
 
     this.setState({ isLoading: true });
 
@@ -119,7 +114,7 @@ export class SubscriptionForm extends React.Component {
       students: students,
       disciplineId: subscription.disciplineId || null,
       teacherId: subscription.teacherId || "",
-      startDate: subscription.startDate ? format(new Date(subscription.startDate), "dd.MM.yyyy") : "",
+      startDate: subscription.startDate ? format(new Date(subscription.startDate), "dd.MM.yyyy") : format(new Date(), "dd.MM.yyyy"),
       attendanceCount: subscription.attendanceCount || "",
       attendanceLength: subscription.attendanceLength || 0,
       teacherId: subscription.teacherId || "",
@@ -234,6 +229,7 @@ export class SubscriptionForm extends React.Component {
   handleSave = async (e) => {
     e.preventDefault();
 
+    // Parse dd.MM.yyyy format to Date object for backend
     const startDate = parse(this.state.startDate, "dd.MM.yyyy", new Date());
 
     let studentIds = [];
@@ -323,6 +319,23 @@ export class SubscriptionForm extends React.Component {
             <h2 className="mb-4 text-center">{isNew ? "Новый абонемент" : "Редактировать абонемент"}</h2>
 
             <Form>
+
+              {/*Discipline*/}
+              {basedOnSubscriptionId != null ? (
+                <DisciplinePlate 
+                  disciplineId={disciplineId}
+                  label=""
+                  size="medium"
+                />
+              ) : (
+                <DisciplineGridSelector
+                  selectedDisciplineId={disciplineId}
+                  onDisciplineChange={this.handleDisciplineChange}
+                />
+              )}
+
+              {/*Students*/}
+              <div className="mb-3"><b>Ученики</b></div>
               <Form.Group className="mb-3" controlId="discipline">
                 {basedOnSubscriptionId != null 
                 ? <SubscriptionStudents
@@ -351,37 +364,21 @@ export class SubscriptionForm extends React.Component {
               </Form.Group>
               <hr></hr>
 
-              <div className="mb-3"><b>Направление</b></div>
-              {basedOnSubscriptionId != null ? (
-                <DisciplinePlate 
-                  disciplineId={disciplineId}
-                  label=""
-                  size="medium"
-                />
-              ) : (
-                <DisciplineGridSelector
-                  selectedDisciplineId={disciplineId}
-                  onDisciplineChange={this.handleDisciplineChange}
-                />
-              )}
-
-              <Form.Group>
+              <Form.Group className="mb-3">
                 <Form.Label>Дата начала</Form.Label>
-                <div style={{ display: "block" }}>
-                  <InputGroup className="mb-3 " controlId="startDate">
-                    <Form.Control
-                      as={DatePicker}
-                      value={startDate}
-                      locale={ru}
-                      selected={startDate ? parse(startDate, "dd.MM.yyyy", new Date()) : null}
-                      onChange={(date) => this.setState({ startDate: format(date, "dd.MM.yyyy") })}
-                      placeholderText="дд.мм.гггг"
-                    />
-                    <Button variant="outline-secondary" onClick={() => this.setState({ startDate: format(new Date(), "dd.MM.yyyy") })}>
-                      Сегодня
-                    </Button>
-                  </InputGroup>
-                </div>
+                <Form.Control
+                  type="date"
+                  name="startDate"
+                  value={startDate ? format(parse(startDate, "dd.MM.yyyy", new Date()), "yyyy-MM-dd") : ""}
+                  onChange={(e) => {
+                    if (e.target.value) {
+                      const date = new Date(e.target.value);
+                      this.setState({ startDate: format(date, "dd.MM.yyyy") });
+                    } else {
+                      this.setState({ startDate: "" });
+                    }
+                  }}
+                />
               </Form.Group>
 
               <Form.Group className="mb-3" controlId="Subscription">

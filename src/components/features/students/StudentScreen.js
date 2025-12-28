@@ -13,9 +13,9 @@ import { Loading } from "../../shared/Loading";
 
 import { CoinsIcon } from "../../shared/icons/CoinsIcon";
 import { NextIcon } from "../../shared/icons/NextIcon";
-import SubscriptionAttendancesModal from "../../shared/modals/SubscriptionAttendancesModal";
 import { AttendanceModal } from "../../shared/slots/AttendanceModal";
 import PaymentForm from "../payments/PaymentForm";
+import SubscriptionAttendancesModal from "../subscriptions/SubscriptionAttendancesModal";
 import StudentScreenCard from "./StudentScreenCard";
 
 class StudentScreen extends React.Component {
@@ -473,6 +473,7 @@ class StudentScreen extends React.Component {
             isLoading={this.state.isLoadingAttendances}
             onAttendanceClick={this.handleAttendanceClick}
             onEditSchedules={this.handleEditSubscriptionClick}
+            onPayClick={this.handlePayClick}
           />
 
           <PaymentForm

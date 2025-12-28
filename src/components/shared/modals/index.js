@@ -1,2 +1,3 @@
 // Shared Modals Exports
-export { default as SubscriptionAttendancesModal } from './SubscriptionAttendancesModal';
+export { default as SubscriptionAttendancesModal } from '../../features/subscriptions/SubscriptionAttendancesModal';
+

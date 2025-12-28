@@ -5,13 +5,14 @@ import { useState } from 'react';
 import { Button, Col, Modal, Table } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
-import { DisciplineIcon } from '../discipline/DisciplineIcon';
-import { Loading } from '../Loading';
-import { AttendanceStatusBadge } from '../slots/AttendanceStatusBadge';
+import { DisciplineIcon } from '../../shared/discipline/DisciplineIcon';
+import { CoinsIcon } from '../../shared/icons/CoinsIcon';
+import { Loading } from '../../shared/Loading';
+import { AttendanceStatusBadge } from '../../shared/slots/AttendanceStatusBadge';
 
 import { getDisciplineName } from '../../../constants/disciplines';
 import { getRoomName } from '../../../constants/rooms';
-import { CalendarIcon } from '../icons/CalendarIcon';
+import { CalendarIcon } from '../../shared/icons/CalendarIcon';
 
 const SubscriptionAttendancesModal = ({
   show,
@@ -20,7 +21,8 @@ const SubscriptionAttendancesModal = ({
   attendances = [],
   isLoading = false,
   onAttendanceClick,
-  onEditSchedules
+  onEditSchedules,
+  onPayClick
 }) => {
     const [showCompleted, setShowCompleted] = useState(true);
 
@@ -85,10 +87,7 @@ const SubscriptionAttendancesModal = ({
           </div>
           <div className="row mt-2">
             <div className="col-md-6">
-              <strong>Всего занятий:</strong> {subscription.attendanceCount}
-            </div>
-            <div className="col-md-6">
-              <strong>Осталось:</strong> {subscription.attendancesLeft}
+              <strong>Осталось занятий:</strong> {subscription.attendancesLeft} из {subscription.attendanceCount}
             </div>
           </div>
           <div className='row mt-2'>
@@ -96,6 +95,11 @@ const SubscriptionAttendancesModal = ({
             <Button variant="secondary" onClick={() => onEditSchedules && onEditSchedules(subscription)}>
                 <CalendarIcon color="white"/>
                 Редактировать расписание
+            </Button>
+
+            <Button style={{ marginLeft: '8px' }} variant="primary" onClick={() => onPayClick && onPayClick(subscription)}>
+                <CoinsIcon color="white" enableHover={false}/>
+                Оплатить
             </Button>
 
             </Col>
@@ -236,6 +240,7 @@ SubscriptionAttendancesModal.propTypes = {
   ),
   isLoading: PropTypes.bool,
   onAttendanceClick: PropTypes.func,
+  onPayClick: PropTypes.func,
 };
 
 export default SubscriptionAttendancesModal;

@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import { Alert, Button, Form, Modal } from 'react-bootstrap';
+import { getDisciplineName } from '../../../constants/disciplines';
 import { pay } from '../../../services/apiSubscriptionService';
 import DateTimeHelper from '../../../utils/DateTimeHelper';
 
@@ -114,9 +115,8 @@ const PaymentForm = ({
       <Modal.Body>
         {subscription && (
           <div className="mb-3 p-3 bg-light rounded">
-            <h6>Информация:</h6>
-            <p className="mb-1"><strong>Студент:</strong> {subscription.studentName}</p>
-            <p className="mb-1"><strong>Дисциплина:</strong> {subscription.disciplineName}</p>
+            <p className="mb-1"><strong>Студент:</strong> {subscription.student.firstName} {subscription.student.lastName}</p>
+            <p className="mb-1"><strong>Дисциплина:</strong> {getDisciplineName(subscription.disciplineId)}</p>
             <p className="mb-0"><strong>Сумма:</strong> {subscription.amount} тг.</p>
           </div>
         )}
