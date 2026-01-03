@@ -1,17 +1,17 @@
-import { format, getDay, parse } from "date-fns";
+import { format, getDay } from "date-fns";
 import React from "react";
 import { Button, Col, Container, Form, InputGroup, Row, Table } from "react-bootstrap";
 
 import { getStudent } from "../../../services/apiStudentService";
-import { addSubscription, getSubscription } from "../../../services/apiSubscriptionService";
-import { getAvailableTeachers, getTeacher, getWorkingPeriods } from "../../../services/apiTeacherService";
+import { addSubscription } from "../../../services/apiSubscriptionService";
+import { getAvailableTeachers, getWorkingPeriods } from "../../../services/apiTeacherService";
 import { calculateAge } from "../../../utils/dateTime";
 import { DisciplineGridSelector } from "../../shared/discipline/DisciplineGridSelector";
 import { DisciplinePlate } from "../../shared/discipline/DisciplinePlate";
 import { Loading } from "../../shared/Loading";
+import { AvailableTeachersModal } from "../../shared/modals/AvailableTeachersModal";
 import { ScheduleEditorWithDelete } from "../../shared/schedule/ScheduleEditorWithDelete";
 import { AddStudentModal } from "../students/AddStudentModal";
-import { AvailableTeachersModal } from "../teachers/AvailableTeachersModal";
 import { SubscriptionStudents } from "./SubscriptionStudents";
 
 export class SubscriptionForm extends React.Component {
@@ -20,21 +20,23 @@ export class SubscriptionForm extends React.Component {
 
     this.state = {
       isNew: props.type === "New",
-      isLoading: false,
+      basedOnSubscriptionId: null,
       studentId: this.props.match.params.id,
       student: null,
       students: [],
+
       disciplineId: null,
       teacherId: "",
       selectedTeachers: [],
-      startDate: format(new Date(), "dd.MM.yyyy"),
+      availableTeachers: [],
+
+      startDate: format(new Date(), "yyyy-MM-dd"),
       attendanceCount: "",
       attendanceLength: 0,
-      generatedSchedule: "",
-      availableTeachers: [],
-      schedules: [],
-      basedOnSubscriptionId: null,
 
+      schedules: [],
+      
+      isLoading: false,
       showAvailableTeacherModal: false,
       showAddStudentModal: false,
     };
@@ -59,7 +61,7 @@ export class SubscriptionForm extends React.Component {
     // New
     if (this.state.isNew) {
     
-        // Based on prev subscription
+      // Based on prev subscription
       if (this.props.location.state && this.props.location.state.baseSubscription) {
         const baseSubscription = this.props.location.state.baseSubscription;
 
@@ -72,6 +74,7 @@ export class SubscriptionForm extends React.Component {
           attendanceCount: baseSubscription.isTrial ? null : baseSubscription.attendanceCount,
           attendanceLength: baseSubscription.attendanceLength || 0,
           selectedTeachers: [baseSubscription.teacher] || [],
+          teacher: baseSubscription.teacher || null,
           teacherId: baseSubscription.teacher.teacherId || "",
           schedules: baseSubscription.schedules || [],
           basedOnSubscriptionId: baseSubscription.subscriptionId || null,
@@ -93,35 +96,7 @@ export class SubscriptionForm extends React.Component {
       return;
     }
 
-
-    
     // Edit
-    const id = this.props.match.params.id;
-    const subscription = await getSubscription(id);
-    
-    const student = await getStudent(subscription.studentId);
-    let students = [];
-    if (student != null) 
-      students.push(student);
-
-    const teacher = await getTeacher(subscription.teacherId);
-    let teachers = [];
-    if (teacher != null) 
-      teachers.push(teacher);
-
-    this.setState({
-      student: student || {},
-      students: students,
-      disciplineId: subscription.disciplineId || null,
-      teacherId: subscription.teacherId || "",
-      startDate: subscription.startDate ? format(new Date(subscription.startDate), "dd.MM.yyyy") : format(new Date(), "dd.MM.yyyy"),
-      attendanceCount: subscription.attendanceCount || "",
-      attendanceLength: subscription.attendanceLength || 0,
-      teacherId: subscription.teacherId || "",
-      availableTeachers: teachers,
-      schedules: subscription.schedules || [],
-      });
-    console.log("onFormLoad done");
   }
 
   // AddStudentModal
@@ -146,12 +121,12 @@ export class SubscriptionForm extends React.Component {
   // AvailableTeachersModal
   showAvailableTeachersModal = async (e) => {
     e.preventDefault();
-    
+
     let teachers;
     if (this.state.teacher) {
       // TODO: refactor for non array
       const response = await getWorkingPeriods(this.state.teacher.teacherId);
-      teachers = response.data.availableTeachers;
+      teachers = response.data?.teacher ? [response.data.teacher] : [];
     } else {
       // TODO: branchId
       const sortedStudents = this.sortStudentsByBirthDate(this.state.students);
@@ -229,8 +204,8 @@ export class SubscriptionForm extends React.Component {
   handleSave = async (e) => {
     e.preventDefault();
 
-    // Parse dd.MM.yyyy format to Date object for backend
-    const startDate = parse(this.state.startDate, "dd.MM.yyyy", new Date());
+    // Parse yyyy-MM-dd format to Date object for backend
+    const startDate = new Date(this.state.startDate);
 
     let studentIds = [];
     this.state.students.forEach((student) => {
@@ -262,7 +237,6 @@ export class SubscriptionForm extends React.Component {
       disciplineId,
       students,
       teacherId,
-      availableSlots,
       basedOnSubscriptionId,
       attendanceCount,
       attendanceLength,
@@ -335,7 +309,6 @@ export class SubscriptionForm extends React.Component {
               )}
 
               {/*Students*/}
-              <div className="mb-3"><b>Ученики</b></div>
               <Form.Group className="mb-3" controlId="discipline">
                 {basedOnSubscriptionId != null 
                 ? <SubscriptionStudents
@@ -369,15 +342,8 @@ export class SubscriptionForm extends React.Component {
                 <Form.Control
                   type="date"
                   name="startDate"
-                  value={startDate ? format(parse(startDate, "dd.MM.yyyy", new Date()), "yyyy-MM-dd") : ""}
-                  onChange={(e) => {
-                    if (e.target.value) {
-                      const date = new Date(e.target.value);
-                      this.setState({ startDate: format(date, "dd.MM.yyyy") });
-                    } else {
-                      this.setState({ startDate: "" });
-                    }
-                  }}
+                  value={startDate || ""}
+                  onChange={(e) => this.setState({ startDate: e.target.value })}
                 />
               </Form.Group>
 
@@ -404,7 +370,7 @@ export class SubscriptionForm extends React.Component {
               <hr></hr>
 
               <b>Преподаватель</b>
-              <InputGroup className="mb-3 mt-4 text-center" controlId="GenerteSchedule">
+              <InputGroup className="mb-3 mt-4 text-center">
                 <Form.Select
                   aria-label="Веберите..."
                   value={teacherId}
@@ -423,9 +389,10 @@ export class SubscriptionForm extends React.Component {
                   Доступные окна...
                 </Button>
               </InputGroup>
+
               <AvailableTeachersModal
                 show={showAvailableTeacherModal}
-                availableTeachers={availableTeachers}
+                teachers={availableTeachers}
                 onSlotsChange={this.updateAvailableSlots}
                 onClose={this.handleCloseAvailableTeachersModal}
               />

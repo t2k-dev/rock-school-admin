@@ -6,13 +6,13 @@ import React from "react";
 import { Button, Col, Container, Form, InputGroup, Row, Stack } from "react-bootstrap";
 
 import { Avatar } from "../../shared/Avatar";
-import { AvailableTeachersModal } from "../teachers/AvailableTeachersModal";
+import { AvailableTeachersModal } from "../../shared/modals/AvailableTeachersModal";
 
 import { getNextAvailableSlot, rescheduleAttendance } from "../../../services/apiSubscriptionService";
 import { getWorkingPeriods } from "../../../services/apiTeacherService";
 
 import { getDisciplineName } from "../../../constants/disciplines";
-import { getSlotDescription } from "../../shared/slots/attendanceHelper";
+import { getSlotDescription } from "../../shared/modals/attendanceHelper";
 
 import { DisciplineIcon } from "../../shared/discipline/DisciplineIcon";
 import { CalendarIcon } from "../../shared/icons/CalendarIcon";
@@ -200,7 +200,7 @@ export class AttendanceRescheduleForm extends React.Component {
               <AvailableTeachersModal
                 show={showAvailableTeacherModal}
                 singleSelection={true}
-                availableTeachers={availableTeachers}
+                teachers={availableTeachers}
                 onSlotsChange={this.updateAvailableSlots}
                 onClose={this.handleCloseAvailableTeachersModal}
               />

@@ -3,8 +3,8 @@ import { Badge, Button, Form, Modal } from "react-bootstrap";
 import { v4 as uuidv4 } from "uuid";
 
 import { formatDate, formatTime } from "../../../utils/dateTime";
-import { CalendarWeek } from "../../shared/calendar/CalendarWeek";
-import { CopyIcon } from "../../shared/icons/CopyIcon";
+import { CalendarWeek } from "../calendar/CalendarWeek";
+import { CopyIcon } from "../icons/CopyIcon";
 
 
 export class AvailableTeachersModal extends React.Component {
@@ -26,7 +26,7 @@ export class AvailableTeachersModal extends React.Component {
       this.resetState();
     }
 
-    if (prevProps.availableTeachers !== this.props.availableTeachers) {
+    if (prevProps.teachers !== this.props.teachers) {
       this.resetState();
     }
   }
@@ -35,7 +35,7 @@ export class AvailableTeachersModal extends React.Component {
   resetState = () => {
     const initialSlots = this.props.initialSlots || [];
     this.setState({
-      teachers: this.props.availableTeachers || [],
+      teachers: this.props.teachers || [],
       availableSlots: initialSlots,
       selectedSlotsText: this.generateSelectedSlotsText(initialSlots),
       copySuccess: "",
@@ -376,7 +376,7 @@ export class AvailableTeachersModal extends React.Component {
 
         <Modal.Footer>
           <Button variant="secondary" onClick={this.handleCloseModal}>
-            Закрыть
+            Продолжить
           </Button>
         </Modal.Footer>
       </Modal>

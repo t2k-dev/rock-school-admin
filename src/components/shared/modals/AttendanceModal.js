@@ -379,7 +379,7 @@ export class AttendanceModal extends React.Component {
               Обработка...
             </>
           ) : (
-            'Отказаться'
+            'Отказался'
           )}
         </Button>
         
@@ -395,7 +395,7 @@ export class AttendanceModal extends React.Component {
               Оформление...
             </>
           ) : (
-            'Оформить абонемент'
+            'Решил продолжить'
           )}
         </Button>
       </>
@@ -444,7 +444,7 @@ export class AttendanceModal extends React.Component {
   renderFooterButtons = () => {
     const { isSaving } = this.state;
     const { isCompleted, isTrial, status } = this.props.attendance;
-console.log('renderFooterButtons', isCompleted, isTrial, status)
+
     if (!isCompleted) {
       if (isCancelledAttendanceStatus(status)){
         return <Button variant="outline-primary" onClick={this.handleCancel}>Сохранить</Button>;
@@ -489,7 +489,7 @@ console.log('renderFooterButtons', isCompleted, isTrial, status)
               <span style={{ marginLeft: "10px", fontSize: "16px" }}>
                 <AttendanceStatusBadge 
                   status={status}
-                  style={{ fontSize: "14px" }}
+                  style={{ fontSize: "14px", transform: "translateY(-2px)", display: "inline-block" }}
                 />
               </span>
             </Modal.Title>

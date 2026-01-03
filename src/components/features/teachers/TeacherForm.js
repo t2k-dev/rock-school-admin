@@ -72,6 +72,7 @@ class TeacherForm extends React.Component {
         ageLimit: teacher.ageLimit,
         allowGroupLessons: teacher.allowGroupLessons,
         branchId: teacher.branchId,
+        isActive: teacher.isActive,
       },
       workingPeriods: teacher.workingPeriods,
     });
@@ -187,9 +188,6 @@ class TeacherForm extends React.Component {
   };
 
   handleSave = async (e) => {
-    console.log("handleSave");
-    console.log(this.state);
-
     e.preventDefault();
 
     const requestBody = {

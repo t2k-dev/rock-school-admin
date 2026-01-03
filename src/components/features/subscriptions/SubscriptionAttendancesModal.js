@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 import { DisciplineIcon } from '../../shared/discipline/DisciplineIcon';
 import { CoinsIcon } from '../../shared/icons/CoinsIcon';
 import { Loading } from '../../shared/Loading';
-import { AttendanceStatusBadge } from '../../shared/slots/AttendanceStatusBadge';
+import { AttendanceStatusBadge } from '../../shared/modals/AttendanceStatusBadge';
 
 import { getDisciplineName } from '../../../constants/disciplines';
 import { getRoomName } from '../../../constants/rooms';

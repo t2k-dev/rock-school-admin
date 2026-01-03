@@ -13,7 +13,11 @@ const localizer = momentLocalizer(moment);
 const EventComponent = ({ event }) => {
   return (
     <div style={{ display: "flex", alignItems: "center", marginTop:"5px", marginLeft:"5px" }}>
-      {event.disciplineId && <DisciplineIcon disciplineId={event.disciplineId} color="white"/>}
+      {event.disciplineId && 
+        <DisciplineIcon 
+          disciplineId={event.disciplineId} 
+          color={event.isTrial ? "black" : "white"}
+        />}
       <span style={{marginLeft:"10px"}}>{event.title}</span> 
       
     </div>

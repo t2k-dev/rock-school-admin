@@ -1,21 +1,21 @@
 import { format } from "date-fns";
 import React from "react";
-import { Container, Form, Row, Tab, Table, Tabs } from "react-bootstrap";
+import { Badge, Container, Form, Row, Tab, Table, Tabs } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 import { getDisciplineName } from "../../../constants/disciplines";
+import MyDateFormat from "../../../constants/formats";
 import { getSubscriptionStatusName, getTrialSubscriptionStatusName } from "../../../constants/subscriptions";
 import SubscriptionStatus from "../../../constants/SubscriptionStatus";
 import { getStudentScreenDetails } from "../../../services/apiStudentService";
 import { CalendarWeek } from "../../shared/calendar/CalendarWeek";
 import { DisciplineIcon } from "../../shared/discipline/DisciplineIcon";
-import { Loading } from "../../shared/Loading";
-
 import { CoinsIcon } from "../../shared/icons/CoinsIcon";
 import { NextIcon } from "../../shared/icons/NextIcon";
-import { AttendanceModal } from "../../shared/slots/AttendanceModal";
+import { Loading } from "../../shared/Loading";
+import { AttendanceModal } from "../../shared/modals/AttendanceModal";
+import { NoRecords } from "../../shared/NoRecords";
 import PaymentForm from "../payments/PaymentForm";
-import SubscriptionAttendancesModal from "../subscriptions/SubscriptionAttendancesModal";
 import StudentScreenCard from "./StudentScreenCard";
 
 class StudentScreen extends React.Component {
@@ -31,16 +31,9 @@ class StudentScreen extends React.Component {
 
       showCompleted: false,
 
-
       // Attendance Details
-      showAttendanceDetailsModal: false,
+      showAttendanceModal: false,
       selectedAttendance: null,
-      
-      // Subscription Attendances Modal
-      showSubscriptionAttendancesModal: false,
-      selectedSubscription: null,
-      subscriptionAttendances: [],
-      isLoadingAttendances: false,
 
       // Payment Modal
       showPaymentModal: false,
@@ -88,14 +81,13 @@ class StudentScreen extends React.Component {
   };
 
   handleSelectEvent = (slotInfo) => {
-    console.log(slotInfo);
     const newSelectedAttendance = this.state.attendances.filter((a) => a.attendanceId === slotInfo.id)[0];
-    this.setState({ showAttendanceDetailsModal: true, selectedAttendance: newSelectedAttendance });
+    this.setState({ showAttendanceModal: true, selectedAttendance: newSelectedAttendance });
   };
 
   handleCloseModal = () => {
     this.setState({ 
-      showAttendanceDetailsModal: false,
+      showAttendanceModal: false,
       selectedAttendance: null
     });
   };
@@ -109,46 +101,20 @@ class StudentScreen extends React.Component {
 
     this.setState({
       selectedAttendance: selectedAttendance,
-      showAttendanceDetailsModal: true
+      showAttendanceModal: true
     });
   }
 
   handleViewSubscriptionAttendances = async (subscription) => {
-    this.setState({
-      showSubscriptionAttendancesModal: true,
-      selectedSubscription: subscription,
-      isLoadingAttendances: true,
-      subscriptionAttendances: []
-    });
-
-    try {
-      // You'll need to implement this API call
-      // const attendances = await getSubscriptionAttendances(subscription.subscriptionId);
-      
-      // For now, filter from existing attendances (you can improve this later)
-      const filteredAttendances = this.state.attendances?.filter(
-        attendance => attendance.subscriptionId === subscription.subscriptionId
-      ) || [];
-      
-      this.setState({
-        subscriptionAttendances: filteredAttendances,
-        isLoadingAttendances: false
-      });
-    } catch (error) {
-      console.error('Failed to load subscription attendances:', error);
-      this.setState({
-        isLoadingAttendances: false,
-        subscriptionAttendances: []
-      });
-    }
-  };
-
-  handleCloseSubscriptionAttendancesModal = () => {
-    this.setState({
-      showSubscriptionAttendancesModal: false,
-      selectedSubscription: null,
-      subscriptionAttendances: [],
-      isLoadingAttendances: false
+    // Navigate to the subscription attendances page
+    this.props.history.push({
+      pathname: `/subscription/${subscription.subscriptionId}/attendances`,
+      state: {
+        subscription: subscription,
+        attendances: this.state.attendances?.filter(
+          attendance => attendance.subscriptionId === subscription.subscriptionId
+        ) || []
+      }
     });
   };
 
@@ -156,7 +122,7 @@ class StudentScreen extends React.Component {
     // Open the attendance modal when clicking on an attendance in the list
     this.setState({
       selectedAttendance: attendance,
-      showAttendanceDetailsModal: true
+      showAttendanceModal: true
     });
   };
 
@@ -170,13 +136,6 @@ class StudentScreen extends React.Component {
           ? { ...attendance, ...updatedData }
           : attendance
       ) || [],
-      
-      // Update subscription attendances if they're currently displayed
-      subscriptionAttendances: prevState.subscriptionAttendances.map(attendance => 
-        attendance.attendanceId === attendanceId 
-          ? { ...attendance, ...updatedData }
-          : attendance
-      ),
       
       // Update selected attendance if it matches
       selectedAttendance: prevState.selectedAttendance?.attendanceId === attendanceId
@@ -214,20 +173,18 @@ class StudentScreen extends React.Component {
     this.setState({ isLoadingPayment: true });
     
     try {
-      // TODO: Add API call to submit payment
       console.log('Payment data:', paymentData);
       
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // For now, just log the payment data
-      // In the future, this would call an API service:
-      // await ApiPaymentService.createPayment(paymentData);
-      
-      // Optionally reload student data to reflect payment
-      // await this.loadStudentData();
-      
-      alert('Платеж успешно обработан!');
+      // If payment was successful, update the subscription status to Active
+      if (paymentData.success && paymentData.subscriptionId) {
+        this.setState(prevState => ({
+          subscriptions: prevState.subscriptions.map(subscription => 
+            subscription.subscriptionId === paymentData.subscriptionId
+              ? { ...subscription, status: SubscriptionStatus.ACTIVE }
+              : subscription
+          )
+        }));
+      }
     } catch (error) {
       console.error('Payment submission error:', error);
       throw error;
@@ -238,85 +195,73 @@ class StudentScreen extends React.Component {
 
   // Render Methods
   renderSubscriptionsTable(subscriptions) {
-    let subscriptionsTable;
 
     if (subscriptions && subscriptions.length > 0) {
-      subscriptionsTable = (
-        subscriptions.map((item, index) => (
-          <tr 
-            key={index}
-            onClick={() => this.handleViewSubscriptionAttendances(item)}
-            style={{ 
-              cursor: 'pointer',
-              transition: 'background-color 0.2s'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#f8f9fa';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = '';
-            }}
-          >
-            <td style={{width: "120px"}}>{format(item.startDate, "yyyy-MM-dd")}</td>
-            <td>
-              <DisciplineIcon disciplineId={item.disciplineId} />
-              <span style={{ marginLeft: "10px" }}>{getDisciplineName(item.disciplineId)}</span>
-            </td>
-            <td>
-              <Link 
-                to={`/teacher/${item.teacher.teacherId}`}
-                onClick={(e) => e.stopPropagation()}
-              >
-                {item.teacher.firstName} {item.teacher.lastName}
-              </Link>
-            </td>
-            <td>{item.attendancesLeft} из {item.attendanceCount}</td>
-            <td>{getSubscriptionStatusName(item.status)}</td>
-            <td>
-              <div className="d-flex gap-2" onClick={(e) => e.stopPropagation()}>
-                {item.status === SubscriptionStatus.DRAFT && (
-                  <CoinsIcon
-                    size="20px"
-                    title="Оплатить"
-                    onIconClick={() => this.handlePayClick(item)}
-                  />
-                )}
-                <NextIcon
-                  size="20px"
-                  title="Продлить"
-                  onIconClick={() => this.handleResubscribeClick(item)}
-                />
-              </div>
-            </td>
-          </tr>
-        ))
-      );
-    } else {
-      subscriptionsTable = (
-          <tr key={1}>
-            <td colSpan="6" style={{ textAlign: "center" }}>
-              Нет записей
-            </td>
-          </tr>
-      );
-    }
-
-    return (
-      <>
-        <Table striped bordered hover>
+      return (
+        <>
+          <Table striped bordered hover>
             <thead>
               <tr>
-                <th>Дата начала</th>
-                <th>Направление</th>
+                <th className="date-column">Дата начала</th>
+                <th className="discipline-column">Направление</th>
                 <th>Преподаватель</th>
                 <th>Занятий осталось</th>
                 <th>Статус</th>
                 <th style={{ width: "50px" }}></th>
               </tr>
             </thead>
-            <tbody>
-              {subscriptionsTable}
-            </tbody>
+            <tbody>{
+              subscriptions.map((item, index) => (
+              <tr 
+                key={index}
+                onClick={() => this.handleViewSubscriptionAttendances(item)}
+                style={{ 
+                  cursor: 'pointer',
+                  transition: 'background-color 0.2s'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = '#f8f9fa';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = '';
+                }}
+              >
+                <td>{format(item.startDate, MyDateFormat)}</td>
+                <td>
+                  <DisciplineIcon disciplineId={item.disciplineId} />
+                  <span style={{ marginLeft: "10px" }}>{getDisciplineName(item.disciplineId)}</span>
+                </td>
+                <td>
+                  <Link 
+                    to={`/teacher/${item.teacher.teacherId}`}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {item.teacher.firstName} {item.teacher.lastName}
+                  </Link>
+                </td>
+                <td>{item.attendancesLeft} из {item.attendanceCount}</td>
+                <td>{getSubscriptionStatusName(item.status)}</td>
+                <td>
+                  <div className="d-flex gap-2" onClick={(e) => e.stopPropagation()}>
+                    {item.status === SubscriptionStatus.DRAFT && (
+                      <CoinsIcon
+                        size="20px"
+                        title="Оплатить"
+                        onIconClick={() => this.handlePayClick(item)}
+                      />
+                    )}
+                    {item.status === SubscriptionStatus.COMPLETED || item.status === SubscriptionStatus.ACTIVE && 
+                    <NextIcon
+                      size="20px"
+                      title="Продлить"
+                      onIconClick={() => this.handleResubscribeClick(item)}
+                    />
+                    }
+                  </div>
+                </td>
+              </tr>
+              ))}
+          </tbody>
         </Table>
         <div className="d-flex mt-2">
           <div className="flex-grow-1"></div>
@@ -328,71 +273,68 @@ class StudentScreen extends React.Component {
             onChange={(e) => {
               this.setState({ showCompleted: e.target.checked });
             }}
-            className=""
           />
         </div>
-      </>
-    )
+      </>);
+    }
+
+    return (
+      <NoRecords/>
+    );
   }
 
   renderTrialsTable(subscriptions) {
-    let trialsTable;
 
     if (subscriptions && subscriptions.length > 0) {
-      trialsTable = (
-        subscriptions.map((item, index) => (
-          <tr 
-            key={index}
-            onClick={() => this.handleTrialSubscriptionClick(item)}
-            >
-            <td>{format(item.startDate, "yyyy-MM-dd")}</td>
-            <td>
-              <DisciplineIcon disciplineId={item.disciplineId} />
-              <span style={{ marginLeft: "10px" }}>{getDisciplineName(item.disciplineId)}</span>
-            </td>
-            <td>
-              <Link to={`/teacher/${item.teacher.teacherId}`}>
-                {item.teacher.firstName} {item.teacher.lastName}
-              </Link>
-            </td>
-            <td>{getTrialSubscriptionStatusName(item.trialStatus)}</td>
-            <td>
-                <NextIcon 
-                  size="20px"
-                  onIconClick={() => this.handleResubscribeClick(item)}
-                />
-
-            </td>
-          </tr>
-      )));
-    } else {
-      trialsTable = (
-          <tr key={1}>
-            <td colSpan="4" style={{ textAlign: "center" }}>
-              Нет записей
-            </td>
-          </tr>
-      );
-    }
-
-    return(
-      <Table striped bordered hover>
+      return (
+        <Table striped bordered hover>
           <thead>
             <tr>
-              <th style={{ width: "100px" }}>Дата</th>
-              <th>Направление</th>
+              <th className="date-column">Дата</th>
+              <th className="discipline-column">Направление</th>
               <th>Преподаватель</th>
               <th>Результат</th>
               <th style={{ width: "50px" }}></th>
             </tr>
           </thead>
-          <tbody>{trialsTable}</tbody>
-      </Table>
-    )
+          <tbody>
+            {subscriptions.map((item, index) => (
+            <tr 
+              key={index}
+              onClick={() => this.handleTrialSubscriptionClick(item)}
+              >
+              <td>{format(item.startDate, MyDateFormat)}</td>
+              <td>
+                <DisciplineIcon disciplineId={item.disciplineId} />
+                <span style={{ marginLeft: "10px" }}>{getDisciplineName(item.disciplineId)}</span>
+              </td>
+              <td>
+                <Link to={`/teacher/${item.teacher.teacherId}`}>
+                  {item.teacher.firstName} {item.teacher.lastName}
+                </Link>
+              </td>
+              <td><Badge className="bg-secondary">{getTrialSubscriptionStatusName(item.trialStatus)}</Badge></td>
+              <td>
+                  <NextIcon 
+                    size="20px"
+                    onIconClick={() => this.handleResubscribeClick(item)}
+                  />
+              </td>
+            </tr>
+            ))}
+          </tbody>
+        </Table>
+      );
+    } 
+    
+    return (
+      <NoRecords/>
+    );
   }
 
+
   render() {
-    const { isLoading, student, subscriptions, showCompleted, attendances, selectedAttendance, showAttendanceDetailsModal } = this.state;
+    const { isLoading, student, subscriptions, showCompleted, attendances, selectedAttendance, showAttendanceModal } = this.state;
     
     if (isLoading) {
       return <Loading
@@ -420,7 +362,7 @@ class StudentScreen extends React.Component {
     if (attendances) {
       events = attendances.map((attendance) => ({
         id: attendance.attendanceId,
-        title: attendance.isTrial ? "Пробное занятие" : "Занятие",
+        title: attendance.isTrial ? "Пробное" : "Занятие",
         start: new Date(attendance.startDate),
         end: new Date(attendance.endDate),
         resourceId: attendance.roomId,
@@ -445,36 +387,23 @@ class StudentScreen extends React.Component {
                 {this.renderTrialsTable(trialSubscriptions)}  
 
                 <h3>Репетиции</h3>
-                  Нет записей
+                  <NoRecords/>
 
             </Tab>
             <Tab eventKey="calendar" title="Календарь">
               <CalendarWeek
                 events={events}
-                onSelectEvent={(slotInfo) => {
-                  this.handleSelectEvent(slotInfo);
-                }}
+                onSelectEvent={(slotInfo) => {this.handleSelectEvent(slotInfo);}}
               />
               <AttendanceModal
                 attendance={selectedAttendance}
-                show={showAttendanceDetailsModal}
+                show={showAttendanceModal}
                 handleClose={this.handleCloseModal}
                 onAttendanceUpdate={this.handleAttendanceUpdate}
                 history={this.props.history}
               />
             </Tab>
           </Tabs>
-
-          <SubscriptionAttendancesModal
-            show={this.state.showSubscriptionAttendancesModal}
-            onHide={this.handleCloseSubscriptionAttendancesModal}
-            subscription={this.state.selectedSubscription}
-            attendances={this.state.subscriptionAttendances}
-            isLoading={this.state.isLoadingAttendances}
-            onAttendanceClick={this.handleAttendanceClick}
-            onEditSchedules={this.handleEditSubscriptionClick}
-            onPayClick={this.handlePayClick}
-          />
 
           <PaymentForm
             show={this.state.showPaymentModal}

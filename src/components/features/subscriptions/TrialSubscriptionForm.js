@@ -5,7 +5,7 @@ import { addTrialSubscription } from "../../../services/apiSubscriptionService";
 import { getAvailableTeachers } from "../../../services/apiTeacherService";
 import { DisciplineGridSelector } from "../../shared/discipline/DisciplineGridSelector";
 import { CalendarIcon } from "../../shared/icons/CalendarIcon";
-import { AvailableTeachersModal } from "../teachers/AvailableTeachersModal";
+import { AvailableTeachersModal } from "../../shared/modals/AvailableTeachersModal";
 
 export class TrialSubscriptionForm extends React.Component {
   constructor(props) {
@@ -45,7 +45,7 @@ export class TrialSubscriptionForm extends React.Component {
   };
 
   updateAvailableSlots = (availableSlots) => {
-    this.setState({ availableSlots: availableSlots });
+    this.setState({ availableSlots: availableSlots, selectedSlotId: availableSlots[0]?.id });
   };
 
   handleChange = (e) => {
@@ -130,9 +130,10 @@ export class TrialSubscriptionForm extends React.Component {
                 <Button variant="outline-secondary" type="null" onClick={(e) => this.generateAvailablePeriods(e)} disabled={false}>
                   Доступыне окна...
                 </Button>
+
                 <AvailableTeachersModal
                   show={showAvailableTeacherModal}
-                  availableTeachers={availableTeachers}
+                  teachers={availableTeachers}
                   onSlotsChange={this.updateAvailableSlots}
                   onClose={this.handleCloseAvailableTeachersModal}
                 />

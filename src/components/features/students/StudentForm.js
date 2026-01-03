@@ -4,11 +4,25 @@ import React from "react";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import InputMask from "react-input-mask";
 
 import { addStudent, getStudent, saveStudent } from "../../../services/apiStudentService";
 import { calculateDateFromAge } from "../../../utils/dateTime";
 import { SexControl } from "../../shared/SexControl";
+
+// Phone formatting helper
+const formatPhoneNumber = (value) => {
+  if (!value) return value;
+  
+  // Remove all non-digits
+  const phoneNumber = value.replace(/[^\d]/g, '');
+  
+  // Apply formatting: +7 XXX XXX XX XX
+  if (phoneNumber.length <= 1) return phoneNumber;
+  if (phoneNumber.length <= 4) return `+7 ${phoneNumber.slice(1)}`;
+  if (phoneNumber.length <= 7) return `+7 ${phoneNumber.slice(1, 4)} ${phoneNumber.slice(4)}`;
+  if (phoneNumber.length <= 9) return `+7 ${phoneNumber.slice(1, 4)} ${phoneNumber.slice(4, 7)} ${phoneNumber.slice(7)}`;
+  return `+7 ${phoneNumber.slice(1, 4)} ${phoneNumber.slice(4, 7)} ${phoneNumber.slice(7, 9)} ${phoneNumber.slice(9, 11)}`;
+};
 
 class StudentForm extends React.Component {
   constructor(props) {
@@ -46,7 +60,7 @@ class StudentForm extends React.Component {
       firstName: student.firstName,
       lastName: student.lastName,
       birthDate: student.birthDate,
-      phone: "7" + student.phone,
+      phone: formatPhoneNumber("7" + student.phone),
       age: 0,
       sex: student.sex,
       level: student.level,
@@ -100,6 +114,12 @@ class StudentForm extends React.Component {
   handleChange = (e) => {
     const { id, value } = e.target;
     this.setState({ [id]: value });
+  };
+
+  handlePhoneChange = (e) => {
+    const { value } = e.target;
+    const formattedPhone = formatPhoneNumber(value);
+    this.setState({ phone: formattedPhone });
   };
 
   handleAgeChange = (e) => {
@@ -173,20 +193,19 @@ class StudentForm extends React.Component {
               )}
               <SexControl value={sex} onChange={this.handleSexChange}></SexControl>
 
+              {/*
               <Form.Group className="mb-3" controlId="email">
                 <Form.Label>Email</Form.Label>
                 <Form.Control onChange={this.handleChange} value={email} placeholder="введите email..." autoComplete="off" />
               </Form.Group>
-
+              */}
               <Form.Group className="mb-3" controlId="phone">
                 <Form.Label>Телефон</Form.Label>
                 <Form.Control
-                  as={InputMask}
-                  mask="+7 999 999 99 99"
-                  maskChar=" "
-                  onChange={this.handleChange}
+                  onChange={this.handlePhoneChange}
                   value={phone}
-                  placeholder="введите телефон..."
+                  placeholder="+7 777 777 77 77"
+                  autoComplete="off"
                 />
               </Form.Group>
 
@@ -211,10 +230,11 @@ class StudentForm extends React.Component {
               </Form.Group>
 
               <hr></hr>
-
-              <Button variant="primary" type="null" onClick={this.handleSave}>
-                Сохранить
-              </Button>
+              <div className="text-center">
+                <Button variant="primary" type="null" onClick={this.handleSave}>
+                  Сохранить
+                </Button>
+              </div>
             </Form>
           </Col>
         </Row>

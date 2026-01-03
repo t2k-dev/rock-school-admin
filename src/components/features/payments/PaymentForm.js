@@ -23,8 +23,7 @@ const PaymentForm = ({
 
   const paymentTypes = [
     { value: 1, label: 'Наличные' },
-    { value: 2, label: 'Онлайн платеж' },
-    { value: 3, label: 'Банковская карта' },
+    { value: 2, label: 'Удаленная оплата' },
   ];
 
   const handleInputChange = (e) => {
@@ -88,6 +87,12 @@ const PaymentForm = ({
         paymentType: 1
       });
       
+      // Notify parent component of successful payment
+      onPaymentSubmit({
+        subscriptionId: subscription.subscriptionId,
+        success: true
+      });
+      
       onHide();
     } catch (error) {
       console.error('Payment submission error:', error);
@@ -117,7 +122,7 @@ const PaymentForm = ({
           <div className="mb-3 p-3 bg-light rounded">
             <p className="mb-1"><strong>Студент:</strong> {subscription.student.firstName} {subscription.student.lastName}</p>
             <p className="mb-1"><strong>Дисциплина:</strong> {getDisciplineName(subscription.disciplineId)}</p>
-            <p className="mb-0"><strong>Сумма:</strong> {subscription.amount} тг.</p>
+            <p className="mb-0"><strong>Сумма:</strong> ??? тг.</p>
           </div>
         )}
 

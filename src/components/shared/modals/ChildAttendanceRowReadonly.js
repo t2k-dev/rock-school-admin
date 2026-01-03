@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Avatar } from '../Avatar';
-import { AttendanceStatusBadge } from "./AttendanceStatusBadge";
+import { AttendanceStatusBadge } from "../modals/AttendanceStatusBadge";
 
 const ChildAttendanceRowReadonly = ({ 
   attendance, 

@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { Avatar } from "../../shared/Avatar";
 import { EditIcon } from "../../shared/icons/EditIcon";
 import GroupIcon from "../../shared/icons/GroupIcon";
+import { InstagramIcon } from "../../shared/icons/InstagramIcon";
 
 class StudentScreenCard extends React.Component {
   handleEditClick = (e) => {
@@ -17,6 +18,8 @@ class StudentScreenCard extends React.Component {
       0: "Начинающий (0)",
       1: "Продолжающий (1)",
       2: "Продвинутый",
+      4: "Продолжающий (4)",
+      10: "Бог (10)",
     };
 
     const { item } = this.props;
@@ -33,8 +36,11 @@ class StudentScreenCard extends React.Component {
                   {item.firstName} {item.lastName}
                   <EditIcon onIconClick={this.handleEditClick} />
                 </div>
-                <div style={{ fontSize: "16px" }} className="mt-1">
-                  {Level[item.level]}
+                <div className= "mt-1">
+                  <InstagramIcon
+                    size={"20px"}
+                    title={"Instagram"}
+                  />
                 </div>
               </Container>
             </Container>

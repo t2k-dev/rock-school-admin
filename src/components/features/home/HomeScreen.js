@@ -6,13 +6,14 @@ import { Link } from "react-router-dom";
 import { CalendarDay } from "../../shared/calendar/CalendarDay";
 import { EditIcon } from "../../shared/icons/EditIcon";
 import { Loading } from "../../shared/Loading";
-import { AttendanceModal } from "../../shared/slots/AttendanceModal";
-import { GroupAttendanceModal } from "../../shared/slots/GroupAttendanceModal";
+import { AttendanceModal } from "../../shared/modals/AttendanceModal";
+import { GroupAttendanceModal } from "../../shared/modals/GroupAttendanceModal";
 
-import { isCancelledAttendanceStatus } from "../../shared/slots/attendanceHelper";
+import { isCancelledAttendanceStatus } from "../../shared/modals/attendanceHelper";
 
 import { getHomeScreenDetails } from "../../../services/apiHomeService";
 import { markComplete } from "../../../services/apiNoteService";
+import { NoRecords } from "../../shared/NoRecords";
 
 class HomeScreen extends React.Component {
   constructor(props) {
@@ -228,7 +229,7 @@ class HomeScreen extends React.Component {
         </Table>
       );
     } else {
-      activeNotesTable = <div className="text-center">Нет записей</div>;
+      activeNotesTable = <NoRecords />;
     }
 
     let completedNotesTable;
@@ -269,7 +270,7 @@ class HomeScreen extends React.Component {
         </Table>
       );
     } else {
-      completedNotesTable = <div className="text-center">Нет записей</div>;
+      completedNotesTable = <NoRecords />;
     }
 
     return (
@@ -344,7 +345,9 @@ class HomeScreen extends React.Component {
               <hr></hr>
               {completedNotesTable}
             </Tab>
-            <Tab eventKey="completed" title="Другие"></Tab>
+            <Tab eventKey="completed" title="Другие">
+              <NoRecords />
+            </Tab>
           </Tabs>
         </Row>
       </Container>

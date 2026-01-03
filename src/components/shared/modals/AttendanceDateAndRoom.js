@@ -66,7 +66,18 @@ export const AttendanceDateAndRoom = ({
   };
 
   return (
-    <div className={`text-start ${className}`} style={style}>
+    <div className={`text-start ${className}`} style={{ position: 'relative', ...style }}>
+      {/* Edit Icon - Top Right Corner */}
+      {shouldShowRescheduleLink() && (
+        <div style={{ position: 'absolute', top: '0', right: '0' }}>
+          <EditIcon 
+            onIconClick={handleEditClick} 
+            size="18px"
+            title="Перенести занятие"
+          />
+        </div>
+      )}
+
       {/* Room Information */}
       <div className="d-flex align-items-center mb-1">
         <DoorIcon />
@@ -84,16 +95,10 @@ export const AttendanceDateAndRoom = ({
       {/* Time Information */}
       <div className="d-flex align-items-center mb-2">
         <TimeIcon />
-        <span className="ms-1" style={{ marginRight: "30px" }}>
+        <span className="ms-1">
           С {formatTime(startDate)} - {formatTime(endDate)}
         </span>
-        {/* Reschedule Link */}
-        {shouldShowRescheduleLink() && (
-          <EditIcon onIconClick={handleEditClick} />
-        )}
       </div>
-      
-      
     </div>
   );
 };

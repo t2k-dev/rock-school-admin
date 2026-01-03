@@ -13,7 +13,7 @@ import { SubscriptionStudents } from "./SubscriptionStudents";
 
 import { getSubscriptionFormData, updateSubscriptionSchedules } from "../../../services/apiSubscriptionService";
 import { getWorkingPeriods } from "../../../services/apiTeacherService";
-import { AvailableTeachersModal } from "../teachers/AvailableTeachersModal";
+import { AvailableTeachersModal } from "../../shared/modals/AvailableTeachersModal";
 
 const ERROR_MESSAGES = {
   LOAD_FAILED: "Не удалось загрузить данные абонемента",
@@ -285,7 +285,7 @@ export class SubscriptionFormEditable extends React.Component {
         <Row>
           <Col md="4"></Col>
           <Col md="4">
-            <h2 className="mb-4 text-center">Редактировать абонемент</h2>
+            <h2 className="mb-4 text-center">Редактировать расписание</h2>
 
             <Form>
               <SubscriptionStudents
@@ -320,7 +320,7 @@ export class SubscriptionFormEditable extends React.Component {
 
               <AvailableTeachersModal
                 show={showAvailableTeacherModal}
-                availableTeachers={availableTeachers}
+                teachers={availableTeachers}
                 onSlotsChange={this.updateAvailableSlots}
                 onClose={this.handleCloseAvailableTeachersModal}
               />
