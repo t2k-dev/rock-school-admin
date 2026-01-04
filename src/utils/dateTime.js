@@ -1,3 +1,6 @@
+import { format } from 'date-fns';
+import { ru } from 'date-fns/locale';
+
 export function formatTime(date) {
   // Get hours and minutes
   const hours = date.getHours(); // Returns the hour (0-23)
@@ -94,3 +97,11 @@ export function calculateDateFromAge(age) {
     
     return birthDate;
 }
+
+export function formatDateWithLetters (date) {
+    try {
+      return format(new Date(date), 'd MMM yyyy', { locale: ru });
+    } catch (error) {
+      return 'Неверная дата';
+    }
+  };

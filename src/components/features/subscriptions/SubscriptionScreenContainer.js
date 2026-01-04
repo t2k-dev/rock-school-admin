@@ -2,12 +2,13 @@ import { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 
 import { getStudentScreenDetails } from '../../../services/apiStudentService';
-import { getSubscription } from '../../../services/apiSubscriptionService';
+import { cancelSubscription, getSubscription } from '../../../services/apiSubscriptionService';
 import { AttendanceModal } from '../../shared/modals/AttendanceModal';
 import PaymentForm from '../payments/PaymentForm';
-import SubscriptionAttendancesPage from './SubscriptionAttendancesPage';
+import CancelSubscriptionModal from './CancelSubscriptionModal';
+import SubscriptionScreen from './SubscriptionScreen';
 
-class SubscriptionAttendancesContainer extends Component {
+class SubscriptionScreenContainer extends Component {
   constructor(props) {
     super(props);
     
@@ -24,6 +25,10 @@ class SubscriptionAttendancesContainer extends Component {
       // Payment Modal
       showPaymentModal: false,
       isLoadingPayment: false,
+      
+      // Cancel Subscription Modal
+      showCancelModal: false,
+      isLoadingCancel: false,
     };
   }
 
@@ -95,6 +100,42 @@ class SubscriptionAttendancesContainer extends Component {
       showPaymentModal: true
     });
   };
+  
+  handleCancelSubscription = async (subscription) => {
+    // Open the cancel modal instead of directly canceling
+    this.setState({
+      showCancelModal: true
+    });
+  }
+
+  handleCancelConfirm = async (cancelData) => {
+    this.setState({ isLoadingCancel: true });
+    
+    try {
+      await cancelSubscription(cancelData.subscriptionId, {
+        cancelDate: cancelData.cancelDate,
+        cancelReason: cancelData.cancelReason
+      });
+      
+      alert('Абонемент успешно отменён!');
+      
+      // Reload data to reflect the cancellation
+      await this.loadSubscriptionData();
+      
+      this.setState({ showCancelModal: false });
+    } catch (error) {
+      console.error('Failed to cancel subscription:', error);
+      throw error; // Re-throw to let modal handle the error
+    } finally {
+      this.setState({ isLoadingCancel: false });
+    }
+  }
+
+  handleCloseCancelModal = () => {
+    this.setState({
+      showCancelModal: false
+    });
+  }
 
   handleClosePaymentModal = () => {
     this.setState({
@@ -156,13 +197,14 @@ class SubscriptionAttendancesContainer extends Component {
 
     return (
       <>
-        <SubscriptionAttendancesPage
+        <SubscriptionScreen
           subscription={subscription}
           attendances={attendances}
           isLoading={isLoading}
           onAttendanceClick={this.handleAttendanceClick}
           onEditSchedules={this.handleEditSchedules}
           onPayClick={this.handlePayClick}
+          onCancelClick={this.handleCancelSubscription}
         />
 
         <AttendanceModal
@@ -180,9 +222,17 @@ class SubscriptionAttendancesContainer extends Component {
           onPaymentSubmit={this.handlePaymentSubmit}
           isLoading={this.state.isLoadingPayment}
         />
+
+        <CancelSubscriptionModal
+          show={this.state.showCancelModal}
+          onHide={this.handleCloseCancelModal}
+          subscription={subscription}
+          onConfirm={this.handleCancelConfirm}
+          isLoading={this.state.isLoadingCancel}
+        />
       </>
     );
   }
 }
 
-export default withRouter(SubscriptionAttendancesContainer);
+export default withRouter(SubscriptionScreenContainer);

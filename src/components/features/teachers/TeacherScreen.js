@@ -7,8 +7,8 @@ import { getTeacherScreenDetails } from "../../../services/apiTeacherService";
 
 import { getDisciplineName } from "../../../constants/disciplines";
 import MyDateFormat from "../../../constants/formats";
-import { getSubscriptionStatusName, getTrialSubscriptionStatusName } from "../../../constants/subscriptions";
-import SubscriptionStatus from "../../../constants/SubscriptionStatus";
+import SubscriptionStatus, { getSubscriptionStatusName } from "../../../constants/SubscriptionStatus";
+import { getTrialSubscriptionStatusName } from "../../../constants/SubscriptionTrialStatus";
 
 import { CalendarWeek } from "../../shared/calendar/CalendarWeek";
 import { DisciplineIcon } from "../../shared/discipline/DisciplineIcon";

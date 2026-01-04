@@ -5,8 +5,9 @@ import { Link } from "react-router-dom";
 
 import { getDisciplineName } from "../../../constants/disciplines";
 import MyDateFormat from "../../../constants/formats";
-import { getSubscriptionStatusName, getTrialSubscriptionStatusName } from "../../../constants/subscriptions";
-import SubscriptionStatus from "../../../constants/SubscriptionStatus";
+import SubscriptionStatus, { getSubscriptionStatusName } from "../../../constants/SubscriptionStatus";
+import { getTrialSubscriptionStatusName } from "../../../constants/SubscriptionTrialStatus";
+
 import { getStudentScreenDetails } from "../../../services/apiStudentService";
 import { CalendarWeek } from "../../shared/calendar/CalendarWeek";
 import { DisciplineIcon } from "../../shared/discipline/DisciplineIcon";

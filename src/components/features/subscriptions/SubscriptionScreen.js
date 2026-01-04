@@ -1,37 +1,31 @@
 import { format } from 'date-fns';
-import { ru } from 'date-fns/locale';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
-import { Button, Card, Col, Container, Row, Table } from 'react-bootstrap';
+import { Button, Card, Col, Container, Row, Stack, Table } from 'react-bootstrap';
 import { Link, useHistory } from 'react-router-dom';
-
+import { getDisciplineName } from '../../../constants/disciplines';
+import { getRoomName } from '../../../constants/rooms';
+import SubscriptionStatus from '../../../constants/SubscriptionStatus';
+import { formatDateWithLetters } from '../../../utils/dateTime';
 import { DisciplineIcon } from '../../shared/discipline/DisciplineIcon';
+import { CalendarIcon } from '../../shared/icons/CalendarIcon';
+import { CancelIcon } from '../../shared/icons/CancelIcon';
 import { CoinsIcon } from '../../shared/icons/CoinsIcon';
 import { Loading } from '../../shared/Loading';
 import { AttendanceStatusBadge } from '../../shared/modals/AttendanceStatusBadge';
+import { NoRecords } from '../../shared/NoRecords';
+import { SubscriptionStatusBadge } from './SubscriptionStatusBadge';
 
-import { getDisciplineName } from '../../../constants/disciplines';
-import { getRoomName } from '../../../constants/rooms';
-import { CalendarIcon } from '../../shared/icons/CalendarIcon';
-
-const SubscriptionAttendancesPage = ({
+const SubscriptionScreen = ({
   subscription,
   attendances = [],
-  isLoading = false,
   onAttendanceClick,
   onEditSchedules,
-  onPayClick
+  onPayClick,
+  onCancelClick
 }) => {
   const [showCompleted, setShowCompleted] = useState(true);
   const history = useHistory();
-
-  const formatDate = (date) => {
-    try {
-      return format(new Date(date), 'd MMM yyyy', { locale: ru });
-    } catch (error) {
-      return 'Неверная дата';
-    }
-  };
 
   const formatTime = (date) => {
     try {
@@ -50,7 +44,7 @@ const SubscriptionAttendancesPage = ({
   const handleBack = () => {
     history.goBack();
   };
-console.log('subscription', subscription);
+
   if (!subscription) {
     return (
       <Container style={{ marginTop: "40px" }}>
@@ -68,7 +62,7 @@ console.log('subscription', subscription);
     });
 
   return (
-    <Container style={{ marginTop: "40px" }}>
+    <Container >
       {/* Header with back button */}
       <Row className="mb-3">
         <Col>
@@ -82,7 +76,7 @@ console.log('subscription', subscription);
             <h2 className="d-flex align-items-center mb-0">
               <DisciplineIcon disciplineId={subscription.disciplineId} size="32px" />
               <span className="ms-2">
-                Абонемент {getDisciplineName(subscription.disciplineId)}
+                Абонемент {getDisciplineName(subscription.disciplineId)} <SubscriptionStatusBadge status={subscription.status} />
               </span>
             </h2>
           </div>
@@ -94,40 +88,49 @@ console.log('subscription', subscription);
         <Col>
           <Card>
             <Card.Body>
-              <div className="row">
-                <div className="col-md-6">
-                  <strong>Начало:</strong> {formatDate(subscription.startDate)}
+              <div className="d-flex justify-content-between align-items-center" style={{ flexDirection: "row" }}>  
+                <div className='flex-grow-1'>
+                  <Row>
+                    <Col size="md-6">
+                      <strong>Начало:</strong> {formatDateWithLetters(subscription.startDate)}
+                    </Col>
+                    <Col size="md-6">
+                      <strong>Преподаватель:</strong>{' '}
+                      <Link to={`/teacher/${subscription.teacher.teacherId}`}>
+                        {subscription.teacher.firstName} {subscription.teacher.lastName}
+                      </Link>
+                    </Col>
+                  </Row>
+                  <Row className="mt-2">
+                    <Col size="md-6">
+                      <strong>Осталось занятий:</strong> {subscription.attendancesLeft} из {subscription.attendanceCount}
+                    </Col>
+                    <Col size="md-6">
+                      <strong>Оплата:</strong>
+                      {subscription.paymentId &&<> <strong>Оплачено:</strong> 45 000 тг, 25 дек. 2025</>}
+                    </Col>
+                  </Row>
                 </div>
-                <div className="col-md-6">
-                  <strong>Преподаватель:</strong>{' '}
-                  <Link to={`/teacher/${subscription.teacher.teacherId}`}>
-                    {subscription.teacher.firstName} {subscription.teacher.lastName}
-                  </Link>
-                </div>
-              </div>
-              <div className="row mt-2">
-                <div className="col-md-6">
-                  <strong>Осталось занятий:</strong> {subscription.attendancesLeft} из {subscription.attendanceCount}
-                </div>
-                <div className="col-md-6">
-                  {subscription.paymentId &&<> <strong>Оплачено:</strong> 45 000 тг, 25 дек. 2025</>}
-                </div>
-              </div>
-              <div className='row mt-3'>
-                <Col>
+                <div>
+                  <Stack gap={2} style={{ width: "250px" }}>
                     {subscription.paymentId === null &&
                     <Button variant="primary" onClick={() => onPayClick && onPayClick(subscription)}>
                         <CoinsIcon color="white" enableHover={false}/>
                         Оплатить
                     </Button>
                     }
-
-                    <Button style={{ marginLeft: '8px' }} variant="secondary" onClick={() => onEditSchedules && onEditSchedules(subscription)}>
+                    <Button variant="secondary" onClick={() => onEditSchedules && onEditSchedules(subscription)}>
                         <CalendarIcon color="white"/>
-                        Редактировать расписание
+                        Расписание
                     </Button>
-
-                </Col>
+                    {(subscription.status === SubscriptionStatus.ACTIVE ||  subscription.status === SubscriptionStatus.DRAFT) &&
+                    <Button variant='danger' onClick={() => onCancelClick && onCancelClick(subscription)}>
+                      <CancelIcon color="white" />
+                      Отменить
+                    </Button>
+                    }
+                  </Stack>
+                </div>
               </div>
             </Card.Body>
           </Card>
@@ -144,7 +147,7 @@ console.log('subscription', subscription);
                     <Table striped bordered hover>
                       <thead>
                         <tr>
-                          <th style={{ width: '120px' }}>Дата</th>
+                          <th className='date-column' >Дата</th>
                           <th style={{ width: '120px' }}>Время</th>
                           <th style={{ width: '100px' }}>Комната</th>
                           <th>Комментарий</th>
@@ -155,13 +158,10 @@ console.log('subscription', subscription);
                         {sortedAttendances.map((attendance) => (
                           <tr 
                             key={attendance.attendanceId}
-                            style={{ 
-                              cursor: 'pointer',
-                              opacity: attendance.isCompleted ? 0.8 : 1 
-                            }}
+                            style={{ cursor: 'pointer' }}
                             onClick={() => handleAttendanceRowClick(attendance)}
                           >
-                            <td>{formatDate(attendance.startDate)}</td>
+                            <td>{formatDateWithLetters(attendance.startDate)}</td>
                             <td>
                               {formatTime(attendance.startDate)} - {formatTime(attendance.endDate)}
                             </td>
@@ -193,10 +193,7 @@ console.log('subscription', subscription);
                 ) : (
                   <div className="text-center py-4">
                     <p className="text-muted">
-                      {subscription.attendanceCount > 0 
-                        ? "Занятия еще не запланированы"
-                        : "Нет занятий для этого абонемента"
-                      }
+                      <NoRecords />
                     </p>
                   </div>
                 )}
@@ -207,7 +204,7 @@ console.log('subscription', subscription);
   );
 };
 
-SubscriptionAttendancesPage.propTypes = {
+SubscriptionScreen.propTypes = {
   subscription: PropTypes.shape({
     subscriptionId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     disciplineId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
@@ -238,4 +235,4 @@ SubscriptionAttendancesPage.propTypes = {
   onPayClick: PropTypes.func,
 };
 
-export default SubscriptionAttendancesPage;
+export default SubscriptionScreen;

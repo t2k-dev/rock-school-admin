@@ -54,3 +54,8 @@ export const pay = async (id, data) =>{
   const result = await apiClient.post(`/subscription/${id}/pay`, data);
   return result;
 }
+
+export const cancelSubscription = async (id, data) =>{
+  const result = await apiClient.put(`/subscription/${id}/cancel`, data);
+  return result;
+}

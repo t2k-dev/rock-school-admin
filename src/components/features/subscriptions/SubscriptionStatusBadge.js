@@ -1,8 +1,8 @@
 import { Badge } from 'react-bootstrap';
 
-import AttendanceStatus, { getAttendanceStatusName } from '../../../constants/AttendanceStatus';
+import SubscriptionStatus, { getSubscriptionStatusName } from '../../../constants/SubscriptionStatus';
 
-export const AttendanceStatusBadge = ({ 
+export const SubscriptionStatusBadge = ({ 
   status, 
   pill = true, 
   className = "", 
@@ -12,16 +12,12 @@ export const AttendanceStatusBadge = ({
 
   const getStatusBadgeVariant = (status) => {
     switch (status) {
-      case AttendanceStatus.NEW:
-        return "primary";
-      case AttendanceStatus.ATTENDED:
-        return "success";
-      case AttendanceStatus.MISSED:
-        return "danger";
-      case AttendanceStatus.CANCELED_BY_ADMIN:
-      case AttendanceStatus.CANCELED_BY_TEACHER:
-      case AttendanceStatus.CANCELED_BY_STUDENT:
+      case SubscriptionStatus.DRAFT:
         return "secondary";
+      case SubscriptionStatus.ACTIVE:
+        return "success";
+      case SubscriptionStatus.CANCELED:
+        return "danger";
       default:
         return "secondary";
     }
@@ -38,7 +34,7 @@ export const AttendanceStatusBadge = ({
     }
   };
 
-  const statusName = getAttendanceStatusName(status);
+  const statusName = getSubscriptionStatusName(status);
   const variant = getStatusBadgeVariant(status);
   const sizeStyle = getSizeStyle(size);
 

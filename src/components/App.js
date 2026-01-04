@@ -15,9 +15,9 @@ import { WaitingScheduleForm } from "./features/students/WaitingScheduleForm";
 import TeacherForm from "./features/teachers/TeacherForm";
 import TeacherScreen from "./features/teachers/TeacherScreen";
 
-import SubscriptionAttendancesContainer from "./features/subscriptions/SubscriptionAttendancesContainer";
 import { SubscriptionForm } from "./features/subscriptions/SubscriptionForm";
 import { SubscriptionFormEditable } from "./features/subscriptions/SubscriptionFormEditable";
+import SubscriptionScreenContainer from "./features/subscriptions/SubscriptionScreenContainer";
 import { TrialSubscriptionForm } from "./features/subscriptions/TrialSubscriptionForm";
 
 import { TestComponent } from "./TestComponent";
@@ -58,7 +58,7 @@ function App() {
           
           <Route exact path="/student/:id/subscriptionForm" render={(props) => <SubscriptionForm type="New" {...props} />}/>
           <Route exact path="/subscription/:id/edit" render={(props) => <SubscriptionFormEditable {...props} />}/>
-          <Route exact path="/subscription/:id/attendances" render={(props) => <SubscriptionAttendancesContainer {...props} />} />
+          <Route exact path="/subscription/:id/attendances" render={(props) => <SubscriptionScreenContainer {...props} />} />
           <Route exact path="/notes/addNote" render={(props) => <NoteForm type="New" {...props} />}/>
           <Route exact path="/notes/:id/edit" render={(props) => <NoteForm {...props} />}/>
           
