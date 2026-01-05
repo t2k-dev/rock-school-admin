@@ -1,16 +1,18 @@
 import PropTypes from 'prop-types';
-import { Container, Form, Table } from 'react-bootstrap';
+import { Button, Container, Form, Table } from 'react-bootstrap';
 
 export const SubscriptionStudents = ({ 
   students = [], 
-  showLabel = true, 
+  showLabel = true,
+  allowRemove = true,
   variant = 'striped',
-  className = '' 
+  className = '',
+  onRemoveStudent
 }) => {
   const renderEmptyState = () => (
     <tr>
-      <td className="text-center text-muted p-3">
-        Студенты не найдены
+      <td className="text-center text-muted">
+        Нет записей
       </td>
     </tr>
   );
@@ -28,6 +30,17 @@ export const SubscriptionStudents = ({
               {student.firstName} {student.lastName}
             </span>
           </div>
+          {allowRemove && (
+          <div className="flex-shrink-1">
+              <Button
+                variant="outline-danger"
+                style={{ fontSize: "10px", marginLeft: "10px", borderRadius: "25px" }}
+                onClick={() => onRemoveStudent && onRemoveStudent(index)}
+              >
+                X
+              </Button>
+            </div>
+          )}
         </Container>
       </td>
     </tr>
@@ -71,5 +84,6 @@ SubscriptionStudents.propTypes = {
   showLabel: PropTypes.bool,
   variant: PropTypes.oneOf(['striped', 'hover', 'bordered', 'none']),
   onStudentClick: PropTypes.func,
+  onRemoveStudent: PropTypes.func,
   className: PropTypes.string,
 };

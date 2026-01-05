@@ -1,6 +1,6 @@
 import { format, getDay } from "date-fns";
 import React from "react";
-import { Button, Col, Container, Form, InputGroup, Row, Table } from "react-bootstrap";
+import { Button, Col, Container, Form, InputGroup, Row } from "react-bootstrap";
 
 import { getStudent } from "../../../services/apiStudentService";
 import { addSubscription } from "../../../services/apiSubscriptionService";
@@ -263,28 +263,6 @@ export class SubscriptionForm extends React.Component {
       }
     }
 
-    let studentsList;
-    if (students && students.length > 0) {
-      studentsList = students.map((student, index) => (
-        <tr key={index}>
-          <td>
-            <Container className="d-flex p-0">
-              <div className="flex-grow-1">{`${student.firstName} ${student.lastName}`}</div>
-              <div className="flex-shrink-1">
-                <Button
-                  variant="outline-danger"
-                  style={{ fontSize: "10px", marginLeft: "10px", borderRadius: "25px" }}
-                  onClick={() => this.deleteStudent(index)}
-                >
-                  X
-                </Button>
-              </div>
-            </Container>
-          </td>
-        </tr>
-      ));
-    }
-    
     return (
       <Container style={{ marginTop: "40px", paddingBottom: "50px" }}>
         <Row>
@@ -310,16 +288,13 @@ export class SubscriptionForm extends React.Component {
 
               {/*Students*/}
               <Form.Group className="mb-3" controlId="discipline">
-                {basedOnSubscriptionId != null 
-                ? <SubscriptionStudents
+                <SubscriptionStudents
                   students={students}
                   onRemoveStudent={this.deleteStudent}
+                  allowRemove={basedOnSubscriptionId === null}
                   />
-                : 
+                {basedOnSubscriptionId === null && (
                 <>
-                <Table striped bordered hover>
-                  <tbody>{studentsList}</tbody>
-                </Table>
                 <div className="text-center">
                   <Button size="sm" variant="outline-success" style={{ marginTop: "10px" }} onClick={this.showAddStudentModal}>
                     + Добавить ещё ученика
@@ -332,7 +307,7 @@ export class SubscriptionForm extends React.Component {
                   onAddStudent={this.handleAddStudent}
                   />
                 </>
-                }
+                )}
               
               </Form.Group>
               <hr></hr>
