@@ -7,6 +7,7 @@ import { getDisciplineName } from "../../../constants/disciplines";
 import MyDateFormat from "../../../constants/formats";
 import SubscriptionStatus, { getSubscriptionStatusName } from "../../../constants/SubscriptionStatus";
 import { getTrialSubscriptionStatusName } from "../../../constants/SubscriptionTrialStatus";
+import SubscriptionType from "../../../constants/SubscriptionType";
 
 import { getStudentScreenDetails } from "../../../services/apiStudentService";
 import { CalendarWeek } from "../../shared/calendar/CalendarWeek";
@@ -333,6 +334,45 @@ class StudentScreen extends React.Component {
     );
   }
 
+  renderRentTable(subscriptions) {
+
+    if (subscriptions && subscriptions.length > 0) {
+      return (
+        <Table striped bordered hover>
+          <thead>
+            <tr>
+              <th className="date-column">Дата</th>
+              <th>Занятий осталось</th>
+              <th>Статус</th>
+              <th style={{ width: "50px" }}></th>
+            </tr>
+          </thead>
+          <tbody>
+            {subscriptions.map((item, index) => (
+            <tr 
+              key={index}
+              onClick={() => this.handleViewSubscriptionAttendances(item)}
+              >
+              <td>{format(item.startDate, MyDateFormat)}</td>
+              <td>{item.attendancesLeft} из {item.attendanceCount}</td>
+              <td>{getSubscriptionStatusName(item.status)}</td>
+              <td>
+                  <NextIcon 
+                    size="20px"
+                    onIconClick={() => this.handleResubscribeClick(item)}
+                  />
+              </td>
+            </tr>
+            ))}
+          </tbody>
+        </Table>
+      );
+    } 
+    
+    return (
+      <NoRecords/>
+    );
+  }
 
   render() {
     const { isLoading, student, subscriptions, showCompleted, attendances, selectedAttendance, showAttendanceModal } = this.state;
@@ -353,10 +393,13 @@ class StudentScreen extends React.Component {
     let nonTrialSubscriptions = sortedSubscriptions.filter((s) => s.trialStatus === null);
     nonTrialSubscriptions = showCompleted
       ? nonTrialSubscriptions
-      : nonTrialSubscriptions.filter((s) => s.status !== SubscriptionStatus.COMPLETED);
+      : nonTrialSubscriptions.filter((s) => s.subscriptionType === SubscriptionType.LESSON && s.status !== SubscriptionStatus.COMPLETED);
 
     // Trials
-    const trialSubscriptions = sortedSubscriptions.filter((s) => s.trialStatus !== null);
+    const trialSubscriptions = sortedSubscriptions.filter((s) => s.subscriptionType === SubscriptionType.TRIAL_LESSON && s.trialStatus !== null);
+
+    // Rents
+    const rentSubscriptions = sortedSubscriptions.filter((s) => s.subscriptionType === SubscriptionType.RENT);
 
     // Events
     let events;
@@ -388,7 +431,7 @@ class StudentScreen extends React.Component {
                 {this.renderTrialsTable(trialSubscriptions)}  
 
                 <h3>Репетиции</h3>
-                  <NoRecords/>
+                {this.renderRentTable(rentSubscriptions)}
 
             </Tab>
             <Tab eventKey="calendar" title="Календарь">

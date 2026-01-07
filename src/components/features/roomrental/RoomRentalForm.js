@@ -3,9 +3,11 @@ import React from "react";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
 
 import { getBusySlots } from "../../../services/apiBranchService";
+import { addRentalSubscription } from "../../../services/apiRentalSubscriptionService";
 import { getStudent } from "../../../services/apiStudentService";
 import { SubscriptionStudents } from "../../features/subscriptions/SubscriptionStudents";
 import { Loading } from "../../shared/Loading";
+import { AvailableSlotsModal } from "../../shared/modals/AvailableSlotsModal";
 import { ScheduleEditorWithDelete } from "../../shared/schedule/ScheduleEditorWithDelete";
 
 export class RoomRentalForm extends React.Component {
@@ -26,6 +28,8 @@ export class RoomRentalForm extends React.Component {
       notes: "",
       schedules: [],
       basedOnSubscriptionId: null,
+      showAvailableSlotsModal: false,
+      rooms: [],
     };
 
     this.handleSave = this.handleSave.bind(this);
@@ -62,13 +66,41 @@ export class RoomRentalForm extends React.Component {
   showAvailableSlotsModal = async (e) => {
     e.preventDefault();
     
-    const response = await getBusySlots(1);
-    
+    const responseData = await getBusySlots(1); // BranchId
+    console.log("Busy slots response:", responseData);
     this.setState({
-        busySlots: response.data,
+        rooms: responseData,
         showAvailableSlotsModal: true,
     });
   }
+
+  handleCloseAvailableSlotsModal = () => {
+    this.setState({ showAvailableSlotsModal: false });
+  };
+
+  handleSlotsChange = (availableSlots) => {
+    // Convert available slots to schedules format
+    let periods = [];
+    availableSlots.forEach((slot) => {
+      const newPeriod = {
+        weekDay: new Date(slot.start).getDay(),
+        startTime: new Date(slot.start).toLocaleTimeString('en-GB', { 
+          hour: '2-digit', 
+          minute: '2-digit',
+          hour12: false 
+        }),
+        endTime: new Date(slot.end).toLocaleTimeString('en-GB', { 
+          hour: '2-digit', 
+          minute: '2-digit',
+          hour12: false 
+        }),
+        roomId: slot.roomId,
+      };
+      periods.push(newPeriod);
+    });
+
+    this.setState({ schedules: periods });
+  };
 
   handleChange = (e) => {
     const { id, value } = e.target;
@@ -88,32 +120,21 @@ export class RoomRentalForm extends React.Component {
   handleSave = async (e) => {
     e.preventDefault();
 
-    let studentIds = [];
-    this.state.students.forEach((student) => {
-      studentIds.push(student.studentId);
-    });
-
     const requestBody = {
-      studentIds: studentIds,
-      rental: {
-        roomId: this.state.roomId,
-        startDate: this.state.startDate,
-        attendanceCount: this.state.attendanceCount,
-        attendanceLength: this.state.attendanceLength,
-        purpose: this.state.purpose,
-        notes: this.state.notes,
-        branchId: 1,
-      },
-      schedules: this.state.schedules,
+        subscriptionDetails:{
+            startDate: this.state.startDate,
+            attendanceCount: this.state.attendanceCount,
+            attendanceLength: this.state.attendanceLength,
+            branchId: 1,
+            studentId: this.state.studentId,
+        },
+        schedules: this.state.schedules,
     };
 
     try {
-      // TODO: Add API call to save room rental
-      // await addRoomRental(requestBody);
-      console.log("Room rental data:", requestBody);
+      await addRentalSubscription(requestBody);
       
-      alert("Аренда комнаты успешно оформлена!");
-      this.props.history.push(`/student/${this.state.studentId}`);
+      //this.props.history.push(`/student/${this.state.studentId}`);
     } catch (error) {
       console.error("Failed to save room rental:", error);
       alert("Ошибка при оформлении аренды комнаты");
@@ -129,8 +150,9 @@ export class RoomRentalForm extends React.Component {
       attendanceLength,
       startDate,
       schedules,
-      busySlots,
+      rooms,
       basedOnSubscriptionId,
+      showAvailableSlotsModal,
     } = this.state;
 
     if (isLoading) {
@@ -218,6 +240,14 @@ export class RoomRentalForm extends React.Component {
             </Form>
           </Col>
         </Row>
+
+        <AvailableSlotsModal
+          show={showAvailableSlotsModal}
+          rooms={rooms}
+          onSlotsChange={this.handleSlotsChange}
+          onClose={this.handleCloseAvailableSlotsModal}
+          singleSelection={false}
+        />
       </Container>
     );
   }

@@ -5,14 +5,14 @@ import { v4 as uuidv4 } from "uuid";
 import { formatDate, formatTime } from "../../../utils/dateTime";
 import { CalendarWeek } from "../calendar/CalendarWeek";
 import { CopyIcon } from "../icons/CopyIcon";
-
+import { DoorIcon } from "../icons/DoorIcon";
 
 export class AvailableSlotsModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       teachers: [],
-      busySlots: [],
+      rooms: [],
       availableSlots: [],
       selectedSlotsText: "",
       singleSelection: false,
@@ -27,7 +27,11 @@ export class AvailableSlotsModal extends React.Component {
       this.resetState();
     }
 
-    if (prevProps.busySlots !== this.props.busySlots) {
+    if (prevProps.rooms !== this.props.rooms) {
+      this.resetState();
+    }
+
+    if (prevProps.teachers !== this.props.teachers) {
       this.resetState();
     }
   }
@@ -36,7 +40,8 @@ export class AvailableSlotsModal extends React.Component {
   resetState = () => {
     const initialSlots = this.props.initialSlots || [];
     this.setState({
-      busySlots: this.props.busySlots || [],
+      teachers: this.props.teachers || [],
+      rooms: this.props.rooms || [],
       availableSlots: initialSlots,
       selectedSlotsText: this.generateSelectedSlotsText(initialSlots),
       copySuccess: "",
@@ -58,61 +63,54 @@ export class AvailableSlotsModal extends React.Component {
     return "secondary";
   };
 
-  createNewSlot = (teacher, slotInfo, slotId) =>{
-      const dayName = new Intl.DateTimeFormat("ru-RU", { weekday: "long" }).format(slotInfo.start);
-
-    // Find the matching backgroundEvent based on the slot's start and end times
-    const matchingBackgroundEvent = teacher.scheduledWorkingPeriods?.find(
-      (backgroundEvent) =>
-        new Date(backgroundEvent.startDate).getTime() <= new Date(slotInfo.start).getTime() &&
-        new Date(backgroundEvent.endDate).getTime() >= new Date(slotInfo.end).getTime()
-    );
-
-    const roomId = matchingBackgroundEvent?.roomId;
+  createNewSlot = (room, slotInfo, slotId) => {
+    const dayName = new Intl.DateTimeFormat("ru-RU", { weekday: "long" }).format(slotInfo.start);
 
     return {
       id: slotId,
-      teacherId: teacher.teacherId,
-      teacherFullName: `${teacher.firstName} ${teacher.lastName}`,
+      roomId: room.id,
+      roomName: room.name,
       start: slotInfo.start,
       end: slotInfo.end,
-      roomId: roomId,
-      description: this.generateSlotDescription(teacher, dayName, slotInfo),
+      description: this.generateSlotDescription(room, dayName, slotInfo),
     };
   }
 
-  generateSlotDescription = (teacher, dayName, slotInfo) => {
+  generateSlotDescription = (room, dayName, slotInfo) => {
     const timeString = `${formatDate(slotInfo.start)} в ${formatTime(slotInfo.start)}`;
-    return `${teacher.firstName}: ${dayName}, ${timeString}`;
+    return `${room.name}: ${dayName}, ${timeString}`;
   };
   
   createNewAttendance = (slotId, slotInfo) => ({
     attendanceId: slotId,
+    id: slotId,
     title: "Окно",
     startDate: slotInfo.start,
     endDate: slotInfo.end,
+    start: slotInfo.start,
+    end: slotInfo.end,
     isNew: true,
   });
 
-  updateTeacherAttendances = (teachers, teacherId, newAttendance) => {
-    return teachers.map(teacher => {
-      if (teacher.teacherId !== teacherId) return teacher;
+  updateRoomAttendances = (rooms, roomId, newAttendance) => {
+    return rooms.map(room => {
+      if (room.id !== roomId) return room;
 
-      const currentAttendances = teacher.attendances || [];
+      const currentAttendances = room.attendances || [];
       return {
-        ...teacher,
+        ...room,
         attendances: [...currentAttendances, newAttendance],
       };
     });
   };
 
-  removeAttendanceFromTeacher = (teachers, teacherId, attendanceId) => {
-    return teachers.map(teacher => {
-      if (teacher.teacherId !== teacherId) return teacher;
+  removeAttendanceFromRoom = (rooms, roomId, attendanceId) => {
+    return rooms.map(room => {
+      if (room.id !== roomId) return room;
 
       return {
-        ...teacher,
-        attendances: teacher.attendances?.filter(a => a.attendanceId !== attendanceId) || [],
+        ...room,
+        attendances: room.attendances?.filter(a => a.attendanceId !== attendanceId && a.id !== attendanceId) || [],
       };
     });
   };
@@ -153,58 +151,83 @@ export class AvailableSlotsModal extends React.Component {
     }
   };
 
-  handleSelectSlot = (teacher, slotInfo) => {
+  handleSelectSlot = (room, slotInfo) => {
     const { singleSelection } = this.props;
 
     if (singleSelection && this.state.availableSlots.length > 0) {
       this.clearAllSlots();
       // Wait for state to update before adding new slot
       setTimeout(() => {
-        this.addSlot(teacher, slotInfo);
+        this.addSlot(room, slotInfo);
       }, 0);
       return;
     }
 
-    this.addSlot(teacher, slotInfo);
+    this.addSlot(room, slotInfo);
   };
 
-  addSlot = (teacher, slotInfo) => {
+  handleSelectEvent = (room, slotInfo) => {
+    if (!slotInfo.isNew) return;
+
+    // Update available slots
+    const updatedSlots = this.state.availableSlots.filter((s) => s.id !== slotInfo.id);
+
+    // Update room attendances
+    const updatedRooms = this.removeAttendanceFromRoom(
+      this.state.rooms,
+      room.id,
+      slotInfo.id
+    );
+
+    const slotsTxt = this.generateSelectedSlotsText(updatedSlots);
+
+    this.setState({ 
+      availableSlots: updatedSlots, 
+      rooms: updatedRooms, 
+      selectedSlotsText: slotsTxt 
+    });
+    
+    this.notifyParent(updatedSlots);
+  };
+
+  addSlot = (room, slotInfo) => {
     const slotId = uuidv4();
 
-    // Add new attendance
+    // Add new attendance to room
     const newAttendance = this.createNewAttendance(slotId, slotInfo);
-    const updatedTeachers = this.updateTeacherAttendances(
-      this.state.teachers,
-      teacher.teacherId,
+    const updatedRooms = this.updateRoomAttendances(
+      this.state.rooms,
+      room.id,
       newAttendance
     );
 
     // Add the selected slot to the availableSlots array
-    const newSlot = this.createNewSlot(teacher, slotInfo, slotId);
+    const newSlot = this.createNewSlot(room, slotInfo, slotId);
     const updatedAvailableSlots = [...this.state.availableSlots, newSlot];
     const availableSlotsTxt = this.generateSelectedSlotsText(updatedAvailableSlots);
 
-    // Update the state with the modified array
+    // Update the state with the modified arrays
     this.setState({
-      teachers: updatedTeachers,
+      rooms: updatedRooms,
       availableSlots: updatedAvailableSlots,
       selectedSlotsText: availableSlotsTxt,
       error: null, // Clear any previous errors
     });
 
     // Notify parent components
+    // Notify parent components
     this.notifyParent(updatedAvailableSlots);
   };
 
   clearAllSlots = () => {
-    // Remove all new attendances from teachers
-    const updatedTeachers = this.state.teachers.map(teacher => ({
-      ...teacher,
-      attendances: teacher.attendances?.filter(a => !a.isNew) || [],
+    // Remove all new attendances from rooms
+    const updatedRooms = this.state.rooms.map(room => ({
+      ...room,
+      attendances: room.attendances?.filter(a => !a.isNew) || [],
     }));
 
     this.setState({
-      teachers: updatedTeachers,
+      rooms: updatedRooms,
       availableSlots: [],
       selectedSlotsText: "",
       error: null,
@@ -214,28 +237,11 @@ export class AvailableSlotsModal extends React.Component {
     this.notifyParent([]);
   };
 
-  handleSelectEvent = (teacherId, slotInfo) => {
-    if (!slotInfo.isNew) return;
-
-    // update available slots
-    const updatedSlots = this.state.availableSlots.filter((s) => s.id !== slotInfo.id);
-
-    // update teacher events
-    const updatedTeachers = this.removeAttendanceFromTeacher(
-      this.state.teachers,
-      teacherId,
-      slotInfo.id
-    );
-
-    const slotsTxt = this.generateSelectedSlotsText(updatedSlots);
-
-    this.setState({ availableSlots: updatedSlots, teachers: updatedTeachers, selectedSlotsText: slotsTxt });
-    this.props.onSlotsChange(updatedSlots);
-  };
-
   handleCloseModal = () => {
     this.props.onClose();
-    this.props.onSlotsChange(this.state.availableSlots);
+    if (this.props.onSlotsChange) {
+      this.props.onSlotsChange(this.state.availableSlots);
+    }
   };
 
   // Render Methods
@@ -251,7 +257,11 @@ export class AvailableSlotsModal extends React.Component {
 
   renderTeacher = (teacher, index) => {
     const backgroundEvents = this.mapWorkingPeriodsToBackgroundEvents(teacher.scheduledWorkingPeriods);
-    const events = this.mapAttendancesToEvents(teacher.attendances);
+    const attendanceEvents = this.mapAttendancesToEvents(teacher.attendances);
+    const busySlotEvents = this.mapBusySlotsToEvents(this.state.busySlots);
+    
+    // Combine all events
+    const events = [...attendanceEvents, ...busySlotEvents];
 
     return (
       <div className="mb-4" key={teacher.teacherId} id={`teacher-${teacher.teacherId}`}>
@@ -286,28 +296,49 @@ export class AvailableSlotsModal extends React.Component {
     if (!attendances) return [];
     
     return attendances.map(attendance => ({
-      id: attendance.attendanceId,
+      id: attendance.attendanceId || attendance.id,
       title: attendance.isNew ? "Окно" : "Занято",
-      start: new Date(attendance.startDate),
-      end: new Date(attendance.endDate),
-      isNew: attendance.isNew,
+      start: new Date(attendance.startDate || attendance.start),
+      end: new Date(attendance.endDate || attendance.end),
+      isNew: attendance.isNew || false,
       roomId: attendance.roomId,
     }));
   };
 
   renderTeachersList = () => {
-    const { teachers } = this.state;
+    const { rooms } = this.state;
 
-    if (!teachers || teachers.length === 0) {
+    // If no rooms found, show empty state
+    if (!rooms || rooms.length === 0) {
       return (
         <div className="text-center p-4">
-          <h5>Нет доступных преподавателей</h5>
+          <h5>Нет доступных комнат</h5>
         </div>
       );
     }
 
-    return teachers.map((teacher, index) => 
-      this.renderTeacher(teacher, index)
+    // Render a calendar for each room
+    return rooms.map(room => this.renderRoomCalendar(room));
+  };
+
+  renderRoomCalendar = (room) => {
+    // Map room attendances to events for this specific room
+    const attendanceEvents = this.mapAttendancesToEvents(room.attendances);
+    
+    return (
+      <div className="mb-4" key={room.id}>
+        <div className="mb-3">
+          <span style={{ fontWeight: "bold" }}>
+            <DoorIcon/> {room.name}
+          </span>
+        </div>
+        <CalendarWeek
+          backgroundEvents={[]} // No background events needed for room rental
+          events={attendanceEvents}
+          onSelectSlot={(slotInfo) => this.handleSelectSlot(room, slotInfo)}
+          onSelectEvent={(slotInfo) => this.handleSelectEvent(room, slotInfo)}
+        />
+      </div>
     );
   };
 
@@ -353,11 +384,11 @@ export class AvailableSlotsModal extends React.Component {
         size="xl" 
         show={show} 
         onHide={this.props.onClose}
-        aria-labelledby="available-teachers-modal-title"
+        aria-labelledby="available-slots-modal-title"
       >
         <Modal.Header closeButton>
-          <Modal.Title id="available-teachers-modal-title">
-            Доступные преподаватели
+          <Modal.Title id="available-slots-modal-title">
+            Выбор доступных окон
           </Modal.Title>
         </Modal.Header>
 
@@ -367,7 +398,7 @@ export class AvailableSlotsModal extends React.Component {
               className="flex-grow-1" 
               style={{ height: "640px", overflow: "auto", paddingRight: "15px" }}
               role="region"
-              aria-label="Список преподавателей"
+              aria-label="Список комнат"
             >
               {this.renderTeachersList()}
             </div>
