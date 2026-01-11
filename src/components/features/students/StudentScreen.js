@@ -204,7 +204,7 @@ class StudentScreen extends React.Component {
           <Table striped bordered hover>
             <thead>
               <tr>
-                <th className="date-column">Дата начала</th>
+                <th className="date-column">Начало</th>
                 <th className="discipline-column">Направление</th>
                 <th>Преподаватель</th>
                 <th>Занятий осталось</th>
@@ -341,7 +341,7 @@ class StudentScreen extends React.Component {
         <Table striped bordered hover>
           <thead>
             <tr>
-              <th className="date-column">Дата</th>
+              <th className="date-column">Начало</th>
               <th>Занятий осталось</th>
               <th>Статус</th>
               <th style={{ width: "50px" }}></th>

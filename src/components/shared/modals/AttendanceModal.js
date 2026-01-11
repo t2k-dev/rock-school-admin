@@ -14,6 +14,7 @@ import { AttendanceStatusBadge } from "./AttendanceStatusBadge";
 import AttendanceStatus from "../../../constants/AttendanceStatus";
 import { getDisciplineName } from "../../../constants/disciplines";
 
+import SubscriptionType from '../../../constants/SubscriptionType';
 import { acceptTrial, declineTrial, missedTrial, submit, updateComment } from "../../../services/apiAttendanceService";
 
 // Constants
@@ -471,6 +472,32 @@ export class AttendanceModal extends React.Component {
     );
   };
 
+  renderSubscriptionInfo = () => {
+    const { teacher, disciplineId, subscription } = this.state.attendance;
+    switch (subscription.subscriptionType) {
+        case SubscriptionType.LESSON:
+          return(
+            <div className="d-flex mb-3 text-center">
+              <div style={{ marginRight: "10px" }}>
+                <DisciplineIcon disciplineId={disciplineId} size="40px" />
+                </div>
+            <Stack direction="vertical" gap={0} className="mb-2">
+              <div style={{ fontWeight: "bold", fontSize: "18px" }}>{getDisciplineName(disciplineId)}</div>
+              <div>
+                <Link to={"/teacher/" + teacher.teacherId}>{teacher.firstName}</Link>
+              </div>
+            </Stack>
+          </div>
+      )
+      case SubscriptionType.RENT:
+          return(
+            <div className="d-flex mb-3 text-center">
+              Аренда Комнаты
+            </div>
+          )
+    }
+  }
+
   render() {
     
     if (!this.props.show || !this.state.attendance) {
@@ -505,17 +532,7 @@ export class AttendanceModal extends React.Component {
                     </div>
                   </Container>
                   <Container className="mt-1" style={{ fontSize: "14px", marginLeft: "60px" }}>
-                    <div className="d-flex mb-3 text-center">
-                      <div style={{ marginRight: "10px" }}>
-                        <DisciplineIcon disciplineId={disciplineId} size="40px" />
-                      </div>
-                      <Stack direction="vertical" gap={0} className="mb-2">
-                        <div style={{ fontWeight: "bold", fontSize: "18px" }}>{getDisciplineName(disciplineId)}</div>
-                        <div>
-                          <Link to={"/teacher/" + teacher.teacherId}>{teacher.firstName}</Link>
-                        </div>
-                      </Stack>
-                    </div>
+                    {this.renderSubscriptionInfo()}
                     <AttendanceDateAndRoom 
                       {...this.props.attendance}
                       attendance={this.props.attendance}

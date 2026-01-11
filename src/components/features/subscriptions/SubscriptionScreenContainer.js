@@ -119,10 +119,10 @@ class SubscriptionScreenContainer extends Component {
       
       alert('Абонемент успешно отменён!');
       
-      // Reload data to reflect the cancellation
-      await this.loadSubscriptionData();
-      
       this.setState({ showCancelModal: false });
+      
+      // Redirect back to the previous page
+      this.props.history.goBack();
     } catch (error) {
       console.error('Failed to cancel subscription:', error);
       throw error; // Re-throw to let modal handle the error

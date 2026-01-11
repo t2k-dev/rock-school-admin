@@ -6,6 +6,7 @@ import { Link, useHistory } from 'react-router-dom';
 import { getDisciplineName } from '../../../constants/disciplines';
 import { getRoomName } from '../../../constants/rooms';
 import SubscriptionStatus from '../../../constants/SubscriptionStatus';
+import SubscriptionType from '../../../constants/SubscriptionType';
 import { formatDateWithLetters } from '../../../utils/dateTime';
 import { DisciplineIcon } from '../../shared/discipline/DisciplineIcon';
 import { CalendarIcon } from '../../shared/icons/CalendarIcon';
@@ -45,6 +46,38 @@ const SubscriptionScreen = ({
     history.goBack();
   };
 
+  const renderSubscriptionTitle = () => {
+    switch (subscription.subscriptionType) {
+      case SubscriptionType.LESSON: // Regular subscription
+        return (
+          <>
+            <span className="ms-2">
+              Абонемент - <DisciplineIcon disciplineId={subscription.disciplineId} size="32px" /> {getDisciplineName(subscription.disciplineId)} <SubscriptionStatusBadge status={subscription.status} />
+            </span>
+          </>
+        );
+        break;
+      case SubscriptionType.RENT:
+        return (
+          <>
+            <span className="ms-2">
+              Абонемент - Аренда Комнаты <SubscriptionStatusBadge status={subscription.status} />
+            </span>
+          </>
+        );
+        break;
+      default:
+        return (
+          <>
+            <DisciplineIcon disciplineId={subscription.disciplineId} size="32px" />
+            <span className="ms-2">
+              Абонемент {getDisciplineName(subscription.disciplineId)} <SubscriptionStatusBadge status={subscription.status} />
+            </span>
+          </>
+        );
+    }
+  };
+
   if (!subscription) {
     return (
       <Container style={{ marginTop: "40px" }}>
@@ -72,12 +105,8 @@ const SubscriptionScreen = ({
             </Button>
           </div>*/}
           <div className="d-flex align-items-center mt-4">
-            
             <h2 className="d-flex align-items-center mb-0">
-              <DisciplineIcon disciplineId={subscription.disciplineId} size="32px" />
-              <span className="ms-2">
-                Абонемент {getDisciplineName(subscription.disciplineId)} <SubscriptionStatusBadge status={subscription.status} />
-              </span>
+              {renderSubscriptionTitle()}
             </h2>
           </div>
         </Col>
@@ -95,10 +124,14 @@ const SubscriptionScreen = ({
                       <strong>Начало:</strong> {formatDateWithLetters(subscription.startDate)}
                     </Col>
                     <Col size="md-6">
-                      <strong>Преподаватель:</strong>{' '}
-                      <Link to={`/teacher/${subscription.teacher.teacherId}`}>
-                        {subscription.teacher.firstName} {subscription.teacher.lastName}
-                      </Link>
+                    {subscription.teacher &&
+                      <>
+                        <strong>Преподаватель:</strong>{' '}
+                        <Link to={`/teacher/${subscription.teacher.teacherId}`}>
+                          {subscription.teacher.firstName} {subscription.teacher.lastName}
+                        </Link>
+                      </>
+                    }
                     </Col>
                   </Row>
                   <Row className="mt-2">
