@@ -8,6 +8,8 @@ import Teachers from "./features/teachers/Teachers";
 import { AttendanceCancelationForm } from "./features/attendances/AttendanceCancelationForm";
 import { AttendanceRescheduleForm } from "./features/attendances/AttendanceRescheduleForm";
 
+import Login from "./features/auth/Login";
+
 import StudentForm from "./features/students/StudentForm";
 import StudentScreen from "./features/students/StudentScreen";
 import { WaitingScheduleForm } from "./features/students/WaitingScheduleForm";
@@ -37,6 +39,8 @@ function App() {
         <MyNavbar />
         
         <div style={{ flex: '1 0 auto' }}>
+          <Route exact path="/login" render={(props) => <Login {...props} />}/>
+          
           <Route exact path="/" render={(props) => <HomeScreen {...props} />}/>
           <Route exact path="/home" render={(props) => <HomeScreen {...props} />}/>
 
