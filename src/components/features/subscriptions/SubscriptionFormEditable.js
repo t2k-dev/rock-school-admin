@@ -1,16 +1,20 @@
-import { format, getDay } from "date-fns";
+import { format } from "date-fns";
 import React from "react";
-import { Alert, Button, Col, Container, Form, InputGroup, Row, Spinner, Table } from "react-bootstrap";
+import { Alert, Button, Col, Container, Form, InputGroup, Row, Spinner } from "react-bootstrap";
 import "react-datepicker/dist/react-datepicker.css";
 
 import { getAttendanceLengthName } from "../../../constants/attendancies";
 import { getDisciplineName } from "../../../constants/disciplines";
+import SubscriptionType from '../../../constants/SubscriptionType';
+import { convertSlotsToSchedules } from "../../../utils/scheduleUtils";
 import { DisciplineIcon } from "../../shared/discipline/DisciplineIcon";
 import { CalendarIcon } from "../../shared/icons/CalendarIcon";
 import { Loading } from "../../shared/Loading";
+import { AvailableSlotsModal } from "../../shared/modals/AvailableSlotsModal";
 import { ScheduleEditorWithDelete } from "../../shared/schedule/ScheduleEditorWithDelete";
-import { SubscriptionStudents } from "./SubscriptionStudents";
+import { SubscriptionStudents } from "../subscriptions/SubscriptionStudents";
 
+import { getBusySlots } from "../../../services/apiBranchService";
 import { getSubscriptionFormData, updateSubscriptionSchedules } from "../../../services/apiSubscriptionService";
 import { getWorkingPeriods } from "../../../services/apiTeacherService";
 import { AvailableTeachersModal } from "../../shared/modals/AvailableTeachersModal";
@@ -38,6 +42,7 @@ export class SubscriptionFormEditable extends React.Component {
       attendanceCount: "",
       attendanceLength: 0,
       availableTeachers: [],
+      rooms: [],
       schedules: [],
 
       // UI State
@@ -81,6 +86,7 @@ export class SubscriptionFormEditable extends React.Component {
     
       this.setState({
         subscriptionId: subscription.subscriptionId,
+        type: subscription.subscriptionType,
         students: formData.students,
         disciplineId: subscription.disciplineId || "",
         teacher: formData.teacher || {},
@@ -127,19 +133,23 @@ export class SubscriptionFormEditable extends React.Component {
     this.setState({ showAvailableTeacherModal: false, teacherId: newSelectedTeacherId , selectedTeachers: selectedTeachers });
   };
 
-  updateAvailableSlots = (slots) => {
-    let schedules = [];
-    slots.forEach((slot) => {
-      const newPeriod = {
-        weekDay: getDay(slot.start),
-        startTime: format(slot.start, "HH:mm"),
-        endTime: format(slot.end, "HH:mm"),
-        roomId: slot.roomId,
-        teacherId: slot.teacherId,
-      };
-      schedules.push(newPeriod);
-    });
+  showAvailableSlotsModal = async (e) => {
+    e.preventDefault();
+    
+    const responseData = await getBusySlots(1); // BranchId
 
+    this.setState({
+        rooms: responseData,
+        showAvailableSlotsModal: true,
+    });
+  }
+
+  handleCloseAvailableSlotsModal = () => {
+    this.setState({ showAvailableSlotsModal: false });
+  };
+
+  handleSlotsChange = (slots) => {
+    const schedules = convertSlotsToSchedules(slots, { includeTeacherId: true });
     this.setState({ availableSlots: slots, schedules: schedules });
   };
 
@@ -192,68 +202,68 @@ export class SubscriptionFormEditable extends React.Component {
     </Container>
   );
 
-  renderStudentsList = () => {
-    const { students } = this.state;
+  renderType = () => {
+    const { disciplineId, type } = this.state;
     
-    if (!students?.length) {
-      return (
-        <tr>
-          <td className="text-center text-muted">Студенты не найдены</td>
-        </tr>
-      );
+    switch (type) { 
+      case SubscriptionType.LESSON:
+            return (
+              <Form.Group className="mb-3 text-center">
+                <Form.Label>
+                  <DisciplineIcon disciplineId={disciplineId}/>
+                  <span style={{marginLeft: "5px"}}>{getDisciplineName(disciplineId)}</span>
+                </Form.Label>
+              </Form.Group>
+            );
+      case SubscriptionType.RENT:
+        return (
+          <Form.Group className="mb-3 text-center">
+            <Form.Label>
+              Аренда комнаты
+            </Form.Label>
+          </Form.Group>
+        )
+      default:
+        return null;
     }
+  }
 
-    return (
-      <Form.Group className="mb-3">
-        <Form.Label><b>
-          {students.length > 1 
-            ? 'Ученики' 
-            : 'Ученик'
-            }</b>
-        </Form.Label>
-        <Table striped bordered>
-          <tbody>
-            {students.map((student, index) => (
-            <tr key={student.studentId || index}>
-              <td>
-                <Container className="d-flex p-0">
-                  <div className="flex-grow-1">
-                    {student.firstName} {student.lastName}
-                    {student.birthDate && (
-                      <small className="text-muted ms-2">
-                        ({this.formatDate(student.birthDate)})
-                      </small>
-                    )}
-                  </div>
-                </Container>
-              </td>
-            </tr>
-          ))}</tbody>
-        </Table>
-      </Form.Group>
-    );
-    
+  renderSelectSlotSection = () => {
+    const { teacher, isSaving, type } = this.state;
+    switch (type) { 
+      case SubscriptionType.LESSON:
+        return (
+          <>
+            <div className="mb-3"><b>Преподаватель</b></div>
+            <Form.Group className="mb-3" >
+              <div className="mb-4">
+                  <InputGroup className="mb-3 d-flex">
+                    <Form.Label className="flex-grow-1">{teacher.firstName} {teacher.lastName}</Form.Label>
+                    <Button 
+                      variant="outline-secondary" 
+                      onClick={this.showAvailableTeachersModal}
+                      disabled={!teacher?.teacherId || isSaving}
+                    >
+                      Доступные окна...
+                    </Button>
 
-  };
-
-  renderTeacherSection = () => {
-    const { teacher, isSaving } = this.state;
-    
-    return (
-      <div className="mb-4">
-          <InputGroup className="mb-3 d-flex">
-            <Form.Label className="flex-grow-1">{teacher.firstName} {teacher.lastName}</Form.Label>
-            <Button 
+                  </InputGroup>
+              </div>
+            </Form.Group>
+          </>
+        );
+      case SubscriptionType.RENT:
+        return (
+          <Button 
               variant="outline-secondary" 
-              onClick={this.showAvailableTeachersModal}
-              disabled={!teacher?.teacherId || isSaving}
-            >
-              Доступные окна...
-            </Button>
-
-          </InputGroup>
-      </div>
-    );
+              type="null" 
+              onClick={this.showAvailableSlotsModal}>
+            Доступные окна...
+          </Button>
+        );
+      default:
+        return null;
+    }
   };
 
   render() {
@@ -261,7 +271,6 @@ export class SubscriptionFormEditable extends React.Component {
       isLoading,
       isSaving,
       error,
-      disciplineId,
       teacher,
       attendanceCount,
       attendanceLength,
@@ -270,6 +279,8 @@ export class SubscriptionFormEditable extends React.Component {
       students,
       availableTeachers,
       showAvailableTeacherModal,
+      showAvailableSlotsModal,
+      rooms,
     } = this.state;
 
     if (isLoading) {
@@ -288,17 +299,12 @@ export class SubscriptionFormEditable extends React.Component {
             <h2 className="mb-4 text-center">Редактировать расписание</h2>
 
             <Form>
+              {this.renderType()}
+
               <SubscriptionStudents
                 students={students}
-                variant=""
+                allowRemove={false}
               />
-
-              <Form.Group className="mb-3">
-                <Form.Label>
-                  <DisciplineIcon disciplineId={disciplineId}/>
-                  <span style={{marginLeft: "5px"}}>{getDisciplineName(disciplineId)}</span>
-                </Form.Label>
-              </Form.Group>
 
               <Form.Group className="mb-3">
                 <CalendarIcon />
@@ -313,16 +319,21 @@ export class SubscriptionFormEditable extends React.Component {
                 <Form.Label>Длительность урока: {getAttendanceLengthName(attendanceLength)}</Form.Label>
               </Form.Group>
 
-              <div className="mb-3"><b>Преподаватель</b></div>
-              <Form.Group className="mb-3" >
-                {this.renderTeacherSection()}
-              </Form.Group>
+              {this.renderSelectSlotSection()}
 
               <AvailableTeachersModal
                 show={showAvailableTeacherModal}
                 teachers={availableTeachers}
-                onSlotsChange={this.updateAvailableSlots}
+                onSlotsChange={this.handleSlotsChange}
                 onClose={this.handleCloseAvailableTeachersModal}
+              />
+
+              <AvailableSlotsModal
+                show={showAvailableSlotsModal}
+                rooms={rooms}
+                onSlotsChange={this.handleSlotsChange}
+                onClose={this.handleCloseAvailableSlotsModal}
+                singleSelection={false}
               />
 
               <hr></hr>

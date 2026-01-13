@@ -474,7 +474,7 @@ export class AttendanceModal extends React.Component {
 
   renderSubscriptionInfo = () => {
     const { teacher, disciplineId, subscription } = this.state.attendance;
-    switch (subscription.subscriptionType) {
+    switch (subscription?.subscriptionType) {
         case SubscriptionType.LESSON:
           return(
             <div className="d-flex mb-3 text-center">
@@ -504,7 +504,7 @@ export class AttendanceModal extends React.Component {
       return null;
     }
 
-    const { teacher, student, isTrial, disciplineId, status } = this.state.attendance;
+    const { student, isTrial, status } = this.state.attendance;
     const { comment } = this.state;
 
     return (

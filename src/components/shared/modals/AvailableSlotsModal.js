@@ -144,11 +144,6 @@ export class AvailableSlotsModal extends React.Component {
     if (this.props.onSlotsChange) {
       this.props.onSlotsChange(slots);
     }
-    
-    // Legacy prop pattern (for backward compatibility)
-    if (this.props.updateAvailableSlots) {
-      this.props.updateAvailableSlots(slots);
-    }
   };
 
   handleSelectSlot = (room, slotInfo) => {

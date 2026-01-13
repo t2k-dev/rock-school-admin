@@ -44,7 +44,7 @@ export class TrialSubscriptionForm extends React.Component {
     this.setState({ showAvailableTeacherModal: false, selectedSlotId: newSelectedSlotId });
   };
 
-  updateAvailableSlots = (availableSlots) => {
+  handleSlotsChange = (availableSlots) => {
     this.setState({ availableSlots: availableSlots, selectedSlotId: availableSlots[0]?.id });
   };
 
@@ -63,8 +63,6 @@ export class TrialSubscriptionForm extends React.Component {
 
   handleSave = async (e) => {
     e.preventDefault();
-
-    console.log(this.state)
 
     const selectedSlot = this.state.availableSlots.filter((s) => s.id === this.state.selectedSlotId)[0];
     const requestBody = {
@@ -134,9 +132,10 @@ export class TrialSubscriptionForm extends React.Component {
                 <AvailableTeachersModal
                   show={showAvailableTeacherModal}
                   teachers={availableTeachers}
-                  onSlotsChange={this.updateAvailableSlots}
+                  onSlotsChange={this.handleSlotsChange}
                   onClose={this.handleCloseAvailableTeachersModal}
                 />
+
               </InputGroup>
 
               <hr></hr>

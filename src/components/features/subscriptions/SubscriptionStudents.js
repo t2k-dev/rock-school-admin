@@ -20,8 +20,6 @@ export const SubscriptionStudents = ({
   const renderStudentRow = (student, index) => (
     <tr 
       key={student.studentId || index}
-      //className={onStudentClick ? 'cursor-pointer' : ''}
-      //onClick={onStudentClick ? () => onStudentClick(student) : undefined}
     >
       <td>
         <Container className="d-flex p-0">
@@ -30,7 +28,7 @@ export const SubscriptionStudents = ({
               {student.firstName} {student.lastName}
             </span>
           </div>
-          {allowRemove && (
+          {allowRemove && students.length > 1 && (
           <div className="flex-shrink-1">
               <Button
                 variant="outline-danger"

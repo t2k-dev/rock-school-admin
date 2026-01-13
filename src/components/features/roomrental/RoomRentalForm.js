@@ -5,6 +5,7 @@ import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import { getBusySlots } from "../../../services/apiBranchService";
 import { addRentalSubscription } from "../../../services/apiRentalSubscriptionService";
 import { getStudent } from "../../../services/apiStudentService";
+import { convertSlotsToSchedules } from "../../../utils/scheduleUtils";
 import { SubscriptionStudents } from "../../features/subscriptions/SubscriptionStudents";
 import { Loading } from "../../shared/Loading";
 import { AvailableSlotsModal } from "../../shared/modals/AvailableSlotsModal";
@@ -23,7 +24,7 @@ export class RoomRentalForm extends React.Component {
       roomId: "",
       startDate: format(new Date(), "dd.MM.yyyy"),
       attendanceCount: "",
-      attendanceLength: 0,
+      attendanceLength: 1,
       purpose: "",
       notes: "",
       schedules: [],
@@ -67,7 +68,7 @@ export class RoomRentalForm extends React.Component {
     e.preventDefault();
     
     const responseData = await getBusySlots(1); // BranchId
-    console.log("Busy slots response:", responseData);
+
     this.setState({
         rooms: responseData,
         showAvailableSlotsModal: true,
@@ -79,26 +80,8 @@ export class RoomRentalForm extends React.Component {
   };
 
   handleSlotsChange = (availableSlots) => {
-    // Convert available slots to schedules format
-    let periods = [];
-    availableSlots.forEach((slot) => {
-      const newPeriod = {
-        weekDay: new Date(slot.start).getDay(),
-        startTime: new Date(slot.start).toLocaleTimeString('en-GB', { 
-          hour: '2-digit', 
-          minute: '2-digit',
-          hour12: false 
-        }),
-        endTime: new Date(slot.end).toLocaleTimeString('en-GB', { 
-          hour: '2-digit', 
-          minute: '2-digit',
-          hour12: false 
-        }),
-        roomId: slot.roomId,
-      };
-      periods.push(newPeriod);
-    });
-
+    // Convert available slots to schedules format (without teacherId for room rental)
+    const periods = convertSlotsToSchedules(availableSlots, { includeTeacherId: false });
     this.setState({ schedules: periods });
   };
 
@@ -131,10 +114,13 @@ export class RoomRentalForm extends React.Component {
         schedules: this.state.schedules,
     };
 
+    console.log("Request body for saving room rental:", requestBody);
+return;
+
     try {
       await addRentalSubscription(requestBody);
       
-      //this.props.history.push(`/student/${this.state.studentId}`);
+      this.props.history.push(`/student/${this.state.studentId}`);
     } catch (error) {
       console.error("Failed to save room rental:", error);
       alert("Ошибка при оформлении аренды комнаты");
@@ -210,8 +196,6 @@ export class RoomRentalForm extends React.Component {
                     >
                   <option value="1">Час</option>
                   <option value="2">Полтора часа</option>
-                  <option value="3">Два часа</option>
-                  <option value="4">Три часа</option>
                 </Form.Select>
               </Form.Group>
 

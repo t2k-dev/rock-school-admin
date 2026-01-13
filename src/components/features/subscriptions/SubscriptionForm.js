@@ -1,4 +1,4 @@
-import { format, getDay } from "date-fns";
+import { format } from "date-fns";
 import React from "react";
 import { Button, Col, Container, Form, InputGroup, Row } from "react-bootstrap";
 
@@ -6,6 +6,7 @@ import { getStudent } from "../../../services/apiStudentService";
 import { addSubscription } from "../../../services/apiSubscriptionService";
 import { getAvailableTeachers, getWorkingPeriods } from "../../../services/apiTeacherService";
 import { calculateAge } from "../../../utils/dateTime";
+import { convertSlotsToSchedules } from "../../../utils/scheduleUtils";
 import { DisciplineGridSelector } from "../../shared/discipline/DisciplineGridSelector";
 import { DisciplinePlate } from "../../shared/discipline/DisciplinePlate";
 import { Loading } from "../../shared/Loading";
@@ -155,20 +156,9 @@ export class SubscriptionForm extends React.Component {
     this.setState({ showAvailableTeacherModal: false, teacherId: newSelectedTeacherId , selectedTeachers: selectedTeachers });
   };
 
-  updateAvailableSlots = (availableSlots) => {
-    let periods = [];
-    availableSlots.forEach((slot) => {
-      const newPeriod = {
-        weekDay: getDay(slot.start),
-        startTime: format(slot.start, "HH:mm"),
-        endTime: format(slot.end, "HH:mm"),
-        roomId: slot.roomId,
-        teacherId: slot.teacherId,
-      };
-      periods.push(newPeriod);
-    });
-
-    this.setState({ availableSlots: availableSlots, schedules: periods });
+  handleSlotsChange = (slots) => {
+    const schedules = convertSlotsToSchedules(slots, { includeTeacherId: true });
+    this.setState({ availableSlots: slots, schedules: schedules });
   };
 
   handleChange = (e) => {
@@ -368,7 +358,7 @@ export class SubscriptionForm extends React.Component {
               <AvailableTeachersModal
                 show={showAvailableTeacherModal}
                 teachers={availableTeachers}
-                onSlotsChange={this.updateAvailableSlots}
+                onSlotsChange={this.handleSlotsChange}
                 onClose={this.handleCloseAvailableTeachersModal}
               />
 
