@@ -12,6 +12,7 @@ import { getTrialSubscriptionStatusName } from "../../../constants/SubscriptionT
 
 import { CalendarWeek } from "../../shared/calendar/CalendarWeek";
 import { DisciplineIcon } from "../../shared/discipline/DisciplineIcon";
+import { CalendarIcon } from "../../shared/icons/CalendarIcon";
 import { EditIcon } from "../../shared/icons/EditIcon";
 import { Loading } from "../../shared/Loading";
 import { AttendanceModal } from "../../shared/modals/AttendanceModal";
@@ -171,7 +172,7 @@ class TeacherScreen extends React.Component {
         <Table striped bordered hover>
           <thead>
             <tr>
-              <th className="date-column">Дата начала</th>
+              <th className="date-column">Начало</th>
               <th>Ученик</th>
               <th className="discipline-column">Направление</th>
               <th>Занятий осталось</th>
@@ -337,7 +338,7 @@ class TeacherScreen extends React.Component {
           <TeacherScreenCard item={teacher} history={this.props.history} />
         </Row>
         <Row>
-          <h3>Расписание</h3>
+          <h3><CalendarIcon />Расписание</h3>
           <CalendarWeek 
             events={events} 
             backgroundEvents={backgroundEvents} 

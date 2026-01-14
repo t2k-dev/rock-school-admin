@@ -390,13 +390,13 @@ class StudentScreen extends React.Component {
     });
 
     // Subscriptions
-    let nonTrialSubscriptions = sortedSubscriptions.filter((s) => s.trialStatus === null);
+    let nonTrialSubscriptions = sortedSubscriptions.filter((s) => s.subscriptionType === SubscriptionType.LESSON);
     nonTrialSubscriptions = showCompleted
       ? nonTrialSubscriptions
-      : nonTrialSubscriptions.filter((s) => s.subscriptionType === SubscriptionType.LESSON && s.status !== SubscriptionStatus.COMPLETED);
+      : nonTrialSubscriptions.filter((s) => s.status !== SubscriptionStatus.COMPLETED);
 
     // Trials
-    const trialSubscriptions = sortedSubscriptions.filter((s) => s.subscriptionType === SubscriptionType.TRIAL_LESSON && s.trialStatus !== null);
+    const trialSubscriptions = sortedSubscriptions.filter((s) => s.subscriptionType === SubscriptionType.TRIAL_LESSON);
 
     // Rents
     const rentSubscriptions = sortedSubscriptions.filter((s) => s.subscriptionType === SubscriptionType.RENT);
@@ -430,7 +430,7 @@ class StudentScreen extends React.Component {
                 <h3>Пробные занятия</h3>
                 {this.renderTrialsTable(trialSubscriptions)}  
 
-                <h3>Репетиции</h3>
+                <h3>Аренда комнаты</h3>
                 {this.renderRentTable(rentSubscriptions)}
 
             </Tab>

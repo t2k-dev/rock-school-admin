@@ -126,7 +126,7 @@ export class TrialSubscriptionForm extends React.Component {
                 </Form.Select>
 
                 <Button variant="outline-secondary" type="null" onClick={(e) => this.generateAvailablePeriods(e)} disabled={false}>
-                  Доступыне окна...
+                  Доступные окна...
                 </Button>
 
                 <AvailableTeachersModal

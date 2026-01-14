@@ -18,6 +18,7 @@ const MyNavbar = () =>{
 
                     <Nav.Link as={Link} to="/teachers">Преподаватели</Nav.Link>
                     <Nav.Link as={Link} to="/students">Ученики</Nav.Link>
+                    <Nav.Link as={Link} to="/bands">Группы</Nav.Link>
 
                 </Nav>
                 </Navbar.Collapse>

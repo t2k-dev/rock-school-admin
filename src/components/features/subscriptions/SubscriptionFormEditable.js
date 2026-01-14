@@ -9,6 +9,8 @@ import SubscriptionType from '../../../constants/SubscriptionType';
 import { convertSlotsToSchedules } from "../../../utils/scheduleUtils";
 import { DisciplineIcon } from "../../shared/discipline/DisciplineIcon";
 import { CalendarIcon } from "../../shared/icons/CalendarIcon";
+import { CountIcon } from "../../shared/icons/CountIcon";
+import { TimeIcon } from "../../shared/icons/TimeIcon";
 import { Loading } from "../../shared/Loading";
 import { AvailableSlotsModal } from "../../shared/modals/AvailableSlotsModal";
 import { ScheduleEditorWithDelete } from "../../shared/schedule/ScheduleEditorWithDelete";
@@ -306,17 +308,17 @@ export class SubscriptionFormEditable extends React.Component {
                 allowRemove={false}
               />
 
-              <Form.Group className="mb-3">
+              <Form.Group className="mb-2">
                 <CalendarIcon />
                 <Form.Label>Начало: {startDate}</Form.Label>
               </Form.Group>
 
-              <Form.Group className="mb-3">
-                <Form.Label>Количество занятий: {attendanceCount}</Form.Label>
+              <Form.Group className="mb-2">
+                <Form.Label><CountIcon /> Количество занятий: {attendanceCount}</Form.Label>
               </Form.Group>
 
-              <Form.Group className="mb-3">
-                <Form.Label>Длительность урока: {getAttendanceLengthName(attendanceLength)}</Form.Label>
+              <Form.Group className="mb-2">
+                <Form.Label><TimeIcon /> Длительность урока: {getAttendanceLengthName(attendanceLength)}</Form.Label>
               </Form.Group>
 
               {this.renderSelectSlotSection()}
