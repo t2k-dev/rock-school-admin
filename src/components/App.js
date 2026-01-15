@@ -5,6 +5,10 @@ import HomeScreen from "./features/home/HomeScreen";
 import Students from "./features/students/Students";
 import Teachers from "./features/teachers/Teachers";
 
+import { BandForm } from "./features/bands/BandForm";
+import { BandScreen } from "./features/bands/BandScreen";
+import Bands from "./features/bands/Bands";
+
 import { AttendanceCancelationForm } from "./features/attendances/AttendanceCancelationForm";
 import { AttendanceRescheduleForm } from "./features/attendances/AttendanceRescheduleForm";
 
@@ -69,6 +73,11 @@ function App() {
           <Route exact path="/notes/addNote" render={(props) => <NoteForm type="New" {...props} />}/>
           <Route exact path="/notes/:id/edit" render={(props) => <NoteForm {...props} />}/>
           
+          <Route exact path="/bands"><Bands /></Route>
+          <Route exact path="/band/:id" render={(props) => <BandScreen {...props} />}/>
+          <Route exact path="/band/:id/edit" render={(props) => <BandForm type="Edit" {...props} />}/>
+          <Route exact path="/admin/registerBand" render={(props) => <BandForm type="New" {...props} />}/>
+
           <Route exact path="/bigCalendarTest"><CalendarWeek /></Route>
           <Route exact path="/TestComponent" render={(props) => <TestComponent {...props}/>}/>
           <Route exact path="/TestComponent2" render={(props) => <TestComponent2 {...props}/>}/>

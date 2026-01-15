@@ -86,7 +86,7 @@ export class AddStudentModal extends React.Component {
   };
 
   render() {
-    const { show, handleClose } = this.props;
+    const { show, handleClose, onlyExistingStudents } = this.props;
     const { email, firstName, lastName, birthDate, phone, level, sex, age } = this.state;
 
     return (
@@ -95,28 +95,34 @@ export class AddStudentModal extends React.Component {
           <Modal.Title>Добавить ученика</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Tabs defaultActiveKey="new" id="students-tab" className="mb-3" fill>
-            <Tab eventKey="new" title="Новый">
-              <StudentFormFields
-                isNew={true}
-                email={email}
-                firstName={firstName}
-                lastName={lastName}
-                birthDate={birthDate}
-                phone={phone}
-                level={level}
-                sex={sex}
-                age={age}
-                handleChange={this.handleChange}
-                handleAgeChange={this.handleAgeChange}
-                handleSexChange={this.handleSexChange}
-                handleSave={this.handleSave}
-              />
-            </Tab>
-            <Tab eventKey="existing" title="Существующий">
-              <StudentsSearch handleOnSelect={this.handleAddExisting} />
-            </Tab>
-          </Tabs>
+          {onlyExistingStudents ? (
+            // Show only existing students search when flag is set
+            <StudentsSearch handleOnSelect={this.handleAddExisting} />
+          ) : (
+            // Show tabs when flag is not set (default behavior)
+            <Tabs defaultActiveKey="new" id="students-tab" className="mb-3" fill>
+              <Tab eventKey="new" title="Новый">
+                <StudentFormFields
+                  isNew={true}
+                  email={email}
+                  firstName={firstName}
+                  lastName={lastName}
+                  birthDate={birthDate}
+                  phone={phone}
+                  level={level}
+                  sex={sex}
+                  age={age}
+                  handleChange={this.handleChange}
+                  handleAgeChange={this.handleAgeChange}
+                  handleSexChange={this.handleSexChange}
+                  handleSave={this.handleSave}
+                />
+              </Tab>
+              <Tab eventKey="existing" title="Существующий">
+                <StudentsSearch handleOnSelect={this.handleAddExisting} />
+              </Tab>
+            </Tabs>
+          )}
         </Modal.Body>
       </Modal>
     );

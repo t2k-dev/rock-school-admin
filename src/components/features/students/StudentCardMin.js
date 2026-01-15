@@ -6,7 +6,7 @@ export const StudentCardMin = ({
   handleClick
 }) => {
   return (
-    <Card className="ms-col-2 mb-2" onClick={handleClick}>
+    <Card className="ms-col-2 mb-2 cursor-pointer" style={{ cursor: 'pointer' }} onClick={handleClick}>
       <Card.Body className="p-1">
         <Row>
           <Col md="1">
