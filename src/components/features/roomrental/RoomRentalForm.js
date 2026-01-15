@@ -94,12 +94,6 @@ export class RoomRentalForm extends React.Component {
     this.setState({ schedules: periods });
   };
 
-  deleteStudent = (index) => {
-    const updatedStudents = [...this.state.students];
-    updatedStudents.splice(index, 1);
-    this.setState({ students: updatedStudents });
-  }
-
   handleSave = async (e) => {
     e.preventDefault();
 
@@ -158,12 +152,10 @@ return;
               <Form.Group className="mb-3" controlId="students">
                 <SubscriptionStudents
                   students={students}
-                  onRemoveStudent={this.deleteStudent}
                   allowRemove={false}
+                  allowAdd={false}
                   />
               </Form.Group>
-
-              <hr></hr>
 
               <Form.Group className="mb-3">
                 <Form.Label>Дата начала</Form.Label>

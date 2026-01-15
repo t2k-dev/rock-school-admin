@@ -1,5 +1,6 @@
 import React from "react";
 import { BassGuitarIcon } from "../icons/BassGuitarIcon";
+import { CancelIcon } from "../icons/CancelIcon";
 import { DrumsIcon } from "../icons/DrumsIcon";
 import { ElectroGuitarIcon } from "../icons/ElectroGuitarIcon";
 import { ExtremeVocalIcon } from "../icons/ExtremeVocalIcon";
@@ -45,7 +46,7 @@ export class DisciplineIcon extends React.Component {
         iconControl = <ExtremeVocalIcon color={this.props.color} size={this.props.size} />;
         break;
       default:
-        iconControl = <div>#</div>;
+        iconControl = <CancelIcon color={this.props.color} size={this.props.size} />;
     }
 
     return <div style={{ display: "inline-block" }}>{iconControl}</div>;

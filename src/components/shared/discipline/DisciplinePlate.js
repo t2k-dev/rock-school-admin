@@ -24,6 +24,13 @@ export const DisciplinePlate = ({
           iconSize: '48px',
           fontSize: '12px'
         };
+      case "fill":
+        return {
+          width: '100%',
+          height: '120px',
+          iconSize: '48px',
+          fontSize: '12px'
+        };        
       default: // medium
         return {
           width: '100px',
@@ -35,11 +42,7 @@ export const DisciplinePlate = ({
   };
 
   const sizeStyles = getSizeStyles();
-  const disciplineName = getDisciplineName(disciplineId);
-
-  if (!disciplineId || !disciplineName) {
-    return null;
-  }
+  const disciplineName = disciplineId ? getDisciplineName(disciplineId) : 'Не выбрано';
 
   return (
     <div className="mb-3">
@@ -79,7 +82,7 @@ export const DisciplinePlate = ({
 };
 
 DisciplinePlate.propTypes = {
-  disciplineId: PropTypes.number.isRequired,
+  disciplineId: PropTypes.number,
   label: PropTypes.string,
   size: PropTypes.oneOf(["small", "medium", "large"])
 };

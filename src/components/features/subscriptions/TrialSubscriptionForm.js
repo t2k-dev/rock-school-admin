@@ -1,11 +1,14 @@
 import React from "react";
 import { Button, Col, Container, Form, InputGroup, Row } from "react-bootstrap";
 
+import { getStudent } from "../../../services/apiStudentService";
 import { addTrialSubscription } from "../../../services/apiSubscriptionService";
 import { getAvailableTeachers } from "../../../services/apiTeacherService";
-import { DisciplineGridSelector } from "../../shared/discipline/DisciplineGridSelector";
+import { DisciplinePlate } from "../../shared/discipline/DisciplinePlate";
 import { CalendarIcon } from "../../shared/icons/CalendarIcon";
 import { AvailableTeachersModal } from "../../shared/modals/AvailableTeachersModal";
+import { DisciplineSelectionModal } from "../../shared/modals/DisciplineSelectionModal";
+import { SubscriptionStudents } from "./SubscriptionStudents";
 
 export class TrialSubscriptionForm extends React.Component {
   constructor(props) {
@@ -14,19 +17,42 @@ export class TrialSubscriptionForm extends React.Component {
       isExistingStudent: false,
 
       branchId: 0,
-      disciplineId: "",
+      disciplineId: null,
+      student: null, // Add student to state as fallback
 
       backgroundEvents: [],
       availableTeachers: [],
       availableSlots: [],
       showAvailableTeacherModal: false,
+      showDisciplineModal: false,
       selectedSlotId: 0,
     };
 
     this.handleCloseAvailableTeachersModal = this.handleCloseAvailableTeachersModal.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSave = this.handleSave.bind(this);
+    this.showDisciplineModal = this.showDisciplineModal.bind(this);
+    this.handleCloseDisciplineModal = this.handleCloseDisciplineModal.bind(this);
   }
+
+  componentDidMount() {
+    // Load student if not provided in props
+    if (!this.props.student && !this.props.location?.state?.student) {
+      this.loadStudent();
+    }
+  }
+
+  loadStudent = async () => {
+    try {
+      const studentId = this.props.match?.params?.id;
+      if (studentId) {
+        const student = await getStudent(studentId);
+        this.setState({ student: student });
+      }
+    } catch (error) {
+      console.error('Error loading student:', error);
+    }
+  };
 
   // AvailableTeachersModal
   generateAvailablePeriods = async (e) => {
@@ -58,7 +84,17 @@ export class TrialSubscriptionForm extends React.Component {
       disciplineId: disciplineId,
       availableSlots: [],
       selectedSlotId: 0,
+      showDisciplineModal: false,
     });
+  };
+
+  // Discipline Modal methods
+  showDisciplineModal = () => {
+    this.setState({ showDisciplineModal: true });
+  };
+
+  handleCloseDisciplineModal = () => {
+    this.setState({ showDisciplineModal: false });
   };
 
   handleSave = async (e) => {
@@ -86,10 +122,25 @@ export class TrialSubscriptionForm extends React.Component {
     const {
       disciplineId,
       showAvailableTeacherModal,
+      showDisciplineModal,
       availableTeachers,
       availableSlots,
       selectedSlotId,
+      student,
     } = this.state;
+
+    // Debug: Check what props are available
+    console.log('TrialSubscriptionForm props:', this.props);
+    console.log('Student from props:', this.props.student);
+    console.log('Student from state:', student);
+    console.log('Match params:', this.props.match?.params);
+
+    // Try multiple sources for student data
+    const currentStudent = this.props.student 
+      || this.props.location?.state?.student 
+      || student;
+    
+    const students = currentStudent ? [currentStudent] : [];
 
     let availableSlotsList;
     if (availableSlots && availableSlots.length > 0) {
@@ -105,15 +156,32 @@ export class TrialSubscriptionForm extends React.Component {
         <Row>
           <Col md="4"></Col>
           <Col md="4">
-            <h2 className="text-center mb-5">Пробное занятие</h2>
+            <h2 className="text-center mb-4">Пробное занятие</h2>
             <Form>
 
-              <DisciplineGridSelector
-                selectedDisciplineId={disciplineId}
-                onDisciplineChange={this.handleDisciplineChange}
-              />
+              {/* Discipline Selection */}
+              <div className="mb-3">
+                  <div 
+                    onClick={this.showDisciplineModal}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <DisciplinePlate 
+                      disciplineId={disciplineId}
+                      size="fill"
+                    />
+                  </div>
+              </div>
 
-              <label htmlFor="GenerteSchedule"><CalendarIcon/> Расписание</label>
+              {/*Student*/}
+              <Form.Group className="mb-3" controlId="students">
+                <SubscriptionStudents
+                  students={students}
+                  allowRemove={false}
+                  allowAdd={false}
+                  />
+              </Form.Group>
+
+              <label htmlFor="GenerteSchedule"><CalendarIcon/> <strong>Расписание</strong></label>
               <InputGroup className="mb-3 mt-2 text-center" controlId="GenerteSchedule">
                 <Form.Select
                   aria-label="Веберите..."
@@ -137,6 +205,13 @@ export class TrialSubscriptionForm extends React.Component {
                 />
 
               </InputGroup>
+
+              <DisciplineSelectionModal
+                show={showDisciplineModal}
+                onHide={this.handleCloseDisciplineModal}
+                selectedDisciplineId={disciplineId}
+                onDisciplineChange={this.handleDisciplineChange}
+              />
 
               <hr></hr>
               <div className="text-center">

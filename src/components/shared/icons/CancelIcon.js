@@ -21,8 +21,8 @@ export function CancelIcon({ onIconClick, color = "#000000" }) {
         viewBox="0 0 30 30"
         fill="none"
       >
-        <circle cx="12" cy="12" r="9" stroke={color} stroke-width="2"/>
-        <path d="M18 18L6 6" stroke={color} stroke-width="2"/>
+        <circle cx="12" cy="12" r="9" stroke={color} strokeWidth="2"/>
+        <path d="M18 18L6 6" stroke={color} strokeWidth="2"/>
       </svg>
     </span>
   );

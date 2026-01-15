@@ -91,6 +91,19 @@ class StudentScreenCard extends React.Component {
                 >
                   + Аренда комнаты
                 </Button>
+                <Button
+                    as={Link}
+                    to={{
+                      pathname: `/student/${item.studentId}/subscriptionForm`,
+                      state: { student: item },
+                    }}
+                    variant="outline-success"
+                    type="null"
+                    size="md"
+                    className="w-100"
+                  >
+                    + Репетиции
+                </Button>
                 <Button variant="outline-warning"
                   as={Link}
                   to={{

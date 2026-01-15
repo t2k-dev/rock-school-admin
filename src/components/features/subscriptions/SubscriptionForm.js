@@ -7,10 +7,10 @@ import { addSubscription } from "../../../services/apiSubscriptionService";
 import { getAvailableTeachers, getWorkingPeriods } from "../../../services/apiTeacherService";
 import { calculateAge } from "../../../utils/dateTime";
 import { convertSlotsToSchedules } from "../../../utils/scheduleUtils";
-import { DisciplineGridSelector } from "../../shared/discipline/DisciplineGridSelector";
 import { DisciplinePlate } from "../../shared/discipline/DisciplinePlate";
 import { Loading } from "../../shared/Loading";
 import { AvailableTeachersModal } from "../../shared/modals/AvailableTeachersModal";
+import { DisciplineSelectionModal } from "../../shared/modals/DisciplineSelectionModal";
 import { ScheduleEditorWithDelete } from "../../shared/schedule/ScheduleEditorWithDelete";
 import { AddStudentModal } from "../students/AddStudentModal";
 import { SubscriptionStudents } from "./SubscriptionStudents";
@@ -40,6 +40,7 @@ export class SubscriptionForm extends React.Component {
       isLoading: false,
       showAvailableTeacherModal: false,
       showAddStudentModal: false,
+      showDisciplineModal: false,
     };
 
     // AvailableTeachersModal
@@ -49,6 +50,8 @@ export class SubscriptionForm extends React.Component {
     this.handleSave = this.handleSave.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.onChange = this.onChange.bind(this);
+    this.showDisciplineModal = this.showDisciplineModal.bind(this);
+    this.handleCloseDisciplineModal = this.handleCloseDisciplineModal.bind(this);
   }
 
   componentDidMount() {
@@ -171,7 +174,17 @@ export class SubscriptionForm extends React.Component {
       disciplineId: disciplineId,
       availableSlots: [],
       selectedSlotId: 0,
+      showDisciplineModal: false,
     });
+  };
+
+  // Discipline Modal methods
+  showDisciplineModal = () => {
+    this.setState({ showDisciplineModal: true });
+  };
+
+  handleCloseDisciplineModal = () => {
+    this.setState({ showDisciplineModal: false });
   };
 
   onChange = (periods) => {
@@ -236,6 +249,7 @@ export class SubscriptionForm extends React.Component {
       selectedTeachers,
       showAvailableTeacherModal,
       showAddStudentModal,
+      showDisciplineModal,
     } = this.state;
 
     if (isLoading) {
@@ -263,44 +277,37 @@ export class SubscriptionForm extends React.Component {
             <Form>
 
               {/*Discipline*/}
-              {basedOnSubscriptionId != null ? (
-                <DisciplinePlate 
-                  disciplineId={disciplineId}
-                  label=""
-                  size="medium"
-                />
-              ) : (
-                <DisciplineGridSelector
-                  selectedDisciplineId={disciplineId}
-                  onDisciplineChange={this.handleDisciplineChange}
-                />
-              )}
+              <div className="mb-3">
+                <div 
+                  onClick={basedOnSubscriptionId === null ? this.showDisciplineModal : undefined}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <DisciplinePlate 
+                    disciplineId={disciplineId}
+                    size="fill"
+                  />
+                </div>
+              </div>
 
               {/*Students*/}
-              <Form.Group className="mb-3" controlId="discipline">
+              <Form.Group className="mb-3" controlId="students">
                 <SubscriptionStudents
                   students={students}
-                  onRemoveStudent={this.deleteStudent}
+                  onAddStudent={this.showAddStudentModal}
+                  allowAdd={basedOnSubscriptionId === null}
                   allowRemove={basedOnSubscriptionId === null}
+                  onRemoveStudent={this.deleteStudent}
                   />
-                {basedOnSubscriptionId === null && (
-                <>
-                <div className="text-center">
-                  <Button size="sm" variant="outline-success" style={{ marginTop: "10px" }} onClick={this.showAddStudentModal}>
-                    + Добавить ещё ученика
-                  </Button>
-                </div>
                 
                 <AddStudentModal 
                   show={showAddStudentModal} 
                   handleClose={this.handleCloseAddStudentModal} 
                   onAddStudent={this.handleAddStudent}
                   />
-                </>
-                )}
-              
               </Form.Group>
-              <hr></hr>
+
+
+              
 
               <Form.Group className="mb-3">
                 <Form.Label>Дата начала</Form.Label>
@@ -360,6 +367,13 @@ export class SubscriptionForm extends React.Component {
                 teachers={availableTeachers}
                 onSlotsChange={this.handleSlotsChange}
                 onClose={this.handleCloseAvailableTeachersModal}
+              />
+
+              <DisciplineSelectionModal
+                show={showDisciplineModal}
+                onHide={this.handleCloseDisciplineModal}
+                selectedDisciplineId={disciplineId}
+                onDisciplineChange={this.handleDisciplineChange}
               />
 
               <Form.Group className="mb-3" controlId="Teacher"></Form.Group>
