@@ -260,6 +260,8 @@ export class AvailableTeachersModal extends React.Component {
           events={events}
           onSelectSlot={(slotInfo) => this.handleSelectSlot(teacher, slotInfo)}
           onSelectEvent={(slotInfo) => this.handleSelectEvent(teacher.teacherId, slotInfo)}
+          step={this.props.step}
+          slotDuration={this.props.slotDuration}
         />
       </div>
     );

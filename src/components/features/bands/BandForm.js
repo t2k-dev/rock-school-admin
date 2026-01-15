@@ -2,11 +2,11 @@ import React from "react";
 import { Button, Col, Container, Form, InputGroup, Row } from "react-bootstrap";
 
 import { addBand } from "../../../services/apiBandService";
-import { getBusySlots } from "../../../services/apiBranchService";
-import { getTeachers } from "../../../services/apiTeacherService";
+import { getAvailableTeachers, getTeachers, getWorkingPeriods } from "../../../services/apiTeacherService";
+import { calculateAge } from "../../../utils/dateTime";
 import { convertSlotsToSchedules } from "../../../utils/scheduleUtils";
 import { Loading } from "../../shared/Loading";
-import { AvailableSlotsModal } from "../../shared/modals/AvailableSlotsModal";
+import { AvailableTeachersModal } from "../../shared/modals/AvailableTeachersModal";
 import { ScheduleEditorWithDelete } from "../../shared/schedule/ScheduleEditorWithDelete";
 import { AddStudentModal } from "../students/AddStudentModal";
 import { BandStudents } from "./BandStudents";
@@ -25,9 +25,15 @@ export class BandForm extends React.Component {
       schedules: [],
       
       teachers: [],
+      availableTeachers: [],
+      selectedTeachers: [],
+      availableSlots: [],
       showAddStudentModal: false,
-      showAvailableSlotsModal: false,
-      rooms: [],
+      showAvailableTeacherModal: false,
+      
+      // Calendar configuration
+      step: 60,
+      slotDuration: 120,
       
       isLoading: false,
       isSaving: false,
@@ -37,8 +43,8 @@ export class BandForm extends React.Component {
     // Bind methods
     this.showAddStudentModal = this.showAddStudentModal.bind(this);
     this.handleCloseAddStudentModal = this.handleCloseAddStudentModal.bind(this);
-    this.showAvailableSlotsModal = this.showAvailableSlotsModal.bind(this);
-    this.handleCloseAvailableSlotsModal = this.handleCloseAvailableSlotsModal.bind(this);
+    this.showAvailableTeachersModal = this.showAvailableTeachersModal.bind(this);
+    this.handleCloseAvailableTeachersModal = this.handleCloseAvailableTeachersModal.bind(this);
     this.handleSave = this.handleSave.bind(this);
     this.handleScheduleChange = this.handleScheduleChange.bind(this);
   }
@@ -90,31 +96,69 @@ export class BandForm extends React.Component {
     });
   };
 
-  // Available Slots Modal
-  showAvailableSlotsModal = async (e) => {
+  // Available Teachers Modal (similar to SubscriptionForm)
+  showAvailableTeachersModal = async (e) => {
     e.preventDefault();
-    
-    try {
-      const responseData = await getBusySlots(1); // BranchId
-      
-      this.setState({
-        rooms: responseData,
-        showAvailableSlotsModal: true,
-      });
-    } catch (error) {
-      console.error("Failed to load available slots:", error);
-      alert("Ошибка при загрузке доступных окон");
+
+    let teachers;
+    if (this.state.teacher) {
+      // If teacher already selected, get their working periods
+      const response = await getWorkingPeriods(this.state.teacher.teacherId);
+      teachers = response.data?.teacher ? [response.data.teacher] : [];
+    } else {
+      // Get available teachers based on students' average age
+      if (this.state.students.length === 0) {
+        alert("Сначала добавьте учеников в группу");
+        return;
+      }
+
+      const sortedStudents = this.sortStudentsByAge(this.state.students);
+      const age = calculateAge(sortedStudents[0].birthDate);
+
+      // For bands, we don't need a specific discipline - get all available teachers
+      const response = await getAvailableTeachers(null, age, 1); // null disciplineId for all teachers
+      teachers = response.data.availableTeachers;
     }
+
+    this.setState({
+      availableTeachers: teachers,
+      showAvailableTeacherModal: true,
+    });
   };
 
-  handleCloseAvailableSlotsModal = () => {
-    this.setState({ showAvailableSlotsModal: false });
+  handleCloseAvailableTeachersModal = () => {
+    if (!this.state.availableSlots || this.state.availableSlots.length === 0) {
+      this.setState({ 
+        showAvailableTeacherModal: false, 
+        teacherId: "", 
+        selectedTeachers: [] 
+      });
+      return;
+    }
+
+    const selectedTeacherIds = Array.from(new Set(
+      this.state.availableSlots.map(slot => slot.teacherId)
+    ));
+    const selectedTeachers = this.state.availableTeachers.filter(
+      teacher => selectedTeacherIds.includes(teacher.teacherId)
+    ); 
+    const newSelectedTeacherId = selectedTeachers.length > 0 && selectedTeachers[0].teacherId;
+
+    this.setState({ 
+      showAvailableTeacherModal: false, 
+      teacherId: newSelectedTeacherId, 
+      selectedTeachers: selectedTeachers 
+    });
   };
 
   handleSlotsChange = (availableSlots) => {
     // Convert available slots to schedules format (with teacherId for bands)
     const periods = convertSlotsToSchedules(availableSlots, { includeTeacherId: true });
-    this.setState({ schedules: periods });
+    
+    this.setState({ 
+      availableSlots: availableSlots,
+      schedules: periods 
+    });
   };
 
   handleScheduleChange = (periods) => {
@@ -201,12 +245,15 @@ export class BandForm extends React.Component {
       name,
       teacher,
       teachers,
+      selectedTeachers,
+      availableTeachers,
       teacherId,
       students,
       schedules,
-      rooms,
       showAddStudentModal,
-      showAvailableSlotsModal,
+      showAvailableTeacherModal,
+      step,
+      slotDuration,
       isSaving,
       isLoading,
     } = this.state;
@@ -261,40 +308,49 @@ export class BandForm extends React.Component {
               {/* Teacher Section */}
               <Form.Group className="mb-3">
                 <Form.Label htmlFor="teacherId">Преподаватель</Form.Label>
-                <InputGroup >
-                    <Form.Control
+                <InputGroup>
+                  <Form.Control
                     as="select"
                     id="teacherId"
                     value={teacherId}
                     style={{ width: "200px" }}
                     onChange={this.handleTeacherChange}
-                    >
+                  >
                     <option value="">Выберите преподавателя...</option>
                     {teachers
-                        .filter(teacher => teacher.isActive)
-                        .map(teacher => (
+                      .filter(teacher => teacher.isActive)
+                      .map(teacher => (
                         <option key={teacher.teacherId} value={teacher.teacherId}>
-                            {teacher.firstName} {teacher.lastName}
+                          {teacher.firstName} {teacher.lastName}
                         </option>
-                        ))}
-                    </Form.Control>
-                    <Button 
-                        variant="outline-secondary" 
-                        type="button" 
-                        onClick={this.showAvailableSlotsModal}
-                    >
-                        Доступные окна...
-                    </Button>
-                  </InputGroup>
+                      ))}
+                  </Form.Control>
+                  <Button 
+                    variant="outline-secondary" 
+                    type="button" 
+                    onClick={this.showAvailableTeachersModal}
+                  >
+                    Доступные окна...
+                  </Button>
+                </InputGroup>
               </Form.Group>
+
+              <AvailableTeachersModal
+                show={showAvailableTeacherModal}
+                teachers={availableTeachers}
+                onSlotsChange={this.handleSlotsChange}
+                onClose={this.handleCloseAvailableTeachersModal}
+                step={step}
+                slotDuration={slotDuration}
+              />
 
               {/* Schedule Section */}
               
               <div className="mb-3">
-                    <ScheduleEditorWithDelete
-                    periods={schedules}
-                    onChange={this.handleScheduleChange}
-                    />
+                <ScheduleEditorWithDelete
+                  schedules={schedules}
+                  onChange={this.handleScheduleChange}
+                />
               </div>
               
 
@@ -311,14 +367,6 @@ export class BandForm extends React.Component {
             </Form>
           </Col>
         </Row>
-
-        <AvailableSlotsModal
-          show={showAvailableSlotsModal}
-          rooms={rooms}
-          onSlotsChange={this.handleSlotsChange}
-          onClose={this.handleCloseAvailableSlotsModal}
-          singleSelection={false}
-        />
       </Container>
     );
   }

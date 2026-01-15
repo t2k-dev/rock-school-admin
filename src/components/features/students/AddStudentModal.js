@@ -90,11 +90,16 @@ export class AddStudentModal extends React.Component {
     const { email, firstName, lastName, birthDate, phone, level, sex, age } = this.state;
 
     return (
-      <Modal show={show} onHide={handleClose}>
+      <Modal 
+        show={show} 
+        onHide={handleClose}
+        size="lg"
+        style={{ maxHeight: '90vh' }}
+      >
         <Modal.Header closeButton>
           <Modal.Title>Добавить ученика</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body style={{ maxHeight: '70vh', overflowY: 'auto' }}>
           {onlyExistingStudents ? (
             // Show only existing students search when flag is set
             <StudentsSearch handleOnSelect={this.handleAddExisting} />
