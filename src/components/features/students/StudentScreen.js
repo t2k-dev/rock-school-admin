@@ -1,24 +1,16 @@
-import { format } from "date-fns";
 import React from "react";
-import { Badge, Container, Form, Row, Tab, Table, Tabs } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Container, Form, Row, Tab, Tabs } from "react-bootstrap";
 
-import { getDisciplineName } from "../../../constants/disciplines";
-import MyDateFormat from "../../../constants/formats";
-import SubscriptionStatus, { getSubscriptionStatusName } from "../../../constants/SubscriptionStatus";
-import { getTrialSubscriptionStatusName } from "../../../constants/SubscriptionTrialStatus";
+import SubscriptionStatus from "../../../constants/SubscriptionStatus";
 import SubscriptionType from "../../../constants/SubscriptionType";
 
 import { getStudentScreenDetails } from "../../../services/apiStudentService";
 import { CalendarWeek } from "../../shared/calendar/CalendarWeek";
-import { DisciplineIcon } from "../../shared/discipline/DisciplineIcon";
-import { CoinsIcon } from "../../shared/icons/CoinsIcon";
-import { NextIcon } from "../../shared/icons/NextIcon";
 import { Loading } from "../../shared/Loading";
 import { AttendanceModal } from "../../shared/modals/AttendanceModal";
-import { NoRecords } from "../../shared/NoRecords";
 import PaymentForm from "../payments/PaymentForm";
 import StudentScreenCard from "./StudentScreenCard";
+import { SubscriptionList } from "./SubscriptionList";
 
 class StudentScreen extends React.Component {
   constructor(props) {
@@ -197,74 +189,14 @@ class StudentScreen extends React.Component {
 
   // Render Methods
   renderSubscriptionsTable(subscriptions) {
-
-    if (subscriptions && subscriptions.length > 0) {
-      return (
-        <>
-          <Table striped bordered hover>
-            <thead>
-              <tr>
-                <th className="date-column">Начало</th>
-                <th className="discipline-column">Направление</th>
-                <th>Преподаватель</th>
-                <th>Занятий осталось</th>
-                <th>Статус</th>
-                <th style={{ width: "50px" }}></th>
-              </tr>
-            </thead>
-            <tbody>{
-              subscriptions.map((item, index) => (
-              <tr 
-                key={index}
-                onClick={() => this.handleViewSubscriptionAttendances(item)}
-                style={{ 
-                  cursor: 'pointer',
-                  transition: 'background-color 0.2s'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = '#f8f9fa';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = '';
-                }}
-              >
-                <td>{format(item.startDate, MyDateFormat)}</td>
-                <td>
-                  <DisciplineIcon disciplineId={item.disciplineId} />
-                  <span style={{ marginLeft: "10px" }}>{getDisciplineName(item.disciplineId)}</span>
-                </td>
-                <td>
-                  <Link 
-                    to={`/teacher/${item.teacher.teacherId}`}
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    {item.teacher.firstName} {item.teacher.lastName}
-                  </Link>
-                </td>
-                <td>{item.attendancesLeft} из {item.attendanceCount}</td>
-                <td>{getSubscriptionStatusName(item.status)}</td>
-                <td>
-                  <div className="d-flex gap-2" onClick={(e) => e.stopPropagation()}>
-                    {item.status === SubscriptionStatus.DRAFT && (
-                      <CoinsIcon
-                        size="20px"
-                        title="Оплатить"
-                        onIconClick={() => this.handlePayClick(item)}
-                      />
-                    )}
-                    {item.status === SubscriptionStatus.COMPLETED || item.status === SubscriptionStatus.ACTIVE && 
-                    <NextIcon
-                      size="20px"
-                      title="Продлить"
-                      onIconClick={() => this.handleResubscribeClick(item)}
-                    />
-                    }
-                  </div>
-                </td>
-              </tr>
-              ))}
-          </tbody>
-        </Table>
+    return (
+      <>
+        <SubscriptionList
+          subscriptions={subscriptions}
+          onSubscriptionClick={this.handleViewSubscriptionAttendances}
+          onPayClick={this.handlePayClick}
+          onResubscribeClick={this.handleResubscribeClick}
+        />
         <div className="d-flex mt-2">
           <div className="flex-grow-1"></div>
           <Form.Check
@@ -277,100 +209,28 @@ class StudentScreen extends React.Component {
             }}
           />
         </div>
-      </>);
-    }
-
-    return (
-      <NoRecords/>
+      </>
     );
   }
 
   renderTrialsTable(subscriptions) {
-
-    if (subscriptions && subscriptions.length > 0) {
-      return (
-        <Table striped bordered hover>
-          <thead>
-            <tr>
-              <th className="date-column">Дата</th>
-              <th className="discipline-column">Направление</th>
-              <th>Преподаватель</th>
-              <th>Результат</th>
-              <th style={{ width: "50px" }}></th>
-            </tr>
-          </thead>
-          <tbody>
-            {subscriptions.map((item, index) => (
-            <tr 
-              key={index}
-              onClick={() => this.handleTrialSubscriptionClick(item)}
-              >
-              <td>{format(item.startDate, MyDateFormat)}</td>
-              <td>
-                <DisciplineIcon disciplineId={item.disciplineId} />
-                <span style={{ marginLeft: "10px" }}>{getDisciplineName(item.disciplineId)}</span>
-              </td>
-              <td>
-                <Link to={`/teacher/${item.teacher.teacherId}`}>
-                  {item.teacher.firstName} {item.teacher.lastName}
-                </Link>
-              </td>
-              <td><Badge className="bg-secondary">{getTrialSubscriptionStatusName(item.trialStatus)}</Badge></td>
-              <td>
-                  <NextIcon 
-                    size="20px"
-                    onIconClick={() => this.handleResubscribeClick(item)}
-                  />
-              </td>
-            </tr>
-            ))}
-          </tbody>
-        </Table>
-      );
-    } 
-    
     return (
-      <NoRecords/>
+      <SubscriptionList
+        subscriptions={subscriptions}
+        onSubscriptionClick={this.handleTrialSubscriptionClick}
+        onResubscribeClick={this.handleResubscribeClick}
+      />
     );
   }
 
   renderRentTable(subscriptions) {
-
-    if (subscriptions && subscriptions.length > 0) {
-      return (
-        <Table striped bordered hover>
-          <thead>
-            <tr>
-              <th className="date-column">Начало</th>
-              <th>Занятий осталось</th>
-              <th>Статус</th>
-              <th style={{ width: "50px" }}></th>
-            </tr>
-          </thead>
-          <tbody>
-            {subscriptions.map((item, index) => (
-            <tr 
-              key={index}
-              onClick={() => this.handleViewSubscriptionAttendances(item)}
-              >
-              <td>{format(item.startDate, MyDateFormat)}</td>
-              <td>{item.attendancesLeft} из {item.attendanceCount}</td>
-              <td>{getSubscriptionStatusName(item.status)}</td>
-              <td>
-                  <NextIcon 
-                    size="20px"
-                    onIconClick={() => this.handleResubscribeClick(item)}
-                  />
-              </td>
-            </tr>
-            ))}
-          </tbody>
-        </Table>
-      );
-    } 
-    
     return (
-      <NoRecords/>
+      <SubscriptionList
+        subscriptions={subscriptions}
+        onSubscriptionClick={this.handleViewSubscriptionAttendances}
+        onPayClick={this.handlePayClick}
+        onResubscribeClick={this.handleResubscribeClick}
+      />
     );
   }
 
