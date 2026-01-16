@@ -1,7 +1,7 @@
 import { useState } from "react";
 
-export function CountIcon({ onIconClick }) {
-  const [color, setColor] = useState("#000000"); // Default color
+export function CountIcon({ onIconClick, color = "#000000" }) {
+  const [setColor] = useState("#000000"); // Default color
 
   const handleClick = (e) => {
     if (onIconClick) {
@@ -16,8 +16,7 @@ export function CountIcon({ onIconClick }) {
       xmlns="http://www.w3.org/2000/svg" 
       width="20px" 
       height="20px" 
-      viewBox="0 0 375.165 375.165"
-	  
+      viewBox="0 0 400 400"
      >
 <g>
 	<path d="M373.423,327.337c0.512-0.664,0.926-1.431,1.315-2.484c0.188-0.597,0.316-1.218,0.378-1.924l0.048-149.221l-57.518,0.012

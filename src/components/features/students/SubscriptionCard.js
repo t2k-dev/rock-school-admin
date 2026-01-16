@@ -47,13 +47,13 @@ export const SubscriptionCard = ({
             <div className="text-muted small">Дата</div>
             <div className="fw-bold">{format(subscription.startDate, MyDateFormat)}</div>
           </Col>
-          <Col md="4">
+          <Col md="3">
             <div className="d-flex align-items-center">
               <DisciplineIcon disciplineId={subscription.disciplineId} />
               <span style={{ marginLeft: "10px" }}>{getDisciplineName(subscription.disciplineId)}</span>
             </div>
           </Col>
-          <Col md="4">
+          <Col md="5">
             <div className="text-muted small">Преподаватель</div>
             <Link 
               to={`/teacher/${subscription.teacher.teacherId}`}
@@ -89,7 +89,7 @@ export const SubscriptionCard = ({
             <div className="fw-bold">{format(subscription.startDate, MyDateFormat)}</div>
           </Col>
           <Col md="2">
-            <div className="text-muted small">Занятий осталось</div>
+            <div className="text-muted small">Осталось занятий</div>
             <div className="fw-bold">{subscription.attendancesLeft} из {subscription.attendanceCount}</div>
           </Col>
           <Col md="1">
@@ -142,7 +142,7 @@ export const SubscriptionCard = ({
             </Link>
           </Col>
           <Col md="2">
-            <div className="text-muted small">Занятий осталось</div>
+            <div className="text-muted small">Осталось занятий</div>
             <div className="fw-bold">{subscription.attendancesLeft} из {subscription.attendanceCount}</div>
           </Col>
           <Col md="1">

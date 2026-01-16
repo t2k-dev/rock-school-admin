@@ -12,6 +12,7 @@ import { DisciplineIcon } from '../../shared/discipline/DisciplineIcon';
 import { CalendarIcon } from '../../shared/icons/CalendarIcon';
 import { CancelIcon } from '../../shared/icons/CancelIcon';
 import { CoinsIcon } from '../../shared/icons/CoinsIcon';
+import { CountIcon } from '../../shared/icons/CountIcon';
 import { Loading } from '../../shared/Loading';
 import { AttendanceStatusBadge } from '../../shared/modals/AttendanceStatusBadge';
 import { NoRecords } from '../../shared/NoRecords';
@@ -51,18 +52,22 @@ const SubscriptionScreen = ({
       case SubscriptionType.LESSON: // Regular subscription
         return (
           <>
-            <span className="ms-2">
-              Абонемент - <DisciplineIcon disciplineId={subscription.disciplineId} size="32px" /> {getDisciplineName(subscription.disciplineId)} <SubscriptionStatusBadge status={subscription.status} />
-            </span>
+            
+            <div className="text-center mt-2" style={{fontSize: '24px', fontWeight: 'bold'}}>
+              <DisciplineIcon disciplineId={subscription.disciplineId} size="32px" /> 
+              <div className='mt-1'>{getDisciplineName(subscription.disciplineId)}</div>
+            </div>
+            <div className='text-center mt-2'><SubscriptionStatusBadge status={subscription.status} /></div>
           </>
         );
         break;
       case SubscriptionType.RENT:
         return (
           <>
-            <span className="ms-2">
-              Абонемент - Аренда Комнаты <SubscriptionStatusBadge status={subscription.status} />
-            </span>
+            <div className="text-center mt-2" style={{fontSize: '24px', fontWeight: 'bold'}}>
+              Аренда Комнаты 
+            </div>
+            <div className='text-center mt-2'><SubscriptionStatusBadge status={subscription.status} /></div>
           </>
         );
         break;
@@ -104,11 +109,7 @@ const SubscriptionScreen = ({
               Назад
             </Button>
           </div>*/}
-          <div className="d-flex align-items-center mt-4">
-            <h2 className="d-flex align-items-center mb-0">
-              {renderSubscriptionTitle()}
-            </h2>
-          </div>
+
         </Col>
       </Row>
 
@@ -121,26 +122,40 @@ const SubscriptionScreen = ({
                 <div className='flex-grow-1'>
                   <Row>
                     <Col size="md-6">
-                      <strong>Начало:</strong> {formatDateWithLetters(subscription.startDate)}
+                      {renderSubscriptionTitle()}
                     </Col>
-                    <Col size="md-6">
-                    {subscription.teacher &&
+                    <Col size="md-3">
+                      <div className="text-muted small">Ученик</div>
+                      <Link to={`/student/${subscription.student.studentId}`}>
+                        {subscription.student.firstName} {subscription.student.lastName}
+                      </Link>
+
+                      {subscription.teacher &&
                       <>
-                        <strong>Преподаватель:</strong>{' '}
+                        <div className="text-muted small mt-3">Преподаватель</div>
                         <Link to={`/teacher/${subscription.teacher.teacherId}`}>
                           {subscription.teacher.firstName} {subscription.teacher.lastName}
                         </Link>
                       </>
-                    }
+                      }
                     </Col>
-                  </Row>
-                  <Row className="mt-2">
-                    <Col size="md-6">
-                      <strong>Осталось занятий:</strong> {subscription.attendancesLeft} из {subscription.attendanceCount}
-                    </Col>
-                    <Col size="md-6">
-                      <strong>Оплата:</strong>
-                      {subscription.paymentId &&<> <strong>Оплачено:</strong> 45 000 тг, 25 дек. 2025</>}
+                    <Col size="md-3">
+                      <div>
+                        <span className="text-muted small"><CalendarIcon color="gray"/> Начало </span>
+                        <span className='small'>
+                          {formatDateWithLetters(subscription.startDate)}
+                        </span>
+                      </div>
+                      <div className='mt-2'>
+                        <span className='text-muted small'><CountIcon color="gray"/> Осталось занятий </span>
+                        <span className='small'>
+                          {subscription.attendancesLeft} из {subscription.attendanceCount}
+                        </span>
+                      </div>
+                      <div className='mt-2'>
+                        <span className='text-muted small'>Статус оплаты </span>
+                        {subscription.paymentId ? <> <strong>Оплачено:</strong> 45 000 тг, 25 дек. 2025</> : <span className='small'>Не оплачено</span>}
+                      </div>
                     </Col>
                   </Row>
                 </div>
