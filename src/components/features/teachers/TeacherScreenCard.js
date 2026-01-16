@@ -42,7 +42,7 @@ class TeacherScreenCard extends React.Component {
                   {item.firstName} {item.lastName} {item.isActive ? "" : "(Отключен)"}
                   <EditIcon onIconClick={this.handleEditClick} />
                 </div>
-                <div className="mt-2">Преподаватель</div>
+                <div className="mt-2 text-muted">Преподаватель</div>
                 {item.disciplines && item.disciplines.map((id) => <DisciplineIcon key={id} disciplineId={id} />)}
               </Container>
             </Container>

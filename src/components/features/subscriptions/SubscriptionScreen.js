@@ -1,10 +1,8 @@
-import { format } from 'date-fns';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
-import { Button, Card, Col, Container, Row, Stack, Table } from 'react-bootstrap';
+import { Button, Card, Col, Container, Row, Stack } from 'react-bootstrap';
 import { Link, useHistory } from 'react-router-dom';
 import { getDisciplineName } from '../../../constants/disciplines';
-import { getRoomName } from '../../../constants/rooms';
 import SubscriptionStatus from '../../../constants/SubscriptionStatus';
 import SubscriptionType from '../../../constants/SubscriptionType';
 import { formatDateWithLetters } from '../../../utils/dateTime';
@@ -14,8 +12,7 @@ import { CancelIcon } from '../../shared/icons/CancelIcon';
 import { CoinsIcon } from '../../shared/icons/CoinsIcon';
 import { CountIcon } from '../../shared/icons/CountIcon';
 import { Loading } from '../../shared/Loading';
-import { AttendanceStatusBadge } from '../../shared/modals/AttendanceStatusBadge';
-import { NoRecords } from '../../shared/NoRecords';
+import { AttendanceList } from './AttendanceList';
 import { SubscriptionStatusBadge } from './SubscriptionStatusBadge';
 
 const SubscriptionScreen = ({
@@ -29,14 +26,6 @@ const SubscriptionScreen = ({
   const [showCompleted, setShowCompleted] = useState(true);
   const history = useHistory();
 
-  const formatTime = (date) => {
-    try {
-      return format(new Date(date), 'HH:mm');
-    } catch (error) {
-      return '--:--';
-    }
-  };
-  
   const handleAttendanceRowClick = (attendance) => {
     if (onAttendanceClick) {
       onAttendanceClick(attendance);
@@ -153,8 +142,10 @@ const SubscriptionScreen = ({
                         </span>
                       </div>
                       <div className='mt-2'>
-                        <span className='text-muted small'>Статус оплаты </span>
-                        {subscription.paymentId ? <> <strong>Оплачено:</strong> 45 000 тг, 25 дек. 2025</> : <span className='small'>Не оплачено</span>}
+                        <span className='text-muted small'><CoinsIcon color="gray"/> Статус оплаты </span>
+                        {subscription.paymentId 
+                          ? <> <span className='small'>Оплачено:</span> 25 дек. 2025</> 
+                          : <span className='small'>Не оплачено</span>}
                       </div>
                     </Col>
                   </Row>
@@ -189,63 +180,10 @@ const SubscriptionScreen = ({
       <Row>
         <Col>
           <h4 className="mb-2">Список занятий</h4>
-            
-                {sortedAttendances && sortedAttendances.length > 0 ? (
-                  <>
-                    <Table striped bordered hover>
-                      <thead>
-                        <tr>
-                          <th className='date-column' >Дата</th>
-                          <th style={{ width: '120px' }}>Время</th>
-                          <th style={{ width: '100px' }}>Комната</th>
-                          <th>Комментарий</th>
-                          <th>Статус</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {sortedAttendances.map((attendance) => (
-                          <tr 
-                            key={attendance.attendanceId}
-                            style={{ cursor: 'pointer' }}
-                            onClick={() => handleAttendanceRowClick(attendance)}
-                          >
-                            <td>{formatDateWithLetters(attendance.startDate)}</td>
-                            <td>
-                              {formatTime(attendance.startDate)} - {formatTime(attendance.endDate)}
-                            </td>
-                            <td>{getRoomName(attendance.roomId)}</td>
-                            <td>
-                              {attendance.comment && (
-                                <span 
-                                  title={attendance.comment}
-                                  style={{ 
-                                    display: 'inline-block',
-                                    maxWidth: '200px',
-                                    overflow: 'hidden',
-                                    textOverflow: 'ellipsis',
-                                    whiteSpace: 'nowrap'
-                                  }}
-                                >
-                                  {attendance.comment}
-                                </span>
-                              )}
-                            </td>
-                            <td>
-                              <AttendanceStatusBadge status={attendance.status} />
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </Table>
-                  </>
-                ) : (
-                  <div className="text-center py-4">
-                    <p className="text-muted">
-                      <NoRecords />
-                    </p>
-                  </div>
-                )}
-
+          <AttendanceList
+            attendances={sortedAttendances}
+            onAttendanceClick={handleAttendanceRowClick}
+          />
         </Col>
       </Row>
     </Container>

@@ -9,6 +9,7 @@ import SubscriptionStatus, { getSubscriptionStatusName } from "../../../constant
 import { getTrialSubscriptionStatusName } from "../../../constants/SubscriptionTrialStatus";
 import SubscriptionType from "../../../constants/SubscriptionType";
 import { DisciplineIcon } from "../../shared/discipline/DisciplineIcon";
+import { CalendarIcon } from "../../shared/icons/CalendarIcon";
 import { CoinsIcon } from "../../shared/icons/CoinsIcon";
 import { NextIcon } from "../../shared/icons/NextIcon";
 
@@ -44,7 +45,7 @@ export const SubscriptionCard = ({
       return (
         <>
           <Col md="2">
-            <div className="text-muted small">Дата</div>
+            <div className="text-muted small"><CalendarIcon color="gray"/>Дата</div>
             <div className="fw-bold">{format(subscription.startDate, MyDateFormat)}</div>
           </Col>
           <Col md="3">
@@ -85,7 +86,7 @@ export const SubscriptionCard = ({
       return (
         <>
           <Col md="8">
-            <div className="text-muted small">Начало</div>
+            <div className="text-muted small"><CalendarIcon color="gray"/>Начало</div>
             <div className="fw-bold">{format(subscription.startDate, MyDateFormat)}</div>
           </Col>
           <Col md="2">
@@ -122,7 +123,7 @@ export const SubscriptionCard = ({
       return (
         <>
           <Col md="2">
-            <div className="text-muted small">Начало</div>
+            <div className="text-muted small"><CalendarIcon color="gray"/> Начало</div>
             <div className="fw-bold">{format(subscription.startDate, MyDateFormat)}</div>
           </Col>
           <Col md="3">

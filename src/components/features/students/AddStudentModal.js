@@ -93,7 +93,7 @@ export class AddStudentModal extends React.Component {
       <Modal 
         show={show} 
         onHide={handleClose}
-        size="lg"
+        size="md"
         style={{ maxHeight: '90vh' }}
       >
         <Modal.Header closeButton>

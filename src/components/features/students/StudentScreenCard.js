@@ -53,57 +53,6 @@ class StudentScreenCard extends React.Component {
             </div>
             <div>
               <Stack gap={2} style={{ width: "200px" }}>
-                <Button
-                  as={Link}
-                  to={{
-                    pathname: `/student/${item.studentId}/addTrial`,
-                    state: { student: item },
-                  }}
-                  variant="outline-success"
-                  size="md"
-                  className="w-100"
-                >
-                  + Пробное занятие
-                </Button>
-
-                <Button
-                  as={Link}
-                  to={{
-                    pathname: `/student/${item.studentId}/subscriptionForm`,
-                    state: { student: item },
-                  }}
-                  variant="outline-success"
-                  type="null"
-                  size="md"
-                  className="w-100"
-                >
-                  + Новый абонемент
-                </Button>
-                <Button
-                  as={Link}
-                  to={{
-                    pathname: `/student/${item.studentId}/roomRental`,
-                    state: { student: item },
-                  }}
-                  variant="outline-success"
-                  size="md"
-                  className="w-100"
-                >
-                  + Аренда комнаты
-                </Button>
-                <Button
-                    as={Link}
-                    to={{
-                      pathname: `/student/${item.studentId}/subscriptionForm`,
-                      state: { student: item },
-                    }}
-                    variant="outline-success"
-                    type="null"
-                    size="md"
-                    className="w-100"
-                  >
-                    + Репетиции
-                </Button>
                 <Button variant="outline-warning"
                   as={Link}
                   to={{

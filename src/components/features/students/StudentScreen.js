@@ -1,5 +1,6 @@
 import React from "react";
-import { Container, Form, Row, Tab, Tabs } from "react-bootstrap";
+import { Button, Container, Form, Row, Tab, Tabs } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 import SubscriptionStatus from "../../../constants/SubscriptionStatus";
 import SubscriptionType from "../../../constants/SubscriptionType";
@@ -233,6 +234,15 @@ class StudentScreen extends React.Component {
       />
     );
   }
+  renderRerehearsalTable(subscriptions) {
+    return (
+      <SubscriptionList
+        subscriptions={subscriptions}
+        onSubscriptionClick={this.handleTrialSubscriptionClick}
+        onResubscribeClick={this.handleResubscribeClick}
+      />
+    )
+  }
 
   render() {
     const { isLoading, student, subscriptions, showCompleted, attendances, selectedAttendance, showAttendanceModal } = this.state;
@@ -284,15 +294,86 @@ class StudentScreen extends React.Component {
         <Row className="mb-3">
           <Tabs defaultActiveKey="products" id="uncontrolled-tab-example" className="mb-3">
             <Tab eventKey="products" title="Продукты">
-                <h3>Абонементы</h3>
+
+                <div className="d-flex mb-2 mt-2">
+                  <div className="flex-grow-1"><h3>Абонементы</h3></div>
+                  <div>
+                    <Button
+                      as={Link}
+                      to={{
+                        pathname: `/student/${student.studentId}/subscriptionForm`,
+                        state: { student: student },
+                      }}
+                      variant="outline-success"
+                      type="null"
+                      size="sm"
+                      className="w-100"
+                    >
+                      + Добавить
+                    </Button>
+                  </div>
+                </div>
                 {this.renderSubscriptionsTable(nonTrialSubscriptions)}
 
-                <h3>Пробные занятия</h3>
+                <div className="d-flex mb-2 mt-4">
+                  <div className="flex-grow-1"><h3>Пробные занятия</h3></div>
+                  <div>
+                    <Button
+                      as={Link}
+                      to={{
+                        pathname: `/student/${student.studentId}/addTrial`,
+                        state: { student: student },
+                      }}
+                      variant="outline-success"
+                      type="null"
+                      size="sm"
+                      className="w-100"
+                    >
+                      + Добавить
+                    </Button>
+                  </div>
+                </div>
                 {this.renderTrialsTable(trialSubscriptions)}  
 
-                <h3>Аренда комнаты</h3>
+                <div className="d-flex mb-2 mt-4">
+                  <div className="flex-grow-1"><h3>Аренда комнаты</h3></div>
+                  <div>
+                    <Button
+                      as={Link}
+                      to={{
+                        pathname: `/student/${student.studentId}/roomRental`,
+                        state: { student: student },
+                      }}
+                      variant="outline-success"
+                      type="null"
+                      size="sm"
+                      className="w-100"
+                    >
+                      + Добавить
+                    </Button>
+                  </div>
+                </div>
                 {this.renderRentTable(rentSubscriptions)}
 
+                <div className="d-flex mb-2 mt-4">
+                  <div className="flex-grow-1"><h3>Репетиции</h3></div>
+                  <div>
+                    <Button
+                      as={Link}
+                      to={{
+                        pathname: `/student/${student.studentId}/subscriptionForm`,
+                        state: { student: student },
+                      }}
+                      variant="outline-success"
+                      type="null"
+                      size="sm"
+                      className="w-100"
+                    >
+                      + Добавить
+                    </Button>
+                  </div>
+                </div>
+                {this.renderRerehearsalTable(null)}
             </Tab>
             <Tab eventKey="calendar" title="Календарь">
               <CalendarWeek

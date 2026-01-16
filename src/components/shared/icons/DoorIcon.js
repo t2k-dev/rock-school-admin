@@ -1,7 +1,7 @@
 import { useState } from "react";
 
-export function DoorIcon({ onIconClick }) {
-  const [color, setColor] = useState("#000000"); // Default color
+export function DoorIcon({ onIconClick, color = "#000000", size = '18px' }) {
+  const [setColor] = useState("#000000"); // Default color
 
   const handleClick = (e) => {
     if (onIconClick) {
@@ -12,15 +12,15 @@ export function DoorIcon({ onIconClick }) {
   return (
     <span>
         <svg
-            width="18px"
-            height="18px"
+            width={size}
+            height={size}
             viewBox="0 0 32 32"
             xmlns="http://www.w3.org/2000/svg"
         >
 
             <g fill="none" fillRule="evenodd">
                 <path d="m0 0h32v32h-32z"/>
-                <path d="m0 32v-2h5v-30h22v30h5v2zm25-30h-18v28h18zm-3 11v8h-2v-8z" fill="#000000" fillRule="nonzero"/>
+                <path d="m0 32v-2h5v-30h22v30h5v2zm25-30h-18v28h18zm-3 11v8h-2v-8z" fill={color} fillRule="nonzero"/>
             </g>
         </svg>
     </span>
