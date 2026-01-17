@@ -475,7 +475,8 @@ export class AttendanceModal extends React.Component {
   renderSubscriptionInfo = () => {
     const { teacher, disciplineId, subscription } = this.state.attendance;
     switch (subscription?.subscriptionType) {
-        case SubscriptionType.LESSON:
+      case SubscriptionType.LESSON:  
+      case SubscriptionType.TRIAL_LESSON:
           return(
             <div className="d-flex mb-3 text-center">
               <div style={{ marginRight: "10px" }}>
