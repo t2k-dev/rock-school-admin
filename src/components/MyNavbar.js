@@ -29,7 +29,7 @@ const MyNavbar = () =>{
                                 <span>
                                     <Avatar style={{ width: "30px", height: "30px", marginRight: "10px" }} />
                                     <div style={{ display: "inline-block", verticalAlign: "middle", textAlign: "center"}}>
-                                        <div style={{color: "black"}}>Маржан</div>
+                                        <div style={{color: "black", marginTop:"5px"}}>Маржан</div>
                                         <div style={{ fontSize: "12px", color: "gray" }}>Администратор</div>
                                     </div>
                                 </span>

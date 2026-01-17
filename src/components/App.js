@@ -13,6 +13,7 @@ import { AttendanceCancelationForm } from "./features/attendances/AttendanceCanc
 import { AttendanceRescheduleForm } from "./features/attendances/AttendanceRescheduleForm";
 
 import Login from "./features/auth/Login";
+import ProfileScreen from "./features/profile/ProfileScreen";
 
 import StudentForm from "./features/students/StudentForm";
 import StudentScreen from "./features/students/StudentScreen";
@@ -44,6 +45,7 @@ function App() {
         
         <div style={{ flex: '1 0 auto' }}>
           <Route exact path="/login" render={(props) => <Login {...props} />}/>
+          <Route exact path="/profile" render={(props) => <ProfileScreen {...props} />}/>
           
           <Route exact path="/" render={(props) => <HomeScreen {...props} />}/>
           <Route exact path="/home" render={(props) => <HomeScreen {...props} />}/>

@@ -306,9 +306,6 @@ export class SubscriptionForm extends React.Component {
                   />
               </Form.Group>
 
-
-              
-
               <Form.Group className="mb-3">
                 <Form.Label>Дата начала</Form.Label>
                 <Form.Control
@@ -338,8 +335,6 @@ export class SubscriptionForm extends React.Component {
                   <option value="2">Полтора часа</option>
                 </Form.Select>
               </Form.Group>
-
-              <hr></hr>
 
               <b>Преподаватель</b>
               <InputGroup className="mb-3 mt-4 text-center">
@@ -376,8 +371,6 @@ export class SubscriptionForm extends React.Component {
                 onDisciplineChange={this.handleDisciplineChange}
               />
 
-              <Form.Group className="mb-3" controlId="Teacher"></Form.Group>
-              <hr></hr>
               <Form.Group className="mb-3 mt-3" controlId="Schedule">
                 <ScheduleEditorWithDelete
                   schedules={filteredSchedules}
