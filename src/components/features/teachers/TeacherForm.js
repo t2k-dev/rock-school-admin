@@ -32,6 +32,7 @@ class TeacherForm extends React.Component {
         disciplines: [],
         brachId: 0,
         allowGroupLessons: false,
+        allowBands: false,
         ageLimit: "",
       },
 
@@ -71,6 +72,7 @@ class TeacherForm extends React.Component {
         sex: teacher.sex,
         ageLimit: teacher.ageLimit,
         allowGroupLessons: teacher.allowGroupLessons,
+        allowBands: teacher.allowBands,
         branchId: teacher.branchId,
         isActive: teacher.isActive,
       },
@@ -157,7 +159,14 @@ class TeacherForm extends React.Component {
 
   handleAllowGroupLessonsChange = (e) => {
     const teacher = { ...this.state.teacher };
-    teacher.allowGroupLessons = e.target.isChecked;
+    teacher.allowGroupLessons = e.target.checked;
+
+    this.setState({ teacher });
+  };
+
+  handleAllowBandsChange = (e) => {
+    const teacher = { ...this.state.teacher };
+    teacher.allowBands = e.target.checked;
 
     this.setState({ teacher });
   };
@@ -202,6 +211,7 @@ class TeacherForm extends React.Component {
         branchId: this.state.teacher.branchId,
         ageLimit: this.state.teacher.ageLimit,
         allowGroupLessons: this.state.teacher.allowGroupLessons,
+        allowBands: this.state.teacher.allowBands,
       },
       workingPeriods: this.state.workingPeriods,
       disciplinesChanged: this.state.disciplinesChanged,
@@ -221,7 +231,7 @@ class TeacherForm extends React.Component {
   };
 
   render() {
-    const { isActive, email, firstName, lastName, birthDate, phone, sex, ageLimit, allowGroupLessons, disciplines, branchId } = this.state.teacher;
+    const { isActive, email, firstName, lastName, birthDate, phone, sex, ageLimit, allowGroupLessons, allowBands, disciplines, branchId } = this.state.teacher;
     const { isNew } = this.state;
     
     return (
@@ -318,6 +328,17 @@ class TeacherForm extends React.Component {
                   label="Групповые занятия"
                   checked={allowGroupLessons}
                   onChange={this.handleAllowGroupLessonsChange}
+                  style={{ marginTop: "10px" }}
+                />
+              </Form.Group>
+
+              <Form.Group className="mb-3" controlId="allowBands">
+                <FormCheck
+                  id="allowBands"
+                  key="allowBands"
+                  label="Музыкальные группы"
+                  checked={allowBands}
+                  onChange={this.handleAllowBandsChange}
                   style={{ marginTop: "10px" }}
                 />
               </Form.Group>

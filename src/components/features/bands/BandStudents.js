@@ -102,18 +102,18 @@ export class BandStudents extends React.Component {
             {students.map((student, index) => this.renderStudent(student, index))}
           </div>
         ) : (
-          <div className="text-center py-4 mb-3" style={{ backgroundColor: "#f8f9fa", borderRadius: "5px" }}>
+          <div className="text-center py-2 mb-3" style={{ backgroundColor: "#f8f9fa", borderRadius: "5px" }}>
             <p className="text-muted mb-0">Ученики не добавлены</p>
           </div>
         )}
         
-        <div className="text-end">
+        <div className="text-center">
           <Button 
               variant="outline-success" 
               size="sm"
               onClick={onAddStudent}
           >
-              + Добавить ученика
+              + Добавить
           </Button>
         </div>
 

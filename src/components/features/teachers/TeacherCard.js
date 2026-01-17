@@ -1,25 +1,25 @@
 import React from "react";
-import { Card, Col, Image, Row } from 'react-bootstrap';
+import { Card, Col, Row } from 'react-bootstrap';
 import { Link } from "react-router-dom";
-import noImage from '../../../images/user.jpg';
-import { DisciplineIcon } from "../../shared/discipline/DisciplineIcon";
-
 import { getDisciplineName } from "../../../constants/disciplines";
+import { Avatar } from "../../shared/Avatar";
+import { DisciplineIcon } from "../../shared/discipline/DisciplineIcon";
+import { HoverCard } from "../../shared/ui";
 
 class TeacherCard extends React.Component{
 
     render(){
         return(
-                <Card className="ms-col-2">
+                <HoverCard className="ms-col-2 mb-2">
                     <Card.Body>
                         <Row>
                             <Col md="2">
-                            <Image src={noImage} className='img-preview' fluid='true'/>
+                                <Avatar style={{ width: "70px", height: "70px" }} />
                             </Col>
                             <Col>
                                 <div className="mt-2">
                                     <Link to={`/teacher/${this.props.item.teacherId}`} >
-                                        <h3>{this.props.item.firstName} {this.props.item.lastName} {this.props.item.isActive ? "" : "(Отключен)"}</h3>
+                                        <h3>{this.props.item.firstName} {this.props.item.lastName}</h3>
                                     </Link>
                                 </div>
                                 <div>
@@ -51,7 +51,7 @@ class TeacherCard extends React.Component{
                             </Col>
                         </Row>
                     </Card.Body>
-                </Card>
+                </HoverCard>
         )
     }
 }

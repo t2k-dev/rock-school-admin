@@ -94,8 +94,8 @@ export const DisciplineGridSelector = ({
                 color={isSelected ? '#0d6efd' : '#6c757d'}
               />
               <small 
-                className={isSelected ? "text-primary fw-bold" : "mt-1" }
-                style={{ fontSize: '11px', lineHeight: '1.2', textAlign: 'center' }}
+                className={isSelected ? "text-primary fw-bold mt-2" : "mt-2" }
+                style={{ fontSize: '12px', lineHeight: '1.2', textAlign: 'center' }}
                 >
                 {discipline.name}
               </small>

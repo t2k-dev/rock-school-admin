@@ -304,7 +304,7 @@ export class BandForm extends React.Component {
                   onlyExistingStudents={true}
                 />
               </div>
-              <hr />
+
               {/* Teacher Section */}
               <Form.Group className="mb-3">
                 <Form.Label htmlFor="teacherId">Преподаватель</Form.Label>
@@ -318,8 +318,7 @@ export class BandForm extends React.Component {
                   >
                     <option value="">Выберите преподавателя...</option>
                     {teachers
-                      .filter(teacher => teacher.isActive)
-                      .map(teacher => (
+                        .map(teacher => (
                         <option key={teacher.teacherId} value={teacher.teacherId}>
                           {teacher.firstName} {teacher.lastName}
                         </option>
@@ -329,6 +328,7 @@ export class BandForm extends React.Component {
                     variant="outline-secondary" 
                     type="button" 
                     onClick={this.showAvailableTeachersModal}
+                    disabled={!teacherId}
                   >
                     Доступные окна...
                   </Button>
@@ -352,7 +352,6 @@ export class BandForm extends React.Component {
                   onChange={this.handleScheduleChange}
                 />
               </div>
-              
 
               <hr />
               <div className="text-center">
