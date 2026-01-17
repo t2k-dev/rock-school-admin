@@ -12,8 +12,7 @@ import { getTrialSubscriptionStatusName } from "../../../constants/SubscriptionT
 
 import { CalendarWeek } from "../../shared/calendar/CalendarWeek";
 import { DisciplineIcon } from "../../shared/discipline/DisciplineIcon";
-import { CalendarIcon } from "../../shared/icons/CalendarIcon";
-import { EditIcon } from "../../shared/icons/EditIcon";
+import { CalendarIcon, EditIcon } from "../../shared/icons";
 import { Loading } from "../../shared/Loading";
 import { AttendanceModal } from "../../shared/modals/AttendanceModal";
 import { NoRecords } from "../../shared/NoRecords";

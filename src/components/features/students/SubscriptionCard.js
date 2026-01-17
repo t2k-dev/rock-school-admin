@@ -9,9 +9,8 @@ import SubscriptionStatus, { getSubscriptionStatusName } from "../../../constant
 import { getTrialSubscriptionStatusName } from "../../../constants/SubscriptionTrialStatus";
 import SubscriptionType from "../../../constants/SubscriptionType";
 import { DisciplineIcon } from "../../shared/discipline/DisciplineIcon";
-import { CalendarIcon } from "../../shared/icons/CalendarIcon";
-import { CoinsIcon } from "../../shared/icons/CoinsIcon";
-import { NextIcon } from "../../shared/icons/NextIcon";
+import { CalendarIcon, CoinsIcon, NextIcon } from "../../shared/icons";
+import { HoverCard } from "../../shared/ui";
 
 export const SubscriptionCard = ({ 
   subscription, 
@@ -177,20 +176,8 @@ export const SubscriptionCard = ({
   };
 
   return (
-    <Card 
+    <HoverCard 
       className="mb-3"
-      style={{ 
-        cursor: 'pointer',
-        transition: 'transform 0.2s, box-shadow 0.2s'
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.transform = 'translateY(-2px)';
-        e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.transform = 'translateY(0)';
-        e.currentTarget.style.boxShadow = '';
-      }}
       onClick={() => onClick(subscription)}
     >
       <Card.Body>
@@ -198,7 +185,7 @@ export const SubscriptionCard = ({
           {renderColumns()}
         </Row>
       </Card.Body>
-    </Card>
+    </HoverCard>
   );
 };
 

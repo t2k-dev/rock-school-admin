@@ -4,7 +4,7 @@ import { ru } from "date-fns/locale";
 import React from "react";
 import { Button, Col, Container, Form, Row, Stack } from "react-bootstrap";
 
-import { CalendarIcon } from "../../shared/icons/CalendarIcon";
+import { CalendarIcon } from "../../shared/icons";
 
 import { getDisciplineName } from "../../../constants/disciplines";
 

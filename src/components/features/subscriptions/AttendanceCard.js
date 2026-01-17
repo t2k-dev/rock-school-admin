@@ -3,10 +3,9 @@ import PropTypes from "prop-types";
 import { Card, Col, Row } from "react-bootstrap";
 import { getRoomName } from "../../../constants/rooms";
 import { formatDateWithLetters } from "../../../utils/dateTime";
-import { CalendarIcon } from '../../shared/icons/CalendarIcon';
-import { DoorIcon } from '../../shared/icons/DoorIcon';
-import { TimeIcon } from '../../shared/icons/TimeIcon';
+import { CalendarIcon, DoorIcon, TimeIcon } from '../../shared/icons';
 import { AttendanceStatusBadge } from "../../shared/modals/AttendanceStatusBadge";
+import { HoverCard } from "../../shared/ui";
 
 export const AttendanceCard = ({ 
   attendance, 
@@ -21,20 +20,8 @@ export const AttendanceCard = ({
   };
 
   return (
-    <Card 
+    <HoverCard 
       className="mb-3"
-      style={{ 
-        cursor: 'pointer',
-        transition: 'transform 0.2s, box-shadow 0.2s'
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.transform = 'translateY(-2px)';
-        e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.transform = 'translateY(0)';
-        e.currentTarget.style.boxShadow = '';
-      }}
       onClick={() => onClick && onClick(attendance)}
     >
       <Card.Body>
@@ -78,7 +65,7 @@ export const AttendanceCard = ({
           </Col>
         </Row>
       </Card.Body>
-    </Card>
+    </HoverCard>
   );
 };
 

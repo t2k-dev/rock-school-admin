@@ -3,9 +3,7 @@ import { Button, Card, Container, Stack } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 import { Avatar } from "../../shared/Avatar";
-import { EditIcon } from "../../shared/icons/EditIcon";
-import GroupIcon from "../../shared/icons/GroupIcon";
-import { InstagramIcon } from "../../shared/icons/InstagramIcon";
+import { EditIcon, GroupIcon, InstagramIcon } from "../../shared/icons";
 
 class StudentScreenCard extends React.Component {
   handleEditClick = (e) => {

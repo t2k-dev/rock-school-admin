@@ -3,7 +3,7 @@ import { Card, Container } from "react-bootstrap";
 import { Doughnut } from "react-chartjs-2";
 import { Avatar } from "../../shared/Avatar";
 import { DisciplineIcon } from "../../shared/discipline/DisciplineIcon";
-import { EditIcon } from "../../shared/icons/EditIcon";
+import { EditIcon } from "../../shared/icons";
 
 import {
   ArcElement,

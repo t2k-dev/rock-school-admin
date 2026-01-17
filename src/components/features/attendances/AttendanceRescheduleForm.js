@@ -15,7 +15,7 @@ import { getDisciplineName } from "../../../constants/disciplines";
 import { getSlotDescription } from "../../shared/modals/attendanceHelper";
 
 import { DisciplineIcon } from "../../shared/discipline/DisciplineIcon";
-import { CalendarIcon } from "../../shared/icons/CalendarIcon";
+import { CalendarIcon } from "../../shared/icons";
 
 export class AttendanceRescheduleForm extends React.Component {
   constructor(props) {
@@ -64,7 +64,7 @@ export class AttendanceRescheduleForm extends React.Component {
     this.setState({ showAvailableTeacherModal: false });
   };
 
-  updateAvailableSlots = (availableSlots) => {
+  handleSlotsChange = (availableSlots) => {
     const selectedSlot = availableSlots.length > 0 ? availableSlots[0] : null;
     this.setState({ selectedSlot: selectedSlot });
   };
@@ -201,7 +201,7 @@ export class AttendanceRescheduleForm extends React.Component {
                 show={showAvailableTeacherModal}
                 singleSelection={true}
                 teachers={availableTeachers}
-                onSlotsChange={this.updateAvailableSlots}
+                onSlotsChange={this.handleSlotsChange}
                 onClose={this.handleCloseAvailableTeachersModal}
               />
               <hr></hr>

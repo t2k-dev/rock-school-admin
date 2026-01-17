@@ -5,7 +5,7 @@ import { getStudent } from "../../../services/apiStudentService";
 import { addTrialSubscription } from "../../../services/apiSubscriptionService";
 import { getAvailableTeachers } from "../../../services/apiTeacherService";
 import { DisciplinePlate } from "../../shared/discipline/DisciplinePlate";
-import { CalendarIcon } from "../../shared/icons/CalendarIcon";
+import { CalendarIcon } from "../../shared/icons";
 import { AvailableTeachersModal } from "../../shared/modals/AvailableTeachersModal";
 import { DisciplineSelectionModal } from "../../shared/modals/DisciplineSelectionModal";
 import { SubscriptionStudents } from "./SubscriptionStudents";

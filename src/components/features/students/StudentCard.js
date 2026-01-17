@@ -1,24 +1,25 @@
 import React from "react";
-import { Card, Col, Image, Row } from 'react-bootstrap';
+import { Card, Col, Row } from 'react-bootstrap';
 import { Link } from "react-router-dom";
-import noImage from '../../../images/user.jpg';
+import { Avatar } from "../../shared/Avatar";
+import { HoverCard } from "../../shared/ui";
 
 class StudentCard extends React.Component{
 
     render(){
         return(
-                <Card className="ms-col-2 mb-2">
+                <HoverCard className="ms-col-2 mb-2">
                     <Card.Body>
                         <Row>
                             <Col md="1">
-                                <Image src={noImage} className='img-preview' fluid='true'/>
+                                <Avatar style={{ width: "40px", height: "40px" }} />
                             </Col>
                             <Col as={Link} to={`/student/${this.props.item.studentId}`}>
                                 <h3>{this.props.item.firstName} {this.props.item.lastName}</h3>
                             </Col>
                         </Row>
                     </Card.Body>
-                </Card>
+                </HoverCard>
         )
     }
 }

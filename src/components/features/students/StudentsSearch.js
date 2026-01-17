@@ -40,7 +40,10 @@ export class StudentsSearch extends React.Component{
 
     let studentsList;
     if (students) {
-      const filteredStudents = students.filter((s) => s.firstName.includes(searchText) || s.lastName.includes(searchText));
+      const filteredStudents = students.filter((s) => 
+        s.firstName.toLowerCase().includes(searchText.toLowerCase()) || 
+        s.lastName.toLowerCase().includes(searchText.toLowerCase())
+      );
       studentsList = filteredStudents.map((item, index) => 
       <StudentCardMin 
         key={index} 

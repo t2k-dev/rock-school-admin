@@ -35,7 +35,10 @@ class Students extends React.Component {
 
     let studentsList;
     if (students) {
-      const filteredStudents = students.filter((s) => s.firstName.includes(searchText));
+      const filteredStudents = students.filter((s) => 
+        s.firstName.toLowerCase().includes(searchText.toLowerCase()) || 
+        s.lastName.toLowerCase().includes(searchText.toLowerCase())
+      );
       studentsList = filteredStudents.map((item, index) => <StudentCard key={index} item={item} />);
       studentsList.sort((a, b) => {
         if (a.props.item.firstName < b.props.item.firstName) return -1;

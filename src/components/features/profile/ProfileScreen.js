@@ -1,7 +1,7 @@
 import { Button, Card, Col, Container, Row } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { Avatar } from '../../shared/Avatar';
-import { EditIcon } from '../../shared/icons/EditIcon';
+import { EditIcon } from '../../shared/icons';
 
 const ProfileScreen = () => {
   // Mock user data - in real app this would come from authentication context
