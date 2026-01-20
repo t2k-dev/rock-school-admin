@@ -1,10 +1,11 @@
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, Card, Col, Container, Row, Stack } from 'react-bootstrap';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useHistory, useParams } from 'react-router-dom';
 import { getDisciplineName } from '../../../constants/disciplines';
 import SubscriptionStatus from '../../../constants/SubscriptionStatus';
 import SubscriptionType from '../../../constants/SubscriptionType';
+import { getSubscriptionScreenData } from '../../../services/apiSubscriptionService';
 import { formatDateWithLetters } from '../../../utils/dateTime';
 import { DisciplineIcon } from '../../shared/discipline/DisciplineIcon';
 import { CalendarIcon, CancelIcon, CoinsIcon, CountIcon } from '../../shared/icons';
@@ -13,15 +14,50 @@ import { AttendanceList } from './AttendanceList';
 import { SubscriptionStatusBadge } from './SubscriptionStatusBadge';
 
 const SubscriptionScreen = ({
-  subscription,
-  attendances = [],
   onAttendanceClick,
   onEditSchedules,
   onPayClick,
   onCancelClick
 }) => {
+  const [subscription, setSubscription] = useState(null);
+  const [attendances, setAttendances] = useState([]);
   const [showCompleted, setShowCompleted] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
   const history = useHistory();
+  const { id } = useParams(); // Get subscription ID from URL
+
+  // Load subscription data when component mounts
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        
+        console.log('Loading subscription data for ID:', id);
+        const data = await getSubscriptionScreenData(id);
+        
+        console.log('Received subscription data:', data);
+        
+        if (data) {
+          setSubscription(data.subscription || data);
+          setAttendances(data.subscription.attendances || []);
+        } else {
+          setError('Subscription not found');
+        }
+      } catch (err) {
+        console.error('Error loading subscription data:', err);
+        setError('Failed to load subscription data');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (id) {
+      loadData();
+    }
+  }, [id]);
 
   const handleAttendanceRowClick = (attendance) => {
     if (onAttendanceClick) {
@@ -69,10 +105,40 @@ const SubscriptionScreen = ({
     }
   };
 
-  if (!subscription) {
+  // Loading state
+  if (isLoading) {
     return (
       <Container style={{ marginTop: "40px" }}>
         <Loading message="Загрузка данных абонемента..." />
+      </Container>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <Container style={{ marginTop: "40px" }}>
+        <div className="alert alert-danger">
+          <h4>Ошибка</h4>
+          <p>{error}</p>
+          <Button variant="secondary" onClick={handleBack}>
+            Назад
+          </Button>
+        </div>
+      </Container>
+    );
+  }
+
+  // No subscription found
+  if (!subscription) {
+    return (
+      <Container style={{ marginTop: "40px" }}>
+        <div className="alert alert-warning">
+          <h4>Абонемент не найден</h4>
+          <Button variant="secondary" onClick={handleBack}>
+            Назад
+          </Button>
+        </div>
       </Container>
     );
   }
@@ -188,34 +254,10 @@ const SubscriptionScreen = ({
 };
 
 SubscriptionScreen.propTypes = {
-  subscription: PropTypes.shape({
-    subscriptionId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    disciplineId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    startDate: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)]),
-    endDate: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)]),
-    attendanceCount: PropTypes.number,
-    attendancesLeft: PropTypes.number,
-    teacher: PropTypes.shape({
-      teacherId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-      firstName: PropTypes.string,
-      lastName: PropTypes.string,
-    })
-  }),
-  attendances: PropTypes.arrayOf(
-    PropTypes.shape({
-      attendanceId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-      startDate: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)]),
-      endDate: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)]),
-      roomId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-      status: PropTypes.number,
-      isCompleted: PropTypes.bool,
-      comment: PropTypes.string,
-    })
-  ),
-  isLoading: PropTypes.bool,
   onAttendanceClick: PropTypes.func,
   onEditSchedules: PropTypes.func,
   onPayClick: PropTypes.func,
+  onCancelClick: PropTypes.func,
 };
 
 export default SubscriptionScreen;

@@ -153,7 +153,7 @@ export class AttendanceModal extends React.Component {
       await acceptTrial(attendance.attendanceId, request);
 
       // Redirect to subscription form
-      if (this.props.history) {
+      if (this.props.history && attendance.student) {
         this.props.history.push({
           pathname: `/student/${attendance.student.studentId}/subscriptionForm`,
           state: {
@@ -507,6 +507,22 @@ export class AttendanceModal extends React.Component {
 
     const { student, isTrial, status } = this.state.attendance;
     const { comment } = this.state;
+
+    // Add null check for student
+    if (!student) {
+      return (
+        <Modal show={this.props.show} onHide={this.handleClose} size="md" backdrop="static">
+          <Modal.Header closeButton>
+            <Modal.Title>Ошибка</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div className="alert alert-warning">
+              Информация о студенте недоступна
+            </div>
+          </Modal.Body>
+        </Modal>
+      );
+    }
 
     return (
       <>
