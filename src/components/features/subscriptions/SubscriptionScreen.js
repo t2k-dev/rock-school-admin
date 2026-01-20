@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
-import { Button, Card, Col, Container, Row, Stack } from 'react-bootstrap';
+import { Button, Card, Col, Container, Row, Stack, Tab, Tabs } from 'react-bootstrap';
 import { Link, useHistory, useParams } from 'react-router-dom';
 import { getDisciplineName } from '../../../constants/disciplines';
 import SubscriptionStatus from '../../../constants/SubscriptionStatus';
@@ -24,6 +24,7 @@ const SubscriptionScreen = ({
   const [showCompleted, setShowCompleted] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [activeTab, setActiveTab] = useState('attendances');
   
   const history = useHistory();
   const { id } = useParams(); // Get subscription ID from URL
@@ -215,12 +216,12 @@ const SubscriptionScreen = ({
                 </div>
                 <div>
                   <Stack gap={2} style={{ width: "250px" }}>
-                    {subscription.paymentId === null &&
+                    
                     <Button variant="primary" onClick={() => onPayClick && onPayClick(subscription)}>
                         <CoinsIcon color="white" enableHover={false}/>
                         Оплатить
                     </Button>
-                    }
+
                     <Button variant="secondary" onClick={() => onEditSchedules && onEditSchedules(subscription)}>
                         <CalendarIcon color="white"/>
                         Расписание
@@ -242,11 +243,93 @@ const SubscriptionScreen = ({
       {/* Attendances Table */}
       <Row>
         <Col>
-          <h4 className="mb-2">Список занятий</h4>
-          <AttendanceList
-            attendances={sortedAttendances}
-            onAttendanceClick={handleAttendanceRowClick}
-          />
+          <Tabs
+            activeKey={activeTab}
+            onSelect={(k) => setActiveTab(k)}
+            className="mb-3"
+          >
+            <Tab eventKey="attendances" title="Занятия">
+              <AttendanceList
+                attendances={sortedAttendances}
+                onAttendanceClick={handleAttendanceRowClick}
+              />
+            </Tab>
+            <Tab eventKey="payments" title="Платежи">
+              {subscription.tenders && subscription.tenders.length > 0 ? (
+                <Row>
+                  {subscription.tenders.map((tender, index) => (
+                    <Col key={index} md={6} lg={4} className="mb-3">
+                      <Card>
+                        <Card.Body>
+                          <div className="d-flex justify-content-between align-items-start mb-2">
+                            <h6 className="card-title mb-0">
+                              Платеж #{index + 1}
+                            </h6>
+                            <div 
+                              className={`badge ${
+                                tender.isPaid 
+                                  ? 'bg-success' 
+                                  : tender.isOverdue 
+                                    ? 'bg-danger' 
+                                    : 'bg-warning'
+                              }`}
+                            >
+                              {tender.isPaid 
+                                ? 'Оплачено' 
+                                : tender.isOverdue 
+                                  ? 'Просрочено' 
+                                  : 'Не оплачено'
+                              }
+                            </div>
+                          </div>
+                          
+                          {tender.amount && (
+                            <div className="mb-2">
+                              <span className="text-muted small">Сумма: </span>
+                              <span className="fw-bold">{tender.amount} ₽</span>
+                            </div>
+                          )}
+                          
+                          {tender.dueDate && (
+                            <div className="mb-2">
+                              <span className="text-muted small">Срок оплаты: </span>
+                              <span>{formatDateWithLetters(tender.dueDate)}</span>
+                            </div>
+                          )}
+                          
+                          {tender.paymentDate && tender.isPaid && (
+                            <div className="mb-2">
+                              <span className="text-muted small">Дата оплаты: </span>
+                              <span>{formatDateWithLetters(tender.paymentDate)}</span>
+                            </div>
+                          )}
+                          
+                          {tender.description && (
+                            <div className="mb-2">
+                              <span className="text-muted small">Описание: </span>
+                              <span>{tender.description}</span>
+                            </div>
+                          )}
+                          
+                          {tender.paymentMethod && tender.isPaid && (
+                            <div className="mb-2">
+                              <span className="text-muted small">Способ оплаты: </span>
+                              <span>{tender.paymentMethod}</span>
+                            </div>
+                          )}
+                        </Card.Body>
+                      </Card>
+                    </Col>
+                  ))}
+                </Row>
+              ) : (
+                <div className="p-4 text-center">
+                  <h5>Платежи</h5>
+                  <p className="text-muted">Платежей не найдено</p>
+                </div>
+              )}
+            </Tab>
+          </Tabs>
         </Col>
       </Row>
     </Container>
