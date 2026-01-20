@@ -62,13 +62,3 @@ HoverCard.propTypes = {
   transition: PropTypes.string,
   clickable: PropTypes.bool,
 };
-
-HoverCard.defaultProps = {
-  onClick: null,
-  className: "",
-  style: {},
-  hoverTransform: 'translateY(-2px)',
-  hoverShadow: '0 4px 8px rgba(0,0,0,0.1)',
-  transition: 'transform 0.2s, box-shadow 0.2s',
-  clickable: true,
-};

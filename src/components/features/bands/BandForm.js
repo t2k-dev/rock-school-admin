@@ -2,7 +2,7 @@ import React from "react";
 import { Button, Col, Container, Form, InputGroup, Row } from "react-bootstrap";
 
 import { addBand } from "../../../services/apiBandService";
-import { getAvailableTeachers, getTeachers, getWorkingPeriods } from "../../../services/apiTeacherService";
+import { getAvailableTeachers, getRehearsableTeachers, getWorkingPeriods } from "../../../services/apiTeacherService";
 import { calculateAge } from "../../../utils/dateTime";
 import { convertSlotsToSchedules } from "../../../utils/scheduleUtils";
 import { Loading } from "../../shared/Loading";
@@ -58,10 +58,16 @@ export class BandForm extends React.Component {
 
   async loadTeachers() {
     try {
-      const teachers = await getTeachers();
-      this.setState({ teachers: teachers || [] });
+        this.setState({ isLoading: true });
+
+        const response = await getRehearsableTeachers(1); // DEV
+
+        this.setState({ teachers: response.teachers || [] });
     } catch (error) {
+        this.setState({ teachers: [] });
       console.error("Failed to load teachers:", error);
+    } finally {
+      this.setState({ isLoading: false });
     }
   }
 

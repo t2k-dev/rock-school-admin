@@ -20,6 +20,16 @@ export const getSubscriptionFormData = async (id) => {
   }
 };
 
+export const getSubscriptionScreenData = async (id) => {
+  try {
+    const response = await apiClient.get(`/subscription/${id}/screen-data`);
+    return response.data;
+  } 
+  catch (error) {
+    console.error('Error fetching data:', error);
+  }
+};
+
 export const getNextAvailableSlot = async (id) =>{
   const response = await apiClient.get(`/subscription/${id}/getNextAvailableSlot`);
   return response;

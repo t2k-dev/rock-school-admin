@@ -53,6 +53,11 @@ export const getAvailableTeachers = async (disciplineId, age, branchId) =>{
   return response;
 }
 
+export const getRehearsableTeachers = async (branchId) =>{
+  const response = await apiClient.get(`/teacher/rehearsable?branchId=${branchId}`);
+  return response.data;
+}
+
 export const getWorkingPeriods = async (id) =>{
   const response = await apiClient.get(`/teacher/${id}/workingPeriods`);
   return response;
