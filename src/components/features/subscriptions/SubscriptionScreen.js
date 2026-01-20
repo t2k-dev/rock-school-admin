@@ -10,8 +10,10 @@ import { formatDateWithLetters } from '../../../utils/dateTime';
 import { DisciplineIcon } from '../../shared/discipline/DisciplineIcon';
 import { CalendarIcon, CancelIcon, CoinsIcon, CountIcon } from '../../shared/icons';
 import { Loading } from '../../shared/Loading';
+import { NoRecords } from '../../shared/NoRecords';
 import { AttendanceList } from './AttendanceList';
 import { SubscriptionStatusBadge } from './SubscriptionStatusBadge';
+import TenderCard from './TenderCard';
 
 const SubscriptionScreen = ({
   onAttendanceClick,
@@ -105,6 +107,24 @@ const SubscriptionScreen = ({
         );
     }
   };
+
+  const renderTenders = () => {
+      if (!subscription.tenders || subscription.tenders.length === 0) {
+        return (
+          <div className="text-center py-4">
+            <NoRecords />
+          </div>
+        );
+      }
+
+      return (
+        <div className="mb-3">
+          {subscription.tenders.map((tender, index) => (
+              <TenderCard tender={tender} index={index} />
+          ))}
+        </div>
+      );
+  }
 
   // Loading state
   if (isLoading) {
@@ -255,79 +275,7 @@ const SubscriptionScreen = ({
               />
             </Tab>
             <Tab eventKey="payments" title="Платежи">
-              {subscription.tenders && subscription.tenders.length > 0 ? (
-                <Row>
-                  {subscription.tenders.map((tender, index) => (
-                    <Col key={index} md={6} lg={4} className="mb-3">
-                      <Card>
-                        <Card.Body>
-                          <div className="d-flex justify-content-between align-items-start mb-2">
-                            <h6 className="card-title mb-0">
-                              Платеж #{index + 1}
-                            </h6>
-                            <div 
-                              className={`badge ${
-                                tender.isPaid 
-                                  ? 'bg-success' 
-                                  : tender.isOverdue 
-                                    ? 'bg-danger' 
-                                    : 'bg-warning'
-                              }`}
-                            >
-                              {tender.isPaid 
-                                ? 'Оплачено' 
-                                : tender.isOverdue 
-                                  ? 'Просрочено' 
-                                  : 'Не оплачено'
-                              }
-                            </div>
-                          </div>
-                          
-                          {tender.amount && (
-                            <div className="mb-2">
-                              <span className="text-muted small">Сумма: </span>
-                              <span className="fw-bold">{tender.amount} ₽</span>
-                            </div>
-                          )}
-                          
-                          {tender.dueDate && (
-                            <div className="mb-2">
-                              <span className="text-muted small">Срок оплаты: </span>
-                              <span>{formatDateWithLetters(tender.dueDate)}</span>
-                            </div>
-                          )}
-                          
-                          {tender.paymentDate && tender.isPaid && (
-                            <div className="mb-2">
-                              <span className="text-muted small">Дата оплаты: </span>
-                              <span>{formatDateWithLetters(tender.paymentDate)}</span>
-                            </div>
-                          )}
-                          
-                          {tender.description && (
-                            <div className="mb-2">
-                              <span className="text-muted small">Описание: </span>
-                              <span>{tender.description}</span>
-                            </div>
-                          )}
-                          
-                          {tender.paymentMethod && tender.isPaid && (
-                            <div className="mb-2">
-                              <span className="text-muted small">Способ оплаты: </span>
-                              <span>{tender.paymentMethod}</span>
-                            </div>
-                          )}
-                        </Card.Body>
-                      </Card>
-                    </Col>
-                  ))}
-                </Row>
-              ) : (
-                <div className="p-4 text-center">
-                  <h5>Платежи</h5>
-                  <p className="text-muted">Платежей не найдено</p>
-                </div>
-              )}
+              {renderTenders()}
             </Tab>
           </Tabs>
         </Col>
