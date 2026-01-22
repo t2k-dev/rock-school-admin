@@ -266,7 +266,7 @@ export class SubscriptionForm extends React.Component {
         filteredSchedules = schedules.filter(schedule => schedule.teacherId === teacherId) ;
       }
     }
-
+console.log("att", attendanceLength);
     return (
       <Container style={{ marginTop: "40px", paddingBottom: "50px" }}>
         <Row>
@@ -352,7 +352,12 @@ export class SubscriptionForm extends React.Component {
                   ))}
                 </Form.Select>
 
-                <Button variant="outline-secondary" type="null" onClick={this.showAvailableTeachersModal}>
+                <Button 
+                  variant="outline-secondary" 
+                  type="null" 
+                  onClick={this.showAvailableTeachersModal}
+                  disabled={!disciplineId}
+                  >
                   Доступные окна...
                 </Button>
               </InputGroup>

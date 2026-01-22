@@ -7,6 +7,7 @@ import SubscriptionStatus from '../../../constants/SubscriptionStatus';
 import SubscriptionType from '../../../constants/SubscriptionType';
 import { getSubscriptionScreenData } from '../../../services/apiSubscriptionService';
 import { formatDateWithLetters } from '../../../utils/dateTime';
+import { toMoneyString } from '../../../utils/moneyUtils';
 import { DisciplineIcon } from '../../shared/discipline/DisciplineIcon';
 import { CalendarIcon, CancelIcon, CoinsIcon, CountIcon } from '../../shared/icons';
 import { Loading } from '../../shared/Loading';
@@ -226,10 +227,10 @@ const SubscriptionScreen = ({
                         </span>
                       </div>
                       <div className='mt-2'>
-                        <span className='text-muted small'><CoinsIcon color="gray"/> Статус оплаты </span>
-                        {subscription.paymentId 
-                          ? <> <span className='small'>Оплачено:</span> 25 дек. 2025</> 
-                          : <span className='small'>Не оплачено</span>}
+                        <CoinsIcon color="gray"/>
+                        {subscription.amountOutstanding > 0 
+                        ? <span className='small'>Ожидает оплаты {toMoneyString(subscription.amountOutstanding)}</span>
+                        : <span className='small'> Оплачено</span>}
                       </div>
                     </Col>
                   </Row>

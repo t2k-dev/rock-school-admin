@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import { Card, Col, Row } from 'react-bootstrap';
 import TenderType, { getTenderTypeName } from '../../../constants/TenderType';
 import { formatDateWithLetters } from '../../../utils/dateTime';
+import { toMoneyString } from '../../../utils/moneyUtils';
 import { CalendarIcon } from '../../shared/icons';
 import { HoverCard } from '../../shared/ui/HoverCard';
 
@@ -26,7 +27,9 @@ const TenderCard = ({ tender, index }) => {
   };
 
   return (
-    <HoverCard>
+    <HoverCard
+        className='mb-3'
+    >
       <Card.Body>
         <Row className="align-items-center">
           <Col md="3">
@@ -36,7 +39,7 @@ const TenderCard = ({ tender, index }) => {
           <Col md="2">
             <div className="text-muted small">Сумма</div>
             <div className="fw-bold">
-              {tender.amount?.toLocaleString('ru-RU')} ₸
+              {toMoneyString(tender.amount)}
             </div>
           </Col>
           <Col md="2">

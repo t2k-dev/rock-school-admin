@@ -30,6 +30,9 @@ import { SubscriptionFormEditable } from "./features/subscriptions/SubscriptionF
 import SubscriptionScreenContainer from "./features/subscriptions/SubscriptionScreenContainer";
 import { TrialSubscriptionForm } from "./features/subscriptions/TrialSubscriptionForm";
 
+import TariffForm from "./features/tariffs/TariffForm";
+import TariffList from "./features/tariffs/TariffList";
+
 import { TestComponent } from "./TestComponent";
 import { TestComponent2 } from "./TestComponent2";
 import NoteForm from "./features/notes/NoteForm";
@@ -76,6 +79,9 @@ function App() {
           <Route exact path="/subscription/:id/attendances" render={(props) => <SubscriptionScreenContainer {...props} />} />
           <Route exact path="/notes/addNote" render={(props) => <NoteForm type="New" {...props} />}/>
           <Route exact path="/notes/:id/edit" render={(props) => <NoteForm {...props} />}/>
+          
+          <Route exact path="/tariffForm" render={(props) => <TariffForm type="New" {...props} />}/>
+          <Route exact path="/tariffList" render={(props) => <TariffList {...props} />}/>
           
           <Route exact path="/bands"><Bands /></Route>
           <Route exact path="/band/:id" render={(props) => <BandScreen {...props} />}/>
