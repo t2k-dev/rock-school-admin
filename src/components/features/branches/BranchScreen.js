@@ -74,7 +74,7 @@ export class BranchScreen extends React.Component {
         end: new Date(attendance.endDate),
         resourceId: attendance.roomId,
         status: attendance.status,
-        isTrial: attendance.isTrial,
+        type: attendance.attendanceType,
       }));
     }
 

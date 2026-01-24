@@ -317,7 +317,7 @@ class TeacherScreen extends React.Component {
         end: new Date(attendance.endDate),
         resourceId: attendance.roomId,
         status: attendance.status,
-        isTrial: attendance.isTrial,
+        attendanceType: attendance.attendanceType,
         disciplineId: attendance.disciplineId,
       }));
     }

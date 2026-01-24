@@ -3,6 +3,7 @@ import "moment/locale/ru";
 import React from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
+import AttendanceType from "../../../constants/AttendanceType";
 
 import { applyCalendarStyle } from "../../../utils/calendar";
 import { DisciplineIcon } from "../discipline/DisciplineIcon";
@@ -16,7 +17,7 @@ const EventComponent = ({ event }) => {
     <div style={{ display: "flex", alignItems: "center", marginTop:"5px", marginLeft:"5px" }}>
       <DisciplineIcon 
         disciplineId={event.disciplineId} 
-        color={event.isTrial ? "black" : "white"}
+        color={event.attendanceType === AttendanceType.TRIAL_LESSON ? "black" : "white"}
         />
       <span style={{marginLeft:"10px"}}>{event.title}</span> 
       

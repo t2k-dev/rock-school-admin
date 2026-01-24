@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import SubscriptionStatus from "../../../constants/SubscriptionStatus";
 import SubscriptionType from "../../../constants/SubscriptionType";
 
+import AttendanceType from "../../../constants/AttendanceType";
 import { getStudentScreenDetails } from "../../../services/apiStudentService";
 import { CalendarWeek } from "../../shared/calendar/CalendarWeek";
 import { Loading } from "../../shared/Loading";
@@ -276,12 +277,12 @@ class StudentScreen extends React.Component {
     if (attendances) {
       events = attendances.map((attendance) => ({
         id: attendance.attendanceId,
-        title: attendance.isTrial ? "Пробное" : "Занятие",
+        title: attendance.attendanceType === AttendanceType.TRIAL_LESSON ? "Пробное" : "Занятие",
         start: new Date(attendance.startDate),
         end: new Date(attendance.endDate),
         resourceId: attendance.roomId,
         status: attendance.status,
-        isTrial: attendance.isTrial,
+        attendanceType: attendance.attendanceType,
         disciplineId: attendance.disciplineId,
       }));
     }

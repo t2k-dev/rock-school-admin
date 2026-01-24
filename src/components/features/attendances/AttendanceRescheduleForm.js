@@ -14,6 +14,7 @@ import { getWorkingPeriods } from "../../../services/apiTeacherService";
 import { getDisciplineName } from "../../../constants/disciplines";
 import { getSlotDescription } from "../../shared/modals/attendanceHelper";
 
+import AttendanceType from "../../../constants/AttendanceType";
 import { DisciplineIcon } from "../../shared/discipline/DisciplineIcon";
 import { CalendarIcon } from "../../shared/icons";
 
@@ -134,6 +135,19 @@ export class AttendanceRescheduleForm extends React.Component {
     );
   };
 
+  renderHeader = () => {
+    const { attendance } = this.state;
+
+    switch (attendance?.attendanceType) {
+      case AttendanceType.LESSON:
+        return <h2 className="text-center mb-4">Перенос занятия</h2>;
+      case AttendanceType.TRIAL_LESSON:
+        return <h2 className="text-center mb-4">Перенос пробного занятия</h2>;
+      default:
+        return <h2 className="text-center mb-4">Перенос</h2>;
+    };
+  }
+
   render() {
     const { attendance, lastName, showAvailableTeacherModal, availableTeachers, selectedSlot, notificationDate, cancalationType } = this.state;
     if (!attendance) {
@@ -152,7 +166,7 @@ export class AttendanceRescheduleForm extends React.Component {
         <Row>
           <Col md="4"></Col>
           <Col md="4">
-            <h2 className="text-center mb-4">{attendance?.isTrial ? "Перенос пробного занятия" : "Перенос занятия"}</h2>
+            {this.renderHeader()}
             <Stack className="mb-3" gap={2} style={{ backgroundColor: "#e7e7e7", padding: "15px", borderRadius: "10px" }}>
               <div><Avatar style={{ width: "20px", height: "20px", marginRight: "5px" }}></Avatar> {attendance.student.firstName} {attendance.student.lastName}</div>
               <div>

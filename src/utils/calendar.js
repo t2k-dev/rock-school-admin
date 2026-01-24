@@ -1,4 +1,5 @@
 import AttendanceStatus from "../constants/AttendanceStatus";
+import AttendanceType from "../constants/AttendanceType";
 
 export function applyCalendarStyle(event) {
   const cancelStatuses = [4, 5, 6];
@@ -17,7 +18,7 @@ export function applyCalendarStyle(event) {
   }
 
   // Trial
-  if (event.isTrial === true) {
+  if (event.attendanceType === AttendanceType.TRIAL_LESSON) {
     if (cancelStatuses.includes(event.status)) {
       return {
         style: {

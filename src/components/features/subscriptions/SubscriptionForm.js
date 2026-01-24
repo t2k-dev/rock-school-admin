@@ -2,6 +2,7 @@ import { format } from "date-fns";
 import React from "react";
 import { Button, Col, Container, Form, InputGroup, Row } from "react-bootstrap";
 
+import AttendanceType from "../../../constants/AttendanceType";
 import { getStudent } from "../../../services/apiStudentService";
 import { addSubscription } from "../../../services/apiSubscriptionService";
 import { getAvailableTeachers, getWorkingPeriods } from "../../../services/apiTeacherService";
@@ -75,7 +76,7 @@ export class SubscriptionForm extends React.Component {
         this.setState({
           students: students || [],
           disciplineId: baseSubscription.disciplineId || null,
-          attendanceCount: baseSubscription.isTrial ? null : baseSubscription.attendanceCount,
+          attendanceCount: baseSubscription.attendanceType === AttendanceType.TRIAL_LESSON ? null : baseSubscription.attendanceCount,
           attendanceLength: baseSubscription.attendanceLength || 0,
           selectedTeachers: [baseSubscription.teacher] || [],
           teacher: baseSubscription.teacher || null,

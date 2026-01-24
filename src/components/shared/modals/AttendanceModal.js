@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { DisciplineIcon } from "../discipline/DisciplineIcon";
 import { isCancelledAttendanceStatus } from "./attendanceHelper";
 
+import AttendanceType from "../../../constants/AttendanceType";
 import { Avatar } from "../Avatar";
 import { Loading } from "../Loading";
 import { AttendanceDateAndRoom } from "./AttendanceDateAndRoom";
@@ -162,7 +163,7 @@ export class AttendanceModal extends React.Component {
               subscriptionId: attendance.subscriptionId,
               disciplineId: attendance.disciplineId,
               teacher: attendance.teacher,
-              isTrial: attendance.isTrial,
+              attendanceType: attendance.attendanceType,
             },
           }
         });
@@ -444,14 +445,14 @@ export class AttendanceModal extends React.Component {
 
   renderFooterButtons = () => {
     const { isSaving } = this.state;
-    const { isCompleted, isTrial, status } = this.props.attendance;
+    const { isCompleted, status, attendanceType } = this.props.attendance;
 
     if (!isCompleted) {
       if (isCancelledAttendanceStatus(status)){
         return <Button variant="outline-primary" onClick={this.handleCancel}>Сохранить</Button>;
       }
 
-      return isTrial ? this.renderTrialButtons() : this.renderRegularButtons();
+      return attendanceType === AttendanceType.TRIAL_LESSON ? this.renderTrialButtons() : this.renderRegularButtons();
     }
 
     return (
@@ -507,7 +508,7 @@ export class AttendanceModal extends React.Component {
       return null;
     }
 
-    const { student, isTrial, status } = this.state.attendance;
+    const { student, attendanceType, status } = this.state.attendance;
     const { comment } = this.state;
 
     // Add null check for student
@@ -531,7 +532,7 @@ export class AttendanceModal extends React.Component {
         <Modal show={this.props.show} onHide={this.handleClose} size="md" backdrop="static">
           <Modal.Header closeButton>
             <Modal.Title>
-              {isTrial ? "Пробное занятие" : "Занятие"}
+              {attendanceType === AttendanceType.TRIAL_LESSON ? "Пробное занятие" : "Занятие"}
               <span style={{ marginLeft: "10px", fontSize: "16px" }}>
                 <AttendanceStatusBadge 
                   status={status}
