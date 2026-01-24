@@ -27,7 +27,7 @@ export const DisciplinePlate = ({
       case "fill":
         return {
           width: '100%',
-          height: '120px',
+          height: '100px',
           iconSize: '48px',
           fontSize: '12px'
         };        

@@ -4,6 +4,7 @@ const SubscriptionTrialStatus = Object.freeze({
   PENDINGFEEDBACK: 1,
   NEGATIVE: 2,
   POSITIVE: 3,
+  MISSED: 4,
 });
 
 // Status names mapping
@@ -12,6 +13,7 @@ const TrialStatusNames = {
   [SubscriptionTrialStatus.PENDINGFEEDBACK]: "Ожидает решения",
   [SubscriptionTrialStatus.NEGATIVE]: "Отказался",
   [SubscriptionTrialStatus.POSITIVE]: "Продолжил",
+  [SubscriptionTrialStatus.MISSED]: "Пропущено",
 };
 
 // Status colors for UI (optional)
@@ -20,6 +22,7 @@ const TrialStatusColors = {
   [SubscriptionTrialStatus.PENDINGFEEDBACK]: "warning",
   [SubscriptionTrialStatus.NEGATIVE]: "danger",
   [SubscriptionTrialStatus.POSITIVE]: "success",
+  [SubscriptionTrialStatus.MISSED]: "secondary",
 };
 
 // Helper functions

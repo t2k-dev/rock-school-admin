@@ -49,3 +49,14 @@ export const deleteTariff = async (id) => {
     throw error;
   }
 };
+
+export const getTariffByType = async (subscriptionType, disciplineId = null) => {
+  try {
+    const params = disciplineId ? { disciplineId } : {};
+    const response = await apiClient.get(`/tariff/${subscriptionType}`, { params });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching tariff by type:', error);
+    throw error;
+  }
+};

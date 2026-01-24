@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { getDisciplineName } from "../../../constants/disciplines";
 import MyDateFormat from "../../../constants/formats";
 import SubscriptionStatus, { getSubscriptionStatusName } from "../../../constants/SubscriptionStatus";
-import { getTrialSubscriptionStatusName } from "../../../constants/SubscriptionTrialStatus";
+import SubscriptionTrialStatus, { getTrialSubscriptionStatusName } from "../../../constants/SubscriptionTrialStatus";
 import SubscriptionType from "../../../constants/SubscriptionType";
 import { DisciplineIcon } from "../../shared/discipline/DisciplineIcon";
 import { CalendarIcon, CoinsIcon, NextIcon } from "../../shared/icons";
@@ -20,8 +20,9 @@ export const SubscriptionCard = ({
 }) => {
   const getStatusBadgeColor = (subscription) => {
     if (subscription.subscriptionType === SubscriptionType.TRIAL_LESSON) {
-      if (subscription.trialStatus === 'completed') return "success";
-      if (subscription.trialStatus === 'cancelled') return "danger";
+      if (subscription.trialStatus === SubscriptionTrialStatus.CREATED) return "primary";
+      if (subscription.trialStatus === SubscriptionTrialStatus.POSITIVE) return "success";
+      if (subscription.trialStatus === SubscriptionTrialStatus.NEGATIVE) return "danger";
       return "secondary";
     } else {
       if (subscription.status === SubscriptionStatus.ACTIVE) return "success";
@@ -71,13 +72,14 @@ export const SubscriptionCard = ({
             </div>
           </Col>
           <Col md="1">
+          {subscription.trialStatus === SubscriptionTrialStatus.POSITIVE && (
             <div className="d-flex justify-content-end" onClick={(e) => e.stopPropagation()}>
               <NextIcon 
                 size="20px"
                 title="Продлить"
                 onIconClick={() => onResubscribeClick(subscription)}
               />
-            </div>
+            </div>)}
           </Col>
         </>
       );

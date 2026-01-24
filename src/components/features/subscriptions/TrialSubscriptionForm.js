@@ -1,9 +1,12 @@
 import React from "react";
 import { Button, Col, Container, Form, InputGroup, Row } from "react-bootstrap";
 
+import SubscriptionType from "../../../constants/SubscriptionType";
 import { getStudent } from "../../../services/apiStudentService";
 import { addTrialSubscription } from "../../../services/apiSubscriptionService";
+import { getTariffByType } from "../../../services/apiTariffService";
 import { getAvailableTeachers } from "../../../services/apiTeacherService";
+import { toMoneyString } from "../../../utils/moneyUtils";
 import { DisciplinePlate } from "../../shared/discipline/DisciplinePlate";
 import { CalendarIcon } from "../../shared/icons";
 import { AvailableTeachersModal } from "../../shared/modals/AvailableTeachersModal";
@@ -19,6 +22,8 @@ export class TrialSubscriptionForm extends React.Component {
       branchId: 0,
       disciplineId: null,
       student: null, // Add student to state as fallback
+      tariff: null,
+      trialTariffAmount: 0,
 
       backgroundEvents: [],
       availableTeachers: [],
@@ -40,6 +45,8 @@ export class TrialSubscriptionForm extends React.Component {
     if (!this.props.student && !this.props.location?.state?.student) {
       this.loadStudent();
     }
+    // Load trial tariff
+    this.loadTrialTariff();
   }
 
   loadStudent = async () => {
@@ -51,6 +58,17 @@ export class TrialSubscriptionForm extends React.Component {
       }
     } catch (error) {
       console.error('Error loading student:', error);
+    }
+  };
+
+  loadTrialTariff = async () => {
+    try {
+      const { disciplineId } = this.state;
+      const tariff = await getTariffByType(SubscriptionType.TRIAL_LESSON, disciplineId);
+      this.setState({ tariff: tariff, trialTariffAmount: tariff.amount });
+    } catch (error) {
+      console.error('Error loading trial tariff:', error);
+      // Keep default amount if API call fails
     }
   };
 
@@ -85,6 +103,9 @@ export class TrialSubscriptionForm extends React.Component {
       availableSlots: [],
       selectedSlotId: 0,
       showDisciplineModal: false,
+    }, () => {
+      // Reload tariff when discipline changes
+      this.loadTrialTariff();
     });
   };
 
@@ -107,6 +128,7 @@ export class TrialSubscriptionForm extends React.Component {
       teacherId: selectedSlot.teacherId,
       trialDate: selectedSlot.start,
       roomId: selectedSlot.roomId,
+      tariffId: this.state.tariff ? this.state.tariff.tariffId : null,
       student: {
         studentId: this.props.match.params.id,
       },
@@ -127,6 +149,7 @@ export class TrialSubscriptionForm extends React.Component {
       availableSlots,
       selectedSlotId,
       student,
+      trialTariffAmount,
     } = this.state;
 
     // Debug: Check what props are available
@@ -188,12 +211,18 @@ export class TrialSubscriptionForm extends React.Component {
                   value={selectedSlotId}
                   onChange={(e) => this.setState({ selectedSlotId: e.target.value })}
                   style={{ width: "200px" }}
+                  disabled={availableSlots.length === 0}
                 >
                   <option>выберите...</option>
                   {availableSlotsList}
                 </Form.Select>
 
-                <Button variant="outline-secondary" type="null" onClick={(e) => this.generateAvailablePeriods(e)} disabled={false}>
+                <Button 
+                  variant="outline-secondary" 
+                  type="null" 
+                  onClick={(e) => this.generateAvailablePeriods(e)} 
+                  disabled={!disciplineId}
+                >
                   Доступные окна...
                 </Button>
 
@@ -220,6 +249,23 @@ export class TrialSubscriptionForm extends React.Component {
                 </Button>
               </div>
             </Form>
+          </Col>
+          <Col md="4">
+            {/* Tariff section */}
+            <div style={{ 
+              background: '#f8f9fa', 
+              padding: '15px 20px', 
+              borderRadius: '8px',
+              border: '1px solid #dee2e6',
+              marginTop: '50px'
+            }}>
+              <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#495057' }}>
+                <strong>Тариф</strong>
+              </div>
+              <div style={{ fontSize: '13px', color: '#6c757d', marginTop: '5px' }}>
+                Пробное занятие {toMoneyString(trialTariffAmount)}
+              </div>
+            </div>
           </Col>
         </Row>
       </Container>

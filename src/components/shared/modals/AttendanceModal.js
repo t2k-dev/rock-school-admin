@@ -474,6 +474,8 @@ export class AttendanceModal extends React.Component {
 
   renderSubscriptionInfo = () => {
     const { teacher, disciplineId, subscription } = this.state.attendance;
+
+    console.log("subscription", this.state.attendance);
     switch (subscription?.subscriptionType) {
       case SubscriptionType.LESSON:  
       case SubscriptionType.TRIAL_LESSON:
