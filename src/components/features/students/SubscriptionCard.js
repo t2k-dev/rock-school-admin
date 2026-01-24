@@ -78,8 +78,17 @@ export const SubscriptionCard = ({
                 size="20px"
                 title="Продлить"
                 onIconClick={() => onResubscribeClick(subscription)}
-              />
+              />             
             </div>)}
+              {subscription.status === SubscriptionStatus.DRAFT && (
+                <div className="d-flex justify-content-end" onClick={(e) => e.stopPropagation()}>
+                  <CoinsIcon
+                    size="20px"
+                    title="Оплатить"
+                    onIconClick={() => onPayClick(subscription)}
+                  />
+                </div>
+              )}
           </Col>
         </>
       );

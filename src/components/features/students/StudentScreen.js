@@ -220,6 +220,7 @@ class StudentScreen extends React.Component {
       <SubscriptionList
         subscriptions={subscriptions}
         onSubscriptionClick={this.handleTrialSubscriptionClick}
+        onPayClick={this.handlePayClick}
         onResubscribeClick={this.handleResubscribeClick}
       />
     );

@@ -9,7 +9,7 @@ const SubscriptionTrialStatus = Object.freeze({
 
 // Status names mapping
 const TrialStatusNames = {
-  [SubscriptionTrialStatus.CREATED]: "Создано",
+  [SubscriptionTrialStatus.CREATED]: "Записался",
   [SubscriptionTrialStatus.PENDINGFEEDBACK]: "Ожидает решения",
   [SubscriptionTrialStatus.NEGATIVE]: "Отказался",
   [SubscriptionTrialStatus.POSITIVE]: "Продолжил",

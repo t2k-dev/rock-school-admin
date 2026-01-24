@@ -4,6 +4,7 @@ import { Alert, Button, Form, Modal } from 'react-bootstrap';
 import { getDisciplineName } from '../../../constants/disciplines';
 import { pay } from '../../../services/apiSubscriptionService';
 import DateTimeHelper from '../../../utils/DateTimeHelper';
+import { toMoneyString } from '../../../utils/moneyUtils';
 
 const PaymentForm = ({ 
   show, 
@@ -111,6 +112,8 @@ const PaymentForm = ({
     onHide();
   };
 
+console.log('subscription',subscription);
+
   return (
     <Modal show={show} onHide={handleClose} size="md" centered>
       <Modal.Header closeButton>
@@ -122,7 +125,7 @@ const PaymentForm = ({
           <div className="mb-3 p-3 bg-light rounded">
             <p className="mb-1"><strong>Студент:</strong> {subscription.student.firstName} {subscription.student.lastName}</p>
             <p className="mb-1"><strong>Дисциплина:</strong> {getDisciplineName(subscription.disciplineId)}</p>
-            <p className="mb-0"><strong>Сумма:</strong> ??? тг.</p>
+            <p className="mb-0"><strong>Сумма:</strong> {toMoneyString(subscription.amountOutstanding)}</p>
           </div>
         )}
 
