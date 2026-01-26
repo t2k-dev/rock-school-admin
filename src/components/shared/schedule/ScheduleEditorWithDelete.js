@@ -78,9 +78,7 @@ export class ScheduleEditorWithDelete extends React.Component {
         </b>
         <Row>
           <Container>
-            <Table striped bordered hover style={{ marginTop: "20px" }}>
-              <tbody>{schedulesList}</tbody>
-            </Table>
+              {schedulesList}
           </Container>
         </Row>
       </Form.Group>

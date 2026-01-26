@@ -5,8 +5,10 @@ import { Button, Col, Container, Form, InputGroup, Row } from "react-bootstrap";
 import AttendanceType from "../../../constants/AttendanceType";
 import { getStudent } from "../../../services/apiStudentService";
 import { addSubscription } from "../../../services/apiSubscriptionService";
+import { getTariffsByType } from "../../../services/apiTariffService";
 import { getAvailableTeachers, getWorkingPeriods } from "../../../services/apiTeacherService";
 import { calculateAge } from "../../../utils/dateTime";
+import { toMoneyString } from "../../../utils/moneyUtils";
 import { convertSlotsToSchedules } from "../../../utils/scheduleUtils";
 import { DisciplinePlate } from "../../shared/discipline/DisciplinePlate";
 import { Loading } from "../../shared/Loading";
@@ -15,6 +17,7 @@ import { DisciplineSelectionModal } from "../../shared/modals/DisciplineSelectio
 import { ScheduleEditorWithDelete } from "../../shared/schedule/ScheduleEditorWithDelete";
 import { AddStudentModal } from "../students/AddStudentModal";
 import { SubscriptionStudents } from "./SubscriptionStudents";
+import TariffCard from "./TariffCard";
 
 export class SubscriptionForm extends React.Component {
   constructor(props) {
@@ -35,6 +38,9 @@ export class SubscriptionForm extends React.Component {
       startDate: format(new Date(), "yyyy-MM-dd"),
       attendanceCount: "",
       attendanceLength: 0,
+      
+      tariffs: [],
+      selectedTariff: null,
 
       schedules: [],
       
@@ -86,6 +92,9 @@ export class SubscriptionForm extends React.Component {
           isLoading: false,
         });
         
+        // Load tariffs for discipline
+        this.loadTariffs();
+        
       }
       else{
         const student = await getStudent(this.state.studentId);
@@ -96,6 +105,9 @@ export class SubscriptionForm extends React.Component {
             disciplineId: this.props.location.state.disciplineId,
             isLoading: false,
         });
+        
+        // Load tariffs for discipline
+        this.loadTariffs();
       }
 
       return;
@@ -103,6 +115,16 @@ export class SubscriptionForm extends React.Component {
 
     // Edit
   }
+
+  loadTariffs = async () => {
+    try {
+      // Load all tariffs for lessons
+      const tariffs = await getTariffsByType(AttendanceType.LESSON);
+      this.setState({ tariffs: tariffs || [] });
+    } catch (error) {
+      console.error('Error loading tariffs:', error);
+    }
+  };
 
   // AddStudentModal
   showAddStudentModal = async (e) => {
@@ -165,6 +187,17 @@ export class SubscriptionForm extends React.Component {
     this.setState({ availableSlots: slots, schedules: schedules });
   };
 
+  handleTariffChange = (tariffId) => {
+    const selectedTariff = this.state.tariffs.find(tariff => tariff.tariffId === tariffId);
+    if (selectedTariff) {
+      this.setState({
+        selectedTariff: selectedTariff,
+        attendanceCount: selectedTariff.attendanceCount,
+        attendanceLength: selectedTariff.attendanceLength
+      });
+    }
+  };
+
   handleChange = (e) => {
     const { id, value } = e.target;
     this.setState({ [id]: value });
@@ -176,7 +209,21 @@ export class SubscriptionForm extends React.Component {
       availableSlots: [],
       selectedSlotId: 0,
       showDisciplineModal: false,
+      selectedTariff: null,
+      attendanceCount: "",
+      attendanceLength: 0,
     });
+  };
+
+  handleTariffChange = (tariffId) => {
+    const selectedTariff = this.state.tariffs.find(tariff => tariff.tariffId === tariffId);
+    if (selectedTariff) {
+      this.setState({
+        selectedTariff: selectedTariff,
+        attendanceCount: selectedTariff.attendanceCount,
+        attendanceLength: selectedTariff.attendanceLength
+      });
+    }
   };
 
   // Discipline Modal methods
@@ -225,6 +272,11 @@ export class SubscriptionForm extends React.Component {
         attendanceLength: this.state.attendanceLength,
         startDate: format(startDate, "yyyy.MM.dd"),
         branchId: 1,
+
+        tariffId: this.state.selectedTariff.tariffId,
+        price: this.state.selectedTariff.amount,
+        amountOutstanding: this.state.selectedTariff.amount,
+        finalPrice: this.state.selectedTariff.amount,
       },
       schedules: this.state.schedules,
     };
@@ -232,6 +284,17 @@ export class SubscriptionForm extends React.Component {
     await addSubscription(requestBody);
 
     this.props.history.push(`/student/${this.state.studentId}`);
+  };
+
+  getFilteredTariffs = () => {
+    const { tariffs, disciplineId } = this.state;
+    if (!disciplineId) return tariffs;
+    
+    // Filter tariffs by discipline, if no discipline-specific tariffs found, return tariffs not specified by disciplineId (null)
+    const disciplineSpecific = tariffs.filter(tariff => tariff.disciplineId === parseInt(disciplineId));
+    const genericTariffs = tariffs.filter(tariff => !tariff.disciplineId);
+    
+    return disciplineSpecific.length > 0 ? disciplineSpecific : genericTariffs;
   };
 
   render() {
@@ -251,8 +314,11 @@ export class SubscriptionForm extends React.Component {
       showAvailableTeacherModal,
       showAddStudentModal,
       showDisciplineModal,
+      selectedTariff,
     } = this.state;
 
+    const filteredTariffs = this.getFilteredTariffs();
+    
     if (isLoading) {
       return <Loading
         message="Загрузка данных..."
@@ -267,7 +333,7 @@ export class SubscriptionForm extends React.Component {
         filteredSchedules = schedules.filter(schedule => schedule.teacherId === teacherId) ;
       }
     }
-console.log("att", attendanceLength);
+
     return (
       <Container style={{ marginTop: "40px", paddingBottom: "50px" }}>
         <Row>
@@ -308,7 +374,7 @@ console.log("att", attendanceLength);
               </Form.Group>
 
               <Form.Group className="mb-3">
-                <Form.Label>Дата начала</Form.Label>
+                <Form.Label><b>Дата начала</b></Form.Label>
                 <Form.Control
                   type="date"
                   name="startDate"
@@ -317,23 +383,20 @@ console.log("att", attendanceLength);
                 />
               </Form.Group>
 
-              <Form.Group className="mb-3" controlId="Subscription">
-                <Form.Label>Количество занятий</Form.Label>
-                <Form.Select aria-label="Веберите..." value={attendanceCount} onChange={(e) => this.setState({ attendanceCount: e.target.value })}>
-                  <option>выберите...</option>
-                  <option value="1">1</option>
-                  <option value="4">4</option>
-                  <option value="8">8</option>
-                  <option value="12">12</option>
-                </Form.Select>
-              </Form.Group>
-
-              <Form.Group className="mb-3" controlId="AttendanceLength">
-                <Form.Label>Длительность урока</Form.Label>
-                <Form.Select aria-label="Веберите..." value={attendanceLength} onChange={(e) => this.setState({ attendanceLength: e.target.value })}>
-                  <option>выберите...</option>
-                  <option value="1">Час</option>
-                  <option value="2">Полтора часа</option>
+              <Form.Group className="mb-3" controlId="TariffSelection">
+                <Form.Label><b>Тариф</b></Form.Label>
+                <Form.Select 
+                  aria-label="Выберите тариф..." 
+                  value={selectedTariff?.tariffId || ""} 
+                  onChange={(e) => this.handleTariffChange(e.target.value)}
+                  disabled={!disciplineId || filteredTariffs.length === 0}
+                >
+                  <option value="">выберите тариф...</option>
+                  {filteredTariffs.map((tariff) => (
+                    <option key={tariff.tariffId} value={tariff.tariffId}>
+                      {tariff.attendanceCount} занятий, {tariff.attendanceLength === 1 ? 'час' : 'полтора часа'} - {toMoneyString(tariff.amount)}
+                    </option>
+                  ))}
                 </Form.Select>
               </Form.Group>
 
@@ -344,6 +407,7 @@ console.log("att", attendanceLength);
                   value={teacherId}
                   onChange={(e) => this.setState({ teacherId: e.target.value })}
                   style={{ width: "200px" }}
+                  disabled={!teacherId}
                 >
                   <option>выберите...</option>
                   {selectedTeachers.map((teacher, index) => (
@@ -392,6 +456,16 @@ console.log("att", attendanceLength);
                 </Button>
               </Container>
             </Form>
+          </Col>
+          <Col md="4">
+            {/* Tariff section */}
+            <TariffCard
+              title="Тариф"
+              description="Занятие"
+              amount={selectedTariff ? selectedTariff.amount : 0 }
+              style={{ marginTop: '50px' }}
+              showIcon={false}
+            />
           </Col>
         </Row>
       </Container>

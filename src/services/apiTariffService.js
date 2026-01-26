@@ -50,10 +50,20 @@ export const deleteTariff = async (id) => {
   }
 };
 
+export const getTariffsByType = async (subscriptionType) => {
+  try {
+    const response = await apiClient.get(`/tariff/${subscriptionType}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching tariff by type:', error);
+    throw error;
+  }
+};
+
 export const getTariffByType = async (subscriptionType, disciplineId = null) => {
   try {
     const params = disciplineId ? { disciplineId } : {};
-    const response = await apiClient.get(`/tariff/${subscriptionType}`, { params });
+    const response = await apiClient.get(`/tariff/${subscriptionType}/single`, { params });
     return response.data;
   } catch (error) {
     console.error('Error fetching tariff by type:', error);

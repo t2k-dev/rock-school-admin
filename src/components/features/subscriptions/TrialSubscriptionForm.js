@@ -6,12 +6,12 @@ import { getStudent } from "../../../services/apiStudentService";
 import { addTrialSubscription } from "../../../services/apiSubscriptionService";
 import { getTariffByType } from "../../../services/apiTariffService";
 import { getAvailableTeachers } from "../../../services/apiTeacherService";
-import { toMoneyString } from "../../../utils/moneyUtils";
 import { DisciplinePlate } from "../../shared/discipline/DisciplinePlate";
 import { CalendarIcon } from "../../shared/icons";
 import { AvailableTeachersModal } from "../../shared/modals/AvailableTeachersModal";
 import { DisciplineSelectionModal } from "../../shared/modals/DisciplineSelectionModal";
 import { SubscriptionStudents } from "./SubscriptionStudents";
+import TariffCard from "./TariffCard";
 
 export class TrialSubscriptionForm extends React.Component {
   constructor(props) {
@@ -252,20 +252,13 @@ export class TrialSubscriptionForm extends React.Component {
           </Col>
           <Col md="4">
             {/* Tariff section */}
-            <div style={{ 
-              background: '#f8f9fa', 
-              padding: '15px 20px', 
-              borderRadius: '8px',
-              border: '1px solid #dee2e6',
-              marginTop: '50px'
-            }}>
-              <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#495057' }}>
-                <strong>Тариф</strong>
-              </div>
-              <div style={{ fontSize: '13px', color: '#6c757d', marginTop: '5px' }}>
-                Пробное занятие {toMoneyString(trialTariffAmount)}
-              </div>
-            </div>
+            <TariffCard
+              title="Тариф"
+              description="Пробное занятие"
+              amount={trialTariffAmount}
+              style={{ marginTop: '50px' }}
+              showIcon={false}
+            />
           </Col>
         </Row>
       </Container>
