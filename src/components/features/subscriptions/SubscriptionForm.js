@@ -16,8 +16,8 @@ import { AvailableTeachersModal } from "../../shared/modals/AvailableTeachersMod
 import { DisciplineSelectionModal } from "../../shared/modals/DisciplineSelectionModal";
 import { ScheduleEditorWithDelete } from "../../shared/schedule/ScheduleEditorWithDelete";
 import { AddStudentModal } from "../students/AddStudentModal";
+import TariffCard from "../tariffs/TariffCard";
 import { SubscriptionStudents } from "./SubscriptionStudents";
-import TariffCard from "./TariffCard";
 
 export class SubscriptionForm extends React.Component {
   constructor(props) {

@@ -2,14 +2,18 @@ import { format } from "date-fns";
 import React from "react";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
 
+import AttendanceType from "../../../constants/AttendanceType";
 import { getBusySlots } from "../../../services/apiBranchService";
 import { addRentalSubscription } from "../../../services/apiRentalSubscriptionService";
 import { getStudent } from "../../../services/apiStudentService";
+import { getTariffsByType } from "../../../services/apiTariffService";
+import { toMoneyString } from "../../../utils/moneyUtils";
 import { convertSlotsToSchedules } from "../../../utils/scheduleUtils";
 import { SubscriptionStudents } from "../../features/subscriptions/SubscriptionStudents";
 import { Loading } from "../../shared/Loading";
 import { AvailableSlotsModal } from "../../shared/modals/AvailableSlotsModal";
 import { ScheduleEditorWithDelete } from "../../shared/schedule/ScheduleEditorWithDelete";
+import TariffCard from "../tariffs/TariffCard";
 
 export class RoomRentalForm extends React.Component {
   constructor(props) {
@@ -27,6 +31,10 @@ export class RoomRentalForm extends React.Component {
       attendanceLength: 1,
       purpose: "",
       notes: "",
+      
+      tariffs: [],
+      selectedTariff: null,
+      
       schedules: [],
       basedOnSubscriptionId: null,
       showAvailableSlotsModal: false,
@@ -55,6 +63,9 @@ export class RoomRentalForm extends React.Component {
           students: students,
           isLoading: false,
         });
+        
+        // Load tariffs for room rental
+        this.loadTariffs();
       } else {
         this.setState({ isLoading: false });
       }
@@ -63,6 +74,27 @@ export class RoomRentalForm extends React.Component {
       this.setState({ isLoading: false });
     }
   }
+
+  loadTariffs = async () => {
+    try {
+      // Load all tariffs for room rental
+      const tariffs = await getTariffsByType(AttendanceType.RENT);
+      this.setState({ tariffs: tariffs || [] });
+    } catch (error) {
+      console.error('Error loading tariffs:', error);
+    }
+  };
+
+  handleTariffChange = (tariffId) => {
+    const selectedTariff = this.state.tariffs.find(tariff => tariff.tariffId === tariffId);
+    if (selectedTariff) {
+      this.setState({
+        selectedTariff: selectedTariff,
+        attendanceCount: selectedTariff.attendanceCount,
+        attendanceLength: selectedTariff.attendanceLength
+      });
+    }
+  };
 
   showAvailableSlotsModal = async (e) => {
     e.preventDefault();
@@ -104,12 +136,14 @@ export class RoomRentalForm extends React.Component {
             attendanceLength: this.state.attendanceLength,
             branchId: 1,
             studentId: this.state.studentId,
+            
+            tariffId: this.state.selectedTariff?.tariffId,
+            price: this.state.selectedTariff?.amount,
+            amountOutstanding: this.state.selectedTariff?.amount,
+            finalPrice: this.state.selectedTariff?.amount,
         },
         schedules: this.state.schedules,
     };
-
-    console.log("Request body for saving room rental:", requestBody);
-return;
 
     try {
       await addRentalSubscription(requestBody);
@@ -133,6 +167,8 @@ return;
       rooms,
       basedOnSubscriptionId,
       showAvailableSlotsModal,
+      tariffs,
+      selectedTariff,
     } = this.state;
 
     if (isLoading) {
@@ -158,7 +194,7 @@ return;
               </Form.Group>
 
               <Form.Group className="mb-3">
-                <Form.Label>Дата начала</Form.Label>
+                <Form.Label><b>Дата начала</b></Form.Label>
                 <Form.Control
                   type="date"
                   name="startDate"
@@ -167,27 +203,20 @@ return;
                 />
               </Form.Group>
 
-              <Form.Group className="mb-3" controlId="AttendanceCount">
-                <Form.Label>Количество сеансов</Form.Label>
-                <Form.Select aria-label="Выберите..." value={attendanceCount} onChange={(e) => this.setState({ attendanceCount: e.target.value })}>
-                  <option>выберите...</option>
-                  <option value="1">1</option>
-                  <option value="4">4</option>
-                  <option value="8">8</option>
-                  <option value="12">12</option>
-                </Form.Select>
-              </Form.Group>
-
-              <Form.Group className="mb-3" controlId="AttendanceLength">
-                <Form.Label>Длительность сеанса</Form.Label>
+              <Form.Group className="mb-3" controlId="TariffSelection">
+                <Form.Label><b>Тариф</b></Form.Label>
                 <Form.Select 
-                    aria-label="Выберите..." 
-                    value={attendanceLength} 
-                    onChange={(e) => this.setState({ attendanceLength: e.target.value })}
-                    readOnly
-                    >
-                  <option value="1">Час</option>
-                  <option value="2">Полтора часа</option>
+                  aria-label="Выберите тариф..." 
+                  value={selectedTariff?.tariffId || ""} 
+                  onChange={(e) => this.handleTariffChange(e.target.value)}
+                  disabled={tariffs.length === 0}
+                >
+                  <option value="">выберите тариф...</option>
+                  {tariffs.map((tariff) => (
+                    <option key={tariff.tariffId} value={tariff.tariffId}>
+                      {tariff.attendanceCount} сеансов, {tariff.attendanceLength === 1 ? 'час' : 'полтора часа'} - {toMoneyString(tariff.amount)}
+                    </option>
+                  ))}
                 </Form.Select>
               </Form.Group>
 
@@ -214,6 +243,16 @@ return;
                 </Button>
               </Container>
             </Form>
+          </Col>
+          <Col md="4">
+            {/* Tariff section */}
+            <TariffCard
+              title="Тариф"
+              description="Аренда комнаты"
+              amount={selectedTariff ? toMoneyString(selectedTariff.amount) : toMoneyString(0)}
+              style={{ marginTop: '60px' }}
+              showIcon={false}
+            />
           </Col>
         </Row>
 

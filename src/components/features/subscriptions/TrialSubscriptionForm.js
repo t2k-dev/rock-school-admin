@@ -10,8 +10,8 @@ import { DisciplinePlate } from "../../shared/discipline/DisciplinePlate";
 import { CalendarIcon } from "../../shared/icons";
 import { AvailableTeachersModal } from "../../shared/modals/AvailableTeachersModal";
 import { DisciplineSelectionModal } from "../../shared/modals/DisciplineSelectionModal";
+import TariffCard from "../tariffs/TariffCard";
 import { SubscriptionStudents } from "./SubscriptionStudents";
-import TariffCard from "./TariffCard";
 
 export class TrialSubscriptionForm extends React.Component {
   constructor(props) {
