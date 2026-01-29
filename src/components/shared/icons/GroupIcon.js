@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
-function GroupIcon({ onIconClick }) {
-  const [color, setColor] = useState("#000000"); // Default color
+function GroupIcon({ onIconClick, size="30px", color="#000000" }) {
+  const [setColor] = useState("#000000"); // Default color
 
   const handleClick = (e) => {
     if (onIconClick) {
@@ -14,15 +14,15 @@ function GroupIcon({ onIconClick }) {
       <svg
         onClick={handleClick}
         xmlns="http://www.w3.org/2000/svg"
-        width={30}
-        height={30}
+        width={size}
+        height={size}
         id="Layer_1"
         x="0px"
         y="0px"
         viewBox="0 0 511.999 511.999"
         style={{
           enableBackground:'new 0 0 511.999 511.999',
-          fill:"#c22222"
+          fill:{color}
         }}
       >
         <g>

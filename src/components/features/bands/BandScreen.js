@@ -1,9 +1,10 @@
 import React from "react";
-import { Alert, Button, Col, Container, Row, Spinner } from "react-bootstrap";
+import { Alert, Button, Card, Col, Container, Row, Spinner } from "react-bootstrap";
 import { Link } from "react-router-dom";
-
 import { activateBand, deactivateBand, getBandScreenDetails } from "../../../services/apiBandService";
+import { NoRecords } from "../../shared/NoRecords";
 import { BandScreenCard } from "./BandScreenCard";
+import { BandStudents } from "./BandStudents";
 
 const ERROR_MESSAGES = {
   LOAD_FAILED: "Не удалось загрузить данные группы",
@@ -44,7 +45,7 @@ export class BandScreen extends React.Component {
       const bandData = await getBandScreenDetails(bandId);
       
       this.setState({
-        band: bandData,
+        band: bandData.band,
         isLoading: false,
       });
     } catch (error) {
@@ -106,6 +107,72 @@ export class BandScreen extends React.Component {
       </Alert>
     </Container>
   );
+/*
+  renderStudentsList = () => {
+    if (!students || students.length === 0) {
+      return (
+        <div className="text-center py-3 text-muted">
+          Ученики не добавлены
+        </div>
+      );
+    }
+
+    return (
+      <div>
+        {students.map((student, index) => (
+          <div key={index} className="d-flex align-items-center mb-2 p-2 border rounded">
+            <Avatar style={{ width: "40px", height: "40px", marginRight: "15px" }} />
+            <div className="flex-grow-1">
+              <div>
+                <strong>
+                  <Link to={`/student/${student.studentId}`}>
+                    {student.firstName} {student.lastName}
+                  </Link>
+                </strong>
+              </div>
+              <div className="text-muted small">
+                {calculateAge(student.birthDate)} лет • {student.phone}
+              </div>
+            </div>
+            <div>
+              <Badge bg="secondary">{student.level || "Начинающий"}</Badge>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  renderSchedule = () => {
+    if (!schedules || schedules.length === 0) {
+      return (
+        <div className="text-center py-3 text-muted">
+          Расписание не настроено
+        </div>
+      );
+    }
+
+    return (
+      <Table striped bordered hover size="sm">
+        <thead>
+          <tr>
+            <th>День</th>
+            <th>Время</th>
+            <th>Комната</th>
+          </tr>
+        </thead>
+        <tbody>
+          {schedules.map((schedule, index) => (
+            <tr key={index}>
+              <td>{getDayName(schedule.weekDay)}</td>
+              <td>{formatTime(schedule.startTime)} - {formatTime(schedule.endTime)}</td>
+              <td>Комната {schedule.roomId}</td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+    );
+  };*/
 
   render() {
     const { band, isLoading, isActivating, error } = this.state;
@@ -140,50 +207,51 @@ export class BandScreen extends React.Component {
         <Row>
           <Col md="2"></Col>
           <Col md="8">
-            {/* Header */}
-            <div className="d-flex mb-4 align-items-center">
-              <div className="flex-grow-1">
-                <h2 className="mb-1">{band.name}</h2>
-                <div className="text-muted">
-                  {band.teacher?.firstName} {band.teacher?.lastName}
-                </div>
-              </div>
-              <div className="d-flex gap-2">
-                <Button
-                  variant={band.isActive ? "outline-warning" : "outline-success"}
-                  onClick={this.handleActivateToggle}
-                  disabled={isActivating}
-                >
-                  {isActivating ? (
-                    <>
-                      <Spinner size="sm" className="me-1" />
-                      {band.isActive ? "Деактивация..." : "Активация..."}
-                    </>
-                  ) : (
-                    band.isActive ? "Деактивировать" : "Активировать"
-                  )}
-                </Button>
-                <Button
-                  as={Link}
-                  to={`/band/${band.bandId}/edit`}
-                  variant="outline-primary"
-                  disabled={!band.isActive}
-                >
-                  Редактировать
-                </Button>
-              </div>
-            </div>
 
             {/* Status Alert */}
-            {!band.isActive && (
+            {/*!band.isActive && (
               <Alert variant="warning" className="mb-4">
                 <strong>Группа деактивирована</strong> - занятия не проводятся
               </Alert>
-            )}
+            )*/}
 
             {/* Band Details */}
             <BandScreenCard band={band} />
-
+            <Container>
+              <Row>
+                <Col md="6">
+                  <Card>
+                    <Card.Header><strong>Участники</strong></Card.Header>
+                    <Card.Body>
+                      <BandStudents
+                        students={band.bandStudents?.map(bandStudent => ({
+                          studentId: bandStudent.student?.studentId || bandStudent.studentId,
+                          firstName: bandStudent.student?.firstName,
+                          lastName: bandStudent.student?.lastName,
+                          birthDate: bandStudent.student?.birthDate,
+                          roleId: bandStudent.roleId,
+                          bandStudentId: bandStudent.bandStudentId
+                        })) || []}
+                        onAddStudent={this.showAddStudentModal}
+                        onDeleteStudent={this.deleteStudent}
+                        onRoleChange={this.handleRoleChange}
+                      />
+                    </Card.Body>
+                  </Card>
+                </Col>
+                <Col md="6">
+                  <Card>
+                    <Card.Header>
+                      <strong>Расписание</strong>
+                    </Card.Header>
+                    <Card.Body>
+                      
+                      <NoRecords />
+                    </Card.Body>
+                  </Card>
+                </Col>
+              </Row>
+            </Container>
           </Col>
         </Row>
       </Container>

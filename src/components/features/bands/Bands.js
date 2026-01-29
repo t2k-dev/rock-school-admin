@@ -61,10 +61,6 @@ class Bands extends React.Component {
     if (isLoading) {
       return <Loading />;
     }
-    
-    const activeBands = bands?.filter((b) => b.isActive);
-
-    const inactiveBands = bands?.filter((b) => !b.isActive);
 
     return (
       <Container style={{ marginTop: "40px" }}>
@@ -84,9 +80,7 @@ class Bands extends React.Component {
             <div>
               <Form.Control className="mb-4" placeholder="Поиск..." value={searchText} onChange={(e) => this.handleSearchChange(e)}></Form.Control>
             </div>
-            <div>{this.renderBands(activeBands)}</div>
-            <h4 className="mb-3"> Неактивные </h4>
-            <div>{this.renderBands(inactiveBands)}</div>
+            <div>{this.renderBands(bands)}</div>
           </Col>
         </Row>
       </Container>

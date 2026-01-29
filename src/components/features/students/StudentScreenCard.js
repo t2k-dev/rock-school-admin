@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Card, Container, Stack } from "react-bootstrap";
+import { Button, Card, Col, Container, Row, Stack } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 import { Avatar } from "../../shared/Avatar";
@@ -20,33 +20,49 @@ class StudentScreenCard extends React.Component {
       10: "Бог (10)",
     };
 
-    const { item } = this.props;
+    const { item, bands } = this.props;
     return (
-      <Card className="ms-col-2 mb-2">
+      <Card className="mb-2 p-0">
         <Card.Body>
-          <div className="d-flex justify-content-between align-items-center" style={{ flexDirection: "row" }}>
-            <div style={{ width: "160px" }}>
-              <Avatar></Avatar>
-            </div>
-            <Container className="flex-grow-1">
-              <Container>
-                <div style={{ fontWeight: "bold", fontSize: "24px" }}>
-                  {item.firstName} {item.lastName}
-                  <EditIcon onIconClick={this.handleEditClick} />
+          <Container className="p-2">
+            <Row>
+              <Col md="2" className="text-center">
+                <Avatar/>
+              </Col>
+              <Col md="6">
+                <div className="mt-4">
+                  <div className="fw-bold" style={{ fontSize: "24px" }}>
+                    {item.firstName} {item.lastName}
+                    <EditIcon onIconClick={this.handleEditClick} />
+                  </div>
+                  <div className= "mt-1">
+                    <InstagramIcon
+                      size={"20px"}
+                      title={"Instagram"}
+                    />
+                  </div>
                 </div>
-                <div className= "mt-1">
-                  <InstagramIcon
-                    size={"20px"}
-                    title={"Instagram"}
-                  />
-                </div>
-              </Container>
-            </Container>
+              </Col>
+              <Col md="4">
+              <div className="d-flex justify-content-between align-items-center" style={{ flexDirection: "row" }}>
+                
             <div>
               <Container style={{ textAlign: "center", marginRight: "100px" }} className="mt-2">
-                <GroupIcon />
-                <div style={{ fontWeight: "bold" }}> Группа</div>
-                <div>18pm</div>
+                <div><GroupIcon /></div>
+                <div style={{ fontWeight: "bold" }}> Группы</div>
+                <div>
+                  {bands && bands.length > 0 ? (
+                    bands.map((band, index) => (
+                      <div key={band.bandId || index} className="small">
+                        <Link to={`/band/${band.bandId}`} className="text-decoration-none">
+                          {band.name}
+                        </Link>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-muted small">Нет групп</div>
+                  )}
+                </div>
               </Container>
             </div>
             <div>
@@ -62,6 +78,9 @@ class StudentScreenCard extends React.Component {
               </Stack>
             </div>
           </div>
+              </Col>
+            </Row>
+          </Container>
         </Card.Body>
       </Card>
     );

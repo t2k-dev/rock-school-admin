@@ -223,12 +223,12 @@ export class BandForm extends React.Component {
     this.setState({ isSaving: true });
 
     try {
-      const studentIds = this.state.students.map(student => student.studentId);
+      const members = this.state.students.map(student => ({ studentId: student.studentId, bandRoleId: student.roleId || null }));
 
       const requestBody = {
         name: this.state.name,
         teacherId: this.state.teacherId,
-        studentIds: studentIds,
+        members: members,
         schedules: this.state.schedules,
         branchId: 1, // TODO: get from context or props
       };
@@ -249,9 +249,7 @@ export class BandForm extends React.Component {
     const {
       isNew,
       name,
-      teacher,
       teachers,
-      selectedTeachers,
       availableTeachers,
       teacherId,
       students,
@@ -281,7 +279,7 @@ export class BandForm extends React.Component {
             <Form>
               {/* Band Name */}
               <Form.Group className="mb-3">
-                <Form.Label htmlFor="name">Название группы</Form.Label>
+                <Form.Label htmlFor="name" className="fw-bold">Название группы</Form.Label>
                 <Form.Control
                   type="text"
                   id="name"
@@ -294,9 +292,8 @@ export class BandForm extends React.Component {
 
               {/* Students Section */}
               <div className="mb-3">
-                <label htmlFor="students">Ученики</label>
-                
                 <BandStudents
+                  showLabel={true}
                   students={sortedStudents}
                   onAddStudent={this.showAddStudentModal}
                   onDeleteStudent={this.deleteStudent}
@@ -313,7 +310,7 @@ export class BandForm extends React.Component {
 
               {/* Teacher Section */}
               <Form.Group className="mb-3">
-                <Form.Label htmlFor="teacherId">Преподаватель</Form.Label>
+                <Form.Label htmlFor="teacherId" className="fw-bold">Преподаватель</Form.Label>
                 <InputGroup>
                   <Form.Control
                     as="select"

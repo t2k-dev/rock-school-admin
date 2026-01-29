@@ -92,10 +92,12 @@ export class BandStudents extends React.Component {
   };
 
   render() {
-    const { students, onAddStudent } = this.props;
+    const { students, onAddStudent, showLabel = false } = this.props;
     const { showRoleModal, selectedStudentIndex } = this.state;
 
     return (
+      <>
+      {showLabel && <strong>Участники</strong>}
       <div className="mt-2">
         {students.length > 0 ? (
           <div className="mb-3">
@@ -135,6 +137,7 @@ export class BandStudents extends React.Component {
           </Modal.Body>
         </Modal>
       </div>
+      </>
     );
   }
 }

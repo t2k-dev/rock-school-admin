@@ -19,7 +19,7 @@ const MyNavbar = () =>{
                     <Nav.Link as={Link} to="/teachers">Преподаватели</Nav.Link>
                     <Nav.Link as={Link} to="/students">Ученики</Nav.Link>
                     <Nav.Link as={Link} to="/bands">Группы</Nav.Link>
-                    <NavDropdown title="Цены" id="basic-nav-dropdown-prices">
+                    <NavDropdown title="Тарифы" id="basic-nav-dropdown-prices">
                         <NavDropdown.Item as={Link} to="/tariffForm">Добавить тариф</NavDropdown.Item>
                         <NavDropdown.Item as={Link} to="/tariffList">Список тарифов</NavDropdown.Item>
                     </NavDropdown>

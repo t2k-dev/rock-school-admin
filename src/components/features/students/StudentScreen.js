@@ -57,6 +57,7 @@ class StudentScreen extends React.Component {
         student: details.student,
         subscriptions: details.subscriptions,
         attendances: details.attendances,
+        bands: details.bands,
         isLoading: false,
       });
 
@@ -247,7 +248,7 @@ class StudentScreen extends React.Component {
   }
 
   render() {
-    const { isLoading, student, subscriptions, showCompleted, attendances, selectedAttendance, showAttendanceModal } = this.state;
+    const { isLoading, student, bands, subscriptions, showCompleted, attendances, selectedAttendance, showAttendanceModal } = this.state;
     
     if (isLoading) {
       return <Loading
@@ -291,14 +292,14 @@ class StudentScreen extends React.Component {
     return (
       <Container style={{ marginTop: "40px" }}>
         <Row>
-          <StudentScreenCard item={student} history={this.props.history} />
+          <StudentScreenCard item={student} bands={bands} history={this.props.history} />
         </Row>
         <Row className="mb-3">
           <Tabs defaultActiveKey="products" id="uncontrolled-tab-example" className="mb-3">
-            <Tab eventKey="products" title="Продукты">
+            <Tab eventKey="products" title="Уроки">
 
                 <div className="d-flex mb-2 mt-2">
-                  <div className="flex-grow-1"><h3>Абонементы</h3></div>
+                  <div className="flex-grow-1"></div>
                   <div>
                     <Button
                       as={Link}
@@ -316,9 +317,10 @@ class StudentScreen extends React.Component {
                   </div>
                 </div>
                 {this.renderSubscriptionsTable(nonTrialSubscriptions)}
-
-                <div className="d-flex mb-2 mt-4">
-                  <div className="flex-grow-1"><h3>Пробные занятия</h3></div>
+            </Tab>
+            <Tab eventKey="trials" title="Пробные">  
+              <div className="d-flex mb-2 mt-4">
+                  <div className="flex-grow-1"></div>
                   <div>
                     <Button
                       as={Link}
@@ -336,9 +338,10 @@ class StudentScreen extends React.Component {
                   </div>
                 </div>
                 {this.renderTrialsTable(trialSubscriptions)}  
-
+            </Tab>
+            <Tab eventKey="rents" title="Аренда комнаты">
                 <div className="d-flex mb-2 mt-4">
-                  <div className="flex-grow-1"><h3>Аренда комнаты</h3></div>
+                  <div className="flex-grow-1"></div>
                   <div>
                     <Button
                       as={Link}
@@ -355,10 +358,11 @@ class StudentScreen extends React.Component {
                     </Button>
                   </div>
                 </div>
-                {this.renderRentTable(rentSubscriptions)}
-
+                {this.renderRentTable(rentSubscriptions)}              
+            </Tab>
+            <Tab eventKey="rehearsals" title="Репетиции"> 
                 <div className="d-flex mb-2 mt-4">
-                  <div className="flex-grow-1"><h3>Репетиции</h3></div>
+                  <div className="flex-grow-1"></div>
                   <div>
                     <Button
                       as={Link}

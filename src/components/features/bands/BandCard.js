@@ -1,46 +1,35 @@
-import { Badge, Button, Card, Col, Row } from "react-bootstrap";
+import { Badge, Card, Col, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import { HoverCard } from "../../shared/ui";
 
 const BandCard = ({ item }) => {
   const { bandId, name, teacher, studentsCount, isActive } = item;
 
   return (
-    <Card className="mb-3">
+    <HoverCard className="mb-3" as={Link} to={`/band/${bandId}`} style={{ textDecoration: 'none', color: 'inherit' }}>
       <Card.Body>
         <Row className="align-items-center">
-          <Col md="6">
+          <Col md="4">
             <div className="d-flex align-items-center">
               <div>
-                <h5 className="mb-1">{name}</h5>
-                <div className="text-muted">
-                  {teacher && `${teacher.firstName} ${teacher.lastName}`}
-                </div>
+                <h3 className="mb-1">{name}</h3>
               </div>
             </div>
           </Col>
-          <Col md="2">
-            <Badge bg="info">
-              {studentsCount} {studentsCount === 1 ? 'ученик' : studentsCount < 5 ? 'ученика' : 'учеников'}
-            </Badge>
+          <Col md="4">
+            <div className="text-muted">
+              Куратор
+            </div>
+            <div>{teacher && `${teacher.firstName} ${teacher.lastName}`}</div>
           </Col>
-          <Col md="2">
+          <Col md="4">
             {!isActive && (
               <Badge bg="secondary">Неактивная</Badge>
             )}
           </Col>
-          <Col md="2" className="text-end">
-            <Button 
-              as={Link} 
-              to={`/band/${bandId}`} 
-              variant="outline-primary" 
-              size="sm"
-            >
-              Открыть
-            </Button>
-          </Col>
         </Row>
       </Card.Body>
-    </Card>
+    </HoverCard>
   );
 };
 
