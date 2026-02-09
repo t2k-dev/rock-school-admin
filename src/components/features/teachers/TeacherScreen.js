@@ -42,6 +42,7 @@ class TeacherScreen extends React.Component {
 
     this.handleEditClick = this.handleEditClick.bind(this);
     this.handleEditSubscriptionClick = this.handleEditSubscriptionClick.bind(this);
+    this.handleScheduleClick = this.handleScheduleClick.bind(this);
   }
 
   componentDidMount() {
@@ -80,6 +81,11 @@ class TeacherScreen extends React.Component {
     this.props.history.push("/teachers/edit/" + this.props.match.params.id);
   };
   
+  handleScheduleClick = (e) => {
+    e.preventDefault();
+    this.props.history.push(`/teacher/${this.props.match.params.id}/schedule`);
+  };
+
   handleSelectEvent = (slotInfo) => {
     const newSelectedAttendance = this.state.attendances.filter((a) => a.attendanceId === slotInfo.id)[0];
     this.setState({ showAttendanceModal: true, selectedAttendance: newSelectedAttendance });
@@ -337,7 +343,11 @@ class TeacherScreen extends React.Component {
           <TeacherScreenCard item={teacher} history={this.props.history} />
         </Row>
         <Row>
-          <h3><CalendarIcon />Расписание</h3>
+          <h3>
+            <CalendarIcon />Расписание 
+            <EditIcon onIconClick={this.handleScheduleClick}/>
+          
+          </h3>
           <CalendarWeek 
             events={events} 
             backgroundEvents={backgroundEvents} 

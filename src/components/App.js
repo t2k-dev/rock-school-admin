@@ -23,6 +23,7 @@ import { WaitingScheduleForm } from "./features/students/WaitingScheduleForm";
 import { RoomRentalForm } from "./features/roomrental/RoomRentalForm";
 
 import TeacherForm from "./features/teachers/TeacherForm";
+import TeacherPeriods from "./features/teachers/TeacherPeriods";
 import TeacherScreen from "./features/teachers/TeacherScreen";
 
 import { SubscriptionForm } from "./features/subscriptions/SubscriptionForm";
@@ -62,6 +63,7 @@ function App() {
 
           <Route exact path="/teachers"><Teachers /></Route>
           <Route exact path="/teacher/:id" render={(props) => <TeacherScreen {...props}/>}/>
+          <Route exact path="/teacher/:id/schedule" render={(props) => <TeacherPeriods {...props}/>}/>
           <Route exact path="/teachers/edit/:id" render={(props) => <TeacherForm type="Edit" {...props} />}/>
           <Route exact path="/admin/registerTeacher" render={(props) => <TeacherForm type="New" {...props} />}/>
           

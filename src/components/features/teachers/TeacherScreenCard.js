@@ -20,6 +20,7 @@ class TeacherScreenCard extends React.Component {
     super(props);
 
     this.handleEditClick = this.handleEditClick.bind(this);
+    
   }
 
   handleEditClick = (e) => {

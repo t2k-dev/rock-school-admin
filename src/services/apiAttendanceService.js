@@ -9,15 +9,6 @@ export const getAttendance = async (id) => {
   }
 };
 
-export const updateStatus = async (id, status) => {
-  try {
-    const response = await apiClient.post(`/attendance/${id}/updateStatus/${status}`);
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching data:", error);
-  }
-};
-
 export const updateComment = async (id, comment) => {
   try {
     const response = await apiClient.put(`/attendance/${id}/comment/${comment}`);

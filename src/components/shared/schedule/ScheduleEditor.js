@@ -8,8 +8,6 @@ export class ScheduleEditor extends React.Component {
     super(props);
 
     this.state = {
-      periods: this.props.periods,
-
       periodDay: "",
       periodStart: "",
       periodEnd: "",
@@ -17,36 +15,23 @@ export class ScheduleEditor extends React.Component {
     };
   }
 
-  componentDidUpdate(prevProps) {
-    if (this.props.periods !== prevProps.periods) {
-      this.setState({ periods: this.props.periods });
-    }
+  get periods() {
+    return Array.isArray(this.props.periods) ? this.props.periods : [];
   }
 
   addPeriod = () => {
-    this.setState(
-      (prevState) => {
-        const newPeriod = {
-          weekDay: parseInt(this.state.periodDay),
-          startTime: this.state.periodStart,
-          endTime: this.state.periodEnd,
-          roomId: this.state.roomId,
-        };
-        return { periods: [...prevState.periods, newPeriod] };
-      },
-      () => {
-        this.props.handlePeriodsChange(this.state.periods);
-      }
-    );
+    const newPeriod = {
+      weekDay: parseInt(this.state.periodDay),
+      startTime: this.state.periodStart,
+      endTime: this.state.periodEnd,
+      roomId: this.state.roomId,
+    };
+    this.props.handlePeriodsChange([...this.periods, newPeriod]);
   };
 
   deletePeriod = (itemIndex) => {
-    this.setState(
-      (prevState) => ({
-        periods: prevState.periods.filter((_, index) => index !== itemIndex),
-      }),
-      () => this.props.handlePeriodsChange(this.state.periods)
-    );
+    const updatedPeriods = this.periods.filter((_, index) => index !== itemIndex);
+    this.props.handlePeriodsChange(updatedPeriods);
   };
 
   getDayName = (dayIndex) => {
@@ -69,7 +54,7 @@ export class ScheduleEditor extends React.Component {
   };
 
   render() {
-    const { periods } = this.state;
+    const periods = this.periods;
 
     let periodsList;
     if (periods && periods.length > 0) {

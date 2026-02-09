@@ -1,28 +1,10 @@
 import apiClient from "./apiClient";
 
-export const addTeacher = async (data) =>{
-  const result = await apiClient.post('/teacher', data);
-  return result;
-}
-
-export const saveTeacher = async (id, data) =>{
-  const result = await apiClient.put('/teacher/'+ id, data);
-  return result;
-}
-
-export const deactivateTeacher = async (id) =>{
-  const result = await apiClient.post(`/teacher/${id}/deactivate`);
-  return result;
-}
-
-export const activateTeacher = async (id) =>{
-  const result = await apiClient.post(`/teacher/${id}/activate`);
-  return result;
-}
+const CONTROLLER = "teachers"
 
 export const getTeacher = async (id) => {
   try {
-    const response = await apiClient.get('/teacher/' + id);
+    const response = await apiClient.get(`/${CONTROLLER}/` + id);
     return response.data;
   } catch (error) {
     console.error('Error fetching data:', error);
@@ -30,17 +12,13 @@ export const getTeacher = async (id) => {
 };
 
 export const getTeachers = async () => {
-  try {
-    const response = await apiClient.get('/teacher');
+    const response = await apiClient.get(`/${CONTROLLER}`);
     return response.data;
-  } catch (error) {
-    console.error('Error fetching data:', error);
-  }
 };
 
 export const getTeacherScreenDetails = async (id) => {
   try {
-    const response = await apiClient.get(`/teacher/${id}/screen-details`);
+    const response = await apiClient.get(`/${CONTROLLER}/${id}/screen-details`);
     return response.data;
   } 
   catch (error) {
@@ -49,16 +27,41 @@ export const getTeacherScreenDetails = async (id) => {
 };
 
 export const getAvailableTeachers = async (disciplineId, age, branchId) =>{
-  const response = await apiClient.get(`/teacher/available?disciplineId=${disciplineId}&age=${age}&branchId=${branchId}`);
+  const response = await apiClient.get(`/${CONTROLLER}/available?disciplineId=${disciplineId}&age=${age}&branchId=${branchId}`);
   return response;
 }
 
 export const getRehearsableTeachers = async (branchId) =>{
-  const response = await apiClient.get(`/teacher/rehearsable?branchId=${branchId}`);
+  const response = await apiClient.get(`/${CONTROLLER}/rehearsable?branchId=${branchId}`);
   return response.data;
 }
 
 export const getWorkingPeriods = async (id) =>{
-  const response = await apiClient.get(`/teacher/${id}/workingPeriods`);
+  const response = await apiClient.get(`/${CONTROLLER}/${id}/workingPeriods`);
   return response;
+}
+
+export const addTeacher = async (data) =>{
+  const result = await apiClient.post(`/${CONTROLLER}`, data);
+  return result;
+}
+
+export const saveTeacher = async (id, data) =>{
+  const result = await apiClient.put(`/${CONTROLLER}/`+ id, data);
+  return result;
+}
+
+export const deactivateTeacher = async (id) =>{
+  const result = await apiClient.post(`/${CONTROLLER}/${id}/deactivate`);
+  return result;
+}
+
+export const activateTeacher = async (id) =>{
+  const result = await apiClient.post(`/${CONTROLLER}/${id}/activate`);
+  return result;
+}
+
+export const saveWorkingPeriods = async (id, workingPeriods) =>{
+  const result = await apiClient.put(`/${CONTROLLER}/${id}/workingPeriods`, { workingPeriods });
+  return result;
 }
