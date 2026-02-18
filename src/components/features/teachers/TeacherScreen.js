@@ -316,9 +316,9 @@ class TeacherScreen extends React.Component {
     if (attendances) {
       events = attendances.map((attendance) => ({
         id: attendance.attendanceId,
-        title: attendance.childAttendances !== null && attendance.childAttendances && attendance.childAttendances.length > 0
-          ? attendance.childAttendances.map(childAttendance => childAttendance.student.firstName).join(", ")
-          : `${attendance.student.firstName} ${attendance.student.lastName[0]}.`,
+        title: attendance.attendees !== null && attendance.attendees && attendance.attendees.length > 0
+          ? attendance.attendees.map(attendee => attendee?.student?.firstName).join(", ")
+          : `${attendance.student?.firstName} ${attendance.student?.lastName[0]}.`,
         start: new Date(attendance.startDate),
         end: new Date(attendance.endDate),
         resourceId: attendance.roomId,

@@ -39,7 +39,7 @@ export const SubscriptionCard = ({
   };
 
   const renderColumns = () => {
-    const { subscriptionType } = subscription;
+    const { subscriptionType, teacherFullName } = subscription;
     
     if (subscriptionType === SubscriptionType.TRIAL_LESSON) {
       return (
@@ -57,11 +57,11 @@ export const SubscriptionCard = ({
           <Col md="5">
             <div className="text-muted small">Преподаватель</div>
             <Link 
-              to={`/teacher/${subscription.teacher.teacherId}`}
+              to={`/teacher/${subscription.teacherId}`}
               onClick={(e) => e.stopPropagation()}
               className="text-decoration-none"
             >
-              {subscription.teacher.firstName} {subscription.teacher.lastName}
+              {teacherFullName}
             </Link>
           </Col>
           <Col md="1">
@@ -149,7 +149,7 @@ export const SubscriptionCard = ({
               onClick={(e) => e.stopPropagation()}
               className="text-decoration-none"
             >
-              {subscription.teacher.firstName} {subscription.teacher.lastName}
+              {subscription.teacherFullName}
             </Link>
           </Col>
           <Col md="2">
