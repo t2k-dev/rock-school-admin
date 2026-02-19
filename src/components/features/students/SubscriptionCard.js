@@ -145,7 +145,7 @@ export const SubscriptionCard = ({
           <Col md="3">
             <div className="text-muted small">Преподаватель</div>
             <Link 
-              to={`/teacher/${subscription.teacher.teacherId}`}
+              to={`/teacher/${subscription.teacherId}`}
               onClick={(e) => e.stopPropagation()}
               className="text-decoration-none"
             >
