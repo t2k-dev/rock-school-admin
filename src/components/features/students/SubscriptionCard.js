@@ -206,11 +206,6 @@ SubscriptionCard.propTypes = {
     subscriptionType: PropTypes.number.isRequired,
     startDate: PropTypes.string.isRequired,
     disciplineId: PropTypes.number,
-    teacher: PropTypes.shape({
-      teacherId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-      firstName: PropTypes.string.isRequired,
-      lastName: PropTypes.string.isRequired,
-    }).isRequired,
     attendancesLeft: PropTypes.number,
     attendanceCount: PropTypes.number,
     status: PropTypes.number,

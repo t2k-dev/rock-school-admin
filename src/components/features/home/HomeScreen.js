@@ -127,13 +127,13 @@ class HomeScreen extends React.Component {
   };
 
   getEventTitle = (attendance) => {
-    if (attendance.childAttendances?.length > 0) {
-      return attendance.childAttendances
-        .map(childAttendance => childAttendance.student.firstName)
+    if (attendance.attendees?.length > 1) {
+      return attendance.attendees
+        .map(attendee => attendee.student.firstName)
         .join(", ");
     }
     
-    return `${attendance.student.firstName} ${attendance.student.lastName}`;
+    return `${attendance.attendees[0]?.student?.firstName} ${attendance.attendees[0]?.student?.lastName}`;
   };
 
   render() {
@@ -154,7 +154,7 @@ class HomeScreen extends React.Component {
     }
 
     // Events
-
+console.log("Attendances: ", attendances);
     let events;
     if (attendances) {
 
@@ -173,7 +173,7 @@ class HomeScreen extends React.Component {
         disciplineId: attendance.disciplineId,
       }));
     }
-
+console.log("Events: ", events);
     // Notes
     const sortedNotes = notes?.sort((a, b) => {
       const dateA = new Date(a.completeDate);

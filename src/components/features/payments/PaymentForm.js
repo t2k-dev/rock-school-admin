@@ -121,7 +121,7 @@ console.log('subscription',subscription);
       </Modal.Header>
       
       <Modal.Body>
-        {subscription && (
+        {subscription && subscription.student && (
           <div className="mb-3 p-3 bg-light rounded">
             <p className="mb-1"><strong>Студент:</strong> {subscription.student.firstName} {subscription.student.lastName}</p>
             <p className="mb-1"><strong>Дисциплина:</strong> {getDisciplineName(subscription.disciplineId)}</p>
