@@ -43,6 +43,18 @@ export function applyCalendarStyle(event) {
       };
     }
 
+    if (event.status === AttendanceStatus.MISSED) {
+      return {
+        style: {
+          backgroundColor: "#ce6868",
+          color: "white",
+          borderRadius: "5px",
+          border: "0",
+          textAlign: "center",
+        },
+      };
+    }
+
     return {
       style: {
         backgroundColor: "#e1da77",

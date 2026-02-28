@@ -146,21 +146,22 @@ export class AttendanceModal extends React.Component {
         validationError: null,
       });
 
+      const attendance = this.state.attendance;
       const request = {
           comment: this.state.comment,
+          subscriptionId: attendance.attendees[0]?.subscription?.subscriptionId,
       }
-      const attendance = this.state.attendance;
-      
+
       await acceptTrial(attendance.attendanceId, request);
 
       // Redirect to subscription form
-      if (this.props.history && attendance.student) {
+      if (this.props.history && attendance.attendees[0]?.student) {
         this.props.history.push({
-          pathname: `/student/${attendance.student.studentId}/subscriptionForm`,
+          pathname: `/student/${attendance.attendees[0].student.studentId}/subscriptionForm`,
           state: {
-            studentId: attendance.student.studentId,
+            studentId: attendance.attendees[0].student.studentId,
             baseSubscription: {
-              subscriptionId: attendance.subscriptionId,
+              subscriptionId: attendance.attendees[0]?.subscription?.subscriptionId,
               disciplineId: attendance.disciplineId,
               teacher: attendance.teacher,
               attendanceType: attendance.attendanceType,
@@ -193,6 +194,7 @@ export class AttendanceModal extends React.Component {
       
       const request = {
         statusReason: this.state.statusReason,
+        subscriptionId: this.state.attendance.attendees[0]?.subscription?.subscriptionId,
         comment: this.state.comment,
       }
 
@@ -222,6 +224,7 @@ export class AttendanceModal extends React.Component {
       const request = {
           statusReason: this.state.statusReason,
           comment: this.state.comment,
+          subscriptionId: this.state.attendance.attendees[0]?.subscription?.subscriptionId,
       }
 
       await missedTrial(this.state.attendance.attendanceId, request);
@@ -474,9 +477,9 @@ export class AttendanceModal extends React.Component {
   };
 
   renderSubscriptionInfo = () => {
-    const { teacher, disciplineId, subscription } = this.state.attendance;
+    const { teacher, disciplineId } = this.state.attendance;
+    const subscription = this.state.attendance.attendees[0]?.subscription;
 
-    console.log("subscription", this.state.attendance);
     switch (subscription?.subscriptionType) {
       case SubscriptionType.LESSON:  
       case SubscriptionType.TRIAL_LESSON:
@@ -507,9 +510,9 @@ export class AttendanceModal extends React.Component {
     if (!this.props.show || !this.state.attendance) {
       return null;
     }
-
-    const { student, attendanceType, status } = this.state.attendance;
+    const { attendanceType, status } = this.state.attendance;
     const { comment } = this.state;
+    const student = this.state.attendance?.attendees[0]?.student;
 
     // Add null check for student
     if (!student) {

@@ -11,6 +11,7 @@ import { GroupAttendanceModal } from "../../shared/modals/GroupAttendanceModal";
 
 import { isCancelledAttendanceStatus } from "../../shared/modals/attendanceHelper";
 
+import AttendanceType from "../../../constants/AttendanceType";
 import { getHomeScreenDetails } from "../../../services/apiHomeService";
 import { markComplete } from "../../../services/apiNoteService";
 import { NoRecords } from "../../shared/NoRecords";
@@ -71,7 +72,7 @@ class HomeScreen extends React.Component {
   handleSelectEvent = (slotInfo) => {
     const newSelectedAttendance = this.state.attendances.filter((a) => a.attendanceId === slotInfo.id)[0];
 
-    if (newSelectedAttendance.groupId !== null) {
+    if (newSelectedAttendance.attendanceType === AttendanceType.GROUP_LESSON) {
       this.setState({ showGroupSlotDetailsModal: true, selectedAttendance: newSelectedAttendance });
     } else {
       this.setState({ showAttendanceModal: true, selectedAttendance: newSelectedAttendance });
@@ -154,7 +155,6 @@ class HomeScreen extends React.Component {
     }
 
     // Events
-console.log("Attendances: ", attendances);
     let events;
     if (attendances) {
 
@@ -173,7 +173,7 @@ console.log("Attendances: ", attendances);
         disciplineId: attendance.disciplineId,
       }));
     }
-console.log("Events: ", events);
+
     // Notes
     const sortedNotes = notes?.sort((a, b) => {
       const dateA = new Date(a.completeDate);
