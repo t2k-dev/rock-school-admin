@@ -3,7 +3,6 @@ import { Button, Col, Container, Form, FormCheck, Row } from "react-bootstrap";
 
 import { format, parse } from "date-fns";
 import { DisciplineGridSelector } from "../../shared/discipline/DisciplineGridSelector";
-import { ScheduleEditor } from "../../shared/schedule/ScheduleEditor";
 import { SexControl } from "../../shared/SexControl";
 
 import { activateTeacher, addTeacher, deactivateTeacher, getTeacher, saveTeacher } from "../../../services/apiTeacherService";
@@ -35,14 +34,11 @@ class TeacherForm extends React.Component {
         allowBands: false,
         ageLimit: "",
       },
-
-      workingPeriods: [],
     };
 
     this.handleSave = this.handleSave.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.getValueOrEmptyString = this.getValueOrEmptyString.bind(this);
-    this.handlePeriodsChange = this.handlePeriodsChange.bind(this);
   }
 
   componentDidMount() {
@@ -76,7 +72,6 @@ class TeacherForm extends React.Component {
         branchId: teacher.branchId,
         isActive: teacher.isActive,
       },
-      workingPeriods: teacher.workingPeriods,
     });
   }
 
@@ -171,10 +166,6 @@ class TeacherForm extends React.Component {
     this.setState({ teacher });
   };
 
-  handlePeriodsChange = (periods) => {
-    this.setState({ workingPeriods: periods, periodsChanged: true });
-  };
-
   handleDateChange = (date) => {
     this.setState((prevState) => ({
       teacher: {
@@ -213,9 +204,7 @@ class TeacherForm extends React.Component {
         allowGroupLessons: this.state.teacher.allowGroupLessons,
         allowBands: this.state.teacher.allowBands,
       },
-      workingPeriods: this.state.workingPeriods,
       disciplinesChanged: this.state.disciplinesChanged,
-      periodsChanged: this.state.periodsChanged,
     };
 
     let teacherId;
@@ -295,7 +284,7 @@ class TeacherForm extends React.Component {
                     type="tel"
                     onChange={this.handlePhoneChange}
                     value={phone}
-                    placeholder="+7 999 999 99 99"
+                    placeholder="+7 777 777 77 77"
                     maxLength="16"
                   />
                 </Form.Group>
@@ -353,8 +342,6 @@ class TeacherForm extends React.Component {
                   <option value="2">На Аль-Фараби</option>
                 </Form.Select>
               </Form.Group>
-
-              <ScheduleEditor periods={this.state.workingPeriods} handlePeriodsChange={this.handlePeriodsChange} />
 
               <hr></hr>
               <Form.Group className="mb-3 d-flex justify-content-between">

@@ -95,7 +95,7 @@ class StudentForm extends React.Component {
       birthDate: this.state.birthDate,
       sex: this.state.sex,
       phone: this.state.phone.replace("+7 ", "").replace(/\s/g, ""),
-      level: this.state.level,
+      //level: this.state.level,
       branchId: 1,
     };
 
@@ -136,7 +136,7 @@ class StudentForm extends React.Component {
   };
 
   render() {
-    const { isNew, email, firstName, lastName, birthDate, phone, level, sex, age } = this.state;
+    const { isNew, email, firstName, lastName, birthDate, phone, sex, age } = this.state;
     return (
       <Container style={{ marginTop: "40px" }}>
         <Row>
@@ -199,7 +199,7 @@ class StudentForm extends React.Component {
                 <Form.Control onChange={this.handleChange} value={email} placeholder="введите email..." autoComplete="off" />
               </Form.Group>
               */}
-              <Form.Group className="mb-3" controlId="phone">
+              <Form.Group className="mb-5" controlId="phone">
                 <Form.Label>Телефон</Form.Label>
                 <Form.Control
                   onChange={this.handlePhoneChange}
@@ -209,9 +209,8 @@ class StudentForm extends React.Component {
                 />
               </Form.Group>
 
-              <hr></hr>
-
-              <Form.Group className="mb-3" controlId="level">
+              {/*
+                <Form.Group className="mb-3" controlId="level">
                 <Form.Label>Уровень</Form.Label>
                 <Form.Select name="level" aria-label="Веберите..." value={level} onChange={(e) => this.setState({ level: e.target.value })}>
                   <option>выберите...</option>
@@ -228,6 +227,7 @@ class StudentForm extends React.Component {
                   <option value="10">10 - Бог</option>
                 </Form.Select>
               </Form.Group>
+              */}
 
               <hr></hr>
               <div className="text-center">

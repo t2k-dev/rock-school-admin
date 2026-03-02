@@ -25,7 +25,7 @@ class TeacherScreenCard extends React.Component {
 
   handleEditClick = (e) => {
     e.preventDefault();
-    this.props.history.push("/teachers/edit/" + this.props.item.teacherId);
+    this.props.history.push(`/teacher/${this.props.item.teacherId}/edit`);
   };
 
   render() {

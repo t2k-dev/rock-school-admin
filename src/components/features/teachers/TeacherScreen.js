@@ -78,7 +78,7 @@ class TeacherScreen extends React.Component {
 
   handleEditClick = (e) => {
     e.preventDefault();
-    this.props.history.push("/teachers/edit/" + this.props.match.params.id);
+    this.props.history.push(`/teacher/${this.props.match.params.id}/edit`);
   };
   
   handleScheduleClick = (e) => {
