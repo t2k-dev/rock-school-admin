@@ -1,20 +1,20 @@
 import PropTypes from 'prop-types';
 import { Card, Col, Row } from 'react-bootstrap';
-import TenderType, { getTenderTypeName } from '../../../constants/TenderType';
+import PaymentType, { getPaymentTypeName } from '../../../constants/PaymentType';
 import { formatDateWithLetters } from '../../../utils/dateTime';
 import { toMoneyString } from '../../../utils/moneyUtils';
 import { CalendarIcon } from '../../shared/icons';
 import { HoverCard } from '../../shared/ui/HoverCard';
 
-const TenderCard = ({ tender, index }) => {
+const PaymentCard = ({ payment, index }) => {
   const getStatusBadge = () => {
     let badgeClass = 'bg-warning';
     let statusText = 'Не оплачено';
 
-    if (tender.isPaid) {
+    if (payment.isPaid) {
       badgeClass = 'bg-success';
       statusText = 'Оплачено';
-    } else if (tender.isOverdue) {
+    } else if (payment.isOverdue) {
       badgeClass = 'bg-danger';
       statusText = 'Просрочено';
     }
@@ -34,25 +34,25 @@ const TenderCard = ({ tender, index }) => {
         <Row className="align-items-center">
           <Col md="3">
             <div className="text-muted small"><CalendarIcon size="16px" color="gray"/> Дата</div>
-            <div className="fw-bold">{formatDateWithLetters(tender.paidOn)}</div>
+            <div className="fw-bold">{formatDateWithLetters(payment.paidOn)}</div>
           </Col>
           <Col md="2">
             <div className="text-muted small">Сумма</div>
             <div className="fw-bold">
-              {toMoneyString(tender.amount)}
+              {toMoneyString(payment.amount)}
             </div>
           </Col>
           <Col md="2">
             <div className="text-muted small">Тип</div>
             <div className="fw-bold">
-              {getTenderTypeName(tender.tenderType)}
+              {getPaymentTypeName(payment.paymentType)}
             </div>
           </Col>
           <Col md="3">
             <div className="text-muted small">Комментарий</div>
-            {tender.comment ? (
+            {payment.comment ? (
               <div
-                title={tender.comment}
+                title={payment.comment}
                 style={{
                   maxWidth: '200px',
                   overflow: 'hidden',
@@ -60,7 +60,7 @@ const TenderCard = ({ tender, index }) => {
                   whiteSpace: 'nowrap'
                 }}
               >
-                {tender.comment}
+                {payment.comment}
               </div>
             ) : (
               <div className="text-muted">—</div>
@@ -77,8 +77,8 @@ const TenderCard = ({ tender, index }) => {
   );
 };
 
-TenderCard.propTypes = {
-  tender: PropTypes.shape({
+PaymentCard.propTypes = {
+  payment: PropTypes.shape({
     isPaid: PropTypes.bool,
     isOverdue: PropTypes.bool,
     amount: PropTypes.number,
@@ -86,7 +86,7 @@ TenderCard.propTypes = {
     paymentDate: PropTypes.string,
     description: PropTypes.string,
     paymentMethod: PropTypes.string,
-    tenderType: PropTypes.oneOf([TenderType.Cash, TenderType.Bill, TenderType.Card]),
+    paymentType: PropTypes.oneOf([PaymentType.Cash, PaymentType.Bill, PaymentType.Card]),
     paidOn: PropTypes.string,
     comment: PropTypes.string,
     status: PropTypes.string,
@@ -94,4 +94,4 @@ TenderCard.propTypes = {
   index: PropTypes.number.isRequired,
 };
 
-export default TenderCard;
+export default PaymentCard;

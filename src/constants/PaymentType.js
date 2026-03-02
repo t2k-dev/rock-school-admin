@@ -1,20 +1,20 @@
-const TenderType = {
+const PaymentType = {
   Cash: 1, // Наличные
   Bill: 2, // Удаленная оплата
   Card: 3, // Карта
 };
 
-export const getTenderTypeName = (tenderType) => {
-  switch (tenderType) {
-    case TenderType.Cash:
+export const getPaymentTypeName = (paymentType) => {
+  switch (paymentType) {
+    case PaymentType.Cash:
       return 'Наличные';
-    case TenderType.Bill:
+    case PaymentType.Bill:
       return 'Удаленная оплата';
-    case TenderType.Card:
+    case PaymentType.Card:
       return 'Карта';
     default:
       return 'Неизвестно';
   }
 };
 
-export default TenderType;
+export default PaymentType;

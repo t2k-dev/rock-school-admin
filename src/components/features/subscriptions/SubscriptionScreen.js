@@ -13,8 +13,8 @@ import { CalendarIcon, CancelIcon, CoinsIcon, CountIcon } from '../../shared/ico
 import { Loading } from '../../shared/Loading';
 import { NoRecords } from '../../shared/NoRecords';
 import { AttendanceList } from './AttendanceList';
+import PaymentCard from './PaymentCard';
 import { SubscriptionStatusBadge } from './SubscriptionStatusBadge';
-import TenderCard from './TenderCard';
 
 const SubscriptionScreen = ({
   onAttendanceClick,
@@ -110,7 +110,7 @@ const SubscriptionScreen = ({
   };
 
   const renderTenders = () => {
-      if (!subscription.tenders || subscription.tenders.length === 0) {
+      if (!subscription.payments || subscription.payments.length === 0) {
         return (
           <div className="text-center py-4">
             <NoRecords />
@@ -120,8 +120,8 @@ const SubscriptionScreen = ({
 
       return (
         <div className="mb-3">
-          {subscription.tenders.map((tender, index) => (
-              <TenderCard tender={tender} index={index} />
+          {subscription.payments.map((payment, index) => (
+              <PaymentCard payment={payment} index={index} />
           ))}
         </div>
       );
