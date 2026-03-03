@@ -25,7 +25,7 @@ class StudentScreen extends React.Component {
       },
       subscriptions: [],
 
-      showCompleted: false,
+      showAll: false,
 
       // Attendance Details
       showAttendanceModal: false,
@@ -205,10 +205,10 @@ class StudentScreen extends React.Component {
           <Form.Check
             type="switch"
             id="custom-switch"
-            label="Показывать завершенные"
-            checked={this.state.showCompleted}
+            label="Показывать все"
+            checked={this.state.showAll}
             onChange={(e) => {
-              this.setState({ showCompleted: e.target.checked });
+              this.setState({ showAll: e.target.checked });
             }}
           />
         </div>
@@ -248,7 +248,7 @@ class StudentScreen extends React.Component {
   }
 
   render() {
-    const { isLoading, student, bands, subscriptions, showCompleted, attendances, selectedAttendance, showAttendanceModal } = this.state;
+    const { isLoading, student, bands, subscriptions, showAll, attendances, selectedAttendance, showAttendanceModal } = this.state;
     
     if (isLoading) {
       return <Loading
@@ -263,10 +263,10 @@ class StudentScreen extends React.Component {
     });
 
     // Subscriptions
-    let nonTrialSubscriptions = sortedSubscriptions.filter((s) => s.subscriptionType === SubscriptionType.LESSON);
-    nonTrialSubscriptions = showCompleted
+    let nonTrialSubscriptions = sortedSubscriptions.filter((s) => s.subscriptionType === SubscriptionType.LESSON || s.subscriptionType === SubscriptionType.GROUP_LESSON);
+    nonTrialSubscriptions = showAll
       ? nonTrialSubscriptions
-      : nonTrialSubscriptions.filter((s) => s.status !== SubscriptionStatus.COMPLETED);
+      : nonTrialSubscriptions.filter((s) => s.status === SubscriptionStatus.ACTIVE || s.status === SubscriptionStatus.DRAFT);
 
     // Trials
     const trialSubscriptions = sortedSubscriptions.filter((s) => s.subscriptionType === SubscriptionType.TRIAL_LESSON);
@@ -279,7 +279,7 @@ class StudentScreen extends React.Component {
     if (attendances) {
       events = attendances.map((attendance) => ({
         id: attendance.attendanceId,
-        title: attendance.attendanceType === AttendanceType.TRIAL_LESSON ? "Пробное" : "Занятие",
+        title: attendance.attendanceType === AttendanceType.TRIAL_LESSON ? "Пробный" : "Урок",
         start: new Date(attendance.startDate),
         end: new Date(attendance.endDate),
         resourceId: attendance.roomId,
@@ -358,7 +358,7 @@ class StudentScreen extends React.Component {
                     </Button>
                   </div>
                 </div>
-                {this.renderRentTable(rentSubscriptions)}              
+                {this.renderRentTable(rentSubscriptions)}
             </Tab>
             <Tab eventKey="rehearsals" title="Репетиции"> 
                 <div className="d-flex mb-2 mt-2">

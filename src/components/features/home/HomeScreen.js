@@ -6,12 +6,10 @@ import { Link } from "react-router-dom";
 import { CalendarDay } from "../../shared/calendar/CalendarDay";
 import { EditIcon } from "../../shared/icons";
 import { Loading } from "../../shared/Loading";
-import { AttendanceModal } from "../../shared/modals/AttendanceModal";
 import { GroupAttendanceModal } from "../../shared/modals/GroupAttendanceModal";
 
 import { isCancelledAttendanceStatus } from "../../shared/modals/attendanceHelper";
 
-import AttendanceType from "../../../constants/AttendanceType";
 import { getHomeScreenDetails } from "../../../services/apiHomeService";
 import { markComplete } from "../../../services/apiNoteService";
 import { NoRecords } from "../../shared/NoRecords";
@@ -25,7 +23,6 @@ class HomeScreen extends React.Component {
       attendances: null,
 
       showCanceled: true,
-      showAttendanceModal: false,
       showGroupSlotDetailsModal: false,
       selectedAttendance: null,
 
@@ -52,7 +49,6 @@ class HomeScreen extends React.Component {
         notes: details.notes,
         attendances: details.attendances,
 
-        showAttendanceModal: false,
         showGroupSlotDetailsModal: false,
         isLoading: false,
       });
@@ -71,19 +67,7 @@ class HomeScreen extends React.Component {
 
   handleSelectEvent = (slotInfo) => {
     const newSelectedAttendance = this.state.attendances.filter((a) => a.attendanceId === slotInfo.id)[0];
-
-    if (newSelectedAttendance.attendanceType === AttendanceType.GROUP_LESSON) {
-      this.setState({ showGroupSlotDetailsModal: true, selectedAttendance: newSelectedAttendance });
-    } else {
-      this.setState({ showAttendanceModal: true, selectedAttendance: newSelectedAttendance });
-    }
-  };
-
-  handleCloseAttendanceModal = () => {
-    this.setState({ 
-      showAttendanceModal: false,
-      selectedAttendance: null,
-    });
+    this.setState({ showGroupSlotDetailsModal: true, selectedAttendance: newSelectedAttendance });
   };
 
   handleCloseGroupSlotDetailsModal = () => {
@@ -144,7 +128,6 @@ class HomeScreen extends React.Component {
       showCanceled, 
       selectedAttendance, 
       notes, 
-      showAttendanceModal, 
       showGroupSlotDetailsModal 
     } = this.state;
 
@@ -311,15 +294,6 @@ class HomeScreen extends React.Component {
             />
           </div>
 
-          <AttendanceModal
-            history={this.props.history}
-            attendance={selectedAttendance}
-            show={showAttendanceModal}
-            onAttendanceUpdate={this.handleAttendanceUpdate}
-            handleClose={() => {
-              this.handleCloseAttendanceModal();
-            }}
-          />
           <GroupAttendanceModal
             attendance={selectedAttendance}
             show={showGroupSlotDetailsModal}

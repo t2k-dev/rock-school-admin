@@ -314,7 +314,7 @@ class TeacherForm extends React.Component {
                 <FormCheck
                   id="supportGroups"
                   key="supportGroups"
-                  label="Групповые занятия"
+                  label="Групповые уроки"
                   checked={allowGroupLessons}
                   onChange={this.handleAllowGroupLessonsChange}
                   style={{ marginTop: "10px" }}

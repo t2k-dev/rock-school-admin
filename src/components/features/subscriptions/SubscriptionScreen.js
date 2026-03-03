@@ -221,7 +221,7 @@ const SubscriptionScreen = ({
                         </span>
                       </div>
                       <div className='mt-2'>
-                        <span className='text-muted small'><CountIcon color="gray"/> Осталось занятий </span>
+                        <span className='text-muted small'><CountIcon color="gray"/> Осталось уроков </span>
                         <span className='small'>
                           {subscription.attendancesLeft} из {subscription.attendanceCount}
                         </span>
@@ -269,7 +269,7 @@ const SubscriptionScreen = ({
             onSelect={(k) => setActiveTab(k)}
             className="mb-3"
           >
-            <Tab eventKey="attendances" title="Занятия">
+            <Tab eventKey="attendances" title="Уроки">
               <AttendanceList
                 attendances={sortedAttendances}
                 onAttendanceClick={handleAttendanceRowClick}

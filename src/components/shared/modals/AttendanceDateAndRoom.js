@@ -73,7 +73,7 @@ export const AttendanceDateAndRoom = ({
           <EditIcon 
             onIconClick={handleEditClick} 
             size="18px"
-            title="Перенести занятие"
+            title="Перенести урок"
           />
         </div>
       )}

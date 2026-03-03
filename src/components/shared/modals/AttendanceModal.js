@@ -299,10 +299,10 @@ export class AttendanceModal extends React.Component {
     if (isProcessingTrial) {
       switch (currentAction) {
         case TRIAL_ACTIONS.ACCEPT:
-          message = "Подтверждение пробного занятия...";
+          message = "Подтверждение пробного урока...";
           break;
         case TRIAL_ACTIONS.DECLINE:
-          message = "Отклонение пробного занятия...";
+          message = "Отклонение пробного урока...";
           break;
         case TRIAL_ACTIONS.MISSED:
           message = "Отметка о пропуске...";
@@ -535,7 +535,7 @@ export class AttendanceModal extends React.Component {
         <Modal show={this.props.show} onHide={this.handleClose} size="md" backdrop="static">
           <Modal.Header closeButton>
             <Modal.Title>
-              {attendanceType === AttendanceType.TRIAL_LESSON ? "Пробное занятие" : "Занятие"}
+              {attendanceType === AttendanceType.TRIAL_LESSON ? "Пробный урок" : "Урок"}
               <span style={{ marginLeft: "10px", fontSize: "16px" }}>
                 <AttendanceStatusBadge 
                   status={status}

@@ -180,7 +180,7 @@ class TeacherScreen extends React.Component {
               <th className="date-column">Начало</th>
               <th>Ученик</th>
               <th className="discipline-column">Направление</th>
-              <th>Занятий осталось</th>
+              <th>Осталось уроков</th>
               <th>Статус</th>
               <th></th>
             </tr>
@@ -367,7 +367,7 @@ class TeacherScreen extends React.Component {
             <Tab eventKey="subscriptions" title="Абонементы">
               {this.renderSubscriptions(nonTrialSubscriptions)}
             </Tab>
-            <Tab eventKey="trials" title="Пробные занятия">
+            <Tab eventKey="trials" title="Пробные уроки">
               {this.renderTrials(trialSubscriptions)}
 
             </Tab>

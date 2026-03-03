@@ -102,7 +102,7 @@ export const SubscriptionCard = ({
             <div className="fw-bold">{format(subscription.startDate, MyDateFormat)}</div>
           </Col>
           <Col md="2">
-            <div className="text-muted small">Осталось занятий</div>
+            <div className="text-muted small">Осталось уроков</div>
             <div className="fw-bold">{subscription.attendancesLeft} из {subscription.attendanceCount}</div>
           </Col>
           <Col md="1">
@@ -155,7 +155,7 @@ export const SubscriptionCard = ({
             </Link>
           </Col>
           <Col md="2">
-            <div className="text-muted small">Осталось занятий</div>
+            <div className="text-muted small">Осталось уроков</div>
             <div className="fw-bold">{subscription.attendancesLeft} из {subscription.attendanceCount}</div>
           </Col>
           <Col md="1">

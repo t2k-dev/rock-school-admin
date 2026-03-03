@@ -313,7 +313,7 @@ export class SubscriptionFormEditable extends React.Component {
               </Form.Group>
 
               <Form.Group className="mb-2">
-                <Form.Label><CountIcon /> Количество занятий: {attendanceCount}</Form.Label>
+                <Form.Label><CountIcon /> Количество уроков: {attendanceCount}</Form.Label>
               </Form.Group>
 
               <Form.Group className="mb-2">

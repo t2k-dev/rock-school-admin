@@ -1,13 +1,13 @@
 import React from "react";
-import { Button, Container, Form, Modal, Row, Stack, Table } from "react-bootstrap";
+import { Button, Card, Col, Container, Form, Modal, Row, Stack } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
+import { getAttendanceTypeName } from "../../../constants/AttendanceType";
 import { getDisciplineName } from "../../../constants/disciplines";
+import { Avatar } from "../Avatar";
 import { DisciplineIcon } from "../discipline/DisciplineIcon";
 import { AttendanceDateAndRoom } from "./AttendanceDateAndRoom";
 import { AttendanceStatusBadge } from "./AttendanceStatusBadge";
-import ChildAttendanceRow from "./ChildAttendanceRow";
-import ChildAttendanceRowReadonly from "./ChildAttendanceRowReadonly";
 
 import { submitGroup } from "../../../services/apiAttendanceService";
 
@@ -78,6 +78,13 @@ export class GroupAttendanceModal extends React.Component {
     this.setState({ childAttendances: updatedChildAttendances });
   }
 
+  handleAttendeeStatusChange = (attendeeId, status) => {
+    // This will be used for the new card-based UI
+    // You may need to call an API to update the attendee status
+    console.log(`Updating attendee ${attendeeId} to status ${status}`);
+    // TODO: Implement API call to update attendee status
+  }
+
   async handleSave() {
    const request = {
       childAttendances: this.state.childAttendances,
@@ -90,28 +97,53 @@ export class GroupAttendanceModal extends React.Component {
   }
 
   renderStudentList() {
-    const { childAttendances } = this.state;
+    const { attendance } = this.props;
+    
+    if (!attendance || !attendance.attendees || attendance.attendees.length === 0) {
+      return <p className="text-muted text-center">Нет учеников</p>;
+    }
 
     return (
-      <Table striped bordered hover>
-        <tbody>
-          {childAttendances.map((attendance) => (
-            attendance.isCompleted 
-            ? 
-              <ChildAttendanceRowReadonly 
-                key={attendance.attendanceId}
-                attendance={attendance} 
-              />
-            : 
-              <ChildAttendanceRow
-                key={attendance.attendanceId}
-                attendance={attendance}
-                onStatusChange={this.handleStatusChange}
-                disabled={this.state.isSaving}
-              />
-          ))}
-        </tbody>
-      </Table>)
+      <Row className="g-3">
+        {attendance.attendees.map((attendee) => (
+          <Col xs={12} key={attendee.attendeeId}>
+            <Card>
+              <Card.Body>
+                <div className="d-flex justify-content-between align-items-center">
+                  <div className="d-flex align-items-center">
+                    <Avatar style={{ width: "40px", height: "40px", marginRight: "12px" }} />
+                    <div>
+                      <h6 className="mb-0">
+                        <Link to={`/student/${attendee.studentId}`}>
+                          {attendee.student.firstName} {attendee.student.lastName}
+                        </Link>
+                      </h6>
+                    </div>
+                  </div>
+                  <div>
+                    <Button
+                      variant="outline-danger"
+                      size="sm"
+                      className="me-2"
+                      onClick={() => this.handleAttendeeStatusChange(attendee.attendeeId, 3)}
+                    >
+                      Пропущено
+                    </Button>
+                    <Button
+                      variant="outline-success"
+                      size="sm"
+                      onClick={() => this.handleAttendeeStatusChange(attendee.attendeeId, 2)}
+                    >
+                      Посещено
+                    </Button>
+                  </div>
+                </div>
+              </Card.Body>
+            </Card>
+          </Col>
+        ))}
+      </Row>
+    );
   }
 
   render() {
@@ -119,14 +151,14 @@ export class GroupAttendanceModal extends React.Component {
       return null;
     }
 
-    const { teacher, disciplineId } = this.props.attendance;
-    const { status, comment } = this.state;
+    const { teacher, disciplineId, status, attendanceType } = this.props.attendance;
+    const { comment } = this.state;
 
     return (
         <Modal show={this.props.show} onHide={this.props.handleClose} size="md" backdrop="static">
           <Modal.Header closeButton>
             <Modal.Title>
-              <span style={{ marginRight: "10px" }}>Групповое занятие</span>
+              <span style={{ marginRight: "10px" }}>{getAttendanceTypeName(attendanceType)}</span>
               <AttendanceStatusBadge 
                 status={status}
                 style={{ fontSize: "14px" }}
@@ -134,43 +166,36 @@ export class GroupAttendanceModal extends React.Component {
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <Container className="mb-3">
+            <Container className="mt-2 text-center" style={{ fontSize: "14px" }}>
               <Row>
-                <div className="d-flex" style={{ padding: "0 50px" }}>
-
-                  <Container>
-                    <Container className="mt-2 text-center" style={{ fontSize: "14px" }}>
-                      <div className="d-flex mb-3">
-                        <div style={{ marginTop: "10px" }}>
-                          <DisciplineIcon disciplineId={disciplineId} size="40px" />
-                        </div>
-                        <Stack direction="vertical" gap={0} className="mb-2 text-center">
-                          <div style={{ fontWeight: "bold", fontSize: "18px" }}>{getDisciplineName(disciplineId)}</div>
-                          <div>
-                            <Link to={"/teacher/" + teacher.teacherId}>{teacher.firstName}</Link>
-                          </div>
-                        </Stack>
+                <Col size="6">
+                  <div className="d-flex mb-3">
+                    <div style={{ marginTop: "10px" }}>
+                      <DisciplineIcon disciplineId={disciplineId} size="40px" />
+                    </div>
+                    <Stack direction="vertical" gap={0} className="mb-2 text-center">
+                      <div style={{ fontWeight: "bold", fontSize: "18px" }}>{getDisciplineName(disciplineId)}</div>
+                      <div>
+                        <Link to={"/teacher/" + teacher.teacherId}>{teacher.firstName}</Link>
                       </div>
-                      <AttendanceDateAndRoom 
-                        {...this.props.attendance}
-                        attendance={this.props.attendance}
-                        className="text-center"
-                      />
-                    </Container>
-                    <Link to={`/student/${this.props.attendance.studentId}`}>
-                      <h3>
-                        {this.props.attendance.firstName} {this.props.attendance.lastName}
-                      </h3>
-                    </Link>
-                  </Container>
-                </div>
+                    </Stack>
+                  </div>
+                </Col>
+                <Col size="6" className="text-end">
+                  <AttendanceDateAndRoom 
+                    {...this.props.attendance}
+                    attendance={this.props.attendance}
+                    className="text-center"
+                  />
+                </Col>
               </Row>
             </Container>
+
             <hr></hr>
 
             {this.renderStudentList()}
-
-            <Form.Group className="mb-3" controlId="comment">
+            <hr></hr>
+            <Form.Group className="mb-3 mt-3" controlId="comment">
               <Form.Label>Комментарий</Form.Label>
               <Form.Control as="textarea" onChange={this.handleChange} value={comment} placeholder="введите..." autoComplete="off"/>
             </Form.Group>

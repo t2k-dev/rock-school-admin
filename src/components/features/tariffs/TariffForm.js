@@ -73,7 +73,7 @@ const TariffForm = ({ history, type = "New" }) => {
     }
 
     if (!formData.attendanceCount || parseInt(formData.attendanceCount) <= 0) {
-      newErrors.attendanceCount = 'Количество занятий должно быть больше 0';
+      newErrors.attendanceCount = 'Количество уроков должно быть больше 0';
     }
 
     if (formData.subscriptionType === '') {
@@ -155,7 +155,7 @@ const TariffForm = ({ history, type = "New" }) => {
         </Form.Group>
 
         <Form.Group className="mb-3">
-            <Form.Label>Количество занятий</Form.Label>
+            <Form.Label>Количество уроков</Form.Label>
             <Form.Select 
             name="attendanceCount"
             value={formData.attendanceCount}

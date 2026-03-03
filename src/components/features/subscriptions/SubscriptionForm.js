@@ -419,7 +419,7 @@ export class SubscriptionForm extends React.Component {
                   <option value="">выберите тариф...</option>
                   {filteredTariffs.map((tariff) => (
                     <option key={tariff.tariffId} value={tariff.tariffId}>
-                      {tariff.attendanceCount} занятий, {getAttendanceLengthName(tariff.attendanceLength)} - {toMoneyString(tariff.amount)}
+                      {tariff.attendanceCount} уроков, {getAttendanceLengthName(tariff.attendanceLength)} - {toMoneyString(tariff.amount)}
                     </option>
                   ))}
                 </Form.Select>
@@ -486,7 +486,7 @@ export class SubscriptionForm extends React.Component {
             {/* Tariff section */}
             <TariffCard
               title="Тариф"
-              description="Занятие"
+              description="Урок"
               amount={selectedTariff ? selectedTariff.amount : 0 }
               style={{ marginTop: '50px' }}
               showIcon={false}

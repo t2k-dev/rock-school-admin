@@ -57,7 +57,7 @@ export class AttendanceCancelationForm extends React.Component {
         <Row>
           <Col md="4"></Col>
           <Col md="4">
-            <h2 className="text-center mb-4">Пропуск занятия</h2>
+            <h2 className="text-center mb-4">Пропуск урока</h2>
             <Stack className="mb-3" gap={2} style={{ backgroundColor: "#e7e7e7", padding: "15px", borderRadius: "10px" }}>
               <div>
                 <CalendarIcon />

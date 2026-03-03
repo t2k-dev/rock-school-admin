@@ -179,7 +179,7 @@ export class TrialSubscriptionForm extends React.Component {
         <Row>
           <Col md="4"></Col>
           <Col md="4">
-            <h2 className="text-center mb-4">Пробное занятие</h2>
+            <h2 className="text-center mb-4">Пробный урок</h2>
             <Form>
 
               {/* Discipline Selection */}

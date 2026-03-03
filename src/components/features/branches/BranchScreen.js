@@ -157,7 +157,7 @@ export class BranchScreen extends React.Component {
             </div>
             <div>
               <Button as={Link} to="/admin/addTrial" variant="outline-success">
-                + Пробное занятие
+                + Пробный урок
               </Button>
             </div>
           </div>
