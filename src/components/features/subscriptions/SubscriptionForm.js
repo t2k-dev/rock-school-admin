@@ -3,9 +3,11 @@ import React from "react";
 import { Button, Col, Container, Form, InputGroup, Row } from "react-bootstrap";
 
 import AttendanceType from "../../../constants/AttendanceType";
+import { getAttendanceLengthName } from "../../../constants/attendancies";
+import SubscriptionType from "../../../constants/SubscriptionType";
 import { getStudent } from "../../../services/apiStudentService";
 import { addSubscription } from "../../../services/apiSubscriptionService";
-import { getTariffsByType } from "../../../services/apiTariffService";
+import { getCurrentTariffs } from "../../../services/apiTariffService";
 import { getAvailableTeachers, getWorkingPeriods } from "../../../services/apiTeacherService";
 import { calculateAge } from "../../../utils/dateTime";
 import { toMoneyString } from "../../../utils/moneyUtils";
@@ -119,7 +121,7 @@ export class SubscriptionForm extends React.Component {
   loadTariffs = async () => {
     try {
       // Load all tariffs for lessons
-      const tariffs = await getTariffsByType(AttendanceType.LESSON);
+      const tariffs = await getCurrentTariffs();
       this.setState({ tariffs: tariffs || [] });
     } catch (error) {
       console.error('Error loading tariffs:', error);
@@ -139,6 +141,8 @@ export class SubscriptionForm extends React.Component {
     this.setState((prevState) => ({
       students: [...prevState.students, newStudent],
     }));
+
+    this.getFilteredTariffs();
   };
 
   handleCloseAddStudentModal = () => {
@@ -287,14 +291,35 @@ export class SubscriptionForm extends React.Component {
   };
 
   getFilteredTariffs = () => {
-    const { tariffs, disciplineId } = this.state;
+    const { tariffs, disciplineId, students } = this.state;
     if (!disciplineId) return tariffs;
     
-    // Filter tariffs by discipline, if no discipline-specific tariffs found, return tariffs not specified by disciplineId (null)
-    const disciplineSpecific = tariffs.filter(tariff => tariff.disciplineId === parseInt(disciplineId));
-    const genericTariffs = tariffs.filter(tariff => !tariff.disciplineId);
-    
-    return disciplineSpecific.length > 0 ? disciplineSpecific : genericTariffs;
+    let availableTariffs = [];
+    if (students.length > 1){
+      //console.log("Filtering for group lesson, subscriptionType:", tariff.subscriptionType);
+      console.log("Filtering for group lesson, disciplineId: ", disciplineId);
+      // Group Lessons
+      const disciplineTariffs = tariffs.filter(tariff => tariff.disciplineId === parseInt(disciplineId) && tariff.subscriptionType === SubscriptionType.GROUP_LESSON);
+      console.log("Discipline tariffs: ", disciplineTariffs);
+      if (disciplineTariffs.length > 0){
+        availableTariffs = disciplineTariffs;
+      } else{
+        availableTariffs = tariffs.filter(tariff => tariff.subscriptionType === SubscriptionType.GROUP_LESSON)
+      }
+
+    } else{
+      // Single Lessons
+      const disciplineTariffs = tariffs.filter(tariff => tariff.disciplineId === parseInt(disciplineId) && tariff.subscriptionType === SubscriptionType.LESSON);
+      
+      if (disciplineTariffs.length > 0){
+        availableTariffs = disciplineTariffs;
+      } else{
+          availableTariffs = tariffs.filter(tariff => tariff.subscriptionType === SubscriptionType.LESSON && tariff.disciplineId === null);
+      }
+    }
+    console.log("all: ", tariffs);
+    console.log("availableTariffs: ", availableTariffs);
+    return availableTariffs;
   };
 
   render() {
@@ -394,7 +419,7 @@ export class SubscriptionForm extends React.Component {
                   <option value="">выберите тариф...</option>
                   {filteredTariffs.map((tariff) => (
                     <option key={tariff.tariffId} value={tariff.tariffId}>
-                      {tariff.attendanceCount} занятий, {tariff.attendanceLength === 1 ? 'час' : 'полтора часа'} - {toMoneyString(tariff.amount)}
+                      {tariff.attendanceCount} занятий, {getAttendanceLengthName(tariff.attendanceLength)} - {toMoneyString(tariff.amount)}
                     </option>
                   ))}
                 </Form.Select>

@@ -33,9 +33,11 @@ export const SubscriptionCard = ({
 
   const getStatusText = (subscription) => {
     if (subscription.subscriptionType === SubscriptionType.TRIAL_LESSON) {
-      return getTrialSubscriptionStatusName(subscription.trialStatus);
+    
     }
     return getSubscriptionStatusName(subscription.status);
+
+      return getTrialSubscriptionStatusName(subscription.trialStatus);
   };
 
   const renderColumns = () => {

@@ -319,7 +319,7 @@ class StudentScreen extends React.Component {
                 {this.renderSubscriptionsTable(nonTrialSubscriptions)}
             </Tab>
             <Tab eventKey="trials" title="Пробные">  
-              <div className="d-flex mb-2 mt-4">
+              <div className="d-flex mb-2 mt-2">
                   <div className="flex-grow-1"></div>
                   <div>
                     <Button
@@ -340,7 +340,7 @@ class StudentScreen extends React.Component {
                 {this.renderTrialsTable(trialSubscriptions)}  
             </Tab>
             <Tab eventKey="rents" title="Аренда комнаты">
-                <div className="d-flex mb-2 mt-4">
+                <div className="d-flex mb-2 mt-2">
                   <div className="flex-grow-1"></div>
                   <div>
                     <Button
@@ -361,7 +361,7 @@ class StudentScreen extends React.Component {
                 {this.renderRentTable(rentSubscriptions)}              
             </Tab>
             <Tab eventKey="rehearsals" title="Репетиции"> 
-                <div className="d-flex mb-2 mt-4">
+                <div className="d-flex mb-2 mt-2">
                   <div className="flex-grow-1"></div>
                   <div>
                     <Button

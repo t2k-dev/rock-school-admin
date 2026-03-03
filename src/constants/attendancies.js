@@ -3,8 +3,9 @@ export function getAttendanceLengthName(lengthId) {
     return "(none)";
   }
   const attendanceLengthsRu = [
-    { id: 1, name: "60 мин." },
-    { id: 2, name: "90 мин." },
+    { id: 60, name: "60 мин." },
+    { id: 90, name: "90 мин." },
+    { id: 120, name: "120 мин." },
   ];
 
   return attendanceLengthsRu.find((item) => item.id === lengthId).name;

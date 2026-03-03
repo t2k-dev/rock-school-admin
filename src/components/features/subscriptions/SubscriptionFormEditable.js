@@ -234,7 +234,7 @@ export class SubscriptionFormEditable extends React.Component {
       case SubscriptionType.LESSON:
         return (
           <>
-            <div className="mb-3"><b>Преподаватель</b></div>
+            <div className="mb-3 mt-3"><b>Преподаватель</b></div>
             <Form.Group className="mb-3" >
               <div className="mb-4">
                   <InputGroup className="mb-3 d-flex">
@@ -304,6 +304,7 @@ export class SubscriptionFormEditable extends React.Component {
               <SubscriptionStudents
                 students={students}
                 allowRemove={false}
+                allowAdd={false}
               />
 
               <Form.Group className="mb-2">

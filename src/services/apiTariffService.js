@@ -50,6 +50,16 @@ export const deleteTariff = async (id) => {
   }
 };
 
+export const getCurrentTariffs = async () => {
+  try {
+    const response = await apiClient.get('/tariff/current');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching current tariffs:', error);
+    throw error;
+  }
+};
+
 export const getTariffsByType = async (subscriptionType) => {
   try {
     const response = await apiClient.get(`/tariff/${subscriptionType}`);
