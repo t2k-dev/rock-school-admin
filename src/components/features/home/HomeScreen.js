@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { CalendarDay } from "../../shared/calendar/CalendarDay";
 import { EditIcon } from "../../shared/icons";
 import { Loading } from "../../shared/Loading";
-import { GroupAttendanceModal } from "../../shared/modals/GroupAttendanceModal";
+import { AttendanceModal } from "../../shared/modals/AttendanceModal";
 
 import { isCancelledAttendanceStatus } from "../../shared/modals/attendanceHelper";
 
@@ -23,7 +23,7 @@ class HomeScreen extends React.Component {
       attendances: null,
 
       showCanceled: true,
-      showGroupSlotDetailsModal: false,
+      showAttendanceModal: false,
       selectedAttendance: null,
 
       isLoading: true,
@@ -49,7 +49,7 @@ class HomeScreen extends React.Component {
         notes: details.notes,
         attendances: details.attendances,
 
-        showGroupSlotDetailsModal: false,
+        showAttendanceModal: false,
         isLoading: false,
       });
     } catch (error) {
@@ -67,12 +67,12 @@ class HomeScreen extends React.Component {
 
   handleSelectEvent = (slotInfo) => {
     const newSelectedAttendance = this.state.attendances.filter((a) => a.attendanceId === slotInfo.id)[0];
-    this.setState({ showGroupSlotDetailsModal: true, selectedAttendance: newSelectedAttendance });
+    this.setState({ showAttendanceModal: true, selectedAttendance: newSelectedAttendance });
   };
 
-  handleCloseGroupSlotDetailsModal = () => {
+  handleCloseAttendanceModal = () => {
     this.setState({ 
-      showGroupSlotDetailsModal: false,
+      showAttendanceModal: false,
       selectedAttendance: null, 
     });
   };
@@ -128,7 +128,7 @@ class HomeScreen extends React.Component {
       showCanceled, 
       selectedAttendance, 
       notes, 
-      showGroupSlotDetailsModal 
+      showAttendanceModal 
     } = this.state;
 
     if (isLoading) {
@@ -294,11 +294,11 @@ class HomeScreen extends React.Component {
             />
           </div>
 
-          <GroupAttendanceModal
+          <AttendanceModal
             attendance={selectedAttendance}
-            show={showGroupSlotDetailsModal}
+            show={showAttendanceModal}
             handleClose={() => {
-              this.handleCloseGroupSlotDetailsModal();
+              this.handleCloseAttendanceModal();
             }}
           />
         </Row>

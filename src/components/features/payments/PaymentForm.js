@@ -112,8 +112,6 @@ const PaymentForm = ({
     onHide();
   };
 
-console.log('subscription',subscription);
-
   return (
     <Modal show={show} onHide={handleClose} size="md" centered>
       <Modal.Header closeButton>

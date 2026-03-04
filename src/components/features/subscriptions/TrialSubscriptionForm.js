@@ -254,7 +254,7 @@ export class TrialSubscriptionForm extends React.Component {
             {/* Tariff section */}
             <TariffCard
               title="Тариф"
-              description="Пробное занятие"
+              description="Пробный урок"
               amount={trialTariffAmount}
               style={{ marginTop: '50px' }}
               showIcon={false}

@@ -1,64 +1,32 @@
-import PropTypes from 'prop-types';
 import React from "react";
-import { Alert, Button, Container, Form, Modal, Row, Spinner, Stack } from "react-bootstrap";
+import { Badge, Button, Card, Col, Container, Form, Modal, Row, Stack } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
-import { DisciplineIcon } from "../discipline/DisciplineIcon";
-import { isCancelledAttendanceStatus } from "./attendanceHelper";
-
-import AttendanceType from "../../../constants/AttendanceType";
+import { getAttendanceTypeName } from "../../../constants/AttendanceType";
+import AttendeeStatus, { getAttendeeStatusColor, getAttendeeStatusName } from "../../../constants/AttendeeStatus";
+import { getDisciplineName } from "../../../constants/disciplines";
+import { submitGroup, updateAttendeeStatus } from "../../../services/apiAttendanceService";
 import { Avatar } from "../Avatar";
-import { Loading } from "../Loading";
+import { DisciplineIcon } from "../discipline/DisciplineIcon";
 import { AttendanceDateAndRoom } from "./AttendanceDateAndRoom";
 import { AttendanceStatusBadge } from "./AttendanceStatusBadge";
-
-import AttendanceStatus from "../../../constants/AttendanceStatus";
-import { getDisciplineName } from "../../../constants/disciplines";
-
-import SubscriptionType from '../../../constants/SubscriptionType';
-import { acceptTrial, declineTrial, missedTrial, submit, updateComment } from "../../../services/apiAttendanceService";
-
-// Constants
-const ERROR_MESSAGES = {
-  SAVE_FAILED: "Не удалось сохранить изменения",
-  ACCEPT_TRIAL_FAILED: "Не удалось подтвердить пробное занятие",
-  DECLINE_TRIAL_FAILED: "Не удалось отклонить пробное занятие",
-  MARK_MISSED_FAILED: "Не удалось отметить как пропущенное",
-  UPDATE_STATUS_FAILED: "Не удалось обновить статус занятия",
-  NETWORK_ERROR: "Проверьте подключение к интернету",
-  VALIDATION_FAILED: "Заполните все обязательные поля",
-};
-
-const TRIAL_ACTIONS = {
-  ACCEPT: 'accept',
-  DECLINE: 'decline',
-  MISSED: 'missed',
-};
-
-const REGULAR_ACTIONS = {
-  ATTENDED: 'attended',
-  MISSED: 'missed',
-};
 
 export class AttendanceModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      attendance: null,
+      show: this.props.show,
 
       status: 0,
-      trialStatus: 0,
       comment: "",
-      statusReason: "",
-
-      isSaving: false,
-      isProcessingTrial: false,
-      error: null,
-      validationError: null,
-      currentAction: null,
+      attendance: null,
+      attendees: [],
     };
 
+    this.handleClose = this.handleClose.bind(this);
+    this.handleStatusChange = this.handleStatusChange.bind(this);
     this.handleSave = this.handleSave.bind(this);
+    this.handleChange = this.handleChange.bind(this); 
   }
 
   componentDidUpdate(prevProps) {
@@ -69,533 +37,177 @@ export class AttendanceModal extends React.Component {
         return;
       }
 
-      this.setState(
-        {
-          attendance: attendance,
-          status: attendance.status,
-          attendanceId: attendance.attendanceId,
-          comment: attendance.comment || "",
-          statusReason: attendance.statusReason || "",
-         }
-      );
+      this.setState({ 
+        attendance: attendance,
+        status: attendance.status,
+        comment: attendance.comment || "",
+      });
     }
   }
 
-  // Event handlers
+  handleClose() {
+    this.setState({ show: false, attendance: null, attendees: [], comment: "" });
+  }
+
   handleChange = (e) => {
-    const { id, value } = e.target;
-    this.setState({ [id]: value });
-  };
-
-  handleSave = async () => {
-    const { attendance, comment } = this.state;
-
-    // Completed attendance
-    await updateComment(attendance.attendanceId, comment);
-    
-    // Update parent component with new comment
-    this.handleSuccess({ 
-      comment: comment 
-    });
-  }
-
-  handleError = (message, error) => {
-    console.error(message, error);
-    
-    let errorMessage = message;
-    if (error?.name === 'NetworkError' || error?.message?.includes('fetch')) {
-      errorMessage = ERROR_MESSAGES.NETWORK_ERROR;
-    }
-
+    const { value } = e.target;
     this.setState({ 
-      error: errorMessage,
-      isSaving: false,
-      isProcessingTrial: false,
-      currentAction: null,
+      comment: value
     });
   };
 
-  handleSuccess = (updatedData = null) => {
-    // Notify parent component about the update
-    if (this.props.onAttendanceUpdate && updatedData && this.state.attendance) {
-      this.props.onAttendanceUpdate({
-        ...updatedData,
-        attendanceId: this.state.attendance.attendanceId
-      });
-    }
-
-    this.setState({
-      isSaving: false,
-      isProcessingTrial: false,
-      currentAction: null,
-      error: null,
-      validationError: null,
+  async handleStatusChange(attendanceId, status) {
+    const updatedAttendees = this.state.attendees.map((attendee) => {
+      if (attendee.attendanceId === attendanceId) {
+        return { ...attendee, status: status, isCompleted: true };
+      }
+      return attendee;
     });
 
-    this.props.handleClose();
-  };
-
-  handleConfirmAndSubscribe = async (e) => {
-    e.preventDefault();
-
-    try{
-      this.setState({ 
-        isProcessingTrial: true,
-        currentAction: TRIAL_ACTIONS.ACCEPT,
-        error: null,
-        validationError: null,
-      });
-
-      const attendance = this.state.attendance;
-      const request = {
-          comment: this.state.comment,
-          subscriptionId: attendance.attendees[0]?.subscription?.subscriptionId,
-      }
-
-      await acceptTrial(attendance.attendanceId, request);
-
-      // Redirect to subscription form
-      if (this.props.history && attendance.attendees[0]?.student) {
-        this.props.history.push({
-          pathname: `/student/${attendance.attendees[0].student.studentId}/subscriptionForm`,
-          state: {
-            studentId: attendance.attendees[0].student.studentId,
-            baseSubscription: {
-              subscriptionId: attendance.attendees[0]?.subscription?.subscriptionId,
-              disciplineId: attendance.disciplineId,
-              teacher: attendance.teacher,
-              attendanceType: attendance.attendanceType,
-            },
-          }
-        });
-      }
-
-      this.handleSuccess({ 
-        status: AttendanceStatus.ATTENDED, 
-        comment: this.state.comment,
-        isCompleted: true 
-      });
-
-    } catch(error){
-      console.log("suda")
-      this.handleError(ERROR_MESSAGES.ACCEPT_TRIAL_FAILED, error);
-    }
-  };
-
-  handleDeclineTrial = async (e) =>{
-    e.preventDefault();
-    try{
-      this.setState({ 
-        isProcessingTrial: true,
-        currentAction: TRIAL_ACTIONS.DECLINE,
-        error: null,
-        validationError: null,
-      });
-      
-      const request = {
-        statusReason: this.state.statusReason,
-        subscriptionId: this.state.attendance.attendees[0]?.subscription?.subscriptionId,
-        comment: this.state.comment,
-      }
-
-      await declineTrial(this.state.attendance.attendanceId, request);
-      this.handleSuccess({ 
-        status: AttendanceStatus.MISSED, 
-        statusReason: this.state.statusReason,
-        comment: this.state.comment,
-        isCompleted: true 
-      });
-
-    } catch(error){
-      this.handleError(ERROR_MESSAGES.DECLINE_TRIAL_FAILED, error);
-    }
+    this.setState({ attendees: updatedAttendees });
   }
 
-  handleMissedTrial = async (e) =>{
-    e.preventDefault();
-    try{
-      this.setState({ 
-        isProcessingTrial: true,
-        currentAction: TRIAL_ACTIONS.MISSED,
-        error: null,
-        validationError: null,
-      });
-
-      const request = {
-          statusReason: this.state.statusReason,
-          comment: this.state.comment,
-          subscriptionId: this.state.attendance.attendees[0]?.subscription?.subscriptionId,
-      }
-
-      await missedTrial(this.state.attendance.attendanceId, request);
-      this.handleSuccess({ 
-        status: AttendanceStatus.MISSED,
-        statusReason: this.state.statusReason,
-        comment: this.state.comment,
-        isCompleted: true 
-      });
-
-    } catch(error){
-      this.handleError(ERROR_MESSAGES.MARK_MISSED_FAILED, error);
+  async handleAttendeeStatusChange(attendanceId, attendeeId, status) {
+    const request ={
+        attendeeId: attendeeId,
+        attendeeStatus: status
     }
-  };
-
-  handleCompleted = async (e, status) =>{
-    e.preventDefault();
-
-    try{
-      this.setState({ 
-        isSaving: true,
-        currentAction: status === AttendanceStatus.ATTENDED 
-          ? REGULAR_ACTIONS.ATTENDED 
-          : REGULAR_ACTIONS.MISSED,
-        error: null,
-        validationError: null,
-      });
-      
-      const { attendance, comment } = this.state;
-
-      const submitRequest = {
-        status: status,
-        comment: comment,
-      };
-      await submit(attendance.attendanceId, submitRequest);
-
-      this.handleSuccess({ 
-        status: status, 
-        comment: comment,
-        isCompleted: true 
-      });
-
-    } catch(error){
-      this.handleError(ERROR_MESSAGES.UPDATE_STATUS_FAILED, error);
-    }
+    await updateAttendeeStatus(attendanceId, request);
   }
 
-  handleClose = () => {
-    // Reset state when closing
-    this.setState({
-      attendance: null,
-      error: null,
-      validationError: null,
-      isSaving: false,
-      isProcessingTrial: false,
-      currentAction: null,
-      comment: "",
-    });
+  async handleSave() {
+   const request = {
+      attendees: this.state.attendees,
+      comment: this.props.attendance.statusReason,
+    };
+
+    await submitGroup(request);
 
     this.props.handleClose();
-  };
+  }
 
-  // Rendering
-
-  renderLoadingOverlay = () => {
-    const { isSaving, isProcessingTrial, currentAction } = this.state;
-
-    if (!isSaving && !isProcessingTrial) return null;
-
-    let message = "Сохранение...";
+  renderStudentList() {
+    const { attendance } = this.props;
     
-    if (isProcessingTrial) {
-      switch (currentAction) {
-        case TRIAL_ACTIONS.ACCEPT:
-          message = "Подтверждение пробного урока...";
-          break;
-        case TRIAL_ACTIONS.DECLINE:
-          message = "Отклонение пробного урока...";
-          break;
-        case TRIAL_ACTIONS.MISSED:
-          message = "Отметка о пропуске...";
-          break;
-        default:
-          message = "Обработка...";
-      }
+    if (!attendance || !attendance.attendees || attendance.attendees.length === 0) {
+      return <p className="text-muted text-center">Нет учеников</p>;
     }
 
     return (
-      <div 
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(255, 255, 255, 0.8)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 1000,
-          borderRadius: '0.375rem',
-        }}
-      >
-        <Loading
-          message={message}
-          containerStyle={{ backgroundColor: 'transparent' }}
-        />
-      </div>
-    );
-  };
-
-  renderErrorAlert = () => {
-    const { error, validationError } = this.state;
-
-    if (!error && !validationError) return null;
-
-    return (
-      <Alert 
-        variant={validationError ? "warning" : "danger"} 
-        className="mb-3"
-        dismissible
-        onClose={() => this.setState({ error: null, validationError: null })}
-      >
-        {validationError || error}
-      </Alert>
-    );
-  };
-
-  renderTrialButtons = () => {
-    const { isProcessingTrial, currentAction } = this.state;
-
-    return (
-      <>
-        <Button 
-          onClick={this.handleMissedTrial}
-          variant="outline-danger"
-          disabled={isProcessingTrial}
-        >
-          {isProcessingTrial && currentAction === TRIAL_ACTIONS.MISSED ? (
-            <>
-              <Spinner size="sm" className="me-1" />
-              Обработка...
-            </>
-          ) : (
-            'Пропущено'
-          )}
-        </Button>
-        
-        <Button 
-          onClick={this.handleDeclineTrial}
-          variant="outline-secondary"
-          disabled={isProcessingTrial}
-        >
-          {isProcessingTrial && currentAction === TRIAL_ACTIONS.DECLINE ? (
-            <>
-              <Spinner size="sm" className="me-1" />
-              Обработка...
-            </>
-          ) : (
-            'Отказался'
-          )}
-        </Button>
-        
-        <Button 
-          onClick={this.handleConfirmAndSubscribe}
-          variant="outline-success"
-          disabled={isProcessingTrial}
-          style={{ marginLeft: "10px" }}
-        >
-          {isProcessingTrial && currentAction === TRIAL_ACTIONS.ACCEPT ? (
-            <>
-              <Spinner size="sm" className="me-1" />
-              Оформление...
-            </>
-          ) : (
-            'Решил продолжить'
-          )}
-        </Button>
-      </>
-    );
-  };
-
-  renderRegularButtons = () => {
-    const { isSaving, currentAction } = this.state;
-
-    return (
-      <>
-        <Button 
-          onClick={(e) => this.handleCompleted(e, AttendanceStatus.ATTENDED)}
-          variant="outline-success"
-          disabled={isSaving}
-        >
-          {isSaving && currentAction === REGULAR_ACTIONS.ATTENDED ? (
-            <>
-              <Spinner size="sm" className="me-1" />
-              Сохранение...
-            </>
-          ) : (
-            'Посещено'
-          )}
-        </Button>
-        
-        <Button 
-          onClick={(e) => this.handleCompleted(e, AttendanceStatus.MISSED)}
-          variant="outline-danger"
-          disabled={isSaving}
-          style={{ marginLeft: "10px" }}
-        >
-          {isSaving && currentAction === REGULAR_ACTIONS.MISSED ? (
-            <>
-              <Spinner size="sm" className="me-1" />
-              Сохранение...
-            </>
-          ) : (
-            'Пропущено'
-          )}
-        </Button>
-      </>
-    );
-  };
-
-  renderFooterButtons = () => {
-    const { isSaving } = this.state;
-    const { isCompleted, status, attendanceType } = this.props.attendance;
-
-    if (!isCompleted) {
-      if (isCancelledAttendanceStatus(status)){
-        return <Button variant="outline-primary" onClick={this.handleCancel}>Сохранить</Button>;
-      }
-
-      return attendanceType === AttendanceType.TRIAL_LESSON ? this.renderTrialButtons() : this.renderRegularButtons();
-    }
-
-    return (
-      <Button 
-        variant="primary" 
-        onClick={this.handleSave}
-        disabled={isSaving}
-      >
-        {isSaving ? (
-          <>
-            <Spinner size="sm" className="me-1" />
-            Сохранение...
-          </>
-        ) : (
-          'Сохранить'
-        )}
-      </Button>
-    );
-  };
-
-  renderSubscriptionInfo = () => {
-    const { teacher, disciplineId } = this.state.attendance;
-    const subscription = this.state.attendance.attendees[0]?.subscription;
-
-    switch (subscription?.subscriptionType) {
-      case SubscriptionType.LESSON:  
-      case SubscriptionType.TRIAL_LESSON:
-          return(
-            <div className="d-flex mb-3 text-center">
-              <div style={{ marginRight: "10px" }}>
-                <DisciplineIcon disciplineId={disciplineId} size="40px" />
+      <Row className="g-3">
+        {attendance.attendees.map((attendee) => (
+          <Col xs={12} key={attendee.attendeeId}>
+            <Card>
+              <Card.Body>
+                <div className="d-flex justify-content-between align-items-center">
+                  <div className="d-flex align-items-center">
+                    <Avatar style={{ width: "40px", height: "40px", marginRight: "12px" }} />
+                    <div>
+                      <h6 className="mb-0">
+                        <Link to={`/student/${attendee.studentId}`}>
+                          {attendee.student.firstName} {attendee.student.lastName}
+                        </Link>
+                      </h6>
+                    </div>
+                  </div>
+                  <div>
+                    {attendee.status === AttendeeStatus.NEW ? (
+                        <>
+                        <Button
+                        variant="outline-danger"
+                        size="sm"
+                        className="me-2"
+                        onClick={() => this.handleAttendeeStatusChange(attendance.attendanceId, attendee.attendeeId, AttendeeStatus.MISSED)}
+                        >
+                            Пропущено
+                        </Button>
+                        <Button
+                        variant="outline-success"
+                        size="sm"
+                        onClick={() => this.handleAttendeeStatusChange(attendance.attendanceId, attendee.attendeeId, AttendeeStatus.ATTENDED)}
+                        >
+                            Посещено
+                        </Button>
+                        </>
+                    ) : 
+                        <Badge 
+                            
+                            bg={getAttendeeStatusColor(attendee.status)}
+                            >
+                            {getAttendeeStatusName(attendee.status)}
+                        </Badge>
+                    }
+                  </div>
                 </div>
-            <Stack direction="vertical" gap={0} className="mb-2">
-              <div style={{ fontWeight: "bold", fontSize: "18px" }}>{getDisciplineName(disciplineId)}</div>
-              <div>
-                <Link to={"/teacher/" + teacher.teacherId}>{teacher.firstName}</Link>
-              </div>
-            </Stack>
-          </div>
-      )
-      case SubscriptionType.RENT:
-          return(
-            <div className="d-flex mb-3 text-center">
-              Аренда Комнаты
-            </div>
-          )
-    }
+              </Card.Body>
+            </Card>
+          </Col>
+        ))}
+      </Row>
+    );
   }
 
   render() {
-    
-    if (!this.props.show || !this.state.attendance) {
+    if (!this.props.show || !this.props.attendance) {
       return null;
     }
-    const { attendanceType, status } = this.state.attendance;
-    const { comment } = this.state;
-    const student = this.state.attendance?.attendees[0]?.student;
 
-    // Add null check for student
-    if (!student) {
-      return (
-        <Modal show={this.props.show} onHide={this.handleClose} size="md" backdrop="static">
-          <Modal.Header closeButton>
-            <Modal.Title>Ошибка</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <div className="alert alert-warning">
-              Информация о студенте недоступна
-            </div>
-          </Modal.Body>
-        </Modal>
-      );
-    }
+    const { teacher, disciplineId, status, attendanceType } = this.props.attendance;
+    const { comment } = this.state;
 
     return (
-      <>
-        <Modal show={this.props.show} onHide={this.handleClose} size="md" backdrop="static">
+        <Modal show={this.props.show} onHide={this.props.handleClose} size="md" backdrop="static">
           <Modal.Header closeButton>
             <Modal.Title>
-              {attendanceType === AttendanceType.TRIAL_LESSON ? "Пробный урок" : "Урок"}
-              <span style={{ marginLeft: "10px", fontSize: "16px" }}>
-                <AttendanceStatusBadge 
-                  status={status}
-                  style={{ fontSize: "14px", transform: "translateY(-2px)", display: "inline-block" }}
-                />
-              </span>
+              <span style={{ marginRight: "10px" }}>{getAttendanceTypeName(attendanceType)}</span>
+              <AttendanceStatusBadge 
+                status={status}
+                style={{ fontSize: "14px" }}
+              />
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <Container className="mb-3">
+            <Container className="mt-2 text-center" style={{ fontSize: "14px" }}>
               <Row>
-                <div className="d-flex" style={{ padding: "0 50px" }}>
-                  <Container style={{ width: "100px", padding: "0" }}>
-                    <Avatar style={{ width: "100px", height: "100px" }} />
-                    <div className="text-center mt-1">
-                      <Link to={`/student/${student.studentId}`}>{student.firstName} {student.lastName}</Link>
+                <Col size="6">
+                  <div className="d-flex mb-3">
+                    <div style={{ marginTop: "10px" }}>
+                      <DisciplineIcon disciplineId={disciplineId} size="40px" />
                     </div>
-                  </Container>
-                  <Container className="mt-1" style={{ fontSize: "14px", marginLeft: "60px" }}>
-                    {this.renderSubscriptionInfo()}
-                    <AttendanceDateAndRoom 
-                      {...this.props.attendance}
-                      attendance={this.props.attendance}
-                    />
-                  </Container>
-                </div>
+                    <Stack direction="vertical" gap={0} className="mb-2 text-center">
+                      <div style={{ fontWeight: "bold", fontSize: "18px" }}>{getDisciplineName(disciplineId)}</div>
+                      <div>
+                        <Link to={"/teacher/" + teacher.teacherId}>{teacher.firstName}</Link>
+                      </div>
+                    </Stack>
+                  </div>
+                </Col>
+                <Col size="6" className="text-end">
+                  <AttendanceDateAndRoom 
+                    {...this.props.attendance}
+                    attendance={this.props.attendance}
+                    className="text-center"
+                  />
+                </Col>
               </Row>
             </Container>
-            <hr></hr>
-            <Form.Group className="mb-3" controlId="comment">
-              <Form.Label>Комментарий</Form.Label>
-              <Form.Control 
-                as="textarea" 
-                onChange={this.handleChange} 
-                value={comment} 
-                placeholder="введите..." 
-                autoComplete="off"
-              />
-            </Form.Group>
 
-            {this.renderErrorAlert()}
+            <hr></hr>
+
+            {this.renderStudentList()}
+
+            <hr></hr>
+            <Form.Group className="mb-3 mt-3" controlId="comment">
+              <Form.Label>Комментарий</Form.Label>
+              <Form.Control as="textarea" onChange={this.handleChange} value={comment} placeholder="введите..." autoComplete="off"/>
+            </Form.Group>
           </Modal.Body>
           <Modal.Footer>
-            {this.renderFooterButtons()}
+            <Button variant="primary" onClick={this.handleSave}>
+              Сохранить
+            </Button>
           </Modal.Footer>
         </Modal>
-      </>
     );
   }
 }
-
-AttendanceModal.propTypes = {
-  show: PropTypes.bool.isRequired,
-  attendance: PropTypes.object,
-  history: PropTypes.object,
-  handleClose: PropTypes.func.isRequired,
-  onAttendanceUpdate: PropTypes.func, // Callback when attendance is updated
-};
-
-AttendanceModal.defaultProps = {
-  attendance: null,
-  onAttendanceUpdate: null,
-};

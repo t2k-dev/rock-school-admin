@@ -170,7 +170,7 @@ export class BranchScreen extends React.Component {
             }}
           />
           <AttendanceModal
-            selectedSlotDetails={selectedSlotDetails}
+            attendance={selectedSlotDetails}
             show={showSlotDetailsModal}
             handleClose={() => {
               this.handleCloseSlotDetailsModal();
