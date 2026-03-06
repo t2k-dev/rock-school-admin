@@ -177,7 +177,7 @@ export class AttendanceModal extends React.Component {
                     <Stack direction="vertical" gap={0} className="mb-2 text-center">
                       <div style={{ fontWeight: "bold", fontSize: "18px" }}>{getDisciplineName(disciplineId)}</div>
                       <div>
-                        <Link to={"/teacher/" + teacher.teacherId}>{teacher.firstName}</Link>
+                        {teacher && <Link to={`/teacher/${teacher.teacherId}`}>{teacher.firstName}</Link>}
                       </div>
                     </Stack>
                   </div>

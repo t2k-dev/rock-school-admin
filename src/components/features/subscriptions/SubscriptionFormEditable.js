@@ -93,7 +93,7 @@ export class SubscriptionFormEditable extends React.Component {
         startDate: subscription.startDate ? format(new Date(subscription.startDate), "dd.MM.yyyy") : "",
         attendanceCount: subscription.attendanceCount || "",
         attendanceLength: subscription.attendanceLength || 0,
-        schedules: subscription.schedules || [],
+        schedules: subscription.scheduleSlots || [],
         isLoading: false,
         });
     } catch (error) {

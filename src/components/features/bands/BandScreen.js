@@ -1,8 +1,9 @@
 import React from "react";
 import { Alert, Button, Card, Col, Container, Row, Spinner } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { activateBand, deactivateBand, getBandScreenDetails } from "../../../services/apiBandService";
+import { activateBand, addBandStudent, deactivateBand, getBandScreenDetails, removeBandStudent, updateBandStudentRole } from "../../../services/apiBandService";
 import { NoRecords } from "../../shared/NoRecords";
+import { AddStudentModal } from "../students/AddStudentModal";
 import { BandScreenCard } from "./BandScreenCard";
 import { BandStudents } from "./BandStudents";
 
@@ -20,6 +21,7 @@ export class BandScreen extends React.Component {
       band: null,
       isLoading: true,
       isActivating: false,
+      showAddStudentModal: false,
       error: null,
     };
   }
@@ -77,6 +79,74 @@ export class BandScreen extends React.Component {
         error: ERROR_MESSAGES.ACTIVATION_FAILED,
         isActivating: false,
       });
+    }
+  };
+
+  showAddStudentModal = (e) => {
+    e.preventDefault();
+    this.setState({ showAddStudentModal: true });
+  };
+
+  handleCloseAddStudentModal = () => {
+    this.setState({ showAddStudentModal: false });
+  };
+
+  handleAddStudent = async (student) => {
+    const { bandId } = this.state;
+    try {
+      const response = await addBandStudent(bandId, { studentId: student.studentId });
+      const newBandStudentId = response.data;
+      this.setState((prevState) => ({
+        band: {
+          ...prevState.band,
+          bandStudents: [
+            ...prevState.band.bandStudents,
+            {
+              bandStudentId: newBandStudentId,
+              studentId: student.studentId,
+              roleId: null,
+              student: {
+                studentId: student.studentId,
+                firstName: student.firstName,
+                lastName: student.lastName,
+                birthDate: student.birthDate,
+              },
+            },
+          ],
+        },
+      }));
+    } catch (error) {
+      console.error("Failed to add student:", error);
+    }
+  };
+
+  deleteStudent = async (index) => {
+    const { bandId, band } = this.state;
+    const bandStudent = band.bandStudents[index];
+    try {
+      await removeBandStudent(bandId, bandStudent.bandStudentId);
+      this.setState((prevState) => {
+        const updated = [...prevState.band.bandStudents];
+        updated.splice(index, 1);
+        return { band: { ...prevState.band, bandStudents: updated } };
+      });
+    } catch (error) {
+      console.error("Failed to remove student:", error);
+    }
+  };
+
+  handleRoleChange = async (studentIndex, disciplineId) => {
+    const { bandId, band } = this.state;
+    const bandStudent = band.bandStudents[studentIndex];
+    try {
+      await updateBandStudentRole(bandId, bandStudent.bandStudentId, disciplineId);
+      this.setState((prevState) => {
+        const updated = [...prevState.band.bandStudents];
+        updated[studentIndex] = { ...updated[studentIndex], roleId: disciplineId };
+        return { band: { ...prevState.band, bandStudents: updated } };
+      });
+    } catch (error) {
+      console.error("Failed to update student role:", error);
     }
   };
 
@@ -175,7 +245,7 @@ export class BandScreen extends React.Component {
   };*/
 
   render() {
-    const { band, isLoading, isActivating, error } = this.state;
+    const { band, isLoading, isActivating, showAddStudentModal, error } = this.state;
 
     if (isLoading) {
       return this.renderLoadingState();
@@ -217,6 +287,13 @@ export class BandScreen extends React.Component {
 
             {/* Band Details */}
             <BandScreenCard band={band} />
+
+            <AddStudentModal
+              show={showAddStudentModal}
+              onAddStudent={this.handleAddStudent}
+              handleClose={this.handleCloseAddStudentModal}
+              onlyExistingStudents={true}
+            />
             <Container>
               <Row>
                 <Col md="6">

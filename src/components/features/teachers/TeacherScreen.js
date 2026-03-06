@@ -275,8 +275,8 @@ class TeacherScreen extends React.Component {
                 <td>
                   <Link 
                     onClick={(e) => e.stopPropagation()}
-                    to={`/student/${item.student.studentId}`}>
-                    {item.student.firstName} {item.student.lastName}
+                    to={`/student/${item.student?.studentId}`}>
+                    {item.student?.firstName} {item.student?.lastName}
                   </Link>
                 </td>
                 <td>{getDisciplineName(item.disciplineId)}</td>
