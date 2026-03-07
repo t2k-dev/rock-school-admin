@@ -1,9 +1,9 @@
 import React from "react";
-import { Button, Card, Col, Container, Row, Stack } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Card, Col, Container, Row, Stack } from "react-bootstrap";
 
 import { Avatar } from "../../shared/Avatar";
-import { EditIcon, GroupIcon, InstagramIcon } from "../../shared/icons";
+import { EditIcon, InstagramIcon } from "../../shared/icons";
+import BandList from "./BandList";
 
 class StudentScreenCard extends React.Component {
   handleEditClick = (e) => {
@@ -47,34 +47,18 @@ class StudentScreenCard extends React.Component {
               <div className="d-flex justify-content-between align-items-center" style={{ flexDirection: "row" }}>
                 
             <div>
-              <Container style={{ textAlign: "center", marginRight: "100px" }} className="mt-2">
-                <div><GroupIcon /></div>
-                <div style={{ fontWeight: "bold" }}> Группы</div>
-                <div>
-                  {bands && bands.length > 0 ? (
-                    bands.map((band, index) => (
-                      <div key={band.bandId || index} className="small">
-                        <Link to={`/band/${band.bandId}`} className="text-decoration-none">
-                          {band.name}
-                        </Link>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="text-muted small">Нет групп</div>
-                  )}
-                </div>
-              </Container>
+              <BandList bands={bands} />
             </div>
             <div>
               <Stack gap={2} style={{ width: "200px" }}>
-                <Button variant="outline-warning"
+                {/*<Button variant="outline-warning"
                   as={Link}
                   to={{
                     pathname: `/student/${item.studentId}/waitingSchedule`,
                     state: {student:item}
                   }}>
                   Предзапись
-                </Button>
+                </Button>*/}
               </Stack>
             </div>
           </div>

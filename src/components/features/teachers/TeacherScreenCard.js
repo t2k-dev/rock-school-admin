@@ -1,9 +1,10 @@
 import React from "react";
-import { Card, Container } from "react-bootstrap";
+import { Card, Col, Container, Row } from "react-bootstrap";
 import { Doughnut } from "react-chartjs-2";
 import { Avatar } from "../../shared/Avatar";
 import { DisciplineIcon } from "../../shared/discipline/DisciplineIcon";
 import { EditIcon } from "../../shared/icons";
+import BandList from "../students/BandList";
 
 import {
   ArcElement,
@@ -29,46 +30,47 @@ class TeacherScreenCard extends React.Component {
   };
 
   render() {
-    const { item } = this.props;
+    const { item, bands } = this.props;
     return (
-      <Card className="ms-col-2 mb-2">
+      <Card className="p-0 mb-2">
         <Card.Body>
-          <Container className="d-flex justify-content-between align-items-center p-0" style={{ flexDirection: "row" }}>
-            <Container style={{ width: "160px" }}>
-              <Avatar></Avatar>
-            </Container>
-            <Container style={{ flexDirection: "column" }} className="flex-fill">
-              <Container>
-                <div style={{ fontWeight: "bold", fontSize: "28px", width: "500px" }}>
-                  {item.firstName} {item.lastName} {item.isActive ? "" : "(Отключен)"}
-                  <EditIcon onIconClick={this.handleEditClick} />
-                </div>
-                <div className="mt-2 text-muted">Преподаватель</div>
-                {item.disciplines && item.disciplines.map((id) => <DisciplineIcon key={id} disciplineId={id} />)}
-              </Container>
-            </Container>
-
-            <Container className="d-flex p-0">
-              <Container className="p-0" style={{ width: "120px" }}>
-                <div style={{ textAlign: "center" }}>Загрузка</div>
-                <div style={{ width: "120px" }}>
-                  <Doughnut
-                    data={{
-                      datasets: [
-                        {
-                          data: [20, 3],
-                          color: ["rgb(254, 106, 1)", "#0dc2fd"],
-                          backgroundColor: ["rgb(204, 223, 243)", "#0dc2fd"],
-                          borderWidth: 3,
-                          radius: "100%",
-                        },
-                      ],
-                      options: {},
-                    }}
+          <Container className="p-2">
+            <Row>
+              <Col md="2" className="text-center">
+                <Avatar/>
+              </Col>
+              <Col md="4">
+                    <div style={{ fontWeight: "bold", fontSize: "28px" }}>
+                      {item.firstName} {item.lastName} {item.isActive ? "" : "(Отключен)"}
+                      <EditIcon onIconClick={this.handleEditClick} />
+                    </div>
+                    <div className="mt-2 text-muted">Преподаватель</div>
+                    {item.disciplines && item.disciplines.map((id) => <DisciplineIcon key={id} disciplineId={id} />)}
+              </Col>
+              <Col md="2">
+                <BandList bands={bands} />
+              </Col>
+              <Col md="4">
+                <div className="p-0" style={{ width: "120px", display: "inline-block" }}>
+                  <div style={{ textAlign: "center" }}>Загрузка</div>
+                  <div style={{ width: "120px" }}>
+                    <Doughnut
+                      data={{
+                        datasets: [
+                          {
+                            data: [20, 3],
+                            color: ["rgb(254, 106, 1)", "#0dc2fd"],
+                            backgroundColor: ["rgb(204, 223, 243)", "#0dc2fd"],
+                            borderWidth: 3,
+                            radius: "100%",
+                          },
+                        ],
+                        options: {},
+                      }}
                   />
                 </div>
-              </Container>
-              <Container className="p-0" style={{ width: "120px" }}>
+              </div>
+              <div className="p-0" style={{ width: "120px", display: "inline-block" }}>
                 <div style={{ textAlign: "center" }}>Посещаемость</div>
                 <div style={{ width: "120px" }}>
                   <Doughnut
@@ -85,8 +87,8 @@ class TeacherScreenCard extends React.Component {
                     }}
                   />
                 </div>
-              </Container>
-              <Container className="p-0" style={{ width: "120px" }}>
+              </div>
+              <div className="p-0" style={{ width: "120px", display: "inline-block" }}>
                 <div style={{ textAlign: "center" }}>Пробные</div>
                 <div style={{ width: "120px" }}>
                   <Doughnut
@@ -103,8 +105,11 @@ class TeacherScreenCard extends React.Component {
                     }}
                   />
                 </div>
-              </Container>
-            </Container>
+              </div>
+              </Col>
+            </Row>
+
+              
           </Container>
         </Card.Body>
       </Card>

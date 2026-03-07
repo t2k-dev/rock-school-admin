@@ -99,8 +99,8 @@ export class BandScreen extends React.Component {
       this.setState((prevState) => ({
         band: {
           ...prevState.band,
-          bandStudents: [
-            ...prevState.band.bandStudents,
+          bandMembers: [
+            ...prevState.band.bandMembers,
             {
               bandStudentId: newBandStudentId,
               studentId: student.studentId,
@@ -122,13 +122,13 @@ export class BandScreen extends React.Component {
 
   deleteStudent = async (index) => {
     const { bandId, band } = this.state;
-    const bandStudent = band.bandStudents[index];
+    const bandMember = band.bandMembers[index];
     try {
-      await removeBandStudent(bandId, bandStudent.bandStudentId);
+      await removeBandStudent(bandId, bandMember.bandMemberId);
       this.setState((prevState) => {
-        const updated = [...prevState.band.bandStudents];
+        const updated = [...prevState.band.bandMembers];
         updated.splice(index, 1);
-        return { band: { ...prevState.band, bandStudents: updated } };
+        return { band: { ...prevState.band, bandMembers: updated } };
       });
     } catch (error) {
       console.error("Failed to remove student:", error);
@@ -137,13 +137,13 @@ export class BandScreen extends React.Component {
 
   handleRoleChange = async (studentIndex, disciplineId) => {
     const { bandId, band } = this.state;
-    const bandStudent = band.bandStudents[studentIndex];
+    const bandMember = band.bandMembers[studentIndex];
     try {
-      await updateBandStudentRole(bandId, bandStudent.bandStudentId, disciplineId);
+      await updateBandStudentRole(bandId, bandMember.bandStudentId, disciplineId);
       this.setState((prevState) => {
-        const updated = [...prevState.band.bandStudents];
+        const updated = [...prevState.band.bandMembers];
         updated[studentIndex] = { ...updated[studentIndex], roleId: disciplineId };
-        return { band: { ...prevState.band, bandStudents: updated } };
+        return { band: { ...prevState.band, bandMembers: updated } };
       });
     } catch (error) {
       console.error("Failed to update student role:", error);
@@ -178,41 +178,6 @@ export class BandScreen extends React.Component {
     </Container>
   );
 /*
-  renderStudentsList = () => {
-    if (!students || students.length === 0) {
-      return (
-        <div className="text-center py-3 text-muted">
-          Ученики не добавлены
-        </div>
-      );
-    }
-
-    return (
-      <div>
-        {students.map((student, index) => (
-          <div key={index} className="d-flex align-items-center mb-2 p-2 border rounded">
-            <Avatar style={{ width: "40px", height: "40px", marginRight: "15px" }} />
-            <div className="flex-grow-1">
-              <div>
-                <strong>
-                  <Link to={`/student/${student.studentId}`}>
-                    {student.firstName} {student.lastName}
-                  </Link>
-                </strong>
-              </div>
-              <div className="text-muted small">
-                {calculateAge(student.birthDate)} лет • {student.phone}
-              </div>
-            </div>
-            <div>
-              <Badge bg="secondary">{student.level || "Начинающий"}</Badge>
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-  };
-
   renderSchedule = () => {
     if (!schedules || schedules.length === 0) {
       return (
@@ -288,6 +253,19 @@ export class BandScreen extends React.Component {
             {/* Band Details */}
             <BandScreenCard band={band} />
 
+            <div className="d-flex justify-content-end mb-3">
+              <Button
+                variant={band.isActive ? "outline-danger" : "success"}
+                type="button"
+                onClick={this.handleActivateToggle}
+                disabled={isActivating}
+              >
+                {isActivating
+                  ? (band.isActive ? "Отключение..." : "Включение...")
+                  : (band.isActive ? "Отключить" : "Включить")}
+              </Button>
+            </div>
+
             <AddStudentModal
               show={showAddStudentModal}
               onAddStudent={this.handleAddStudent}
@@ -301,13 +279,13 @@ export class BandScreen extends React.Component {
                     <Card.Header><strong>Участники</strong></Card.Header>
                     <Card.Body>
                       <BandStudents
-                        students={band.bandStudents?.map(bandStudent => ({
-                          studentId: bandStudent.student?.studentId || bandStudent.studentId,
-                          firstName: bandStudent.student?.firstName,
-                          lastName: bandStudent.student?.lastName,
-                          birthDate: bandStudent.student?.birthDate,
-                          roleId: bandStudent.roleId,
-                          bandStudentId: bandStudent.bandStudentId
+                        students={band.bandMembers?.map(bandMember => ({
+                          studentId: bandMember.student?.studentId || bandMember.studentId,
+                          firstName: bandMember.student?.firstName,
+                          lastName: bandMember.student?.lastName,
+                          birthDate: bandMember.student?.birthDate,
+                          roleId: bandMember.roleId,
+                          bandStudentId: bandMember.bandStudentId
                         })) || []}
                         onAddStudent={this.showAddStudentModal}
                         onDeleteStudent={this.deleteStudent}

@@ -140,9 +140,9 @@ export class AttendanceRescheduleForm extends React.Component {
 
     switch (attendance?.attendanceType) {
       case AttendanceType.LESSON:
-        return <h2 className="text-center mb-4">Перенос занятия</h2>;
+        return <h2 className="text-center mb-4">Перенос урока</h2>;
       case AttendanceType.TRIAL_LESSON:
-        return <h2 className="text-center mb-4">Перенос пробного занятия</h2>;
+        return <h2 className="text-center mb-4">Перенос пробного урока</h2>;
       default:
         return <h2 className="text-center mb-4">Перенос</h2>;
     };
@@ -206,7 +206,7 @@ export class AttendanceRescheduleForm extends React.Component {
               
               <Form.Group className="mb-3" controlId="comment">
                 <div className="mb-3">
-                  <b>Новая дата занятия</b>
+                  <b>Новая дата урока</b>
                 </div>
                 {availableSlot}
               </Form.Group>

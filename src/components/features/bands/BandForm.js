@@ -73,8 +73,6 @@ export class BandForm extends React.Component {
 
   async loadFormData() {
     // TODO: Implement for edit mode
-    // const { bandId } = this.props.match.params;
-    // Load band data for editing
   }
 
   // AddStudentModal

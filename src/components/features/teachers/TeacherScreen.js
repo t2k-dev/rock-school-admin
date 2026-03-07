@@ -65,6 +65,7 @@ class TeacherScreen extends React.Component {
         subscriptions: details.subscriptions,
         attendances: details.attendances,
         backgroundEvents: backgroundEvents,
+        bands: details.bands,
         isLoading: false,
     });
 
@@ -293,7 +294,7 @@ class TeacherScreen extends React.Component {
   }
 
   render() {
-    const { isLoading, showCompleted, error, showAttendanceModal, selectedAttendance, teacher, backgroundEvents, subscriptions, attendances } = this.state;
+    const { isLoading, showCompleted, error, showAttendanceModal, selectedAttendance, teacher, backgroundEvents, subscriptions, attendances, bands } = this.state;
 
     if (isLoading) {
       return <Loading
@@ -340,7 +341,7 @@ class TeacherScreen extends React.Component {
     return (
       <Container style={{ marginTop: "40px" }}>
         <Row>
-          <TeacherScreenCard item={teacher} history={this.props.history} />
+          <TeacherScreenCard item={teacher} bands={bands} history={this.props.history} />
         </Row>
         <Row>
           <h3>

@@ -39,12 +39,12 @@ export const getBandScreenDetails = async (id) => {
 };
 
 export const deactivateBand = async (id) => {
-  const result = await apiClient.post(`/band/${id}/deactivate`);
+  const result = await apiClient.put(`/band/${id}/deactivate`);
   return result;
 }
 
 export const activateBand = async (id) => {
-  const result = await apiClient.post(`/band/${id}/activate`);
+  const result = await apiClient.put(`/band/${id}/activate`);
   return result;
 }
 

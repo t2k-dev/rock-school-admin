@@ -36,13 +36,8 @@ class Bands extends React.Component {
     const { searchText } = this.state;
     
     const activeBands = bands?.
-      filter((b) => b.name.includes(searchText)).
-      sort((a, b) => {
-        if (a.name < b.name) return -1;
-        if (a.name > b.name) return 1;
-        
-        return 0;
-      });
+      filter((b) => b.name.toLowerCase().includes(searchText.toLowerCase())).
+      sort((a, b) => a.name.localeCompare(b.name));
 
     if (!activeBands || activeBands.length === 0) {
       return <NoRecords />;
@@ -62,6 +57,9 @@ class Bands extends React.Component {
       return <Loading />;
     }
 
+    const activeBands = bands?.filter((b) => b.isActive);
+    const inactiveBands = bands?.filter((b) => !b.isActive);
+
     return (
       <Container style={{ marginTop: "40px" }}>
         <Row>
@@ -80,7 +78,9 @@ class Bands extends React.Component {
             <div>
               <Form.Control className="mb-4" placeholder="Поиск..." value={searchText} onChange={(e) => this.handleSearchChange(e)}></Form.Control>
             </div>
-            <div>{this.renderBands(bands)}</div>
+            <div>{this.renderBands(activeBands)}</div>
+            <h4 className="mb-3">Неактивные</h4>
+            <div>{this.renderBands(inactiveBands)}</div>
           </Col>
         </Row>
       </Container>
