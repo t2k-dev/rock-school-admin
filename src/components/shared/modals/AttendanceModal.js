@@ -196,11 +196,15 @@ export class AttendanceModal extends React.Component {
 
             {this.renderStudentList()}
 
-            <hr></hr>
-            <Form.Group className="mb-3 mt-3" controlId="comment">
-              <Form.Label>Комментарий</Form.Label>
-              <Form.Control as="textarea" onChange={this.handleChange} value={comment} placeholder="введите..." autoComplete="off"/>
-            </Form.Group>
+            
+            {comment && (
+              <>
+              <hr></hr>
+              <Form.Group className="mb-3 mt-3" controlId="comment">
+                <Form.Label>Комментарий</Form.Label>
+                <Form.Control as="textarea" onChange={this.handleChange} value={comment} placeholder="введите..." autoComplete="off"/>
+              </Form.Group>
+            </>)}
           </Modal.Body>
           <Modal.Footer>
             <Button variant="primary" onClick={this.handleSave}>

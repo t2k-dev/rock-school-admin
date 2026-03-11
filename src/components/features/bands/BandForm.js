@@ -292,7 +292,7 @@ export class BandForm extends React.Component {
               <div className="mb-3">
                 <BandStudents
                   showLabel={true}
-                  students={sortedStudents}
+                  bandMembers={sortedStudents}
                   onAddStudent={this.showAddStudentModal}
                   onDeleteStudent={this.deleteStudent}
                   onRoleChange={this.handleRoleChange}

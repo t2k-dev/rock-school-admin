@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { activateBand, addBandMember, deactivateBand, getBandScreenDetails, removeBandStudent, updateBandStudentRole } from "../../../services/apiBandService";
 import { NoRecords } from "../../shared/NoRecords";
 import { AddStudentModal } from "../students/AddStudentModal";
+import { BandAttendanceList } from "./BandAttendanceList";
 import { BandScreenCard } from "./BandScreenCard";
 import { BandStudents } from "./BandStudents";
 
@@ -19,6 +20,7 @@ export class BandScreen extends React.Component {
     this.state = {
       bandId: this.props.match?.params?.id,
       band: null,
+      attendances: [],
       isLoading: true,
       isActivating: false,
       showAddStudentModal: false,
@@ -48,6 +50,7 @@ export class BandScreen extends React.Component {
       
       this.setState({
         band: bandData.band,
+        attendances: bandData.attendances || [],
         isLoading: false,
       });
     } catch (error) {
@@ -179,37 +182,23 @@ export class BandScreen extends React.Component {
       </Alert>
     </Container>
   );
-/*
-  renderSchedule = () => {
-    if (!schedules || schedules.length === 0) {
-      return (
-        <div className="text-center py-3 text-muted">
-          Расписание не настроено
-        </div>
-      );
-    }
+
+  renderAttendances = () => {
+    const { attendances } = this.state;
+
+    const sortedAttendances = [...(attendances || [])].sort((a, b) => {
+      const dateA = new Date(a.startDate);
+      const dateB = new Date(b.startDate);
+      return dateB - dateA; // Descending order
+    });
 
     return (
-      <Table striped bordered hover size="sm">
-        <thead>
-          <tr>
-            <th>День</th>
-            <th>Время</th>
-            <th>Комната</th>
-          </tr>
-        </thead>
-        <tbody>
-          {schedules.map((schedule, index) => (
-            <tr key={index}>
-              <td>{getDayName(schedule.weekDay)}</td>
-              <td>{formatTime(schedule.startTime)} - {formatTime(schedule.endTime)}</td>
-              <td>Комната {schedule.roomId}</td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
+      <BandAttendanceList
+        attendances={sortedAttendances}
+        onAttendanceClick={() => {}}
+      />
     );
-  };*/
+  };
 
   render() {
     const { band, isLoading, isActivating, showAddStudentModal, error } = this.state;
@@ -245,13 +234,6 @@ export class BandScreen extends React.Component {
           <Col md="2"></Col>
           <Col md="8">
 
-            {/* Status Alert */}
-            {/*!band.isActive && (
-              <Alert variant="warning" className="mb-4">
-                <strong>Группа деактивирована</strong> - занятия не проводятся
-              </Alert>
-            )*/}
-
             {/* Band Details */}
             <BandScreenCard 
               band={band} 
@@ -269,15 +251,25 @@ export class BandScreen extends React.Component {
               <Row>
                 <Col md="6">
                   <Card>
+                    <Card.Header>
+                      <strong>Репетиции</strong>
+                    </Card.Header>
+                    <Card.Body>
+                      {this.renderAttendances()}
+                    </Card.Body>
+                  </Card>
+                </Col>
+                <Col md="6">
+                  <Card>
                     <Card.Header><strong>Участники</strong></Card.Header>
                     <Card.Body>
                       <BandStudents
-                        students={band.bandMembers?.map(bandMember => ({
+                        bandMembers={band.bandMembers?.map(bandMember => ({
                           studentId: bandMember.student?.studentId || bandMember.studentId,
                           firstName: bandMember.student?.firstName,
                           lastName: bandMember.student?.lastName,
                           birthDate: bandMember.student?.birthDate,
-                          roleId: bandMember.roleId,
+                          bandRoleId: bandMember.bandRoleId,
                           bandStudentId: bandMember.bandStudentId
                         })) || []}
                         onAddStudent={this.showAddStudentModal}
@@ -286,17 +278,14 @@ export class BandScreen extends React.Component {
                       />
                     </Card.Body>
                   </Card>
-                </Col>
-                <Col md="6">
-                  <Card>
-                    <Card.Header>
-                      <strong>Репетиции</strong>
-                    </Card.Header>
+
+                  <Card className="mt-3">
+                    <Card.Header><strong>Трэклист</strong></Card.Header>
                     <Card.Body>
-                      
-                      <NoRecords />
+                      <NoRecords/>
                     </Card.Body>
                   </Card>
+
                 </Col>
               </Row>
             </Container>

@@ -1,6 +1,7 @@
 import { Badge } from 'react-bootstrap';
 
-import SubscriptionStatus, { getSubscriptionStatusName } from '../../../constants/SubscriptionStatus';
+import SubscriptionStatus, { getSubscriptionStatusColor, getSubscriptionStatusName } from '../../../constants/SubscriptionStatus';
+
 
 export const SubscriptionStatusBadge = ({ 
   status, 
@@ -35,7 +36,7 @@ export const SubscriptionStatusBadge = ({
   };
 
   const statusName = getSubscriptionStatusName(status);
-  const variant = getStatusBadgeVariant(status);
+  const variant = getSubscriptionStatusColor(status);
   const sizeStyle = getSizeStyle(size);
 
   const finalStyle = {

@@ -16,11 +16,9 @@ class TeacherCard extends React.Component{
                             <Col md="2">
                                 <Avatar style={{ width: "70px", height: "70px" }} />
                             </Col>
-                            <Col>
+                            <Col as={Link} to={`/teacher/${this.props.item.teacherId}`} md="10">
                                 <div className="mt-2">
-                                    <Link to={`/teacher/${this.props.item.teacherId}`} >
                                         <h3>{this.props.item.firstName} {this.props.item.lastName}</h3>
-                                    </Link>
                                 </div>
                                 <div>
                                     <Row className="mt-3" style={{width:"400px"}}>

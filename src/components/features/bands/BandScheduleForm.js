@@ -56,15 +56,15 @@ export class BandScheduleForm extends React.Component {
     try {
       this.setState({ isLoading: true, error: null });
 
-      const bandData = await getBandFormData(bandId);
-      const band = bandData.band || {};
+      const formData = await getBandFormData(bandId);
+      const band = formData.band || {};
 
       this.setState({
         band: band,
         bandId: band.bandId,
         bandName: band.name || "",
         teacher: band.teacher || {},
-        schedules: bandData.scheduleSlots || [],
+        schedules: band.scheduleSlots || [],
         isLoading: false,
       });
     } catch (error) {

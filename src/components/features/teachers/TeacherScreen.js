@@ -1,13 +1,13 @@
 import { format } from "date-fns";
 import React from "react";
-import { Alert, Button, Col, Container, Form, Row, Tab, Table, Tabs } from "react-bootstrap";
+import { Alert, Badge, Button, Col, Container, Form, Row, Tab, Table, Tabs } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { getTeacherScreenDetails } from "../../../services/apiTeacherService";
 
 
 import { getDisciplineName } from "../../../constants/disciplines";
 import MyDateFormat from "../../../constants/formats";
-import SubscriptionStatus, { getSubscriptionStatusName } from "../../../constants/SubscriptionStatus";
+import SubscriptionStatus, { getSubscriptionStatusColor, getSubscriptionStatusName } from "../../../constants/SubscriptionStatus";
 import { getTrialSubscriptionStatusName } from "../../../constants/SubscriptionTrialStatus";
 
 import { CalendarWeek } from "../../shared/calendar/CalendarWeek";
@@ -187,44 +187,36 @@ class TeacherScreen extends React.Component {
             </tr>
           </thead>
           <tbody>
-            {subscriptions.map((item, idx) => (
+            {subscriptions.map((subscription, idx) => (
               <tr 
                 key={idx}
-                onClick={() => this.handleViewSubscriptionAttendances(item)}
+                onClick={() => this.handleViewSubscriptionAttendances(subscription)}
                 style={{ 
                   cursor: 'pointer',
                   transition: 'background-color 0.2s'
                 }}
               >
-                <td>{format(item.startDate, MyDateFormat)}</td>
+                <td>{format(subscription.startDate, MyDateFormat)}</td>
                 <td>
-                  {item.childSubscriptions && item.childSubscriptions.length > 0 
-                    ? item.childSubscriptions.map((childItem, idx) => (
-                        <Link 
-                          key={idx} 
-                          onClick={(e) => e.stopPropagation()}
-                          to={"/student/" + childItem.student.studentId}>
-                          {childItem.student.firstName} {childItem.student.lastName}
-                          {idx < item.childSubscriptions.length - 1 && ", "}
-                        </Link>
-                      ))
-                    : 
-                    <Link 
-                      key={idx} 
-                      onClick={(e) => e.stopPropagation()}
-                      to={"/student/" + item.student.studentId}>
-                        {item.student.firstName} {item.student.lastName}
-                    </Link>
-                  }
+                  <Link 
+                    key={idx} 
+                    onClick={(e) => e.stopPropagation()}
+                    to={"/student/" + subscription.studentId}>
+                    {subscription.studentFullName}
+                  </Link>
                 </td>
                 <td>
-                  <DisciplineIcon disciplineId={item.disciplineId} />
-                  <span style={{ marginLeft: "10px" }}>{getDisciplineName(item.disciplineId)}</span>
+                  <DisciplineIcon disciplineId={subscription.disciplineId} />
+                  <span style={{ marginLeft: "10px" }}>{getDisciplineName(subscription.disciplineId)}</span>
                 </td>
-                <td>{item.attendancesLeft} из {item.attendanceCount}</td>
-                <td>{getSubscriptionStatusName(item.status)}</td>
+                <td>{subscription.attendancesLeft} из {subscription.attendanceCount}</td>
+                <td> 
+                  <Badge 
+                    bg={getSubscriptionStatusColor(subscription.status)}>
+                      {getSubscriptionStatusName(subscription.status)}
+                  </Badge> </td>
                 <td>
-                  <EditIcon onIconClick={(e, _item) => this.handleEditSubscriptionClick(e, item)} />
+                  <EditIcon onIconClick={(e, _item) => this.handleEditSubscriptionClick(e, subscription)} />
                 </td>
               </tr>
             ))}
@@ -276,12 +268,12 @@ class TeacherScreen extends React.Component {
                 <td>
                   <Link 
                     onClick={(e) => e.stopPropagation()}
-                    to={`/student/${item.student?.studentId}`}>
-                    {item.student?.firstName} {item.student?.lastName}
+                    to={`/student/${item.studentId}`}>
+                    {item.studentFullName}
                   </Link>
                 </td>
                 <td>{getDisciplineName(item.disciplineId)}</td>
-                <td>{getTrialSubscriptionStatusName(item.trialStatus)}</td>
+                <td>{getTrialSubscriptionStatusName(item.trialDecision)}</td>
                 <td>
                   
                 </td>
@@ -319,7 +311,9 @@ class TeacherScreen extends React.Component {
         id: attendance.attendanceId,
         title: attendance.attendees !== null && attendance.attendees && attendance.attendees.length > 0
           ? attendance.attendees.map(attendee => attendee?.student?.firstName).join(", ")
-          : `${attendance.student?.firstName} ${attendance.student?.lastName[0]}.`,
+          : attendance.student 
+            ? `${attendance.student.firstName} ${attendance.student.lastName[0]}.` 
+            : "",
         start: new Date(attendance.startDate),
         end: new Date(attendance.endDate),
         resourceId: attendance.roomId,
@@ -330,13 +324,13 @@ class TeacherScreen extends React.Component {
     }
 
     // Subscriptions
-    let nonTrialSubscriptions = sortedSubscriptions.filter((s) => s.trialStatus === null);
+    let nonTrialSubscriptions = sortedSubscriptions.filter((s) => s.trialDecision === null);
     nonTrialSubscriptions = showCompleted
       ? nonTrialSubscriptions
       : nonTrialSubscriptions.filter((s) => s.status !== SubscriptionStatus.COMPLETED);
 
     // Trials
-    const trialSubscriptions = sortedSubscriptions.filter((s) => s.trialStatus !== null);
+    const trialSubscriptions = sortedSubscriptions.filter((s) => s.trialDecision !== null);
 
     return (
       <Container style={{ marginTop: "40px" }}>

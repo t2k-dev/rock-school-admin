@@ -1,5 +1,6 @@
 import { Badge, Card, Col, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import { GroupIcon } from "../../shared/icons";
 import { HoverCard } from "../../shared/ui";
 
 const BandCard = ({ item }) => {
@@ -9,7 +10,10 @@ const BandCard = ({ item }) => {
     <HoverCard className="mb-3" as={Link} to={`/band/${bandId}`} style={{ textDecoration: 'none', color: 'inherit' }}>
       <Card.Body>
         <Row className="align-items-center">
-          <Col md="4">
+          <Col md="1">
+            <GroupIcon size="40px" color="#000000" />
+          </Col>
+          <Col md="3">
             <div className="d-flex align-items-center">
               <div>
                 <h3 className="mb-1">{name}</h3>

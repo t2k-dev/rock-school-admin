@@ -41,22 +41,22 @@ export class BandStudents extends React.Component {
     this.handleCloseRoleModal();
   };
 
-  renderStudent = (student, index) => {
-    const age = calculateAge(student.birthDate);
+  renderStudent = (bandMember, index) => {
+    const age = calculateAge(bandMember.birthDate);
     const { onDeleteStudent } = this.props;
     
     return (
       <Card key={index} className="mb-2">
         <Card.Body className="py-2">
           <Row className="align-items-center">
-            <Col md="1">
+            <Col md="2" className="text-center">
               <Avatar style={{ width: "30px", height: "30px" }} />
             </Col>
-            <Col md="9">
-              <div style={{marginLeft: "10px"}}>
+            <Col md="8">
+              <div>
                 <strong>
-                  <Link to={`/student/${student.studentId}`}>
-                    {student.firstName} {student.lastName}
+                  <Link to={`/student/${bandMember.studentId}`}>
+                    {bandMember.firstName} {bandMember.lastName}
                   </Link>
                 </strong>
                 <div className="text-muted small">
@@ -66,10 +66,10 @@ export class BandStudents extends React.Component {
                     style={{ cursor: 'pointer'}}
                     onClick={() => this.handleShowRoleModal(index)}
                   >
-                    {student.roleId 
+                    {bandMember.bandRoleId 
                         ? <>
-                            <span style={{ marginRight: "5px" }}>{getDisciplineName(student.roleId)}</span>
-                            <DisciplineIcon disciplineId={student.roleId} size="20px"/> 
+                            <span style={{ marginRight: "5px" }}>{getDisciplineName(bandMember.bandRoleId)}</span>
+                            <DisciplineIcon disciplineId={bandMember.bandRoleId} size="20px"/> 
                         </> 
                         : "Выбрать роль"}
                   </span>
@@ -92,16 +92,16 @@ export class BandStudents extends React.Component {
   };
 
   render() {
-    const { students, onAddStudent, showLabel = false } = this.props;
+    const { bandMembers, onAddStudent, showLabel = false } = this.props;
     const { showRoleModal, selectedStudentIndex } = this.state;
 
     return (
       <>
       {showLabel && <strong>Участники</strong>}
       <div className="mt-2">
-        {students.length > 0 ? (
+        {bandMembers.length > 0 ? (
           <div className="mb-3">
-            {students.map((student, index) => this.renderStudent(student, index))}
+            {bandMembers.map((bandMember, index) => this.renderStudent(bandMember, index))}
           </div>
         ) : (
           <div className="text-center py-2 mb-3" style={{ backgroundColor: "#f8f9fa", borderRadius: "5px" }}>
@@ -128,7 +128,7 @@ export class BandStudents extends React.Component {
             <DisciplineGridSelector
               selectedDisciplineId={
                 selectedStudentIndex !== null 
-                  ? students[selectedStudentIndex]?.roleId 
+                  ? bandMembers[selectedStudentIndex]?.roleId 
                   : null
               }
               onDisciplineChange={this.handleRoleSelect}
