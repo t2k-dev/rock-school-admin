@@ -12,7 +12,7 @@ import { CalendarIcon, CountIcon, TimeIcon } from "../../shared/icons";
 import { Loading } from "../../shared/Loading";
 import { AvailableSlotsModal } from "../../shared/modals/AvailableSlotsModal";
 import { ScheduleEditorWithDelete } from "../../shared/schedule/ScheduleEditorWithDelete";
-import { SubscriptionStudents } from "../subscriptions/SubscriptionStudents";
+import { SubscriptionStudents } from "./SubscriptionStudents";
 
 import { getBusySlots } from "../../../services/apiBranchService";
 import { getSubscriptionFormData, updateSubscriptionSchedules } from "../../../services/apiSubscriptionService";
@@ -27,7 +27,7 @@ const ERROR_MESSAGES = {
   VALIDATION_FAILED: "Пожалуйста, заполните все обязательные поля",
 };
 
-export class SubscriptionFormEditable extends React.Component {
+export class SubscriptionScheduleForm extends React.Component {
   constructor(props) {
     super(props);
 

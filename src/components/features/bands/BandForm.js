@@ -22,7 +22,7 @@ export class BandForm extends React.Component {
       teacher: null,
       
       students: [],
-      schedules: [],
+      scheduleSlots: [],
       
       teachers: [],
       availableTeachers: [],
@@ -156,17 +156,17 @@ export class BandForm extends React.Component {
   };
 
   handleSlotsChange = (availableSlots) => {
-    // Convert available slots to schedules format (with teacherId for bands)
+    // Convert available slots to scheduleSlots format (with teacherId for bands)
     const periods = convertSlotsToSchedules(availableSlots, { includeTeacherId: true });
     
     this.setState({ 
       availableSlots: availableSlots,
-      schedules: periods 
+      scheduleSlots: periods 
     });
   };
 
   handleScheduleChange = (periods) => {
-    this.setState({ schedules: periods });
+    this.setState({ scheduleSlots: periods });
   };
 
   sortStudentsByAge = (students) => {
@@ -213,7 +213,7 @@ export class BandForm extends React.Component {
       return;
     }
 
-    if (this.state.schedules.length === 0) {
+    if (this.state.scheduleSlots.length === 0) {
       alert("Добавьте расписание");
       return;
     }
@@ -227,7 +227,7 @@ export class BandForm extends React.Component {
         name: this.state.name,
         teacherId: this.state.teacherId,
         members: members,
-        schedules: this.state.schedules,
+        scheduleSlots: this.state.scheduleSlots,
         branchId: 1, // TODO: get from context or props
       };
 
@@ -251,7 +251,7 @@ export class BandForm extends React.Component {
       availableTeachers,
       teacherId,
       students,
-      schedules,
+      scheduleSlots,
       showAddStudentModal,
       showAvailableTeacherModal,
       step,
@@ -349,7 +349,7 @@ export class BandForm extends React.Component {
               
               <div className="mb-3">
                 <ScheduleEditorWithDelete
-                  schedules={schedules}
+                  schedules={scheduleSlots}
                   onChange={this.handleScheduleChange}
                 />
               </div>

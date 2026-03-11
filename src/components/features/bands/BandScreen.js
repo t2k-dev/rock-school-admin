@@ -1,7 +1,7 @@
 import React from "react";
 import { Alert, Button, Card, Col, Container, Row, Spinner } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { activateBand, addBandStudent, deactivateBand, getBandScreenDetails, removeBandStudent, updateBandStudentRole } from "../../../services/apiBandService";
+import { activateBand, addBandMember, deactivateBand, getBandScreenDetails, removeBandStudent, updateBandStudentRole } from "../../../services/apiBandService";
 import { NoRecords } from "../../shared/NoRecords";
 import { AddStudentModal } from "../students/AddStudentModal";
 import { BandScreenCard } from "./BandScreenCard";
@@ -59,29 +59,6 @@ export class BandScreen extends React.Component {
     }
   }
 
-  handleActivateToggle = async () => {
-    const { bandId, band } = this.state;
-    
-    try {
-      this.setState({ isActivating: true });
-      
-      if (band.isActive) {
-        await deactivateBand(bandId);
-      } else {
-        await activateBand(bandId);
-      }
-      
-      // Reload data to get updated status
-      await this.loadBandData();
-    } catch (error) {
-      console.error("Failed to toggle band status:", error);
-      this.setState({
-        error: ERROR_MESSAGES.ACTIVATION_FAILED,
-        isActivating: false,
-      });
-    }
-  };
-
   showAddStudentModal = (e) => {
     e.preventDefault();
     this.setState({ showAddStudentModal: true });
@@ -94,7 +71,7 @@ export class BandScreen extends React.Component {
   handleAddStudent = async (student) => {
     const { bandId } = this.state;
     try {
-      const response = await addBandStudent(bandId, { studentId: student.studentId });
+      const response = await addBandMember(bandId, { studentId: student.studentId });
       const newBandStudentId = response.data;
       this.setState((prevState) => ({
         band: {
@@ -147,6 +124,31 @@ export class BandScreen extends React.Component {
       });
     } catch (error) {
       console.error("Failed to update student role:", error);
+    }
+  };
+
+  handleEditSchedules = (band) => {
+    this.props.history.push(`/band/${band.bandId}/schedule`);
+  };
+
+  handleActivateToggle = async (band) => {
+    try {
+      this.setState({ isActivating: true });
+      
+      if (band.isActive) {
+        await deactivateBand(band.bandId);
+      } else {
+        await activateBand(band.bandId);
+      }
+      
+      // Reload data to get updated status
+      await this.loadBandData();
+    } catch (error) {
+      console.error("Failed to toggle band status:", error);
+      this.setState({
+        error: ERROR_MESSAGES.ACTIVATION_FAILED,
+        isActivating: false,
+      });
     }
   };
 
@@ -251,20 +253,11 @@ export class BandScreen extends React.Component {
             )*/}
 
             {/* Band Details */}
-            <BandScreenCard band={band} />
-
-            <div className="d-flex justify-content-end mb-3">
-              <Button
-                variant={band.isActive ? "outline-danger" : "success"}
-                type="button"
-                onClick={this.handleActivateToggle}
-                disabled={isActivating}
-              >
-                {isActivating
-                  ? (band.isActive ? "Отключение..." : "Включение...")
-                  : (band.isActive ? "Отключить" : "Включить")}
-              </Button>
-            </div>
+            <BandScreenCard 
+              band={band} 
+              onEditSchedules={this.handleEditSchedules}
+              onActivateToggle={this.handleActivateToggle}
+            />
 
             <AddStudentModal
               show={showAddStudentModal}
@@ -297,7 +290,7 @@ export class BandScreen extends React.Component {
                 <Col md="6">
                   <Card>
                     <Card.Header>
-                      <strong>Расписание</strong>
+                      <strong>Репетиции</strong>
                     </Card.Header>
                     <Card.Body>
                       

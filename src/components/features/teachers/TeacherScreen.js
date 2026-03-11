@@ -94,7 +94,7 @@ class TeacherScreen extends React.Component {
 
   handleEditSubscriptionClick = (e, item) => {
     e.preventDefault();
-    this.props.history.push(`/subscription/${item.subscriptionId}/edit`);
+    this.props.history.push(`/subscription/${item.subscriptionId}/schedule`);
   };
 
   handleViewSubscriptionAttendances = async (subscription) => {

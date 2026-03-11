@@ -6,6 +6,7 @@ import Students from "./features/students/Students";
 import Teachers from "./features/teachers/Teachers";
 
 import { BandForm } from "./features/bands/BandForm";
+import { BandScheduleForm } from "./features/bands/BandScheduleForm";
 import { BandScreen } from "./features/bands/BandScreen";
 import Bands from "./features/bands/Bands";
 
@@ -27,7 +28,7 @@ import TeacherPeriods from "./features/teachers/TeacherPeriods";
 import TeacherScreen from "./features/teachers/TeacherScreen";
 
 import { SubscriptionForm } from "./features/subscriptions/SubscriptionForm";
-import { SubscriptionFormEditable } from "./features/subscriptions/SubscriptionFormEditable";
+import { SubscriptionScheduleForm } from "./features/subscriptions/SubscriptionScheduleForm";
 import SubscriptionScreenContainer from "./features/subscriptions/SubscriptionScreenContainer";
 import { TrialSubscriptionForm } from "./features/subscriptions/TrialSubscriptionForm";
 
@@ -77,7 +78,7 @@ function App() {
           <Route exact path="/admin/addSubscription" render={(props) => <SubscriptionForm {...props} />}/>
           
           <Route exact path="/student/:id/subscriptionForm" render={(props) => <SubscriptionForm type="New" {...props} />}/>
-          <Route exact path="/subscription/:id/edit" render={(props) => <SubscriptionFormEditable {...props} />}/>
+          <Route exact path="/subscription/:id/schedule" render={(props) => <SubscriptionScheduleForm {...props} />}/>
           <Route exact path="/subscription/:id/attendances" render={(props) => <SubscriptionScreenContainer {...props} />} />
           <Route exact path="/notes/addNote" render={(props) => <NoteForm type="New" {...props} />}/>
           <Route exact path="/notes/:id/edit" render={(props) => <NoteForm {...props} />}/>
@@ -88,6 +89,7 @@ function App() {
           <Route exact path="/bands"><Bands /></Route>
           <Route exact path="/band/:id" render={(props) => <BandScreen {...props} />}/>
           <Route exact path="/band/:id/edit" render={(props) => <BandForm type="Edit" {...props} />}/>
+          <Route exact path="/band/:id/schedule" render={(props) => <BandScheduleForm {...props} />}/>
           <Route exact path="/admin/registerBand" render={(props) => <BandForm type="New" {...props} />}/>
 
           <Route exact path="/bigCalendarTest"><CalendarWeek /></Route>

@@ -90,7 +90,7 @@ class StudentScreen extends React.Component {
   };
 
   handleEditSubscriptionClick = (subscription) => {
-    this.props.history.push(`/subscription/${subscription.subscriptionId}/edit`);
+    this.props.history.push(`/subscription/${subscription.subscriptionId}/schedule`);
   };
 
   handleTrialSubscriptionClick = (subscription) => {

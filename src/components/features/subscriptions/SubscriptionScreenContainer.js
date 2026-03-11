@@ -92,7 +92,7 @@ class SubscriptionScreenContainer extends Component {
   };
 
   handleEditSchedules = (subscription) => {
-    this.props.history.push(`/subscription/${subscription.subscriptionId}/edit`);
+    this.props.history.push(`/subscription/${subscription.subscriptionId}/schedule`);
   };
 
   handlePayClick = (subscription) => {
