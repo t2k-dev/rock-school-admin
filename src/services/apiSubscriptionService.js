@@ -47,6 +47,11 @@ export const addTrialSubscription = async (data) =>{
   return result;
 }
 
+export const addRehearsalSubscription = async (data) =>{
+  const result = await apiClient.post(`/${CONTROLLER}/addRehearsal`, data);
+  return result;
+}
+
 export const updateSubscription = async (data) =>{
   const result = await apiClient.put(`/${CONTROLLER}`, data);
   return result;

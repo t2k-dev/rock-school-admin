@@ -367,7 +367,7 @@ class StudentScreen extends React.Component {
                     <Button
                       as={Link}
                       to={{
-                        pathname: `/student/${student.studentId}/subscriptionForm`,
+                        pathname: `/student/${student.studentId}/rehearsal`,
                         state: { student: student },
                       }}
                       variant="outline-success"

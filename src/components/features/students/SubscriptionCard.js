@@ -97,9 +97,15 @@ export const SubscriptionCard = ({
     } else if (subscriptionType === SubscriptionType.RENT) {
       return (
         <>
-          <Col md="8">
+          <Col md="2">
             <div className="text-muted small"><CalendarIcon color="gray"/>Начало</div>
             <div className="fw-bold">{format(subscription.startDate, MyDateFormat)}</div>
+          </Col>
+          <Col md="6">
+            <div className="d-flex align-items-center">
+              
+              <span style={{ marginLeft: "10px" }}>Аренда комнаты</span>
+            </div>
           </Col>
           <Col md="2">
             <div className="text-muted small">Осталось уроков</div>

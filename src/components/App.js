@@ -27,6 +27,7 @@ import TeacherForm from "./features/teachers/TeacherForm";
 import TeacherPeriods from "./features/teachers/TeacherPeriods";
 import TeacherScreen from "./features/teachers/TeacherScreen";
 
+import { RehearsalForm } from "./features/subscriptions/RehearsalForm";
 import { SubscriptionForm } from "./features/subscriptions/SubscriptionForm";
 import { SubscriptionScheduleForm } from "./features/subscriptions/SubscriptionScheduleForm";
 import SubscriptionScreenContainer from "./features/subscriptions/SubscriptionScreenContainer";
@@ -73,6 +74,7 @@ function App() {
           <Route exact path="/student" render={(props) => <StudentForm type="New" {...props} />}/>
           <Route exact path="/student/edit/:id" render={(props) => <StudentForm type="Edit" {...props} />}/>
           <Route exact path="/student/:id/addTrial" render={(props) => <TrialSubscriptionForm {...props} />}/>
+          <Route exact path="/student/:id/rehearsal" render={(props) => <RehearsalForm {...props} />}/>
           <Route exact path="/student/:id/waitingSchedule" render={(props) => <WaitingScheduleForm {...props} />}/>
           <Route exact path="/student/:id/roomRental" render={(props) => <RoomRentalForm type="New" {...props} />}/>
           <Route exact path="/admin/addSubscription" render={(props) => <SubscriptionForm {...props} />}/>
