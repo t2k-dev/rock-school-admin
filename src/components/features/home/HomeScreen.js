@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { CalendarDay } from "../../shared/calendar/CalendarDay";
 import { EditIcon } from "../../shared/icons";
 import { Loading } from "../../shared/Loading";
-import { AttendanceModal } from "../../shared/modals/AttendanceModal";
+import { AttendanceModal } from "../../shared/modals/AttendanceModal/AttendanceModal";
 
 import { isCancelledAttendanceStatus } from "../../shared/modals/attendanceHelper";
 

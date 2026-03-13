@@ -3,13 +3,13 @@ import { ru } from "date-fns/locale";
 import PropTypes from 'prop-types';
 import { useHistory } from "react-router-dom";
 
-import { CalendarIcon } from "../icons/CalendarIcon";
-import { DoorIcon } from "../icons/DoorIcon";
-import { EditIcon } from "../icons/EditIcon";
-import { TimeIcon } from "../icons/TimeIcon";
-import { isCancelledAttendanceStatus } from "./attendanceHelper";
+import { CalendarIcon } from "../../icons/CalendarIcon";
+import { DoorIcon } from "../../icons/DoorIcon";
+import { EditIcon } from "../../icons/EditIcon";
+import { TimeIcon } from "../../icons/TimeIcon";
+import { isCancelledAttendanceStatus } from "../attendanceHelper";
 
-import { getRoomName } from "../../../constants/rooms";
+import { getRoomName } from "../../../../constants/rooms";
 
 export const AttendanceDateAndRoom = ({ 
   attendanceId,

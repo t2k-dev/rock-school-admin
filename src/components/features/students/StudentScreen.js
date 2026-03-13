@@ -9,7 +9,7 @@ import AttendanceType from "../../../constants/AttendanceType";
 import { getStudentScreenDetails } from "../../../services/apiStudentService";
 import { CalendarWeek } from "../../shared/calendar/CalendarWeek";
 import { Loading } from "../../shared/Loading";
-import { AttendanceModal } from "../../shared/modals/AttendanceModal";
+import { AttendanceModal } from "../../shared/modals/AttendanceModal/AttendanceModal";
 import PaymentForm from "../payments/PaymentForm";
 import StudentScreenCard from "./StudentScreenCard";
 import { SubscriptionList } from "./SubscriptionList";
@@ -274,6 +274,9 @@ class StudentScreen extends React.Component {
     // Rents
     const rentSubscriptions = sortedSubscriptions.filter((s) => s.subscriptionType === SubscriptionType.RENT);
 
+    // Rehearsals
+    const rehearsalSubscriptions = sortedSubscriptions.filter((s) => s.subscriptionType === SubscriptionType.REHEARSAL);
+
     // Events
     let events;
     if (attendances) {
@@ -379,7 +382,7 @@ class StudentScreen extends React.Component {
                     </Button>
                   </div>
                 </div>
-                {this.renderRerehearsalTable(null)}
+                {this.renderRerehearsalTable(rehearsalSubscriptions)}
             </Tab>
             <Tab eventKey="calendar" title="Календарь">
               <CalendarWeek

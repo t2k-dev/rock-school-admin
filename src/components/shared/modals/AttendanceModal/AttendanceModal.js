@@ -1,15 +1,14 @@
 import React from "react";
-import { Badge, Button, Card, Col, Container, Form, Modal, Row, Stack } from "react-bootstrap";
+import { Badge, Button, Card, Col, Container, Form, Modal, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
-import { getAttendanceTypeName } from "../../../constants/AttendanceType";
-import AttendeeStatus, { getAttendeeStatusColor, getAttendeeStatusName } from "../../../constants/AttendeeStatus";
-import { getDisciplineName } from "../../../constants/disciplines";
-import { submitGroup, updateAttendeeStatus } from "../../../services/apiAttendanceService";
-import { Avatar } from "../Avatar";
-import { DisciplineIcon } from "../discipline/DisciplineIcon";
+import { getAttendanceTypeName } from "../../../../constants/AttendanceType";
+import AttendeeStatus, { getAttendeeStatusColor, getAttendeeStatusName } from "../../../../constants/AttendeeStatus";
+import { submitGroup, updateAttendeeStatus } from "../../../../services/apiAttendanceService";
+import { Avatar } from "../../Avatar";
+import { AttendanceStatusBadge } from "../AttendanceStatusBadge";
 import { AttendanceDateAndRoom } from "./AttendanceDateAndRoom";
-import { AttendanceStatusBadge } from "./AttendanceStatusBadge";
+import { AttendanceHeaderInfo } from "./AttendanceHeaderInfo";
 
 export class AttendanceModal extends React.Component {
   constructor(props) {
@@ -170,17 +169,7 @@ export class AttendanceModal extends React.Component {
             <Container className="mt-2 text-center" style={{ fontSize: "14px" }}>
               <Row>
                 <Col size="6">
-                  <div className="d-flex mb-3">
-                    <div style={{ marginTop: "10px" }}>
-                      <DisciplineIcon disciplineId={disciplineId} size="40px" />
-                    </div>
-                    <Stack direction="vertical" gap={0} className="mb-2 text-center">
-                      <div style={{ fontWeight: "bold", fontSize: "18px" }}>{getDisciplineName(disciplineId)}</div>
-                      <div>
-                        {teacher && <Link to={`/teacher/${teacher.teacherId}`}>{teacher.firstName}</Link>}
-                      </div>
-                    </Stack>
-                  </div>
+                  <AttendanceHeaderInfo attendance={this.props.attendance} />
                 </Col>
                 <Col size="6" className="text-end">
                   <AttendanceDateAndRoom 

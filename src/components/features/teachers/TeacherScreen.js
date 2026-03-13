@@ -4,17 +4,17 @@ import { Alert, Badge, Button, Col, Container, Form, Row, Tab, Table, Tabs } fro
 import { Link } from "react-router-dom";
 import { getTeacherScreenDetails } from "../../../services/apiTeacherService";
 
-
 import { getDisciplineName } from "../../../constants/disciplines";
 import MyDateFormat from "../../../constants/formats";
 import SubscriptionStatus, { getSubscriptionStatusColor, getSubscriptionStatusName } from "../../../constants/SubscriptionStatus";
 import { getTrialSubscriptionStatusName } from "../../../constants/SubscriptionTrialStatus";
 
+import SubscriptionType from "../../../constants/SubscriptionType";
 import { CalendarWeek } from "../../shared/calendar/CalendarWeek";
 import { DisciplineIcon } from "../../shared/discipline/DisciplineIcon";
 import { CalendarIcon, EditIcon } from "../../shared/icons";
 import { Loading } from "../../shared/Loading";
-import { AttendanceModal } from "../../shared/modals/AttendanceModal";
+import { AttendanceModal } from "../../shared/modals/AttendanceModal/AttendanceModal";
 import { NoRecords } from "../../shared/NoRecords";
 import TeacherScreenCard from "./TeacherScreenCard";
 
@@ -324,13 +324,18 @@ class TeacherScreen extends React.Component {
     }
 
     // Subscriptions
-    let nonTrialSubscriptions = sortedSubscriptions.filter((s) => s.trialDecision === null);
+    let nonTrialSubscriptions = sortedSubscriptions.filter((s) => s.subscriptionType === SubscriptionType.LESSON 
+      || s.subscriptionType === SubscriptionType.GROUP_LESSON );
+
     nonTrialSubscriptions = showCompleted
       ? nonTrialSubscriptions
       : nonTrialSubscriptions.filter((s) => s.status !== SubscriptionStatus.COMPLETED);
 
     // Trials
-    const trialSubscriptions = sortedSubscriptions.filter((s) => s.trialDecision !== null);
+    const trialSubscriptions = sortedSubscriptions.filter((s) => s.subscriptionType === SubscriptionType.TRIAL_LESSON);
+
+    // Rehearsals
+    const rehearsalSubscriptions = sortedSubscriptions.filter((s) => s.subscriptionType === SubscriptionType.REHEARSAL);
 
     return (
       <Container style={{ marginTop: "40px" }}>
@@ -367,7 +372,7 @@ class TeacherScreen extends React.Component {
 
             </Tab>
             <Tab eventKey="rehearsals" title="Репетиции">
-              <NoRecords />
+              {this.renderSubscriptions(rehearsalSubscriptions)}
             </Tab>
           </Tabs>
         </Row>

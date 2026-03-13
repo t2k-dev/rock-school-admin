@@ -8,7 +8,7 @@ import { EditIcon } from "../../shared/icons";
 
 import { getHomeScreenDetails } from "../../../services/apiHomeService";
 import { markComplete } from "../../../services/apiNoteService";
-import { AttendanceModal } from "../../shared/modals/AttendanceModal";
+import { AttendanceModal } from "../../shared/modals/AttendanceModal/AttendanceModal";
 
 export class BranchScreen extends React.Component {
   constructor(props) {

@@ -3,7 +3,7 @@ import { withRouter } from 'react-router-dom';
 
 import { getStudentScreenDetails } from '../../../services/apiStudentService';
 import { cancelSubscription, getSubscription } from '../../../services/apiSubscriptionService';
-import { AttendanceModal } from '../../shared/modals/AttendanceModal';
+import { AttendanceModal } from '../../shared/modals/AttendanceModal/AttendanceModal';
 import PaymentForm from '../payments/PaymentForm';
 import CancelSubscriptionModal from './CancelSubscriptionModal';
 import SubscriptionScreen from './SubscriptionScreen';

@@ -95,6 +95,8 @@ export class AttendanceRescheduleForm extends React.Component {
     const requestBody = {
       attendanceId: attendance.attendanceId,
       newStartDate: selectedSlot.start,
+      newEndDate: selectedSlot.end,
+      roomId: selectedSlot.roomId,
     };
 
     const response = await rescheduleAttendance(requestBody);
@@ -160,7 +162,7 @@ export class AttendanceRescheduleForm extends React.Component {
     } else{
       availableSlot = <div>Не выбрано</div>;
     }
-
+console.log("attendance", attendance);
     return (
       <Container style={{ marginTop: "40px" }}>
         <Row>
@@ -168,7 +170,7 @@ export class AttendanceRescheduleForm extends React.Component {
           <Col md="4">
             {this.renderHeader()}
             <Stack className="mb-3" gap={2} style={{ backgroundColor: "#e7e7e7", padding: "15px", borderRadius: "10px" }}>
-              <div><Avatar style={{ width: "20px", height: "20px", marginRight: "5px" }}></Avatar> {attendance.student.firstName} {attendance.student.lastName}</div>
+              <div><Avatar style={{ width: "20px", height: "20px", marginRight: "5px" }}></Avatar> {attendance.attendees[0].student.firstName} {attendance.attendees[0].student.lastName}</div>
               <div>
                 <CalendarIcon />
                 <span style={{ fontSize: "14px" }}>
