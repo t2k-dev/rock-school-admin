@@ -8,10 +8,10 @@ import { Button, Col, Container, Form, InputGroup, Row, Stack } from "react-boot
 import { Avatar } from "../../shared/Avatar";
 import { AvailableTeachersModal } from "../../shared/modals/AvailableTeachersModal";
 
-import { getNextAvailableSlot, rescheduleAttendance } from "../../../services/apiSubscriptionService";
-import { getWorkingPeriods } from "../../../services/apiTeacherService";
-
 import { getDisciplineName } from "../../../constants/disciplines";
+import { rescheduleAttendance } from "../../../services/apiAttendanceService";
+import { getNextAvailableSlot } from "../../../services/apiSubscriptionService";
+import { getWorkingPeriods } from "../../../services/apiTeacherService";
 import { getSlotDescription } from "../../shared/modals/attendanceHelper";
 
 import AttendanceType from "../../../constants/AttendanceType";

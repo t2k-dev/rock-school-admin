@@ -2,7 +2,7 @@ import React from "react";
 import { Button, Col, Container, Form, InputGroup, Row } from "react-bootstrap";
 
 import SubscriptionType from "../../../constants/SubscriptionType";
-import { getBands } from "../../../services/apiBandService";
+import { getActiveBands } from "../../../services/apiBranchService";
 import { getStudent } from "../../../services/apiStudentService";
 import { addRehearsalSubscription } from "../../../services/apiSubscriptionService";
 import { getTariffByType } from "../../../services/apiTariffService";
@@ -50,7 +50,7 @@ export class RehearsalForm extends React.Component {
   loadBands = async () => {
     try {
       this.setState({ isLoading: true });
-      const bands = await getBands();
+      const bands = await getActiveBands(1); //DEV
       this.setState({ 
         bands: bands || [],
         isLoading: false,

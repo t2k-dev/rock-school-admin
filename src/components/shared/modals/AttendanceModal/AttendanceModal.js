@@ -1,14 +1,14 @@
 import React from "react";
-import { Badge, Button, Card, Col, Container, Form, Modal, Row } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Button, Col, Container, Form, Modal, Row } from "react-bootstrap";
 
-import { getAttendanceTypeName } from "../../../../constants/AttendanceType";
-import AttendeeStatus, { getAttendeeStatusColor, getAttendeeStatusName } from "../../../../constants/AttendeeStatus";
-import { submitGroup, updateAttendeeStatus } from "../../../../services/apiAttendanceService";
-import { Avatar } from "../../Avatar";
+import AttendanceType, { getAttendanceTypeName } from "../../../../constants/AttendanceType";
+import { acceptTrial, declineTrial, missedTrial, updateAttendeeStatus } from "../../../../services/apiAttendanceService";
 import { AttendanceStatusBadge } from "../AttendanceStatusBadge";
 import { AttendanceDateAndRoom } from "./AttendanceDateAndRoom";
 import { AttendanceHeaderInfo } from "./AttendanceHeaderInfo";
+import { AttendeesList } from "./AttendeesList";
+
+
 
 export class AttendanceModal extends React.Component {
   constructor(props) {
@@ -23,8 +23,6 @@ export class AttendanceModal extends React.Component {
     };
 
     this.handleClose = this.handleClose.bind(this);
-    this.handleStatusChange = this.handleStatusChange.bind(this);
-    this.handleSave = this.handleSave.bind(this);
     this.handleChange = this.handleChange.bind(this); 
   }
 
@@ -55,17 +53,6 @@ export class AttendanceModal extends React.Component {
     });
   };
 
-  async handleStatusChange(attendanceId, status) {
-    const updatedAttendees = this.state.attendees.map((attendee) => {
-      if (attendee.attendanceId === attendanceId) {
-        return { ...attendee, status: status, isCompleted: true };
-      }
-      return attendee;
-    });
-
-    this.setState({ attendees: updatedAttendees });
-  }
-
   async handleAttendeeStatusChange(attendanceId, attendeeId, status) {
     const request ={
         attendeeId: attendeeId,
@@ -74,84 +61,39 @@ export class AttendanceModal extends React.Component {
     await updateAttendeeStatus(attendanceId, request);
   }
 
-  async handleSave() {
-   const request = {
-      attendees: this.state.attendees,
-      comment: this.props.attendance.statusReason,
-    };
-
-    await submitGroup(request);
-
-    this.props.handleClose();
-  }
-
-  renderStudentList() {
-    const { attendance } = this.props;
-    
-    if (!attendance || !attendance.attendees || attendance.attendees.length === 0) {
-      return <p className="text-muted text-center">Нет учеников</p>;
+  handleAcceptTrial = async () => {
+    try {
+      await acceptTrial(this.props.attendance.attendanceId, {});
+      this.props.handleClose();
+    } catch (error) {
+      console.error('Error accepting trial:', error);
     }
+  };
 
-    return (
-      <Row className="g-3">
-        {attendance.attendees.map((attendee) => (
-          <Col xs={12} key={attendee.attendeeId}>
-            <Card>
-              <Card.Body>
-                <div className="d-flex justify-content-between align-items-center">
-                  <div className="d-flex align-items-center">
-                    <Avatar style={{ width: "40px", height: "40px", marginRight: "12px" }} />
-                    <div>
-                      <h6 className="mb-0">
-                        <Link to={`/student/${attendee.studentId}`}>
-                          {attendee.student.firstName} {attendee.student.lastName}
-                        </Link>
-                      </h6>
-                    </div>
-                  </div>
-                  <div>
-                    {attendee.status === AttendeeStatus.NEW ? (
-                        <>
-                        <Button
-                        variant="outline-danger"
-                        size="sm"
-                        className="me-2"
-                        onClick={() => this.handleAttendeeStatusChange(attendance.attendanceId, attendee.attendeeId, AttendeeStatus.MISSED)}
-                        >
-                            Пропущено
-                        </Button>
-                        <Button
-                        variant="outline-success"
-                        size="sm"
-                        onClick={() => this.handleAttendeeStatusChange(attendance.attendanceId, attendee.attendeeId, AttendeeStatus.ATTENDED)}
-                        >
-                            Посещено
-                        </Button>
-                        </>
-                    ) : 
-                        <Badge 
-                            
-                            bg={getAttendeeStatusColor(attendee.status)}
-                            >
-                            {getAttendeeStatusName(attendee.status)}
-                        </Badge>
-                    }
-                  </div>
-                </div>
-              </Card.Body>
-            </Card>
-          </Col>
-        ))}
-      </Row>
-    );
-  }
+  handleDeclineTrial = async () => {
+    try {
+      await declineTrial(this.props.attendance.attendanceId, {});
+      this.props.handleClose();
+    } catch (error) {
+      console.error('Error declining trial:', error);
+    }
+  };
+
+  handleMissedTrial = async () => {
+    try {
+      await missedTrial(this.props.attendance.attendanceId, {});
+      this.props.handleClose();
+    } catch (error) {
+      console.error('Error recording missed trial:', error);
+    }
+  };
 
   render() {
     if (!this.props.show || !this.props.attendance) {
       return null;
     }
 
-    const { teacher, disciplineId, status, attendanceType } = this.props.attendance;
+    const { status, attendanceType, isCompleted } = this.props.attendance;
     const { comment } = this.state;
 
     return (
@@ -183,9 +125,11 @@ export class AttendanceModal extends React.Component {
 
             <hr></hr>
 
-            {this.renderStudentList()}
+            <AttendeesList 
+              attendance={this.props.attendance} 
+              onAttendeeStatusChange={this.handleAttendeeStatusChange.bind(this)}
+            />
 
-            
             {comment && (
               <>
               <hr></hr>
@@ -195,11 +139,16 @@ export class AttendanceModal extends React.Component {
               </Form.Group>
             </>)}
           </Modal.Body>
-          <Modal.Footer>
-            <Button variant="primary" onClick={this.handleSave}>
-              Сохранить
-            </Button>
-          </Modal.Footer>
+          {attendanceType === AttendanceType.TRIAL_LESSON && !isCompleted &&(
+            <Modal.Footer>
+              <Button variant="outline-secondary" onClick={this.handleDeclineTrial}>
+                Отклонил
+              </Button>
+              <Button variant="outline-success" onClick={this.handleAcceptTrial}>
+                Решил продолжить
+              </Button>
+            </Modal.Footer>
+          )}
         </Modal>
     );
   }

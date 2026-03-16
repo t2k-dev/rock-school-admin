@@ -11,6 +11,7 @@ export function AttendanceHeaderInfo({ attendance }) {
   }
 
   switch (attendance.attendanceType) {
+    case AttendanceType.TRIAL_LESSON:
     case AttendanceType.LESSON:
     case AttendanceType.GROUP_LESSON: {
       const { teacher, disciplineId } = attendance;

@@ -1,22 +1,16 @@
-import { format } from "date-fns";
 import React from "react";
-import { Alert, Badge, Button, Col, Container, Form, Row, Tab, Table, Tabs } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Alert, Button, Col, Container, Row, Tab, Tabs } from "react-bootstrap";
 import { getTeacherScreenDetails } from "../../../services/apiTeacherService";
 
-import { getDisciplineName } from "../../../constants/disciplines";
-import MyDateFormat from "../../../constants/formats";
-import SubscriptionStatus, { getSubscriptionStatusColor, getSubscriptionStatusName } from "../../../constants/SubscriptionStatus";
-import { getTrialSubscriptionStatusName } from "../../../constants/SubscriptionTrialStatus";
+import SubscriptionStatus from "../../../constants/SubscriptionStatus";
 
 import SubscriptionType from "../../../constants/SubscriptionType";
 import { CalendarWeek } from "../../shared/calendar/CalendarWeek";
-import { DisciplineIcon } from "../../shared/discipline/DisciplineIcon";
 import { CalendarIcon, EditIcon } from "../../shared/icons";
 import { Loading } from "../../shared/Loading";
 import { AttendanceModal } from "../../shared/modals/AttendanceModal/AttendanceModal";
-import { NoRecords } from "../../shared/NoRecords";
 import TeacherScreenCard from "./TeacherScreenCard";
+import { TeacherSubscriptions } from "./TeacherSubscriptions";
 
 // Constants
 const ERROR_MESSAGES = {
@@ -168,122 +162,9 @@ class TeacherScreen extends React.Component {
     </Container>
   );
 
-  renderSubscriptions(subscriptions){
-    if (!subscriptions || subscriptions.length === 0) {
-      return <NoRecords />;
-    }
-
-    return (
-      <>
-        <Table striped bordered hover>
-          <thead>
-            <tr>
-              <th className="date-column">Начало</th>
-              <th>Ученик</th>
-              <th className="discipline-column">Направление</th>
-              <th>Осталось уроков</th>
-              <th>Статус</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {subscriptions.map((subscription, idx) => (
-              <tr 
-                key={idx}
-                onClick={() => this.handleViewSubscriptionAttendances(subscription)}
-                style={{ 
-                  cursor: 'pointer',
-                  transition: 'background-color 0.2s'
-                }}
-              >
-                <td>{format(subscription.startDate, MyDateFormat)}</td>
-                <td>
-                  <Link 
-                    key={idx} 
-                    onClick={(e) => e.stopPropagation()}
-                    to={"/student/" + subscription.studentId}>
-                    {subscription.studentFullName}
-                  </Link>
-                </td>
-                <td>
-                  <DisciplineIcon disciplineId={subscription.disciplineId} />
-                  <span style={{ marginLeft: "10px" }}>{getDisciplineName(subscription.disciplineId)}</span>
-                </td>
-                <td>{subscription.attendancesLeft} из {subscription.attendanceCount}</td>
-                <td> 
-                  <Badge 
-                    bg={getSubscriptionStatusColor(subscription.status)}>
-                      {getSubscriptionStatusName(subscription.status)}
-                  </Badge> </td>
-                <td>
-                  <EditIcon onIconClick={(e, _item) => this.handleEditSubscriptionClick(e, subscription)} />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
-        <div className="d-flex mt-2">
-          <div className="flex-grow-1"></div>
-          <Form.Check
-            type="switch"
-            id="custom-switch"
-            label="Показывать завершенные"
-            checked={this.state.showCompleted}
-            onChange={(e) => {
-              this.setState({ showCompleted: e.target.checked });
-            }}
-          />
-        </div>
-        </>
-      );
+  handleShowCompletedChange = (showCompleted) => {
+    this.setState({ showCompleted });
   };
-
-  renderTrials(trialSubscriptions){
-    if (!trialSubscriptions || trialSubscriptions.length === 0) {
-      return <NoRecords />;
-    }
-    
-    return (
-      <Table striped bordered hover>
-          <thead>
-            <tr>
-              <th className="date-column">Дата</th>
-              <th>Ученик</th>
-              <th className="discipline-column">Направление</th>
-              <th>Статус</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {trialSubscriptions.map((item, index) => (
-              <tr 
-                key={index}
-                onClick={() => this.handleTrialSubscriptionClick(item)}
-                style={{ 
-                  cursor: 'pointer',
-                  transition: 'background-color 0.2s'
-                }}
-                >
-                <td>{format(item.startDate, MyDateFormat)}</td>
-                <td>
-                  <Link 
-                    onClick={(e) => e.stopPropagation()}
-                    to={`/student/${item.studentId}`}>
-                    {item.studentFullName}
-                  </Link>
-                </td>
-                <td>{getDisciplineName(item.disciplineId)}</td>
-                <td>{getTrialSubscriptionStatusName(item.trialDecision)}</td>
-                <td>
-                  
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
-    );
-
-  }
 
   render() {
     const { isLoading, showCompleted, error, showAttendanceModal, selectedAttendance, teacher, backgroundEvents, subscriptions, attendances, bands } = this.state;
@@ -365,14 +246,31 @@ class TeacherScreen extends React.Component {
         <Row className="mt-3">
           <Tabs defaultActiveKey="subscriptions" id="uncontrolled-tab-example" className="mb-3">
             <Tab eventKey="subscriptions" title="Абонементы">
-              {this.renderSubscriptions(nonTrialSubscriptions)}
+              <TeacherSubscriptions
+                subscriptions={nonTrialSubscriptions}
+                showCompleted={this.state.showCompleted}
+                onShowCompletedChange={this.handleShowCompletedChange}
+                onViewAttendances={this.handleViewSubscriptionAttendances}
+                onEditSubscription={this.handleEditSubscriptionClick}
+              />
             </Tab>
             <Tab eventKey="trials" title="Пробные уроки">
-              {this.renderTrials(trialSubscriptions)}
-
+              <TeacherSubscriptions
+                subscriptions={trialSubscriptions}
+                showCompleted={this.state.showCompleted}
+                onShowCompletedChange={this.handleShowCompletedChange}
+                onViewAttendances={this.handleViewSubscriptionAttendances}
+                onEditSubscription={this.handleEditSubscriptionClick}
+              />
             </Tab>
             <Tab eventKey="rehearsals" title="Репетиции">
-              {this.renderSubscriptions(rehearsalSubscriptions)}
+              <TeacherSubscriptions
+                subscriptions={rehearsalSubscriptions}
+                showCompleted={this.state.showCompleted}
+                onShowCompletedChange={this.handleShowCompletedChange}
+                onViewAttendances={this.handleViewSubscriptionAttendances}
+                onEditSubscription={this.handleEditSubscriptionClick}
+              />
             </Tab>
           </Tabs>
         </Row>

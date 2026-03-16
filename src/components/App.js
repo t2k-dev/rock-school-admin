@@ -10,7 +10,6 @@ import { BandScheduleForm } from "./features/bands/BandScheduleForm";
 import { BandScreen } from "./features/bands/BandScreen";
 import Bands from "./features/bands/Bands";
 
-import { AttendanceCancelationForm } from "./features/attendances/AttendanceCancelationForm";
 import { AttendanceRescheduleForm } from "./features/attendances/AttendanceRescheduleForm";
 
 import Login from "./features/auth/Login";
@@ -59,7 +58,6 @@ function App() {
           <Route exact path="/home" render={(props) => <HomeScreen {...props} />}/>
 
           <Route exact path="/attendance/:id/rescheduleForm" render={(props) => <AttendanceRescheduleForm {...props}/>}/>
-          <Route exact path="/attendance/:id/cancelationForm" render={(props) => <AttendanceCancelationForm {...props}/>}/>
 
           <Route exact path="/branchScreen/:id" render={(props) => <BranchScreen {...props}/>}/>
 

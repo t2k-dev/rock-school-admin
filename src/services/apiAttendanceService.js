@@ -1,44 +1,24 @@
 import apiClient from "./apiClient";
 
+const CONTROLLER = "attendance"
+
 export const getAttendance = async (id) => {
   try {
-    const response = await apiClient.get(`/attendance/${id}`);
+    const response = await apiClient.get(`/${CONTROLLER}/${id}`);
     return response.data;
   } catch (error) {
     console.error("Error fetching data:", error);
   }
 };
 
-export const updateComment = async (id, comment) => {
-  try {
-    const response = await apiClient.put(`/attendance/${id}/comment/${comment}`);
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching data:", error);
-  }
-};
+export const rescheduleAttendance = async (id, data) =>{
+  const result = await apiClient.post(`/${CONTROLLER}/${id}/reschedule`, data);
+  return result;
+}
 
 export const updateAttendeeStatus = async (id, data) => {
   try {
-    const response = await apiClient.put(`attendance/${id}/submitAttendee`, data);
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching data:", error);
-  }
-};
-
-export const submitGroup = async (data) => {
-  try {
-    const response = await apiClient.post(`/attendance/submit`, data);
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching data:", error);
-  }
-};
-
-export const submit = async (id, data) => {
-  try {
-    const response = await apiClient.post(`/attendance/${id}/submit`, data);
+    const response = await apiClient.put(`/${CONTROLLER}/${id}/submitAttendee`, data);
     return response.data;
   } catch (error) {
     console.error("Error fetching data:", error);
@@ -46,13 +26,13 @@ export const submit = async (id, data) => {
 };
 
 export const acceptTrial = async (id, data) => {
-    const response = await apiClient.post(`/attendance/${id}/acceptTrial`, data);
+    const response = await apiClient.post(`/${CONTROLLER}/${id}/acceptTrial`, data);
     return response.data;
 }
 
 export const declineTrial = async (id, data) => {
   try {
-    const response = await apiClient.post(`/attendance/${id}/declineTrial`, data);
+    const response = await apiClient.post(`/${CONTROLLER}/${id}/declineTrial`, data);
     return response.data;
   } catch (error) {
     console.error("Error fetching data:", error);
@@ -61,28 +41,9 @@ export const declineTrial = async (id, data) => {
 
 export const missedTrial = async (id, data) => {
   try {
-    const response = await apiClient.post(`/attendance/${id}/missedTrial`, data);
+    const response = await apiClient.post(`/${CONTROLLER}/${id}/missedTrial`, data);
     return response.data;
   } catch (error) {
     console.error("Error fetching data:", error);
   }
 };
-
-export const attend = async (id, data) => {
-  try {
-    const response = await apiClient.post(`/attendance/${id}/attend`, data);
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching data:", error);
-  }
-};
-
-export const missed = async (id, data) => {
-  try {
-    const response = await apiClient.post(`/attendance/${id}/missed`, data);
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching data:", error);
-  }
-};
-
