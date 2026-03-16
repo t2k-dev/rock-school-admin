@@ -99,7 +99,7 @@ export class AttendanceRescheduleForm extends React.Component {
       roomId: selectedSlot.roomId,
     };
 
-    const response = await rescheduleAttendance(requestBody);
+    const response = await rescheduleAttendance(attendance.attendanceId, requestBody);
 
     window.history.back();
   };
@@ -156,6 +156,8 @@ export class AttendanceRescheduleForm extends React.Component {
       return;
     }
 
+    const { teacher } = this.state.attendance;
+
     let availableSlot;
     if (selectedSlot) {
       availableSlot = <>{getSlotDescription(selectedSlot)}</>;
@@ -200,11 +202,19 @@ console.log("attendance", attendance);
                 <Form.Label>Причина</Form.Label>
                 <Form.Control onChange={this.handleChange} value={lastName} placeholder="введите..." autoComplete="off" />
               </Form.Group>
-
-              <div className="mb-3"><b>Преподаватель</b></div>
-              <Form.Group className="mb-3" >
-                {this.renderTeacherSection()}
-              </Form.Group>
+              {teacher !== null ? 
+              <>
+                <div className="mb-3"><b>Преподаватель</b></div>
+                <Form.Group className="mb-3" >
+                  {this.renderTeacherSection()}
+                </Form.Group>
+              </>
+              :<div className="text-center mt-5 mb-5">
+                <Button variant="secondary" size="lg">
+                Доступные окна
+                </Button>
+                </div>
+              }
               
               <Form.Group className="mb-3" controlId="comment">
                 <div className="mb-3">
@@ -219,6 +229,7 @@ console.log("attendance", attendance);
                 teachers={availableTeachers}
                 onSlotsChange={this.handleSlotsChange}
                 onClose={this.handleCloseAvailableTeachersModal}
+                slotDuration={Math.floor((new Date(attendance?.endDate) - new Date(attendance?.startDate)) / 60000)}
               />
               <hr></hr>
               <div className="text-center">

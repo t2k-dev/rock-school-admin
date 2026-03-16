@@ -9,13 +9,13 @@ import { getStudent } from "../../../services/apiStudentService";
 import { getTariffsByType } from "../../../services/apiTariffService";
 import { toMoneyString } from "../../../utils/moneyUtils";
 import { convertSlotsToSchedules } from "../../../utils/scheduleUtils";
-import { SubscriptionStudents } from "../../features/subscriptions/SubscriptionStudents";
 import { Loading } from "../../shared/Loading";
 import { AvailableSlotsModal } from "../../shared/modals/AvailableSlotsModal";
 import { ScheduleEditorWithDelete } from "../../shared/schedule/ScheduleEditorWithDelete";
 import TariffCard from "../tariffs/TariffCard";
+import { SubscriptionStudents } from "./SubscriptionStudents";
 
-export class RoomRentalForm extends React.Component {
+export class RentalSubscriptionForm extends React.Component {
   constructor(props) {
     super(props);
 
