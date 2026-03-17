@@ -2,10 +2,10 @@ import React from "react";
 import { Button, Col, Container, Form, FormCheck, Row } from "react-bootstrap";
 
 import { format, parse } from "date-fns";
-import { DisciplineGridSelector } from "../../shared/discipline/DisciplineGridSelector";
-import { SexControl } from "../../shared/SexControl";
+import { DisciplineGridSelector } from "../../components/shared/discipline/DisciplineGridSelector";
+import { SexControl } from "../../components/shared/SexControl";
 
-import { activateTeacher, addTeacher, deactivateTeacher, getTeacher, saveTeacher } from "../../../services/apiTeacherService";
+import { activateTeacher, addTeacher, deactivateTeacher, getTeacher, saveTeacher } from "../../services/apiTeacherService";
 
 import { ru } from "date-fns/locale";
 import DatePicker from "react-datepicker";

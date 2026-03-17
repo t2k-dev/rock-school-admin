@@ -1,9 +1,9 @@
 import React from "react";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { getTeachers } from "../../../services/apiTeacherService";
-import { Loading } from "../../shared/Loading";
-import { NoRecords } from "../../shared/NoRecords";
+import { Loading } from "../../components/shared/Loading";
+import { NoRecords } from "../../components/shared/NoRecords";
+import { getTeachers } from "../../services/apiTeacherService";
 import TeacherCard from "./TeacherCard";
 
 class Teachers extends React.Component {

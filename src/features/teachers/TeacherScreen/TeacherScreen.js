@@ -4,11 +4,11 @@ import { getTeacherScreenDetails } from "../../../services/apiTeacherService";
 
 import SubscriptionStatus from "../../../constants/SubscriptionStatus";
 
+import { CalendarWeek } from "../../../components/shared/calendar/CalendarWeek";
+import { CalendarIcon, EditIcon } from "../../../components/shared/icons";
+import { Loading } from "../../../components/shared/Loading";
+import { AttendanceModal } from "../../../components/shared/modals/AttendanceModal/AttendanceModal";
 import SubscriptionType from "../../../constants/SubscriptionType";
-import { CalendarWeek } from "../../shared/calendar/CalendarWeek";
-import { CalendarIcon, EditIcon } from "../../shared/icons";
-import { Loading } from "../../shared/Loading";
-import { AttendanceModal } from "../../shared/modals/AttendanceModal/AttendanceModal";
 import TeacherScreenCard from "./TeacherScreenCard";
 import { TeacherSubscriptions } from "./TeacherSubscriptions";
 

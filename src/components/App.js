@@ -1,9 +1,9 @@
 import { BrowserRouter, Route } from "react-router-dom";
 
+import Teachers from "../features/teachers/Teachers";
 import { BranchScreen } from "./features/branches/BranchScreen";
 import HomeScreen from "./features/home/HomeScreen";
 import Students from "./features/students/Students";
-import Teachers from "./features/teachers/Teachers";
 
 import { BandForm } from "./features/bands/BandForm";
 import { BandScheduleForm } from "./features/bands/BandScheduleForm";
@@ -22,9 +22,9 @@ import { WaitingScheduleForm } from "./features/students/WaitingScheduleForm";
 
 import { RentalSubscriptionForm } from "./features/subscriptions/RentalSubscriptionForm";
 
-import TeacherForm from "./features/teachers/TeacherForm";
-import TeacherPeriods from "./features/teachers/TeacherPeriods";
-import TeacherScreen from "./features/teachers/TeacherScreen";
+import TeacherForm from "../features/teachers/TeacherForm";
+import TeacherPeriods from "../features/teachers/TeacherPeriods";
+import TeacherScreen from "../features/teachers/TeacherScreen/TeacherScreen";
 
 import { RehearsalForm } from "./features/subscriptions/RehearsalForm";
 import { SubscriptionForm } from "./features/subscriptions/SubscriptionForm";

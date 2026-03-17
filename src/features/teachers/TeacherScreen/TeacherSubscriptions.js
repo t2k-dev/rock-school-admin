@@ -2,14 +2,14 @@ import { format } from "date-fns";
 import { Badge, Form, Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
+import { DisciplineIcon } from "../../../components/shared/discipline/DisciplineIcon";
+import { EditIcon } from "../../../components/shared/icons";
+import { NoRecords } from "../../../components/shared/NoRecords";
 import { getDisciplineName } from "../../../constants/disciplines";
 import MyDateFormat from "../../../constants/formats";
 import { getSubscriptionStatusColor, getSubscriptionStatusName } from "../../../constants/SubscriptionStatus";
 import { getTrialSubscriptionStatusName } from "../../../constants/SubscriptionTrialStatus";
 import SubscriptionType from "../../../constants/SubscriptionType";
-import { DisciplineIcon } from "../../shared/discipline/DisciplineIcon";
-import { EditIcon } from "../../shared/icons";
-import { NoRecords } from "../../shared/NoRecords";
 
 export function TeacherSubscriptions({
   subscriptions,
@@ -43,7 +43,11 @@ const renderSubscriptionInfo = (subscription) => {
         return (
           <>
             <DisciplineIcon disciplineId={subscription.disciplineId} />
-            <span style={{ marginLeft: "10px" }}>{getDisciplineName(subscription.disciplineId)}</span>
+            <span style={{ marginLeft: "10px" }}>
+              {getDisciplineName(subscription.disciplineId)}
+              {subscription.subscriptionType === SubscriptionType.GROUP_LESSON && " (гр.)"}
+
+            </span>
           </>
         );
       case SubscriptionType.REHEARSAL:

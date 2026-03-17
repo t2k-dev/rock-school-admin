@@ -3,13 +3,13 @@ import { ru } from "date-fns/locale";
 import { v4 as uuidv4 } from "uuid";
 
 import React from "react";
-import { Button, Col, Container, Form, InputGroup, Row, Stack } from "react-bootstrap";
+import { Button, Col, Container, Form, Row, Stack } from "react-bootstrap";
 
 import { Avatar } from "../../shared/Avatar";
-import { AvailableTeachersModal } from "../../shared/modals/AvailableTeachersModal";
 
 import { getDisciplineName } from "../../../constants/disciplines";
 import { rescheduleAttendance } from "../../../services/apiAttendanceService";
+import { getBusySlots } from "../../../services/apiBranchService";
 import { getNextAvailableSlot } from "../../../services/apiSubscriptionService";
 import { getWorkingPeriods } from "../../../services/apiTeacherService";
 import { getSlotDescription } from "../../shared/modals/attendanceHelper";
@@ -17,6 +17,8 @@ import { getSlotDescription } from "../../shared/modals/attendanceHelper";
 import AttendanceType from "../../../constants/AttendanceType";
 import { DisciplineIcon } from "../../shared/discipline/DisciplineIcon";
 import { CalendarIcon } from "../../shared/icons";
+import { SelectRoomSlot } from "./SelectRoomSlot";
+import { SelectTeacherSlot } from "./SelectTeacherSlot";
 
 export class AttendanceRescheduleForm extends React.Component {
   constructor(props) {
@@ -28,6 +30,8 @@ export class AttendanceRescheduleForm extends React.Component {
 
       availableTeachers: [],
       showAvailableTeacherModal: false,
+      rooms: [],
+      showAvailableSlotsModal: false,
       selectedSlotId: 0,
       selectedSlot: null,
 
@@ -63,6 +67,22 @@ export class AttendanceRescheduleForm extends React.Component {
 
   handleCloseAvailableTeachersModal = () => {
     this.setState({ showAvailableTeacherModal: false });
+  };
+
+  showAvailableRoomSlotsModal = async (e) => {
+    e.preventDefault();
+
+    const branchId = 1; // Default branch ID
+    const responseData = await getBusySlots(branchId);
+
+    this.setState({
+      rooms: responseData,
+      showAvailableSlotsModal: true,
+    });
+  };
+
+  handleCloseRoomSlotsModal = () => {
+    this.setState({ showAvailableSlotsModal: false });
   };
 
   handleSlotsChange = (availableSlots) => {
@@ -109,34 +129,6 @@ export class AttendanceRescheduleForm extends React.Component {
     this.setState({ [id]: value });
   };
 
-  renderTeacherSection = () => {
-    const { teacher } = this.state.attendance;
-    
-    return (
-      <div className="mb-4">
-          <InputGroup className="mb-3 d-flex">
-            <Form.Label className="flex-grow-1">{teacher.firstName} {teacher.lastName}</Form.Label>
-            <Button 
-              variant="outline-secondary" 
-              onClick={this.showAvailableSlotsModal}
-            >
-              Доступные окна...
-            </Button>
-            <Button
-              title="Следующее по расписанию"
-              variant="outline-secondary"
-              type="null"
-              size="sm"
-              onClick={(e) => this.handleGetNextAvailableSlot(e)}
-              disabled={false}
-            >
-              {">>"}
-            </Button>
-          </InputGroup>
-      </div>
-    );
-  };
-
   renderHeader = () => {
     const { attendance } = this.state;
 
@@ -151,7 +143,7 @@ export class AttendanceRescheduleForm extends React.Component {
   }
 
   render() {
-    const { attendance, lastName, showAvailableTeacherModal, availableTeachers, selectedSlot, notificationDate, cancalationType } = this.state;
+    const { attendance, lastName, showAvailableTeacherModal, availableTeachers, showAvailableSlotsModal, rooms, selectedSlot, notificationDate, cancalationType } = this.state;
     if (!attendance) {
       return;
     }
@@ -172,7 +164,7 @@ console.log("attendance", attendance);
           <Col md="4">
             {this.renderHeader()}
             <Stack className="mb-3" gap={2} style={{ backgroundColor: "#e7e7e7", padding: "15px", borderRadius: "10px" }}>
-              <div><Avatar style={{ width: "20px", height: "20px", marginRight: "5px" }}></Avatar> {attendance.attendees[0].student.firstName} {attendance.attendees[0].student.lastName}</div>
+              <div><DisciplineIcon size="20" style={{marginRight: "5px"}} disciplineId={attendance.disciplineId} /> {getDisciplineName(attendance.disciplineId)}</div>
               <div>
                 <CalendarIcon />
                 <span style={{ fontSize: "14px" }}>
@@ -180,7 +172,12 @@ console.log("attendance", attendance);
                   {format(attendance.endDate, "HH:mm")}
                 </span>
               </div>
-              <div><DisciplineIcon size="20" style={{marginRight: "5px"}} disciplineId={attendance.disciplineId} /> {getDisciplineName(attendance.disciplineId)}</div>
+              <div><Avatar style={{ width: "20px", height: "20px", marginRight: "5px" }}></Avatar> {attendance.attendees[0].student.firstName} {attendance.attendees[0].student.lastName}</div>
+              {teacher && 
+              <div className="mb-3">
+                  Преподаватель: {teacher.firstName} {teacher.lastName}
+              </div>
+              }
             </Stack>
             <hr></hr>
 
@@ -202,20 +199,35 @@ console.log("attendance", attendance);
                 <Form.Label>Причина</Form.Label>
                 <Form.Control onChange={this.handleChange} value={lastName} placeholder="введите..." autoComplete="off" />
               </Form.Group>
-              {teacher !== null ? 
-              <>
-                <div className="mb-3"><b>Преподаватель</b></div>
-                <Form.Group className="mb-3" >
-                  {this.renderTeacherSection()}
+              {teacher !== null ? (
+                <>
+                  <Form.Group className="mb-4 mt-4">
+                    <SelectTeacherSlot
+                      teacher={teacher}
+                      availableTeachers={availableTeachers}
+                      showAvailableTeacherModal={showAvailableTeacherModal}
+                      selectedSlot={selectedSlot}
+                      attendance={attendance}
+                      onShowAvailableSlotsModal={this.showAvailableSlotsModal}
+                      onCloseModal={this.handleCloseAvailableTeachersModal}
+                      onSlotsChange={this.handleSlotsChange}
+                      onGetNextAvailableSlot={this.handleGetNextAvailableSlot}
+                    />
+                  </Form.Group>
+                </>
+              ) : (
+                <Form.Group className="mb-4 mt-4">
+                  <SelectRoomSlot
+                    rooms={rooms}
+                    showAvailableSlotsModal={showAvailableSlotsModal}
+                    attendance={attendance}
+                    onShowAvailableSlotsModal={this.showAvailableRoomSlotsModal}
+                    onCloseModal={this.handleCloseRoomSlotsModal}
+                    onSlotsChange={this.handleSlotsChange}
+                  />
                 </Form.Group>
-              </>
-              :<div className="text-center mt-5 mb-5">
-                <Button variant="secondary" size="lg">
-                Доступные окна
-                </Button>
-                </div>
-              }
-              
+              )}
+
               <Form.Group className="mb-3" controlId="comment">
                 <div className="mb-3">
                   <b>Новая дата урока</b>
@@ -223,14 +235,6 @@ console.log("attendance", attendance);
                 {availableSlot}
               </Form.Group>
 
-              <AvailableTeachersModal
-                show={showAvailableTeacherModal}
-                singleSelection={true}
-                teachers={availableTeachers}
-                onSlotsChange={this.handleSlotsChange}
-                onClose={this.handleCloseAvailableTeachersModal}
-                slotDuration={Math.floor((new Date(attendance?.endDate) - new Date(attendance?.startDate)) / 60000)}
-              />
               <hr></hr>
               <div className="text-center">
                 <Button variant="success" type="null" onClick={this.handleSave}>

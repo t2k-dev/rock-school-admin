@@ -1,10 +1,10 @@
 import React from "react";
 import { Card, Col, Container, Row } from "react-bootstrap";
 import { Doughnut } from "react-chartjs-2";
-import { Avatar } from "../../shared/Avatar";
-import { DisciplineIcon } from "../../shared/discipline/DisciplineIcon";
-import { EditIcon } from "../../shared/icons";
-import BandList from "../students/BandList";
+import BandList from "../../../components/features/students/BandList";
+import { Avatar } from "../../../components/shared/Avatar";
+import { DisciplineIcon } from "../../../components/shared/discipline/DisciplineIcon";
+import { EditIcon } from "../../../components/shared/icons";
 
 import {
   ArcElement,
