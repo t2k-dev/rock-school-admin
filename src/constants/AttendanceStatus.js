@@ -56,9 +56,11 @@ export function isMissedStatus(statusId) {
 }
 
 export function isCanceledStatus(statusId) {
-  return statusId === AttendanceStatus.CANCELED_BY_STUDENT ||
-         statusId === AttendanceStatus.CANCELED_BY_TEACHER ||
-         statusId === AttendanceStatus.CANCELED_BY_ADMIN;
+  return (
+    statusId === AttendanceStatus.CANCELED_BY_STUDENT ||
+    statusId === AttendanceStatus.CANCELED_BY_TEACHER ||
+    statusId === AttendanceStatus.CANCELED_BY_ADMIN
+  );
 }
 
 export function isCanceledByStudent(statusId) {
@@ -74,9 +76,11 @@ export function isCanceledByAdmin(statusId) {
 }
 
 export function isCompleted(statusId) {
-  return statusId === AttendanceStatus.ATTENDED || 
-         statusId === AttendanceStatus.MISSED ||
-         isCanceledStatus(statusId);
+  return (
+    statusId === AttendanceStatus.ATTENDED ||
+    statusId === AttendanceStatus.MISSED ||
+    isCanceledStatus(statusId)
+  );
 }
 
 export function isPending(statusId) {
@@ -87,7 +91,7 @@ export function isPending(statusId) {
 export function getAllAttendanceStatuses() {
   return Object.entries(AttendanceStatusNames).map(([id, name]) => ({
     id: parseInt(id),
-    name
+    name,
   }));
 }
 

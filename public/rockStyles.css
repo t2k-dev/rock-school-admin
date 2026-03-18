@@ -1,13 +1,17 @@
 body {
-    font-family: 'Segoe UI', sans-serif;
-    font-size: 16px;
-  }
-
-h1, h2, h3, h4, h5 {
-  font-family: 'Segoe UI', sans-serif;
+  font-family: "Segoe UI", sans-serif;
+  font-size: 16px;
 }
 
-.avatar{
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-family: "Segoe UI", sans-serif;
+}
+
+.avatar {
   width: 120px;
   height: 120px;
   border: 1px solid black;
@@ -15,40 +19,39 @@ h1, h2, h3, h4, h5 {
   object-fit: cover;
 }
 
-.rbc-header{
+.rbc-header {
   font-weight: normal !important;
 }
-.rbc-toolbar-label{
+.rbc-toolbar-label {
   font-weight: bold;
 }
-.rbc-event-label{
+.rbc-event-label {
   display: none !important;
 }
-.rbc-toolbar button.rbc-active{
+.rbc-toolbar button.rbc-active {
   box-shadow: none !important;
 }
-.rbc-background-event{
+.rbc-background-event {
   background-color: #87ce96 !important;
-  ;
 }
-.rbc-allday-cell{
+.rbc-allday-cell {
   display: none;
 }
-.rbc-btn-group{
+.rbc-btn-group {
   font-size: 14px;
 }
-.nav-link{
-  color: #8c8c8c !important
+.nav-link {
+  color: #8c8c8c !important;
 }
 
-.nav-link.active{
-  color: #000000 !important
+.nav-link.active {
+  color: #000000 !important;
 }
 
-.date-column{
+.date-column {
   width: 120px;
 }
 
-.discipline-column{
+.discipline-column {
   width: 240px;
 }

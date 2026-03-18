@@ -1,150 +1,165 @@
-import { useState } from 'react';
-import { Alert, Button, Card, Col, Container, Form, Row } from 'react-bootstrap';
-import { useHistory, useLocation } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
-import { login as loginAPI } from '../../services/apiAuthService';
+import { useState } from "react";
+import { useHistory, useLocation } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
+import { login as loginAPI } from "../../services/apiAuthService";
+import { LogIn } from "lucide-react";
+import { Colors } from "../../constants/Colors";
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const Login = () => {
-  const [formData, setFormData] = useState({
-    login: '',
-    password: ''
-  });
+  const [formData, setFormData] = useState({ login: "", password: "" });
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
+  const [triedSubmit, setTriedSubmit] = useState(false);
+
   const history = useHistory();
   const location = useLocation();
   const { login } = useAuth();
-
-  // Get the page user was trying to visit before being redirected to login
-  const from = location.state?.from?.pathname || '/';
+  const from = location.state?.from?.pathname || "/";
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prevState => ({
-      ...prevState,
-      [name]: value
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
-    setIsLoading(true);
+    setError("");
+    setTriedSubmit(true);
 
-    // Basic validation
     if (!formData.login.trim() || !formData.password.trim()) {
-      setError('Пожалуйста, заполните все поля');
-      setIsLoading(false);
+      setError("Пожалуйста, заполните все поля");
       return;
     }
 
+    if (!EMAIL_REGEX.test(formData.login)) {
+      setError("Введите корректный формат email");
+      return;
+    }
+
+    setIsLoading(true);
     try {
       const response = await loginAPI(formData);
-      
-      // Use the auth context to handle login
       login(response.token, response.user || { login: formData.login });
-
-      // Redirect to the page user was trying to visit or home
       history.replace(from);
-    } catch (error) {
-      console.error('Login failed:', error);
-      
-      // Handle different error responses
-      if (error.response) {
-        switch (error.response.status) {
-          case 401:
-            setError('Неверный логин или пароль');
-            break;
-          case 403:
-            setError('Доступ запрещен');
-            break;
-          case 500:
-            setError('Ошибка сервера. Попробуйте позже');
-            break;
-          default:
-            setError('Произошла ошибка при входе в систему');
-        }
-      } else {
-        setError('Ошибка сети. Проверьте подключение к интернету');
-      }
+    } catch (err) {
+      setError("Неверный логин или пароль");
     } finally {
       setIsLoading(false);
     }
   };
 
+  const isInvalid = (field) => {
+    if (!triedSubmit) return false;
+    if (!formData[field].trim()) return true;
+    if (field === "login" && !EMAIL_REGEX.test(formData.login)) return true;
+    return false;
+  };
+
   return (
-    <Container fluid className="mt-4 d-flex align-items-center justify-content-center">
-      <Row className="w-100 justify-content-center">
-        <Col xs={12} sm={8} md={6} lg={4} xl={3}>
-          <Card className="shadow-sm">
-            <Card.Body className="p-4">
-              <div className="text-center mb-4">
-                <h2 className="h4 text-dark mb-1">Вход в систему</h2>
-              </div>
+    <div
+      className="min-h-screen w-full flex justify-center items-center fixed font-geologica"
+      style={{ backgroundColor: Colors.mainBg }}
+    >
+      <form
+        onSubmit={handleSubmit}
+        className="p-[60px] w-full max-w-[500px] rounded-[24px] flex flex-col gap-8"
+        style={{ backgroundColor: Colors.cardBg }}
+      >
+        <h2
+          className="text-[36px] font-semibold m-0"
+          style={{ color: Colors.textMain }}
+        >
+          Вход в систему
+        </h2>
 
-              {error && (
-                <Alert variant="danger" className="mb-3">
-                  {error}
-                </Alert>
-              )}
+        <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-3">
+            <label
+              className="text-[16px] opacity-60"
+              style={{ color: Colors.textMain }}
+            >
+              Логин
+            </label>
+            <input
+              name="login"
+              type="text"
+              placeholder="Введите логин..."
+              value={formData.login}
+              onChange={handleChange}
+              disabled={isLoading}
+              className={`p-4 rounded-[12px] border-none outline-none text-[16px] transition-all
+                ${isInvalid("login") ? "ring-1 ring-red-500" : "focus:ring-1"}`}
+              style={{
+                backgroundColor: "#2e323e",
+                color: Colors.textMain,
+                "--tw-ring-color": Colors.accent,
+              }}
+            />
+          </div>
 
-              <Form onSubmit={handleSubmit}>
-                <Form.Group className="mb-3">
-                  <Form.Label>Логин</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="login"
-                    value={formData.login}
-                    onChange={handleChange}
-                    placeholder="Введите логин"
-                    disabled={isLoading}
-                    autoComplete="username"
-                    required
-                  />
-                </Form.Group>
+          <div className="flex flex-col gap-3">
+            <label
+              className="text-[16px] opacity-60"
+              style={{ color: Colors.textMain }}
+            >
+              Пароль
+            </label>
+            <input
+              name="password"
+              type="password"
+              placeholder="Введите пароль..."
+              value={formData.password}
+              onChange={handleChange}
+              disabled={isLoading}
+              className={`p-4 rounded-[12px] border-none outline-none text-[16px] transition-all
+                ${isInvalid("password") ? "ring-1 ring-red-500" : "focus:ring-1"}`}
+              style={{
+                backgroundColor: "#2e323e",
+                color: Colors.textMain,
+                "--tw-ring-color": Colors.accent,
+              }}
+            />
+          </div>
+        </div>
 
-                <Form.Group className="mb-4">
-                  <Form.Label>Пароль</Form.Label>
-                  <Form.Control
-                    type="password"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    placeholder="Введите пароль"
-                    disabled={isLoading}
-                    autoComplete="current-password"
-                    required
-                  />
-                </Form.Group>
+        {error && <p className="text-red-400 text-[14px] m-0 -mt-4">{error}</p>}
 
-                <Button
-                  type="submit"
-                  variant="primary"
-                  size="lg"
-                  className="w-100"
-                  disabled={isLoading}
-                >
-                  {isLoading ? (
-                    <>
-                      <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                      Вход...
-                    </>
-                  ) : (
-                    'Войти'
-                  )}
-                </Button>
-              </Form>
+        <button
+          type="submit"
+          disabled={isLoading}
+          className="flex justify-center items-center gap-3 px-6 py-3.5 rounded-[14px] text-[16px] font-semibold border-none transition-all duration-200 cursor-pointer hover:bg-[var(--hover-color)] hover:text-[var(--hover-text)]"
+          style={{
+            backgroundColor: `${Colors.accent}33`,
+            color: Colors.textMuted,
+            "--hover-color": `${Colors.accent}`,
+            "--hover-text": `${Colors.textMain}`,
+          }}
+        >
+          {isLoading ? (
+            <span className="animate-pulse">Загрузка...</span>
+          ) : (
+            <div className="flex gap-2 items-center">
+              <LogIn size="24px" style={{ color: Colors.textMuted }} />
+              <span>Войти</span>
+            </div>
+          )}
+        </button>
 
-              <div className="text-center mt-3">
-                <small className="text-muted">
-                  Забыли пароль? Обратитесь к администратору
-                </small>
-              </div>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
-    </Container>
+        <div className="flex justify-center gap-1 text-[13px]">
+          <span
+            style={{ color: Colors.accent }}
+            className="cursor-pointer hover:underline"
+          >
+            Забыли пароль?
+          </span>
+          <span style={{ color: Colors.textMuted }}>
+            Обратитесь к администратору
+          </span>
+        </div>
+      </form>
+    </div>
   );
 };
 
