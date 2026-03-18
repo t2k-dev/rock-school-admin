@@ -2,8 +2,8 @@ import React from "react";
 import { Button, Col, Container, Form, FormCheck, Row } from "react-bootstrap";
 
 import { format, parse } from "date-fns";
-import { DisciplineGridSelector } from "../../components/shared/discipline/DisciplineGridSelector";
-import { SexControl } from "../../components/shared/SexControl";
+import { SexControl } from "../../components/SexControl";
+import { DisciplineGridSelector } from "../disciplines/DisciplineGridSelector";
 
 import { activateTeacher, addTeacher, deactivateTeacher, getTeacher, saveTeacher } from "../../services/apiTeacherService";
 

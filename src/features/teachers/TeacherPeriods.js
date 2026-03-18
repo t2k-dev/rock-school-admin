@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, Col, Container, Row } from "react-bootstrap";
-import { ScheduleEditor } from "../../components/shared/schedule/ScheduleEditor";
+import { ScheduleEditor } from "../../components/schedule/ScheduleEditor";
 import { getTeacher, saveWorkingPeriods } from "../../services/apiTeacherService";
 
 export class TeacherPeriods extends React.Component {

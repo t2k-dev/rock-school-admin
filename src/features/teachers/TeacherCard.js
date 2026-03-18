@@ -1,10 +1,10 @@
 import React from "react";
 import { Card, Col, Row } from 'react-bootstrap';
 import { Link } from "react-router-dom";
-import { Avatar } from "../../components/shared/Avatar";
-import { DisciplineIcon } from "../../components/shared/discipline/DisciplineIcon";
-import { HoverCard } from "../../components/shared/ui";
+import { Avatar } from "../../components/Avatar";
+import { HoverCard } from "../../components/ui";
 import { getDisciplineName } from "../../constants/disciplines";
+import { DisciplineIcon } from "../disciplines/DisciplineIcon";
 
 class TeacherCard extends React.Component{
 

@@ -3,16 +3,16 @@ import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { Loading } from "../../components/Loading";
 import { NoRecords } from "../../components/NoRecords";
-import { getTeachers } from "../../services/apiTeacherService";
-import TeacherCard from "./TeacherCard";
+import { getBands } from "../../services/apiBandService";
+import BandCard from "./BandCard";
 
-class Teachers extends React.Component {
+class Bands extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       isLoading: false,
       searchText: "",
-      teachers: [],
+      bands: [],
     };
 
     this.handleSearchChange = this.handleSearchChange.bind(this);
@@ -28,43 +28,37 @@ class Teachers extends React.Component {
   
   async onFormLoad() {
     this.setState({ isLoading: true });
-    const returnedTeachers = await getTeachers();
-    this.setState({ teachers: returnedTeachers, isLoading: false });
+    const returnedBands = await getBands();
+    this.setState({ bands: returnedBands, isLoading: false });
   }
 
-  renderTeachers(teachers) {
+  renderBands(bands) {
     const { searchText } = this.state;
     
-    const activeTeachers = teachers?.
-      filter((s) => s.firstName.includes(searchText)).
-      sort((a, b) => {
-        if (a.firstName < b.firstName) return -1;
-        if (a.firstName > b.firstName) return 1;
-        
-        return 0;
-      });
+    const activeBands = bands?.
+      filter((b) => b.name.toLowerCase().includes(searchText.toLowerCase())).
+      sort((a, b) => a.name.localeCompare(b.name));
 
-    if (!activeTeachers || activeTeachers.length === 0) {
+    if (!activeBands || activeBands.length === 0) {
       return <NoRecords />;
     } 
 
     return(
       <>
-      {activeTeachers.map((item, index) => <TeacherCard key={index} item={item} />)}
+      {activeBands.map((item, index) => <BandCard key={index} item={item} />)}
       </>
     );
   }
 
   render() {
-    const { searchText, teachers, isLoading } = this.state;
+    const { searchText, bands, isLoading } = this.state;
 
     if (isLoading) {
       return <Loading />;
     }
-    
-    const activeTeachers = teachers?.filter((t) => t.isActive);
 
-    const inactiveTeachers = teachers?.filter((t) => !t.isActive);
+    const activeBands = bands?.filter((b) => b.isActive);
+    const inactiveBands = bands?.filter((b) => !b.isActive);
 
     return (
       <Container style={{ marginTop: "40px" }}>
@@ -73,20 +67,20 @@ class Teachers extends React.Component {
           <Col md="8">
             <div className="d-flex mb-5">
               <div className="flex-grow-1">
-                <div style={{ fontWeight: "bold", fontSize: "28px" }}>Преподаватели</div>
+                <div style={{ fontWeight: "bold", fontSize: "28px" }}>Группы</div>
               </div>
               <div>
-                <Button as={Link} to="/admin/registerTeacher" variant="outline-success">
-                  + Новый преподаватель
+                <Button as={Link} to="/admin/registerBand" variant="outline-success">
+                  + Новая группа
                 </Button>
               </div>
             </div>
             <div>
               <Form.Control className="mb-4" placeholder="Поиск..." value={searchText} onChange={(e) => this.handleSearchChange(e)}></Form.Control>
             </div>
-            <div>{this.renderTeachers(activeTeachers)}</div>
-            <h4 className="mb-3"> Неактивные </h4>
-            <div>{this.renderTeachers(inactiveTeachers)}</div>
+            <div>{this.renderBands(activeBands)}</div>
+            <h4 className="mb-3">Неактивные</h4>
+            <div>{this.renderBands(inactiveBands)}</div>
           </Col>
         </Row>
       </Container>
@@ -94,4 +88,4 @@ class Teachers extends React.Component {
   }
 }
 
-export default Teachers;
+export default Bands;

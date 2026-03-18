@@ -2,14 +2,14 @@ import { format } from "date-fns";
 import { Badge, Form, Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
-import { DisciplineIcon } from "../../../components/shared/discipline/DisciplineIcon";
-import { EditIcon } from "../../../components/shared/icons";
-import { NoRecords } from "../../../components/shared/NoRecords";
+import { EditIcon } from "../../../components/icons";
+import { NoRecords } from "../../../components/NoRecords";
 import { getDisciplineName } from "../../../constants/disciplines";
 import MyDateFormat from "../../../constants/formats";
 import { getSubscriptionStatusColor, getSubscriptionStatusName } from "../../../constants/SubscriptionStatus";
-import { getTrialSubscriptionStatusName } from "../../../constants/SubscriptionTrialStatus";
 import SubscriptionType from "../../../constants/SubscriptionType";
+import { getTrialDecisionColor, getTrialDecisionName } from "../../../constants/TrialDecision";
+import { DisciplineIcon } from "../../disciplines/DisciplineIcon";
 
 export function TeacherSubscriptions({
   subscriptions,
@@ -28,7 +28,7 @@ const renderHeaders = (subscription) => {
             <th className="date-column">Начало</th>
             <th>Ученик</th>
             <th className="discipline-column">Направление</th>
-            <th>{subscription.subscriptionType === SubscriptionType.TRIAL_LESSON ? "Результат пробного" : "Осталось занятий"}</th>
+            <th>{subscription.subscriptionType === SubscriptionType.TRIAL_LESSON ? "Решение" : "Осталось занятий"}</th>
             <th>Статус</th>
             <th></th>
         </tr>
@@ -91,7 +91,9 @@ const renderSubscriptionInfo = (subscription) => {
               <td>{renderSubscriptionInfo(subscription)}</td>
               <td>
                 {subscription.subscriptionType === SubscriptionType.TRIAL_LESSON
-                  ? getTrialSubscriptionStatusName(subscription.trialDecision)
+                  ? <Badge bg={getTrialDecisionColor(subscription.trialDecision)}>
+                      {getTrialDecisionName(subscription.trialDecision)}
+                    </Badge>
                   : `${subscription.attendancesLeft} из ${subscription.attendanceCount}`}
               </td>
               <td>

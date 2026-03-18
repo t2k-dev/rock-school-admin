@@ -62,11 +62,6 @@ export const updateSubscriptionSchedules = async (id, data) =>{
   return result;
 }
 
-export const rescheduleAttendance = async (data) =>{
-  const result = await apiClient.post(`/${CONTROLLER}/rescheduleAttendance`, data);
-  return result;
-}
-
 export const pay = async (id, data) =>{
   const result = await apiClient.post(`/${CONTROLLER}/${id}/pay`, data);
   return result;

@@ -17,7 +17,7 @@ const SubscriptionStatusNames = {
 // Status colors for UI (optional)
 const SubscriptionStatusColors = {
   [SubscriptionStatus.DRAFT]: "warning",
-  [SubscriptionStatus.ACTIVE]: "success",
+  [SubscriptionStatus.ACTIVE]: "primary",
   [SubscriptionStatus.COMPLETED]: "secondary", 
   [SubscriptionStatus.CANCELED]: "danger",
 };
@@ -28,23 +28,10 @@ export function getSubscriptionStatusName(statusId) {
 }
 
 export function getSubscriptionStatusColor(statusId) {
+  if (statusId === null) {
+    return "secondary";
+  }
   return SubscriptionStatusColors[statusId] || "secondary";
-}
-
-export function isActiveStatus(statusId) {
-  return statusId === SubscriptionStatus.ACTIVE;
-}
-
-export function isDraftStatus(statusId) {
-  return statusId === SubscriptionStatus.DRAFT;
-}
-
-export function isCompletedStatus(statusId) {
-  return statusId === SubscriptionStatus.COMPLETED;
-}
-
-export function isCanceledStatus(statusId) {
-  return statusId === SubscriptionStatus.CANCELED;
 }
 
 // Get all statuses as array (useful for dropdowns)
