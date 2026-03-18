@@ -6,20 +6,20 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import AttendanceType from "../../constants/AttendanceType";
 import { DisciplineIcon } from "../../features/disciplines/DisciplineIcon";
 import { applyCalendarStyle } from "../../utils/calendar";
+import styles from "./CalendarWeek.module.css";
 
 moment.locale("ru");
 const localizer = momentLocalizer(moment);
 
 const EventComponent = ({ event }) => {
   return (
-    <div style={{ display: "flex", alignItems: "center", marginTop:"5px", marginLeft:"5px" }}>
-      {event.disciplineId && 
-        <DisciplineIcon 
-          disciplineId={event.disciplineId} 
+    <div className={styles.event}>
+      {event.disciplineId &&
+        <DisciplineIcon
+          disciplineId={event.disciplineId}
           color={event.attendanceType === AttendanceType.TRIAL_LESSON ? "black" : "white"}
         />}
-      <span style={{marginLeft:"10px"}}>{event.title}</span> 
-      
+      <span className={styles.eventTitle}>{event.title}</span>
     </div>
   );
 };
@@ -72,7 +72,7 @@ export class CalendarWeek extends React.Component {
     };
 
     return (
-      <div style={{ height: 550 }}>
+      <div className={styles.calendarWeek}>
         <Calendar
           events={this.state.events}
           backgroundEvents={this.state.backgroundEvents}
@@ -92,7 +92,7 @@ export class CalendarWeek extends React.Component {
           onSelectSlot={handleSelectSlot}
           onSelectEvent={this.props.onSelectEvent}
           eventPropGetter={(event) => applyCalendarStyle(event)}
-          components={{event: EventComponent}}
+          components={{ event: EventComponent }}
         />
       </div>
     );

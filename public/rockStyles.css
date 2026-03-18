@@ -1,6 +1,7 @@
 body {
   font-family: "Segoe UI", sans-serif;
   font-size: 16px;
+  color: #e1e6f5;
 }
 
 h1,
@@ -19,8 +20,24 @@ h5 {
   object-fit: cover;
 }
 
+/*Calendar*/
+.rbc-calendar {
+    
+}
+
+.rbc-today{
+  background-color: #22272e !important
+}
+
 .rbc-header {
   font-weight: normal !important;
+}
+
+.rbc-time-header-gutter {
+  background-color: inherit !important;
+}
+.rbc-time-view-resources{
+  background-color: inherit !important;
 }
 .rbc-toolbar-label {
   font-weight: bold;

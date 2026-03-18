@@ -128,7 +128,7 @@ const PaymentModal = ({
             Цена: {toMoneyString(subscription.finalPrice)}
           </div>
           <div>
-            {subscription.amountOutstanding} a
+            {subscription.amountOutstanding}
           </div>
 
         </Stack>

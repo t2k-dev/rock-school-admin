@@ -46,11 +46,15 @@ export const SubscriptionCard = ({
               {teacherFullName}
             </Link>
           </Col>
-          <Col md="2">
+          <Col md="1">
             <div className="text-muted small">Решение</div>
             <Badge bg ={getTrialDecisionColor(subscription.trialDecision)}>
               {getTrialDecisionName(subscription.trialDecision)}
             </Badge>
+          </Col>
+          <Col md="1">
+            <div className="text-muted small">Причина</div>
+            {subscription.statusReason}
           </Col>
           <Col md="1">
             <div className="d-flex justify-content-start">

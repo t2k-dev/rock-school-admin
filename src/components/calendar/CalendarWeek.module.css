@@ -1,0 +1,45 @@
+.calendarWeek {
+  height: 550px;
+}
+
+.event {
+  display: flex;
+  align-items: center;
+  margin-top: 5px;
+  margin-left: 5px;
+}
+
+.eventTitle {
+  margin-left: 10px;
+}
+
+.calendarWeek :global(.rbc-calendar) {
+  background-color: #22272e;
+}
+
+.calendarWeek :global(.rbc-toolbar button) {
+  border-radius: 6px;
+}
+
+.calendarWeek :global(.rbc-event) {
+  border: none;
+  border-radius: 8px;
+}
+
+.calendarWeek :global(.rbc-time-view) {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.calendarWeek :global(.rbc-today) {
+
+  background-color: #22272e;
+}
+
+.calendarWeek :global(.rbc-time-view) {
+  border-radius: 8px;
+}
+
+.rbc-calendar {
+    background-color: #22272e !important
+}

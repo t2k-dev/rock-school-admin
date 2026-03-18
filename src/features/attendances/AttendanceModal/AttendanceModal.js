@@ -18,6 +18,9 @@ export class AttendanceModal extends React.Component {
 
       status: 0,
       comment: "",
+      statusReason: "",
+      showDeclineConfirmation: false,
+      isSubmittingDecline: false,
       attendance: null,
       attendees: [],
     };
@@ -38,18 +41,40 @@ export class AttendanceModal extends React.Component {
         attendance: attendance,
         status: attendance.status,
         comment: attendance.comment || "",
+        statusReason: "",
+        showDeclineConfirmation: false,
+        isSubmittingDecline: false,
       });
     }
   }
 
   handleClose() {
-    this.setState({ show: false, attendance: null, attendees: [], comment: "" });
+    this.setState({
+      show: false,
+      attendance: null,
+      attendees: [],
+      comment: "",
+      statusReason: "",
+      showDeclineConfirmation: false,
+      isSubmittingDecline: false,
+    });
+
+    if (this.props.handleClose) {
+      this.props.handleClose();
+    }
   }
 
   handleChange = (e) => {
     const { value } = e.target;
     this.setState({ 
       comment: value
+    });
+  };
+
+  handleStatusReasonChange = (e) => {
+    const { value } = e.target;
+    this.setState({
+      statusReason: value
     });
   };
 
@@ -64,18 +89,46 @@ export class AttendanceModal extends React.Component {
   handleAcceptTrial = async () => {
     try {
       await acceptTrial(this.props.attendance.attendanceId, {});
-      this.props.handleClose();
+      this.handleClose();
     } catch (error) {
       console.error('Error accepting trial:', error);
     }
   };
 
-  handleDeclineTrial = async () => {
+  handleDeclineTrial = () => {
+    this.setState({
+      showDeclineConfirmation: true,
+      statusReason: "",
+    });
+  };
+
+  handleCancelDeclineTrial = () => {
+    this.setState({
+      showDeclineConfirmation: false,
+      statusReason: "",
+    });
+  };
+
+  handleConfirmCancelation = async () => {
+    const statusReason = this.state.statusReason.trim();
+
+    if (!statusReason) {
+      return;
+    }
+
     try {
-      await declineTrial(this.props.attendance.attendanceId, {});
-      this.props.handleClose();
+      this.setState({ isSubmittingDecline: true });
+
+      await declineTrial(this.props.attendance.attendanceId, {
+        subscriptionId:this.props.attendance.attendees[0].subscriptionId,
+        statusReason,
+      });
+      
+      this.handleClose();
     } catch (error) {
       console.error('Error declining trial:', error);
+    } finally {
+      this.setState({ isSubmittingDecline: false });
     }
   };
 
@@ -94,10 +147,10 @@ export class AttendanceModal extends React.Component {
     }
 
     const { status, attendanceType, isCompleted } = this.props.attendance;
-    const { comment } = this.state;
+    const { comment, statusReason, showDeclineConfirmation, isSubmittingDecline } = this.state;
 
     return (
-        <Modal show={this.props.show} onHide={this.props.handleClose} size="md" backdrop="static">
+        <Modal show={this.props.show} onHide={this.handleClose} size="md" backdrop="static">
           <Modal.Header closeButton>
             <Modal.Title>
               <span style={{ marginRight: "10px" }}>{getAttendanceTypeName(attendanceType)}</span>
@@ -138,15 +191,53 @@ export class AttendanceModal extends React.Component {
                 <Form.Control as="textarea" onChange={this.handleChange} value={comment} placeholder="введите..." autoComplete="off"/>
               </Form.Group>
             </>)}
+
+            {showDeclineConfirmation && (
+              <>
+                <hr></hr>
+                <Form.Group className="mb-0 mt-3" controlId="statusReason">
+                  <Form.Label>Причина</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    rows={3}
+                    onChange={this.handleStatusReasonChange}
+                    value={statusReason}
+                    placeholder="Укажите причину отказа..."
+                    autoComplete="off"
+                  />
+                </Form.Group>
+              </>
+            )}
           </Modal.Body>
-          {attendanceType === AttendanceType.TRIAL_LESSON && !isCompleted &&(
+          {attendanceType === AttendanceType.TRIAL_LESSON && isCompleted &&(
             <Modal.Footer>
-              <Button variant="outline-secondary" onClick={this.handleDeclineTrial}>
-                Отклонил
-              </Button>
-              <Button variant="outline-success" onClick={this.handleAcceptTrial}>
-                Решил продолжить
-              </Button>
+              {showDeclineConfirmation ? (
+                <>
+                  <Button
+                    variant="outline-secondary"
+                    onClick={this.handleCancelDeclineTrial}
+                    disabled={isSubmittingDecline}
+                  >
+                    Назад
+                  </Button>
+                  <Button
+                    variant="danger"
+                    onClick={this.handleConfirmCancelation}
+                    disabled={!statusReason.trim() || isSubmittingDecline}
+                  >
+                    {isSubmittingDecline ? "Сохраняем..." : "Подтвердить отмену"}
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button variant="outline-secondary" onClick={this.handleDeclineTrial}>
+                    Отклонил
+                  </Button>
+                  <Button variant="outline-success" onClick={this.handleAcceptTrial}>
+                    Решил продолжить
+                  </Button>
+                </>
+              )}
             </Modal.Footer>
           )}
         </Modal>
