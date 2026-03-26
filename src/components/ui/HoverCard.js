@@ -1,6 +1,8 @@
 import PropTypes from "prop-types";
 import { Card } from "react-bootstrap";
 
+import styles from "./HoverCard.module.css";
+
 export const HoverCard = ({ 
   children, 
   onClick, 
@@ -40,7 +42,7 @@ export const HoverCard = ({
 
   return (
     <Card 
-      className={className}
+      className={`${styles.card} ${className}`}
       style={cardStyle}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}

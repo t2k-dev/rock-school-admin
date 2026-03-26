@@ -1,18 +1,18 @@
 // Shared Icons Exports
-export { BassGuitarIcon } from "./BassGuitarIcon";
-export { DrumsIcon } from "./DrumsIcon";
-export { ElectroGuitarIcon } from "./ElectroGuitarIcon";
-export { ExtremeVocalIcon } from "./ExtremeVocalIcon";
+export { BassGuitarIcon } from "./Disciplines/BassGuitarIcon";
+export { DrumsIcon } from "./Disciplines/DrumsIcon";
+export { ElectroGuitarIcon } from "./Disciplines/ElectroGuitarIcon";
+export { ExtremeVocalIcon } from "./Disciplines/ExtremeVocalIcon";
+export { GuitarIcon } from "./Disciplines/GuitarIcon";
+export { PianoIcon } from "./Disciplines/PianoIcon";
+export { UkuleleIcon } from "./Disciplines/UkuleleIcon";
+export { ViolaIcon } from "./Disciplines/ViolaIcon";
+export { VocalIcon } from "./Disciplines/VocalIcon";
 export { default as GroupIcon } from "./GroupIcon";
-export { GuitarIcon } from "./GuitarIcon";
 export { InstagramIcon } from "./InstagramIcon";
 export { LocationIcon } from "./LocationIcon";
-export { PianoIcon } from "./PianoIcon";
 export { RefreshIcon } from "./RefreshIcon";
 export { TimeIcon } from "./TimeIcon";
-export { UkuleleIcon } from "./UkuleleIcon";
-export { ViolaIcon } from "./ViolaIcon";
-export { VocalIcon } from "./VocalIcon";
 
 export { CancelIcon } from "./CancelIcon";
 export { CoinsIcon } from "./CoinsIcon";
@@ -24,3 +24,4 @@ export { CopyIcon } from "./CopyIcon";
 export { DoorIcon } from "./DoorIcon";
 export { EditIcon } from "./EditIcon";
 export { NextIcon } from "./NextIcon";
+

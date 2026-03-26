@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import { NoRecords } from "../../../components/NoRecords";
-import { SubscriptionCard } from "./SubscriptionCard";
+import { SubscriptionCard } from "./SubscriptionCard/SubscriptionCard";
 
 export const SubscriptionList = ({ 
   subscriptions, 

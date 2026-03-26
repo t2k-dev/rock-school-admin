@@ -1,6 +1,5 @@
-import React from "react";
 
-export function ElectroGuitarIcon({ onIconClick, color = "#000000", size = "24px" }) {
+export function ElectroGuitarIcon({ onIconClick, color = "currentColor", size = "24px" }) {
   return (
     <span title="Электро гитара">
       <svg

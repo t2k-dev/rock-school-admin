@@ -1,5 +1,5 @@
 
-export function ExtremeVocalIcon({ onIconClick, color = "#000000", size="24px" }) {
+export function ExtremeVocalIcon({ onIconClick, color = "currentColor", size="24px" }) {
   return (
     <span title="Экстрим вокал">
       <svg

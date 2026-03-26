@@ -1,5 +1,5 @@
 
-export function UkuleleIcon({ onIconClick, color = "#000000", size = "24px" }) {
+export function UkuleleIcon({ onIconClick, color = "currentColor", size = "24px" }) {
   return (
     <span title="Укулеле">
       <svg

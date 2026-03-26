@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export function DoorIcon({ onIconClick, color = "#000000", size = '18px' }) {
+export function DoorIcon({ onIconClick, color = "currentColor", size = '18px' }) {
   const [setColor] = useState("#000000"); // Default color
 
   const handleClick = (e) => {

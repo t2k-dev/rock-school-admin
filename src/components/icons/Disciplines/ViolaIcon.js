@@ -1,5 +1,5 @@
 
-export function ViolaIcon({ onIconClick, color = "#000000", size = "24px"}) {
+export function ViolaIcon({ onIconClick, color = "currentColor", size = "24px"}) {
   return (
 
 <span>

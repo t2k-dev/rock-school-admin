@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export function CountIcon({ onIconClick, color = "#000000" }) {
+export function CountIcon({ onIconClick, color = "currentColor" }) {
   const [setColor] = useState("#000000"); // Default color
 
   const handleClick = (e) => {

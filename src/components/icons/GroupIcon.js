@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-function GroupIcon({ onIconClick, size="30px", color="#000000" }) {
+function GroupIcon({ onIconClick, size="30px", color="currentColor" }) {
   const [setColor] = useState("#000000"); // Default color
 
   const handleClick = (e) => {

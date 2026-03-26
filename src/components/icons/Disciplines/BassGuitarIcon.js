@@ -1,6 +1,5 @@
-import React from "react";
 
-export function BassGuitarIcon({ onIconClick, color = "#000000", size = "24px"}) {
+export function BassGuitarIcon({ onIconClick, color = "currentColor", size = "24px"}) {
   return (
     <span title="Басс гитара">
       <svg

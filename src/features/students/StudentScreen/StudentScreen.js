@@ -294,14 +294,14 @@ class StudentScreen extends React.Component {
 
     return (
       <Container style={{ marginTop: "40px" }}>
-        <Row>
+        <Row className="mb-4" style={{ backgroundColor: "#22272e"}}>
           <StudentScreenCard item={student} bands={bands} history={this.props.history} />
         </Row>
         <Row className="mb-3">
-          <Tabs defaultActiveKey="products" id="uncontrolled-tab-example" className="mb-3">
-            <Tab eventKey="products" title="Уроки">
+          <Tabs defaultActiveKey="products" id="uncontrolled-tab-example">
+            <Tab eventKey="products" title="Уроки" style={{ backgroundColor: "#22272e" }}>
 
-                <div className="d-flex mb-2 mt-2">
+                <div className="d-flex mb-2 mt-3">
                   <div className="flex-grow-1"></div>
                   <div>
                     <Button

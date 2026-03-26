@@ -1,6 +1,5 @@
-import React from "react";
 
-export function VocalIcon({ onIconClick, color = "#000000", size = "24px" }) {
+export function VocalIcon({ onIconClick, color = "currentColor", size = "24px" }) {
   return (
     <span title="Вокал">
       <svg

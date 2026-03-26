@@ -3,15 +3,16 @@ import PropTypes from "prop-types";
 import { Badge, Card, Col, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
-import { CalendarIcon, CoinsIcon } from "../../../components/icons";
-import { NextIcon } from "../../../components/icons/NextIcon";
-import { HoverCard } from "../../../components/ui";
-import { getDisciplineName } from "../../../constants/disciplines";
-import MyDateFormat from "../../../constants/formats";
-import SubscriptionStatus, { getSubscriptionStatusColor, getSubscriptionStatusName } from "../../../constants/SubscriptionStatus";
-import SubscriptionType from "../../../constants/SubscriptionType";
-import TrialDecision, { getTrialDecisionColor, getTrialDecisionName } from "../../../constants/TrialDecision";
-import { DisciplineIcon } from "../../disciplines/DisciplineIcon";
+import { CalendarIcon, CoinsIcon } from "../../../../components/icons";
+import { NextIcon } from "../../../../components/icons/NextIcon";
+import { HoverCard } from "../../../../components/ui";
+import { getDisciplineName } from "../../../../constants/disciplines";
+import MyDateFormat from "../../../../constants/formats";
+import SubscriptionStatus, { getSubscriptionStatusColor, getSubscriptionStatusName } from "../../../../constants/SubscriptionStatus";
+import SubscriptionType from "../../../../constants/SubscriptionType";
+import TrialDecision, { getTrialDecisionColor, getTrialDecisionName } from "../../../../constants/TrialDecision";
+import { DisciplineIcon } from "../../../disciplines/DisciplineIcon";
+
 
 export const SubscriptionCard = ({ 
   subscription, 
@@ -189,11 +190,11 @@ export const SubscriptionCard = ({
       className="mb-3"
       onClick={() => onClick(subscription)}
     >
-      <Card.Body>
-        <Row className="align-items-center">
-          {renderColumns()}
-        </Row>
-      </Card.Body>
+        <Card.Body>
+          <Row className="align-items-center">
+            {renderColumns()}
+          </Row>
+        </Card.Body>
     </HoverCard>
   );
 };

@@ -1,6 +1,5 @@
-import React from "react";
 
-export function GuitarIcon({ onIconClick, color = "#000000", size = "24px" }) {
+export function GuitarIcon({ onIconClick, color = "currentColor", size = "24px" }) {
 
   return (
     <span title="Гитара">

@@ -14,7 +14,7 @@ const Footer = () => {
             style={{ color: Colors.textMuted }}
           >
             &copy; {currentYear}
-            <span className="text-white/90 font-medium">Rock School Admin</span>
+            <span className="text-white/90 font-medium"> Rock School Admin</span>
             . Все права защищены.
           </p>
 

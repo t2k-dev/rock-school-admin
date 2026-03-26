@@ -1,4 +1,4 @@
-export function CopyIcon({ onIconClick, color = "#000000", size = "24px"}) {
+export function CopyIcon({ onIconClick, color = "currentColor", size = "24px"}) {
   return (
     <span title="Скопировать в буфер обмена">
         <svg 
