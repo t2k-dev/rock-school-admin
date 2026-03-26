@@ -2,16 +2,19 @@ import React from "react";
 import { Button, Container, Form, Row, Tab, Tabs } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
+import { Avatar } from "../../../components/Avatar";
 import SubscriptionStatus from "../../../constants/SubscriptionStatus";
 import SubscriptionType from "../../../constants/SubscriptionType";
 
 import { CalendarWeek } from "../../../components/calendar/CalendarWeek";
+import { InstagramIcon } from "../../../components/icons";
 import { Loading } from "../../../components/Loading";
+import ScreenHeader from "../../../components/screens/ScreenHeader";
 import AttendanceType from "../../../constants/AttendanceType";
 import { getStudentScreenDetails } from "../../../services/apiStudentService";
 import { AttendanceModal } from "../../attendances/AttendanceModal/AttendanceModal";
 import PaymentModal from "../../payments/PaymentModal";
-import StudentScreenCard from "./StudentScreenCard";
+import BandList from "../BandList";
 import { SubscriptionList } from "./SubscriptionList";
 
 class StudentScreen extends React.Component {
@@ -295,7 +298,14 @@ class StudentScreen extends React.Component {
     return (
       <Container style={{ marginTop: "40px" }}>
         <Row className="mb-4" style={{ backgroundColor: "#22272e"}}>
-          <StudentScreenCard item={student} bands={bands} history={this.props.history} />
+          <ScreenHeader
+            avatar={<Avatar style={{ width: "72px", height: "72px" }} />}
+            title={`${student.firstName} ${student.lastName}`}
+            titleClassName="text-[24px]"
+            onEdit={this.handleEditClick}
+            meta={<InstagramIcon size="20px" title="Instagram" />}
+            aside={<BandList bands={bands} />}
+          />
         </Row>
         <Row className="mb-3">
           <Tabs defaultActiveKey="products" id="uncontrolled-tab-example">

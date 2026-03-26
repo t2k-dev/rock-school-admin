@@ -1,5 +1,15 @@
+import {
+  ArcElement,
+  Chart as ChartJS,
+  Legend,
+  Tooltip,
+} from "chart.js";
 import React from "react";
 import { Alert, Button, Col, Container, Row, Tab, Tabs } from "react-bootstrap";
+import { Doughnut } from "react-chartjs-2";
+
+import { Avatar } from "../../../components/Avatar";
+import ScreenHeader from "../../../components/screens/ScreenHeader";
 import { getTeacherScreenDetails } from "../../../services/apiTeacherService";
 
 import SubscriptionStatus from "../../../constants/SubscriptionStatus";
@@ -9,7 +19,8 @@ import { CalendarIcon, EditIcon } from "../../../components/icons";
 import { Loading } from "../../../components/Loading";
 import SubscriptionType from "../../../constants/SubscriptionType";
 import { AttendanceModal } from "../../attendances/AttendanceModal/AttendanceModal";
-import TeacherScreenCard from "./TeacherScreenCard";
+import { DisciplineIcon } from "../../disciplines/DisciplineIcon";
+import BandList from "../../students/BandList";
 import { TeacherSubscriptions } from "./TeacherSubscriptions";
 
 // Constants
@@ -18,6 +29,8 @@ const ERROR_MESSAGES = {
   TEACHER_NOT_FOUND: "Преподаватель не найден",
   NO_TEACHER_ID: "Не указан ID преподавателя",
 };
+
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 class TeacherScreen extends React.Component {
   constructor(props) {
@@ -218,10 +231,102 @@ class TeacherScreen extends React.Component {
     // Rehearsals
     const rehearsalSubscriptions = sortedSubscriptions.filter((s) => s.subscriptionType === SubscriptionType.REHEARSAL);
 
+    const metrics = [
+      {
+        title: "Загрузка",
+        datasets: [
+          {
+            data: [20, 3],
+            color: ["rgb(254, 106, 1)", "#0dc2fd"],
+            backgroundColor: ["rgb(204, 223, 243)", "#0dc2fd"],
+            borderWidth: 3,
+            radius: "100%",
+          },
+        ],
+      },
+      {
+        title: "Посещаемость",
+        datasets: [
+          {
+            data: [16, 84],
+            backgroundColor: ["rgb(204, 223, 243)", "#0dc2fd"],
+            borderWidth: 3,
+            radius: "100%",
+          },
+        ],
+      },
+      {
+        title: "Пробные",
+        datasets: [
+          {
+            data: [60, 40],
+            backgroundColor: ["rgb(204, 223, 243)", "#0dc2fd"],
+            borderWidth: 3,
+            radius: "100%",
+          },
+        ],
+      },
+    ];
+
     return (
       <Container style={{ marginTop: "40px" }}>
         <Row>
-          <TeacherScreenCard item={teacher} bands={bands} history={this.props.history} />
+          <ScreenHeader
+            avatar={<Avatar style={{ width: "72px", height: "72px" }} />}
+            title={
+              <>
+                {teacher.firstName} {teacher.lastName}
+                {teacher.isActive ? null : (
+                  <span className="ml-2 text-lg font-medium text-[#94A3B8]">
+                    (Отключен)
+                  </span>
+                )}
+              </>
+            }
+            subtitle={<>
+              Преподаватель
+              <div className="flex flex-wrap gap-2">
+                {teacher.disciplines &&
+                  teacher.disciplines.map((id) => (
+                    <DisciplineIcon key={id} disciplineId={id} />
+                  ))}
+              </div>
+            </>
+
+            }
+            onEdit={this.handleEditClick}
+            asideClassName="w-full xl:w-auto xl:min-w-[560px]"
+            aside={
+              <div className="flex flex-wrap items-start gap-3 xl:flex-nowrap xl:justify-end">
+                <div className="shrink-0">
+                  <BandList bands={bands} />
+                </div>
+
+                <div className="flex flex-nowrap gap-3">
+                  {metrics.map((metric) => (
+                    <div
+                      key={metric.title}
+                      className="w-[112px] shrink-0 rounded-xl bg-[#161920] px-2 py-2"
+                    >
+                      <div className="mb-2 text-center text-xs font-medium text-[#94A3B8]">
+                        {metric.title}
+                      </div>
+                      <div className="mx-auto h-[96px] w-[96px]">
+                        <Doughnut
+                          data={{
+                            datasets: metric.datasets,
+                            options: {},
+                          }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            }
+          >
+
+          </ScreenHeader>
         </Row>
         <Row>
           <h3>

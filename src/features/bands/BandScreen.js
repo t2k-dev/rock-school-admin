@@ -1,11 +1,12 @@
 import React from "react";
 import { Alert, Button, Card, Col, Container, Row, Spinner } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import { CalendarIcon, GroupIcon } from "../../components/icons";
 import { NoRecords } from "../../components/NoRecords";
-import { activateBand, addBandMember, deactivateBand, getBandScreenDetails, removeBandStudent, updateBandStudentRole } from "../../services/apiBandService";
+import ScreenHeader from "../../components/screens/ScreenHeader";
+import { activateBand, addBandMember, deactivateBand, generateAttendances, getBandScreenDetails, removeBandStudent, updateBandStudentRole } from "../../services/apiBandService";
 import { AddStudentModal } from "../students/AddStudentModal";
 import { BandAttendanceList } from "./BandAttendanceList";
-import { BandScreenCard } from "./BandScreenCard";
 import { BandStudents } from "./BandStudents";
 
 const ERROR_MESSAGES = {
@@ -23,6 +24,7 @@ export class BandScreen extends React.Component {
       attendances: [],
       isLoading: true,
       isActivating: false,
+      isGenerating: false,
       showAddStudentModal: false,
       error: null,
     };
@@ -134,6 +136,11 @@ export class BandScreen extends React.Component {
     this.props.history.push(`/band/${band.bandId}/schedule`);
   };
 
+  handleEditClick = (e) => {
+    e.preventDefault();
+    this.props.history.push(`/band/${this.state.bandId}/edit`);
+  };
+
   handleActivateToggle = async (band) => {
     try {
       this.setState({ isActivating: true });
@@ -152,6 +159,18 @@ export class BandScreen extends React.Component {
         error: ERROR_MESSAGES.ACTIVATION_FAILED,
         isActivating: false,
       });
+    }
+  };
+
+  handleGenerateAttendances = async () => {
+    try {
+      this.setState({ isGenerating: true });
+      await generateAttendances(this.state.bandId);
+      await this.loadBandData();
+    } catch (error) {
+      console.error("Failed to generate attendances:", error);
+    } finally {
+      this.setState({ isGenerating: false });
     }
   };
 
@@ -201,7 +220,7 @@ export class BandScreen extends React.Component {
   };
 
   render() {
-    const { band, isLoading, isActivating, showAddStudentModal, error } = this.state;
+    const { band, isLoading, isActivating, isGenerating, showAddStudentModal, error } = this.state;
 
     if (isLoading) {
       return this.renderLoadingState();
@@ -235,11 +254,70 @@ export class BandScreen extends React.Component {
           <Col md="8">
 
             {/* Band Details */}
-            <BandScreenCard 
-              band={band} 
-              onEditSchedules={this.handleEditSchedules}
-              onActivateToggle={this.handleActivateToggle}
-            />
+            <div className="mb-4">
+              <ScreenHeader
+                avatar={<GroupIcon size="64px" color="#E2E7F6" />}
+                title={band.name}
+                titleClassName="text-[24px]"
+                onEdit={this.handleEditClick}
+                subtitle={band.isActive ? "Активная группа" : "Неактивная группа"}
+                asideClassName="w-full lg:w-auto lg:min-w-[220px]"
+                aside={
+                  <div className="flex w-full flex-col gap-2 lg:w-[220px]">
+                    <Button
+                      variant="outline-warning"
+                      onClick={this.handleGenerateAttendances}
+                      disabled={isGenerating}
+                    >
+                      {isGenerating ? "Создание..." : "Пересоздать слоты"}
+                    </Button>
+
+                    <Button variant="secondary" onClick={() => this.handleEditSchedules(band)}>
+                      <CalendarIcon color="white" />
+                      Расписание
+                    </Button>
+
+                    <Button
+                      variant={band.isActive ? "outline-danger" : "success"}
+                      type="button"
+                      onClick={() => this.handleActivateToggle(band)}
+                      disabled={isActivating}
+                    >
+                      {isActivating
+                        ? (band.isActive ? "Отключение..." : "Включение...")
+                        : (band.isActive ? "Отключить" : "Включить")}
+                    </Button>
+                  </div>
+                }
+              >
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div>
+                    <div className="text-sm text-[#94A3B8]">Куратор</div>
+                    {band.teacher ? (
+                      <Link
+                        to={`/teacher/${band.teacher.teacherId}`}
+                        className="text-[#E2E7F6] no-underline transition-colors duration-200 hover:text-white"
+                      >
+                        {band.teacher.firstName} {band.teacher.lastName}
+                      </Link>
+                    ) : (
+                      <div className="text-sm text-[#94A3B8]">Не назначен</div>
+                    )}
+                  </div>
+
+                  <div className="grid gap-3 text-sm text-[#E2E7F6]">
+                    <div>
+                      <div className="text-[#94A3B8]">Участников</div>
+                      <div>{band.bandMembers?.length || 0}</div>
+                    </div>
+                    <div>
+                      <div className="text-[#94A3B8]">Расписание</div>
+                      <div>{band.schedules?.length || 0} слотов</div>
+                    </div>
+                  </div>
+                </div>
+              </ScreenHeader>
+            </div>
 
             <AddStudentModal
               show={showAddStudentModal}
