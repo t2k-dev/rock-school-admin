@@ -14,8 +14,6 @@ export const HoverCard = ({
   onMouseLeave,
   ...props
 }) => {
-  const baseTransform = style.transform || "translateY(0)";
-  const baseShadow = style.boxShadow || "";
 
   const cardStyle = {
     cursor: clickable ? "pointer" : "default",
@@ -43,7 +41,7 @@ export const HoverCard = ({
 
   const handleMouseLeave = (e) => {
     if (clickable) {
-      e.currentTarget.style.transform = baseTransform;
+      e.currentTarget.style.transform = style.transform || "translateY(0)";
     }
 
     onMouseLeave?.(e);

@@ -297,7 +297,7 @@ class StudentScreen extends React.Component {
 
     return (
       <Container style={{ marginTop: "40px" }}>
-        <Row className="mb-4" style={{ backgroundColor: "#22272e"}}>
+        <Row className="mb-4">
           <ScreenHeader
             avatar={<Avatar style={{ width: "72px", height: "72px" }} />}
             title={`${student.firstName} ${student.lastName}`}
