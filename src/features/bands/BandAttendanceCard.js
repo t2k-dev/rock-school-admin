@@ -1,23 +1,34 @@
 import PropTypes from "prop-types";
+<<<<<<< HEAD
 import { Col, Row } from "react-bootstrap";
 import { CalendarIcon } from "../../components/icons";
+=======
+import { Card, Col, Row } from "react-bootstrap";
+import { CalendarIcon } from "../../components/icons/Icons";
+>>>>>>> 04387c4 (﻿add uqly icons, add ts, doing header)
 import { HoverCard } from "../../components/ui";
 import { formatDateWithLetters } from "../../utils/dateTime";
 import { AttendanceStatusBadge } from "../attendances/AttendanceStatusBadge";
 
-export const BandAttendanceCard = ({ 
-  attendance, 
-  onClick
-}) => {
+export const BandAttendanceCard = ({ attendance, onClick }) => {
   return (
+<<<<<<< HEAD
     <HoverCard 
       className="mb-3"
       onClick={() => onClick && onClick(attendance)}
     >
+=======
+    <HoverCard className="mb-3" onClick={() => onClick && onClick(attendance)}>
+      <Card.Body>
+>>>>>>> 04387c4 (﻿add uqly icons, add ts, doing header)
         <Row className="align-items-center">
           <Col md="6">
-            <div className="text-muted small"><CalendarIcon size="16px" color="gray"/> Дата</div>
-            <div className="fw-bold">{formatDateWithLetters(attendance.startDate)}</div>
+            <div className="text-muted small">
+              <CalendarIcon size="16px" color="gray" /> Дата
+            </div>
+            <div className="fw-bold">
+              {formatDateWithLetters(attendance.startDate)}
+            </div>
           </Col>
           <Col md="6">
             <AttendanceStatusBadge status={attendance.status} />

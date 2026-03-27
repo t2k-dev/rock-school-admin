@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, Col, Container, Form, InputGroup, Row } from "react-bootstrap";
 
-import { CalendarIcon } from "../../../components/icons";
+import { CalendarIcon } from "../../../components/icons/Icons";
 import SubscriptionType from "../../../constants/SubscriptionType";
 import { getStudent } from "../../../services/apiStudentService";
 import { addTrialSubscription } from "../../../services/apiSubscriptionService";
@@ -33,11 +33,13 @@ export class TrialSubscriptionForm extends React.Component {
       selectedSlotId: 0,
     };
 
-    this.handleCloseAvailableTeachersModal = this.handleCloseAvailableTeachersModal.bind(this);
+    this.handleCloseAvailableTeachersModal =
+      this.handleCloseAvailableTeachersModal.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSave = this.handleSave.bind(this);
     this.showDisciplineModal = this.showDisciplineModal.bind(this);
-    this.handleCloseDisciplineModal = this.handleCloseDisciplineModal.bind(this);
+    this.handleCloseDisciplineModal =
+      this.handleCloseDisciplineModal.bind(this);
   }
 
   componentDidMount() {
@@ -57,17 +59,20 @@ export class TrialSubscriptionForm extends React.Component {
         this.setState({ student: student });
       }
     } catch (error) {
-      console.error('Error loading student:', error);
+      console.error("Error loading student:", error);
     }
   };
 
   loadTrialTariff = async () => {
     try {
       const { disciplineId } = this.state;
-      const tariff = await getTariffByType(SubscriptionType.TRIAL_LESSON, disciplineId);
+      const tariff = await getTariffByType(
+        SubscriptionType.TRIAL_LESSON,
+        disciplineId,
+      );
       this.setState({ tariff: tariff, trialTariffAmount: tariff.amount });
     } catch (error) {
-      console.error('Error loading trial tariff:', error);
+      console.error("Error loading trial tariff:", error);
       // Keep default amount if API call fails
     }
   };
@@ -75,7 +80,11 @@ export class TrialSubscriptionForm extends React.Component {
   // AvailableTeachersModal
   generateAvailablePeriods = async (e) => {
     e.preventDefault();
-    const response = await getAvailableTeachers(this.state.disciplineId, this.state.age, 1);
+    const response = await getAvailableTeachers(
+      this.state.disciplineId,
+      this.state.age,
+      1,
+    );
     this.setState({
       availableTeachers: response.data.availableTeachers,
       showAvailableTeacherModal: true,
@@ -84,12 +93,19 @@ export class TrialSubscriptionForm extends React.Component {
 
   handleCloseAvailableTeachersModal = () => {
     const { selectedSlotId, availableSlots } = this.state;
-    const newSelectedSlotId = selectedSlotId === 0 && availableSlots.length > 0 && availableSlots[0].id;
-    this.setState({ showAvailableTeacherModal: false, selectedSlotId: newSelectedSlotId });
+    const newSelectedSlotId =
+      selectedSlotId === 0 && availableSlots.length > 0 && availableSlots[0].id;
+    this.setState({
+      showAvailableTeacherModal: false,
+      selectedSlotId: newSelectedSlotId,
+    });
   };
 
   handleSlotsChange = (availableSlots) => {
-    this.setState({ availableSlots: availableSlots, selectedSlotId: availableSlots[0]?.id });
+    this.setState({
+      availableSlots: availableSlots,
+      selectedSlotId: availableSlots[0]?.id,
+    });
   };
 
   handleChange = (e) => {
@@ -98,15 +114,18 @@ export class TrialSubscriptionForm extends React.Component {
   };
 
   handleDisciplineChange = (disciplineId) => {
-    this.setState({ 
-      disciplineId: disciplineId,
-      availableSlots: [],
-      selectedSlotId: 0,
-      showDisciplineModal: false,
-    }, () => {
-      // Reload tariff when discipline changes
-      this.loadTrialTariff();
-    });
+    this.setState(
+      {
+        disciplineId: disciplineId,
+        availableSlots: [],
+        selectedSlotId: 0,
+        showDisciplineModal: false,
+      },
+      () => {
+        // Reload tariff when discipline changes
+        this.loadTrialTariff();
+      },
+    );
   };
 
   // Discipline Modal methods
@@ -121,7 +140,9 @@ export class TrialSubscriptionForm extends React.Component {
   handleSave = async (e) => {
     e.preventDefault();
 
-    const selectedSlot = this.state.availableSlots.filter((s) => s.id === this.state.selectedSlotId)[0];
+    const selectedSlot = this.state.availableSlots.filter(
+      (s) => s.id === this.state.selectedSlotId,
+    )[0];
     const requestBody = {
       disciplineId: this.state.disciplineId,
       branchId: 1, // DEV: map after clarification
@@ -153,16 +174,15 @@ export class TrialSubscriptionForm extends React.Component {
     } = this.state;
 
     // Debug: Check what props are available
-    console.log('TrialSubscriptionForm props:', this.props);
-    console.log('Student from props:', this.props.student);
-    console.log('Student from state:', student);
-    console.log('Match params:', this.props.match?.params);
+    console.log("TrialSubscriptionForm props:", this.props);
+    console.log("Student from props:", this.props.student);
+    console.log("Student from state:", student);
+    console.log("Match params:", this.props.match?.params);
 
     // Try multiple sources for student data
-    const currentStudent = this.props.student 
-      || this.props.location?.state?.student 
-      || student;
-    
+    const currentStudent =
+      this.props.student || this.props.location?.state?.student || student;
+
     const students = currentStudent ? [currentStudent] : [];
 
     let availableSlotsList;
@@ -181,18 +201,14 @@ export class TrialSubscriptionForm extends React.Component {
           <Col md="4">
             <h2 className="text-center mb-4">Пробный урок</h2>
             <Form>
-
               {/* Discipline Selection */}
               <div className="mb-3">
-                  <div 
-                    onClick={this.showDisciplineModal}
-                    style={{ cursor: 'pointer' }}
-                  >
-                    <DisciplinePlate 
-                      disciplineId={disciplineId}
-                      size="fill"
-                    />
-                  </div>
+                <div
+                  onClick={this.showDisciplineModal}
+                  style={{ cursor: "pointer" }}
+                >
+                  <DisciplinePlate disciplineId={disciplineId} size="fill" />
+                </div>
               </div>
 
               {/*Student*/}
@@ -201,15 +217,22 @@ export class TrialSubscriptionForm extends React.Component {
                   students={students}
                   allowRemove={false}
                   allowAdd={false}
-                  />
+                />
               </Form.Group>
 
-              <label htmlFor="GenerteSchedule"><CalendarIcon/> <strong>Расписание</strong></label>
-              <InputGroup className="mb-3 mt-2 text-center" controlId="GenerteSchedule">
+              <label htmlFor="GenerteSchedule">
+                <CalendarIcon /> <strong>Расписание</strong>
+              </label>
+              <InputGroup
+                className="mb-3 mt-2 text-center"
+                controlId="GenerteSchedule"
+              >
                 <Form.Select
                   aria-label="Веберите..."
                   value={selectedSlotId}
-                  onChange={(e) => this.setState({ selectedSlotId: e.target.value })}
+                  onChange={(e) =>
+                    this.setState({ selectedSlotId: e.target.value })
+                  }
                   style={{ width: "200px" }}
                   disabled={availableSlots.length === 0}
                 >
@@ -217,10 +240,10 @@ export class TrialSubscriptionForm extends React.Component {
                   {availableSlotsList}
                 </Form.Select>
 
-                <Button 
-                  variant="outline-secondary" 
-                  type="null" 
-                  onClick={(e) => this.generateAvailablePeriods(e)} 
+                <Button
+                  variant="outline-secondary"
+                  type="null"
+                  onClick={(e) => this.generateAvailablePeriods(e)}
                   disabled={!disciplineId}
                 >
                   Доступные окна...
@@ -232,7 +255,6 @@ export class TrialSubscriptionForm extends React.Component {
                   onSlotsChange={this.handleSlotsChange}
                   onClose={this.handleCloseAvailableTeachersModal}
                 />
-
               </InputGroup>
 
               <DisciplineSelectionModal
@@ -256,7 +278,7 @@ export class TrialSubscriptionForm extends React.Component {
               title="Тариф"
               description="Пробный урок"
               amount={trialTariffAmount}
-              style={{ marginTop: '50px' }}
+              style={{ marginTop: "50px" }}
               showIcon={false}
             />
           </Col>

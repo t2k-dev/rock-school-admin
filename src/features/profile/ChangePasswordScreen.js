@@ -12,7 +12,7 @@ import { changePassword } from "../../services/apiAccountService";
 import { Colors } from "../../constants/Colors";
 import { PasswordInput } from "./PasswordInp";
 
-const ChangePasswordScreen = () => {
+export const ChangePasswordScreen = () => {
   const history = useHistory();
 
   const [passwordForm, setPasswordForm] = useState({
@@ -316,5 +316,3 @@ const ChangePasswordScreen = () => {
     </>
   );
 };
-
-export default ChangePasswordScreen;

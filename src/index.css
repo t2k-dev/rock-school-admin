@@ -1,10 +1,72 @@
 @import url("https://fonts.googleapis.com/css2?family=Geologica:wght@300;500;700&display=swap");
 
-body {
-  font-family: "Geologica", sans-serif;
-  background-color: #12141c;
-}
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root {
+    --main-bg: #121519;
+    --card-bg: #22272e;
+    --inner-bg: #161920;
+    --text-main: #e2e7f6;
+    --text-muted: #94a3b8;
+    --accent: #455cc8;
+    --danger: #c84545;
+  }
+
+  body {
+    font-family: "Geologica", sans-serif;
+    background-color: var(--main-bg);
+    color: var(--text-main);
+    @apply antialiased;
+  }
+}
+
+@layer utilities {
+  .bg-main-bg {
+    background-color: var(--main-bg);
+  }
+  .bg-card-bg {
+    background-color: var(--card-bg);
+  }
+  .bg-inner-bg {
+    background-color: var(--inner-bg);
+  }
+
+  .text-text-main {
+    color: var(--text-main);
+  }
+  .text-text-muted {
+    color: var(--text-muted);
+  }
+  .text-accent {
+    color: var(--accent);
+  }
+  .text-danger {
+    color: var(--danger);
+  }
+
+  .bg-accent {
+    background-color: var(--accent);
+  }
+  .bg-danger {
+    background-color: var(--danger);
+  }
+
+  /* Хак для прозрачности (например bg-accent/20), если нужно */
+  .bg-accent\/20 {
+    background-color: rgba(69, 92, 200, 0.2);
+  }
+
+  .ring-accent {
+    --tw-ring-color: var(--accent);
+  }
+  .ring-danger {
+    --tw-ring-color: var(--danger);
+  }
+}
+
+iframe[style*="z-index: 2147483647"] {
+  display: none !important;
+}

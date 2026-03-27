@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, Container, Form, Row, Table } from "react-bootstrap";
 import { getRoomName } from "../../constants/rooms";
-import { CalendarIcon } from "../icons/CalendarIcon";
+import { CalendarIcon } from "../icons/Icons/CalendarIcon";
 
 export class ScheduleEditor extends React.Component {
   constructor(props) {
@@ -30,7 +30,9 @@ export class ScheduleEditor extends React.Component {
   };
 
   deletePeriod = (itemIndex) => {
-    const updatedPeriods = this.periods.filter((_, index) => index !== itemIndex);
+    const updatedPeriods = this.periods.filter(
+      (_, index) => index !== itemIndex,
+    );
     this.props.handlePeriodsChange(updatedPeriods);
   };
 
@@ -63,7 +65,7 @@ export class ScheduleEditor extends React.Component {
         if (a.weekDay === 0 && b.weekDay !== 0) {
           return 1; // Move `a` to after `b`
         }
-        
+
         if (b.weekDay === 0 && a.weekDay !== 0) {
           return -1; // Move `b` to after `a`
         }
@@ -82,12 +84,17 @@ export class ScheduleEditor extends React.Component {
           <td>
             <Container className="d-flex p-0">
               <div className="flex-grow-1">
-                {this.getDayName(item.weekDay)} {item.startTime.substring(0, 5)} - {item.endTime.substring(0, 5)} ({getRoomName(item.roomId)})
+                {this.getDayName(item.weekDay)} {item.startTime.substring(0, 5)}{" "}
+                - {item.endTime.substring(0, 5)} ({getRoomName(item.roomId)})
               </div>
               <div className="flex-shrink-1">
                 <Button
                   variant="outline-danger"
-                  style={{ fontSize: "10px", marginLeft: "10px", borderRadius: "25px" }}
+                  style={{
+                    fontSize: "10px",
+                    marginLeft: "10px",
+                    borderRadius: "25px",
+                  }}
                   onClick={() => this.deletePeriod(index)}
                 >
                   X
@@ -118,7 +125,11 @@ export class ScheduleEditor extends React.Component {
 
         <Row>
           <Container>
-            <Form.Select aria-label="Веберите день..." value={this.state.roomId} onChange={(e) => this.setState({ roomId: e.target.value })}>
+            <Form.Select
+              aria-label="Веберите день..."
+              value={this.state.roomId}
+              onChange={(e) => this.setState({ roomId: e.target.value })}
+            >
               <option>выберите комнату...</option>
               <option value="1">Красная</option>
               <option value={2}>Вокальная</option>
@@ -132,7 +143,11 @@ export class ScheduleEditor extends React.Component {
         <Row style={{ marginTop: "20px" }}>
           <Container className="d-flex">
             <div style={{ width: "150px" }}>
-              <Form.Select aria-label="Веберите день..." value={this.state.periodDay} onChange={(e) => this.setState({ periodDay: e.target.value })}>
+              <Form.Select
+                aria-label="Веберите день..."
+                value={this.state.periodDay}
+                onChange={(e) => this.setState({ periodDay: e.target.value })}
+              >
                 <option>День недели...</option>
                 <option value="1">Понедельник</option>
                 <option value="2">Вторник</option>
@@ -171,7 +186,10 @@ export class ScheduleEditor extends React.Component {
               <span className="mt-1" style={{ margin: "6px 8px" }}>
                 по
               </span>
-              <Form.Select value={this.state.periodEnd} onChange={(e) => this.setState({ periodEnd: e.target.value })}>
+              <Form.Select
+                value={this.state.periodEnd}
+                onChange={(e) => this.setState({ periodEnd: e.target.value })}
+              >
                 <option>чч:мм</option>
                 <option value="10:00">10:00</option>
                 <option value="11:00">11:00</option>
@@ -190,7 +208,11 @@ export class ScheduleEditor extends React.Component {
               </Form.Select>
             </div>
             <div style={{ width: "40px", marginLeft: "10px" }}>
-              <Button variant="outline-success" style={{ width: "40px" }} onClick={this.addPeriod}>
+              <Button
+                variant="outline-success"
+                style={{ width: "40px" }}
+                onClick={this.addPeriod}
+              >
                 +
               </Button>
             </div>

@@ -2,13 +2,19 @@ import { format } from "date-fns";
 import { Badge, Form, Table } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
-import { EditIcon } from "../../../components/icons";
+import { EditIcon } from "../../../components/icons/Icons";
 import { NoRecords } from "../../../components/NoRecords";
 import { getDisciplineName } from "../../../constants/disciplines";
 import MyDateFormat from "../../../constants/formats";
-import { getSubscriptionStatusColor, getSubscriptionStatusName } from "../../../constants/SubscriptionStatus";
+import {
+  getSubscriptionStatusColor,
+  getSubscriptionStatusName,
+} from "../../../constants/SubscriptionStatus";
 import SubscriptionType from "../../../constants/SubscriptionType";
-import { getTrialDecisionColor, getTrialDecisionName } from "../../../constants/TrialDecision";
+import {
+  getTrialDecisionColor,
+  getTrialDecisionName,
+} from "../../../constants/TrialDecision";
 import { DisciplineIcon } from "../../disciplines/DisciplineIcon";
 
 export function TeacherSubscriptions({
@@ -22,20 +28,24 @@ export function TeacherSubscriptions({
     return <NoRecords />;
   }
 
-const renderHeaders = (subscription) => {
-    return(
-        <tr>
-            <th className="date-column">Начало</th>
-            <th>Ученик</th>
-            <th className="discipline-column">Направление</th>
-            <th>{subscription.subscriptionType === SubscriptionType.TRIAL_LESSON ? "Решение" : "Осталось занятий"}</th>
-            <th>Статус</th>
-            <th></th>
-        </tr>
-    )
-}
+  const renderHeaders = (subscription) => {
+    return (
+      <tr>
+        <th className="date-column">Начало</th>
+        <th>Ученик</th>
+        <th className="discipline-column">Направление</th>
+        <th>
+          {subscription.subscriptionType === SubscriptionType.TRIAL_LESSON
+            ? "Решение"
+            : "Осталось занятий"}
+        </th>
+        <th>Статус</th>
+        <th></th>
+      </tr>
+    );
+  };
 
-const renderSubscriptionInfo = (subscription) => {
+  const renderSubscriptionInfo = (subscription) => {
     switch (subscription.subscriptionType) {
       case SubscriptionType.LESSON:
       case SubscriptionType.GROUP_LESSON:
@@ -45,8 +55,8 @@ const renderSubscriptionInfo = (subscription) => {
             <DisciplineIcon disciplineId={subscription.disciplineId} />
             <span style={{ marginLeft: "10px" }}>
               {getDisciplineName(subscription.disciplineId)}
-              {subscription.subscriptionType === SubscriptionType.GROUP_LESSON && " (гр.)"}
-
+              {subscription.subscriptionType ===
+                SubscriptionType.GROUP_LESSON && " (гр.)"}
             </span>
           </>
         );
@@ -56,18 +66,18 @@ const renderSubscriptionInfo = (subscription) => {
         return (
           <>
             <DisciplineIcon disciplineId={subscription.disciplineId} />
-            <span style={{ marginLeft: "10px" }}>{getDisciplineName(subscription.disciplineId)}</span>
+            <span style={{ marginLeft: "10px" }}>
+              {getDisciplineName(subscription.disciplineId)}
+            </span>
           </>
         );
     }
-  }
+  };
 
   return (
     <>
       <Table striped bordered hover>
-        <thead>
-          {renderHeaders(subscriptions[0])}
-        </thead>
+        <thead>{renderHeaders(subscriptions[0])}</thead>
         <tbody>
           {subscriptions.map((subscription, idx) => (
             <tr
@@ -90,11 +100,14 @@ const renderSubscriptionInfo = (subscription) => {
               </td>
               <td>{renderSubscriptionInfo(subscription)}</td>
               <td>
-                {subscription.subscriptionType === SubscriptionType.TRIAL_LESSON
-                  ? <Badge bg={getTrialDecisionColor(subscription.trialDecision)}>
-                      {getTrialDecisionName(subscription.trialDecision)}
-                    </Badge>
-                  : `${subscription.attendancesLeft} из ${subscription.attendanceCount}`}
+                {subscription.subscriptionType ===
+                SubscriptionType.TRIAL_LESSON ? (
+                  <Badge bg={getTrialDecisionColor(subscription.trialDecision)}>
+                    {getTrialDecisionName(subscription.trialDecision)}
+                  </Badge>
+                ) : (
+                  `${subscription.attendancesLeft} из ${subscription.attendanceCount}`
+                )}
               </td>
               <td>
                 <Badge bg={getSubscriptionStatusColor(subscription.status)}>

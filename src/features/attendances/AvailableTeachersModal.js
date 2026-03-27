@@ -3,9 +3,8 @@ import { Badge, Button, Form, Modal } from "react-bootstrap";
 import { v4 as uuidv4 } from "uuid";
 
 import { CalendarWeek } from "../../components/calendar/CalendarWeek";
-import { CopyIcon } from "../../components/icons";
+import { CopyIcon } from "../../components/icons/Icons";
 import { formatDate, formatTime } from "../../utils/dateTime";
-
 
 export class AvailableTeachersModal extends React.Component {
   constructor(props) {
@@ -43,9 +42,7 @@ export class AvailableTeachersModal extends React.Component {
   };
 
   generateSelectedSlotsText(availableSlots) {
-    return availableSlots
-          .map(slot => slot.description)
-          .join('\n');
+    return availableSlots.map((slot) => slot.description).join("\n");
   }
 
   getWorkloadBadgeColor = (workload) => {
@@ -57,14 +54,18 @@ export class AvailableTeachersModal extends React.Component {
     return "secondary";
   };
 
-  createNewSlot = (teacher, slotInfo, slotId) =>{
-      const dayName = new Intl.DateTimeFormat("ru-RU", { weekday: "long" }).format(slotInfo.start);
+  createNewSlot = (teacher, slotInfo, slotId) => {
+    const dayName = new Intl.DateTimeFormat("ru-RU", {
+      weekday: "long",
+    }).format(slotInfo.start);
 
     // Find the matching backgroundEvent based on the slot's start and end times
     const matchingBackgroundEvent = teacher.scheduledWorkingPeriods?.find(
       (backgroundEvent) =>
-        new Date(backgroundEvent.startDate).getTime() <= new Date(slotInfo.start).getTime() &&
-        new Date(backgroundEvent.endDate).getTime() >= new Date(slotInfo.end).getTime()
+        new Date(backgroundEvent.startDate).getTime() <=
+          new Date(slotInfo.start).getTime() &&
+        new Date(backgroundEvent.endDate).getTime() >=
+          new Date(slotInfo.end).getTime(),
     );
 
     const roomId = matchingBackgroundEvent?.roomId;
@@ -78,13 +79,13 @@ export class AvailableTeachersModal extends React.Component {
       roomId: roomId,
       description: this.generateSlotDescription(teacher, dayName, slotInfo),
     };
-  }
+  };
 
   generateSlotDescription = (teacher, dayName, slotInfo) => {
     const timeString = `${formatDate(slotInfo.start)} в ${formatTime(slotInfo.start)}`;
     return `${teacher.firstName}: ${dayName}, ${timeString}`;
   };
-  
+
   createNewAttendance = (slotId, slotInfo) => ({
     attendanceId: slotId,
     title: "Окно",
@@ -94,7 +95,7 @@ export class AvailableTeachersModal extends React.Component {
   });
 
   updateTeacherAttendances = (teachers, teacherId, newAttendance) => {
-    return teachers.map(teacher => {
+    return teachers.map((teacher) => {
       if (teacher.teacherId !== teacherId) return teacher;
 
       const currentAttendances = teacher.attendances || [];
@@ -106,12 +107,14 @@ export class AvailableTeachersModal extends React.Component {
   };
 
   removeAttendanceFromTeacher = (teachers, teacherId, attendanceId) => {
-    return teachers.map(teacher => {
+    return teachers.map((teacher) => {
       if (teacher.teacherId !== teacherId) return teacher;
 
       return {
         ...teacher,
-        attendances: teacher.attendances?.filter(a => a.attendanceId !== attendanceId) || [],
+        attendances:
+          teacher.attendances?.filter((a) => a.attendanceId !== attendanceId) ||
+          [],
       };
     });
   };
@@ -130,7 +133,7 @@ export class AvailableTeachersModal extends React.Component {
     try {
       await navigator.clipboard.writeText(this.state.selectedSlotsText);
       this.setState({ copySuccess: "Текст скопирован в буфер обмена!" });
-      
+
       // Clear success message after 3 seconds
       setTimeout(() => {
         this.setState({ copySuccess: "" });
@@ -170,13 +173,15 @@ export class AvailableTeachersModal extends React.Component {
     const updatedTeachers = this.updateTeacherAttendances(
       this.state.teachers,
       teacher.teacherId,
-      newAttendance
+      newAttendance,
     );
 
     // Add the selected slot to the availableSlots array
     const newSlot = this.createNewSlot(teacher, slotInfo, slotId);
     const updatedAvailableSlots = [...this.state.availableSlots, newSlot];
-    const availableSlotsTxt = this.generateSelectedSlotsText(updatedAvailableSlots);
+    const availableSlotsTxt = this.generateSelectedSlotsText(
+      updatedAvailableSlots,
+    );
 
     // Update the state with the modified array
     this.setState({
@@ -192,9 +197,9 @@ export class AvailableTeachersModal extends React.Component {
 
   clearAllSlots = () => {
     // Remove all new attendances from teachers
-    const updatedTeachers = this.state.teachers.map(teacher => ({
+    const updatedTeachers = this.state.teachers.map((teacher) => ({
       ...teacher,
-      attendances: teacher.attendances?.filter(a => !a.isNew) || [],
+      attendances: teacher.attendances?.filter((a) => !a.isNew) || [],
     }));
 
     this.setState({
@@ -212,18 +217,24 @@ export class AvailableTeachersModal extends React.Component {
     if (!slotInfo.isNew) return;
 
     // update available slots
-    const updatedSlots = this.state.availableSlots.filter((s) => s.id !== slotInfo.id);
+    const updatedSlots = this.state.availableSlots.filter(
+      (s) => s.id !== slotInfo.id,
+    );
 
     // update teacher events
     const updatedTeachers = this.removeAttendanceFromTeacher(
       this.state.teachers,
       teacherId,
-      slotInfo.id
+      slotInfo.id,
     );
 
     const slotsTxt = this.generateSelectedSlotsText(updatedSlots);
 
-    this.setState({ availableSlots: updatedSlots, teachers: updatedTeachers, selectedSlotsText: slotsTxt });
+    this.setState({
+      availableSlots: updatedSlots,
+      teachers: updatedTeachers,
+      selectedSlotsText: slotsTxt,
+    });
     this.props.onSlotsChange(updatedSlots);
   };
 
@@ -234,8 +245,8 @@ export class AvailableTeachersModal extends React.Component {
 
   // Render Methods
   renderWorkloadBadge = (teacher) => (
-    <Badge 
-      className="ms-1" 
+    <Badge
+      className="ms-1"
       bg={this.getWorkloadBadgeColor(teacher.workload)}
       aria-label={`Загруженность ${teacher.workload}%`}
     >
@@ -244,22 +255,31 @@ export class AvailableTeachersModal extends React.Component {
   );
 
   renderTeacher = (teacher, index) => {
-    const backgroundEvents = this.mapWorkingPeriodsToBackgroundEvents(teacher.scheduledWorkingPeriods);
+    const backgroundEvents = this.mapWorkingPeriodsToBackgroundEvents(
+      teacher.scheduledWorkingPeriods,
+    );
     const events = this.mapAttendancesToEvents(teacher.attendances);
 
     return (
-      <div className="mb-4" key={teacher.teacherId} id={`teacher-${teacher.teacherId}`}>
+      <div
+        className="mb-4"
+        key={teacher.teacherId}
+        id={`teacher-${teacher.teacherId}`}
+      >
         <div className="mb-3">
           <span style={{ fontWeight: "bold" }}>
             {teacher.firstName} {teacher.lastName}
           </span>
-          {typeof teacher.workload === 'number' && this.renderWorkloadBadge(teacher)}
+          {typeof teacher.workload === "number" &&
+            this.renderWorkloadBadge(teacher)}
         </div>
         <CalendarWeek
           backgroundEvents={backgroundEvents}
           events={events}
           onSelectSlot={(slotInfo) => this.handleSelectSlot(teacher, slotInfo)}
-          onSelectEvent={(slotInfo) => this.handleSelectEvent(teacher.teacherId, slotInfo)}
+          onSelectEvent={(slotInfo) =>
+            this.handleSelectEvent(teacher.teacherId, slotInfo)
+          }
           step={this.props.step}
           slotDuration={this.props.slotDuration}
         />
@@ -269,8 +289,8 @@ export class AvailableTeachersModal extends React.Component {
 
   mapWorkingPeriodsToBackgroundEvents = (scheduledWorkingPeriods) => {
     if (!scheduledWorkingPeriods) return [];
-    
-    return scheduledWorkingPeriods.map(period => ({
+
+    return scheduledWorkingPeriods.map((period) => ({
       id: period.scheduledWorkingPeriodId,
       start: period.startDate,
       end: period.endDate,
@@ -280,8 +300,8 @@ export class AvailableTeachersModal extends React.Component {
 
   mapAttendancesToEvents = (attendances) => {
     if (!attendances) return [];
-    
-    return attendances.map(attendance => ({
+
+    return attendances.map((attendance) => ({
       id: attendance.attendanceId,
       title: attendance.isNew ? "Окно" : "Занято",
       start: new Date(attendance.startDate),
@@ -302,9 +322,7 @@ export class AvailableTeachersModal extends React.Component {
       );
     }
 
-    return teachers.map((teacher, index) => 
-      this.renderTeacher(teacher, index)
-    );
+    return teachers.map((teacher, index) => this.renderTeacher(teacher, index));
   };
 
   renderSidebar = () => {
@@ -315,15 +333,19 @@ export class AvailableTeachersModal extends React.Component {
         <Form.Group className="mb-3" controlId="selectedSlotsText">
           <div className="d-flex mb-1">
             <span className="flex-grow-1">Свободные окна</span>
-              <Button
-                size="sm"
-                variant="outline-secondary"
+            <Button
+              size="sm"
+              variant="outline-secondary"
+              onClick={this.handleCopy}
+              disabled={!selectedSlotsText.trim()}
+              id="copy-help-text"
+              aria-describedby="copy-button-help"
+            >
+              <CopyIcon
+                size="15px"
+                style={{ cursor: "pointer" }}
                 onClick={this.handleCopy}
-                disabled={!selectedSlotsText.trim()}
-                id="copy-help-text"
-                aria-describedby="copy-button-help"
-              >
-              <CopyIcon size="15px" style={{ cursor: "pointer" }} onClick={this.handleCopy}></CopyIcon>
+              ></CopyIcon>
             </Button>
           </div>
 
@@ -345,9 +367,9 @@ export class AvailableTeachersModal extends React.Component {
     if (!show) return null;
 
     return (
-      <Modal 
-        size="xl" 
-        show={show} 
+      <Modal
+        size="xl"
+        show={show}
         onHide={this.props.onClose}
         aria-labelledby="available-teachers-modal-title"
       >
@@ -359,9 +381,13 @@ export class AvailableTeachersModal extends React.Component {
 
         <Modal.Body>
           <div className="d-flex" role="main">
-            <div 
-              className="flex-grow-1" 
-              style={{ height: "640px", overflow: "auto", paddingRight: "15px" }}
+            <div
+              className="flex-grow-1"
+              style={{
+                height: "640px",
+                overflow: "auto",
+                paddingRight: "15px",
+              }}
               role="region"
               aria-label="Список преподавателей"
             >

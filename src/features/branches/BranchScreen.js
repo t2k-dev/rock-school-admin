@@ -4,7 +4,7 @@ import { Button, Container, Row, Tab, Table, Tabs } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 import { CalendarDay } from "../../components/calendar/CalendarDay";
-import { EditIcon } from "../../components/icons";
+import { EditIcon } from "../../components/icons/Icons";
 
 import { getHomeScreenDetails } from "../../services/apiHomeService";
 import { markComplete } from "../../services/apiNoteService";
@@ -25,7 +25,7 @@ export class BranchScreen extends React.Component {
 
     this.handleMarkComplete = this.handleMarkComplete.bind(this);
   }
-  
+
   componentDidMount() {
     this.onFormLoad();
   }
@@ -49,8 +49,13 @@ export class BranchScreen extends React.Component {
   }
 
   handleSelectEvent = (teacherId, slotInfo) => {
-    const newSelectedSlotDetails = this.state.attendances.filter((a) => a.attendanceId === slotInfo.id)[0];
-    this.setState({ showSlotDetailsModal: true, selectedSlotDetails: newSelectedSlotDetails });
+    const newSelectedSlotDetails = this.state.attendances.filter(
+      (a) => a.attendanceId === slotInfo.id,
+    )[0];
+    this.setState({
+      showSlotDetailsModal: true,
+      selectedSlotDetails: newSelectedSlotDetails,
+    });
   };
 
   handleCloseSlotDetailsModal = () => {
@@ -62,7 +67,13 @@ export class BranchScreen extends React.Component {
   }
 
   render() {
-    const { branch, attendances, selectedSlotDetails, notes, showSlotDetailsModal } = this.state;
+    const {
+      branch,
+      attendances,
+      selectedSlotDetails,
+      notes,
+      showSlotDetailsModal,
+    } = this.state;
 
     // Events
     let events;
@@ -86,18 +97,21 @@ export class BranchScreen extends React.Component {
     if (activeNotes && activeNotes?.length > 0) {
       activeNotesTable = (
         <Table striped bordered hover>
-
           <tbody>
             {activeNotes.map((item, index) => (
               <tr key={index}>
-                <td style={{width: "100px"}}>
-                  {format(item.completeDate, 'HH:mm')}
+                <td style={{ width: "100px" }}>
+                  {format(item.completeDate, "HH:mm")}
                 </td>
                 <td>
                   <Container className="d-flex p-0">
                     <div className="flex-grow-1">{item.description}</div>
                     <div className="flex-shrink-1">
-                      <Button variant="primary" size="sm" onClick={(e) => this.handleMarkComplete(item.noteId)}>
+                      <Button
+                        variant="primary"
+                        size="sm"
+                        onClick={(e) => this.handleMarkComplete(item.noteId)}
+                      >
                         Выполнено
                       </Button>
                     </div>
@@ -113,7 +127,7 @@ export class BranchScreen extends React.Component {
     }
 
     let completedNotesTable;
-    if (completedNotes ) {
+    if (completedNotes) {
       completedNotesTable = (
         <Table striped bordered hover>
           <thead>
@@ -130,7 +144,12 @@ export class BranchScreen extends React.Component {
                   <Container className="d-flex p-0">
                     <div className="flex-grow-1">{item.description}</div>
                     <div className="flex-shrink-1">
-                      <Button variant="secondary" size="sm" onClick={(e) => this.handleMarkComplete(item.noteId)} disabled>
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        onClick={(e) => this.handleMarkComplete(item.noteId)}
+                        disabled
+                      >
                         Не выполнено
                       </Button>
                     </div>
@@ -180,15 +199,26 @@ export class BranchScreen extends React.Component {
         <Row>
           <div className="d-flex mb-2">
             <div className="flex-grow-1">
-              <div style={{ fontWeight: "bold", fontSize: "20px" }}>Активности</div>
+              <div style={{ fontWeight: "bold", fontSize: "20px" }}>
+                Активности
+              </div>
             </div>
             <div>
-              <Button as={Link} to="/notes/addNote" variant="outline-success" size="sm">
+              <Button
+                as={Link}
+                to="/notes/addNote"
+                variant="outline-success"
+                size="sm"
+              >
                 + Новая активность
               </Button>
             </div>
           </div>
-          <Tabs defaultActiveKey="active" id="uncontrolled-tab-example" className="mb-3">
+          <Tabs
+            defaultActiveKey="active"
+            id="uncontrolled-tab-example"
+            className="mb-3"
+          >
             <Tab eventKey="active" title="На сегодня">
               {activeNotesTable}
             </Tab>

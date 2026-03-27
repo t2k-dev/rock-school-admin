@@ -8,20 +8,30 @@ import AttendanceType from "../../constants/AttendanceType";
 import { DisciplineIcon } from "../../features/disciplines/DisciplineIcon";
 import { applyCalendarStyle } from "../../utils/calendar";
 
-
 moment.locale("ru");
 const localizer = momentLocalizer(moment);
 
 const EventComponent = ({ event }) => {
   return (
-    <div style={{ display: "flex", alignItems: "center", marginTop:"5px", marginLeft:"5px" }}>
-      {event.disciplineId &&
-      <DisciplineIcon 
-        disciplineId={event.disciplineId} 
-        color={event.attendanceType === AttendanceType.TRIAL_LESSON ? "black" : "white"}
-        />}
-      <span style={{marginLeft:"10px"}}>{event.title}</span> 
-      
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        marginTop: "5px",
+        marginLeft: "5px",
+      }}
+    >
+      {event.disciplineId && (
+        <DisciplineIcon
+          disciplineId={event.disciplineId}
+          color={
+            event.attendanceType === AttendanceType.TRIAL_LESSON
+              ? "black"
+              : "white"
+          }
+        />
+      )}
+      <span style={{ marginLeft: "10px" }}>{event.title}</span>
     </div>
   );
 };
@@ -34,7 +44,7 @@ export class CalendarDay extends React.Component {
       backgroundEvents: this.props.backgroundEvents,
     };
   }
- 
+
   render() {
     const messages = {
       next: "Вперед",
@@ -67,7 +77,9 @@ export class CalendarDay extends React.Component {
           max={new Date(2500, 9, 30, 22, 0)}
           defaultDate={Date.now()}
           popup={false}
-          onShowMore={(events, date) => this.setState({ showModal: true, events })}
+          onShowMore={(events, date) =>
+            this.setState({ showModal: true, events })
+          }
           messages={messages}
           resources={resources}
           resourceIdAccessor="resourceId"
@@ -76,7 +88,7 @@ export class CalendarDay extends React.Component {
           now={() => new Date()}
           eventPropGetter={(event) => applyCalendarStyle(event)}
           onSelectEvent={this.props.onSelectEvent}
-          components={{event: EventComponent}}
+          components={{ event: EventComponent }}
         />
       </div>
     );

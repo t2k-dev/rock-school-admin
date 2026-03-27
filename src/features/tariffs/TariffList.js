@@ -1,18 +1,18 @@
-import { format } from 'date-fns';
-import { useEffect, useState } from 'react';
-import { Alert, Button, Col, Container, Row, Table } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { format } from "date-fns";
+import { useEffect, useState } from "react";
+import { Alert, Button, Col, Container, Row, Table } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
-import { Loading } from '../../components/Loading';
-import { NoRecords } from '../../components/NoRecords';
-import { getDisciplineName } from '../../constants/disciplines';
-import { getSubscriptionTypeName } from '../../constants/SubscriptionType';
-import { deleteTariff, getTariffs } from '../../services/apiTariffService';
+import { Loading } from "../../components/Loading";
+import { NoRecords } from "../../components/NoRecords";
+import { getDisciplineName } from "../../constants/disciplines";
+import { getSubscriptionTypeName } from "../../constants/SubscriptionType";
+import { deleteTariff, getTariffs } from "../../services/apiTariffService";
 
-const TariffList = () => {
+export const TariffList = () => {
   const [tariffs, setTariffs] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   useEffect(() => {
     loadTariffs();
@@ -21,32 +21,32 @@ const TariffList = () => {
   const loadTariffs = async () => {
     try {
       setIsLoading(true);
-      setError('');
+      setError("");
       const data = await getTariffs();
       setTariffs(data || []);
     } catch (error) {
-      console.error('Error loading tariffs:', error);
-      setError('Ошибка при загрузке тарифов');
+      console.error("Error loading tariffs:", error);
+      setError("Ошибка при загрузке тарифов");
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Вы уверены, что хотите удалить этот тариф?')) {
+    if (window.confirm("Вы уверены, что хотите удалить этот тариф?")) {
       try {
         await deleteTariff(id);
-        setTariffs(prev => prev.filter(tariff => tariff.tariffId !== id));
+        setTariffs((prev) => prev.filter((tariff) => tariff.tariffId !== id));
       } catch (error) {
-        console.error('Error deleting tariff:', error);
-        setError('Ошибка при удалении тарифа');
+        console.error("Error deleting tariff:", error);
+        setError("Ошибка при удалении тарифа");
       }
     }
   };
 
   const formatDate = (dateString) => {
     try {
-      return format(new Date(dateString), 'dd.MM.yyyy');
+      return format(new Date(dateString), "dd.MM.yyyy");
     } catch {
       return dateString;
     }
@@ -96,24 +96,24 @@ const TariffList = () => {
                 </tr>
               </thead>
               <tbody>
-                {tariffs.map(tariff => (
+                {tariffs.map((tariff) => (
                   <tr key={tariff.tariffId}>
                     <td>
-                      {formatDate(tariff.startDate)} - {formatDate(tariff.endDate)}
+                      {formatDate(tariff.startDate)} -{" "}
+                      {formatDate(tariff.endDate)}
                     </td>
                     <td>{getSubscriptionTypeName(tariff.subscriptionType)}</td>
                     <td>
-                      {tariff.disciplineId 
-                        ? getDisciplineName(tariff.disciplineId) 
-                        : "Любая дисциплина"
-                      }
+                      {tariff.disciplineId
+                        ? getDisciplineName(tariff.disciplineId)
+                        : "Любая дисциплина"}
                     </td>
                     <td>{tariff.attendanceCount}</td>
                     <td>{tariff.attendanceLength} мин.</td>
                     <td>{tariff.amount} тг.</td>
                     <td>
-                      <Button 
-                        variant="outline-danger" 
+                      <Button
+                        variant="outline-danger"
                         size="sm"
                         onClick={() => handleDelete(tariff.tariffId)}
                       >

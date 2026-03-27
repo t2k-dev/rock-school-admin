@@ -15,7 +15,7 @@ import { getTeacherScreenDetails } from "../../../services/apiTeacherService";
 import SubscriptionStatus from "../../../constants/SubscriptionStatus";
 
 import { CalendarWeek } from "../../../components/calendar/CalendarWeek";
-import { CalendarIcon, EditIcon } from "../../../components/icons";
+import { CalendarIcon, EditIcon } from "../../../components/icons/Icons";
 import { Loading } from "../../../components/Loading";
 import SubscriptionType from "../../../constants/SubscriptionType";
 import { AttendanceModal } from "../../attendances/AttendanceModal/AttendanceModal";
@@ -48,7 +48,8 @@ class TeacherScreen extends React.Component {
     };
 
     this.handleEditClick = this.handleEditClick.bind(this);
-    this.handleEditSubscriptionClick = this.handleEditSubscriptionClick.bind(this);
+    this.handleEditSubscriptionClick =
+      this.handleEditSubscriptionClick.bind(this);
     this.handleScheduleClick = this.handleScheduleClick.bind(this);
   }
 
@@ -57,15 +58,17 @@ class TeacherScreen extends React.Component {
   }
 
   async loadTeacherData() {
-    try{
+    try {
       this.setState({ isLoading: true, error: null });
 
       const details = await getTeacherScreenDetails(this.props.match.params.id);
 
-      const backgroundEvents = details.teacher.scheduledWorkingPeriods.map((item) => ({
-        start: item.startDate,
-        end: item.endDate,
-      }));
+      const backgroundEvents = details.teacher.scheduledWorkingPeriods.map(
+        (item) => ({
+          start: item.startDate,
+          end: item.endDate,
+        }),
+      );
 
       this.setState({
         teacher: details.teacher,
@@ -74,9 +77,8 @@ class TeacherScreen extends React.Component {
         backgroundEvents: backgroundEvents,
         bands: details.bands,
         isLoading: false,
-    });
-
-    } catch (error){
+      });
+    } catch (error) {
       this.setState({
         error: error.message || ERROR_MESSAGES.LOAD_FAILED,
         isLoading: false,
@@ -88,15 +90,20 @@ class TeacherScreen extends React.Component {
     e.preventDefault();
     this.props.history.push(`/teacher/${this.props.match.params.id}/edit`);
   };
-  
+
   handleScheduleClick = (e) => {
     e.preventDefault();
     this.props.history.push(`/teacher/${this.props.match.params.id}/schedule`);
   };
 
   handleSelectEvent = (slotInfo) => {
-    const newSelectedAttendance = this.state.attendances.filter((a) => a.attendanceId === slotInfo.id)[0];
-    this.setState({ showAttendanceModal: true, selectedAttendance: newSelectedAttendance });
+    const newSelectedAttendance = this.state.attendances.filter(
+      (a) => a.attendanceId === slotInfo.id,
+    )[0];
+    this.setState({
+      showAttendanceModal: true,
+      selectedAttendance: newSelectedAttendance,
+    });
   };
 
   handleEditSubscriptionClick = (e, item) => {
@@ -112,43 +119,49 @@ class TeacherScreen extends React.Component {
       pathname: `/subscription/${subscription.subscriptionId}/attendances`,
       state: {
         subscription: subscription,
-        attendances: this.state.attendances?.filter(
-          attendance => attendance.subscriptionId === subscription.subscriptionId
-        ) || []
-      }
+        attendances:
+          this.state.attendances?.filter(
+            (attendance) =>
+              attendance.subscriptionId === subscription.subscriptionId,
+          ) || [],
+      },
     });
   };
 
   handleTrialSubscriptionClick = (subscription) => {
-    const selectedAttendance = this.state.attendances.find(a => a.subscriptionId === subscription.subscriptionId);
+    const selectedAttendance = this.state.attendances.find(
+      (a) => a.subscriptionId === subscription.subscriptionId,
+    );
     this.setState({
       selectedAttendance: selectedAttendance,
-      showAttendanceModal: true
+      showAttendanceModal: true,
     });
-  }
+  };
 
   handleCloseModal = () => {
-    this.setState({ 
+    this.setState({
       showAttendanceModal: false,
-      selectedAttendance: null
+      selectedAttendance: null,
     });
   };
 
   handleAttendanceUpdate = (updatedData) => {
     const attendanceId = updatedData.attendanceId;
-    
+
     // Update the main attendances array
-    this.setState(prevState => ({
-      attendances: prevState.attendances?.map(attendance => 
-        attendance.attendanceId === attendanceId 
-          ? { ...attendance, ...updatedData }
-          : attendance
-      ) || [],
-      
+    this.setState((prevState) => ({
+      attendances:
+        prevState.attendances?.map((attendance) =>
+          attendance.attendanceId === attendanceId
+            ? { ...attendance, ...updatedData }
+            : attendance,
+        ) || [],
+
       // Update selected attendance if it matches
-      selectedAttendance: prevState.selectedAttendance?.attendanceId === attendanceId
-        ? { ...prevState.selectedAttendance, ...updatedData }
-        : prevState.selectedAttendance
+      selectedAttendance:
+        prevState.selectedAttendance?.attendanceId === attendanceId
+          ? { ...prevState.selectedAttendance, ...updatedData }
+          : prevState.selectedAttendance,
     }));
   };
 
@@ -161,8 +174,8 @@ class TeacherScreen extends React.Component {
             <p>{this.state.error}</p>
             <hr />
             <div className="d-flex justify-content-end">
-              <Button 
-                onClick={this.handleRetry} 
+              <Button
+                onClick={this.handleRetry}
                 variant="outline-danger"
                 disabled={this.state.isLoading}
               >
@@ -180,12 +193,21 @@ class TeacherScreen extends React.Component {
   };
 
   render() {
-    const { isLoading, showCompleted, error, showAttendanceModal, selectedAttendance, teacher, backgroundEvents, subscriptions, attendances, bands } = this.state;
+    const {
+      isLoading,
+      showCompleted,
+      error,
+      showAttendanceModal,
+      selectedAttendance,
+      teacher,
+      backgroundEvents,
+      subscriptions,
+      attendances,
+      bands,
+    } = this.state;
 
     if (isLoading) {
-      return <Loading
-        message="Загрузка данных преподавателя..."
-      />
+      return <Loading message="Загрузка данных преподавателя..." />;
     }
 
     if (error) {
@@ -203,11 +225,16 @@ class TeacherScreen extends React.Component {
     if (attendances) {
       events = attendances.map((attendance) => ({
         id: attendance.attendanceId,
-        title: attendance.attendees !== null && attendance.attendees && attendance.attendees.length > 0
-          ? attendance.attendees.map(attendee => attendee?.student?.firstName).join(", ")
-          : attendance.student 
-            ? `${attendance.student.firstName} ${attendance.student.lastName[0]}.` 
-            : "",
+        title:
+          attendance.attendees !== null &&
+          attendance.attendees &&
+          attendance.attendees.length > 0
+            ? attendance.attendees
+                .map((attendee) => attendee?.student?.firstName)
+                .join(", ")
+            : attendance.student
+              ? `${attendance.student.firstName} ${attendance.student.lastName[0]}.`
+              : "",
         start: new Date(attendance.startDate),
         end: new Date(attendance.endDate),
         resourceId: attendance.roomId,
@@ -218,18 +245,27 @@ class TeacherScreen extends React.Component {
     }
 
     // Subscriptions
-    let nonTrialSubscriptions = sortedSubscriptions.filter((s) => s.subscriptionType === SubscriptionType.LESSON 
-      || s.subscriptionType === SubscriptionType.GROUP_LESSON );
+    let nonTrialSubscriptions = sortedSubscriptions.filter(
+      (s) =>
+        s.subscriptionType === SubscriptionType.LESSON ||
+        s.subscriptionType === SubscriptionType.GROUP_LESSON,
+    );
 
     nonTrialSubscriptions = showCompleted
       ? nonTrialSubscriptions
-      : nonTrialSubscriptions.filter((s) => s.status !== SubscriptionStatus.COMPLETED);
+      : nonTrialSubscriptions.filter(
+          (s) => s.status !== SubscriptionStatus.COMPLETED,
+        );
 
     // Trials
-    const trialSubscriptions = sortedSubscriptions.filter((s) => s.subscriptionType === SubscriptionType.TRIAL_LESSON);
+    const trialSubscriptions = sortedSubscriptions.filter(
+      (s) => s.subscriptionType === SubscriptionType.TRIAL_LESSON,
+    );
 
     // Rehearsals
-    const rehearsalSubscriptions = sortedSubscriptions.filter((s) => s.subscriptionType === SubscriptionType.REHEARSAL);
+    const rehearsalSubscriptions = sortedSubscriptions.filter(
+      (s) => s.subscriptionType === SubscriptionType.REHEARSAL,
+    );
 
     const metrics = [
       {
@@ -271,6 +307,7 @@ class TeacherScreen extends React.Component {
     return (
       <Container style={{ marginTop: "40px" }}>
         <Row>
+<<<<<<< HEAD
           <ScreenHeader
             avatar={<Avatar style={{ width: "72px", height: "72px" }} />}
             title={
@@ -327,18 +364,27 @@ class TeacherScreen extends React.Component {
           >
 
           </ScreenHeader>
+=======
+          <TeacherScreenCard
+            item={teacher}
+            bands={bands}
+            history={this.props.history}
+          />
+>>>>>>> 04387c4 (﻿add uqly icons, add ts, doing header)
         </Row>
         <Row>
           <h3>
-            <CalendarIcon />Расписание 
-            <EditIcon onIconClick={this.handleScheduleClick}/>
-          
+            <CalendarIcon />
+            Расписание
+            <EditIcon onIconClick={this.handleScheduleClick} />
           </h3>
-          <CalendarWeek 
-            events={events} 
-            backgroundEvents={backgroundEvents} 
-            onSelectEvent={(slotInfo) => {this.handleSelectEvent(slotInfo);}}
-            />
+          <CalendarWeek
+            events={events}
+            backgroundEvents={backgroundEvents}
+            onSelectEvent={(slotInfo) => {
+              this.handleSelectEvent(slotInfo);
+            }}
+          />
 
           <AttendanceModal
             attendance={selectedAttendance}
@@ -349,7 +395,11 @@ class TeacherScreen extends React.Component {
           />
         </Row>
         <Row className="mt-3">
-          <Tabs defaultActiveKey="subscriptions" id="uncontrolled-tab-example" className="mb-3">
+          <Tabs
+            defaultActiveKey="subscriptions"
+            id="uncontrolled-tab-example"
+            className="mb-3"
+          >
             <Tab eventKey="subscriptions" title="Абонементы">
               <TeacherSubscriptions
                 subscriptions={nonTrialSubscriptions}

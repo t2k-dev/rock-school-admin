@@ -7,7 +7,7 @@ import { Button, Col, Container, Form, Row, Stack } from "react-bootstrap";
 
 import { Avatar } from "../../components/Avatar";
 
-import { CalendarIcon } from "../../components/icons";
+import { CalendarIcon } from "../../components/icons/Icons";
 import AttendanceType from "../../constants/AttendanceType";
 import { getDisciplineName } from "../../constants/disciplines";
 import { rescheduleAttendance } from "../../services/apiAttendanceService";
@@ -37,7 +37,8 @@ export class AttendanceRescheduleForm extends React.Component {
       notificationDate: format(new Date(), "yyyy-MM-dd HH:mm"),
     };
 
-    this.handleCloseAvailableTeachersModal = this.handleCloseAvailableTeachersModal.bind(this);
+    this.handleCloseAvailableTeachersModal =
+      this.handleCloseAvailableTeachersModal.bind(this);
 
     this.handleSave = this.handleSave.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -52,7 +53,7 @@ export class AttendanceRescheduleForm extends React.Component {
 
   showAvailableSlotsModal = async (e) => {
     e.preventDefault();
-    
+
     const { teacher } = this.state.attendance;
 
     const response = await getWorkingPeriods(teacher.teacherId);
@@ -92,10 +93,12 @@ export class AttendanceRescheduleForm extends React.Component {
   handleGetNextAvailableSlot = async (e) => {
     e.preventDefault();
 
-    const response = (await getNextAvailableSlot(this.state.attendance.subscriptionId)).data;
-   
+    const response = (
+      await getNextAvailableSlot(this.state.attendance.subscriptionId)
+    ).data;
+
     const date = new Date(response.startDate);
-    const roomId = response.roomId
+    const roomId = response.roomId;
     const slotId = uuidv4();
     const slot = {
       id: slotId,
@@ -118,7 +121,10 @@ export class AttendanceRescheduleForm extends React.Component {
       roomId: selectedSlot.roomId,
     };
 
-    const response = await rescheduleAttendance(attendance.attendanceId, requestBody);
+    const response = await rescheduleAttendance(
+      attendance.attendanceId,
+      requestBody,
+    );
 
     window.history.back();
   };
@@ -138,11 +144,21 @@ export class AttendanceRescheduleForm extends React.Component {
         return <h2 className="text-center mb-4">Перенос пробного урока</h2>;
       default:
         return <h2 className="text-center mb-4">Перенос</h2>;
-    };
-  }
+    }
+  };
 
   render() {
-    const { attendance, lastName, showAvailableTeacherModal, availableTeachers, showAvailableSlotsModal, rooms, selectedSlot, notificationDate, cancalationType } = this.state;
+    const {
+      attendance,
+      lastName,
+      showAvailableTeacherModal,
+      availableTeachers,
+      showAvailableSlotsModal,
+      rooms,
+      selectedSlot,
+      notificationDate,
+      cancalationType,
+    } = this.state;
     if (!attendance) {
       return;
     }
@@ -152,38 +168,67 @@ export class AttendanceRescheduleForm extends React.Component {
     let availableSlot;
     if (selectedSlot) {
       availableSlot = <>{getSlotDescription(selectedSlot)}</>;
-    } else{
+    } else {
       availableSlot = <div>Не выбрано</div>;
     }
-console.log("attendance", attendance);
+    console.log("attendance", attendance);
     return (
       <Container style={{ marginTop: "40px" }}>
         <Row>
           <Col md="4"></Col>
           <Col md="4">
             {this.renderHeader()}
-            <Stack className="mb-3" gap={2} style={{ backgroundColor: "#e7e7e7", padding: "15px", borderRadius: "10px" }}>
-              <div><DisciplineIcon size="20" style={{marginRight: "5px"}} disciplineId={attendance.disciplineId} /> {getDisciplineName(attendance.disciplineId)}</div>
+            <Stack
+              className="mb-3"
+              gap={2}
+              style={{
+                backgroundColor: "#e7e7e7",
+                padding: "15px",
+                borderRadius: "10px",
+              }}
+            >
+              <div>
+                <DisciplineIcon
+                  size="20"
+                  style={{ marginRight: "5px" }}
+                  disciplineId={attendance.disciplineId}
+                />{" "}
+                {getDisciplineName(attendance.disciplineId)}
+              </div>
               <div>
                 <CalendarIcon />
                 <span style={{ fontSize: "14px" }}>
-                  {format(attendance.startDate, "d MMMM, EEEE", { locale: ru })}, с {format(attendance.startDate, "HH:mm")} -{" "}
+                  {format(attendance.startDate, "d MMMM, EEEE", { locale: ru })}
+                  , с {format(attendance.startDate, "HH:mm")} -{" "}
                   {format(attendance.endDate, "HH:mm")}
                 </span>
               </div>
-              <div><Avatar style={{ width: "20px", height: "20px", marginRight: "5px" }}></Avatar> {attendance.attendees[0].student.firstName} {attendance.attendees[0].student.lastName}</div>
-              {teacher && 
-              <div className="mb-3">
-                  Преподаватель: {teacher.firstName} {teacher.lastName}
+              <div>
+                <Avatar
+                  style={{ width: "20px", height: "20px", marginRight: "5px" }}
+                ></Avatar>{" "}
+                {attendance.attendees[0].student.firstName}{" "}
+                {attendance.attendees[0].student.lastName}
               </div>
-              }
+              {teacher && (
+                <div className="mb-3">
+                  Преподаватель: {teacher.firstName} {teacher.lastName}
+                </div>
+              )}
             </Stack>
             <hr></hr>
 
             <Form>
               <Form.Group className="mb-3" controlId="cancalationType">
                 <Form.Label>Кто переносит</Form.Label>
-                <Form.Select name="level" aria-label="Веберите..." value={cancalationType} onChange={(e) => this.setState({ cancalationType: e.target.value })}>
+                <Form.Select
+                  name="level"
+                  aria-label="Веберите..."
+                  value={cancalationType}
+                  onChange={(e) =>
+                    this.setState({ cancalationType: e.target.value })
+                  }
+                >
                   <option>выберите...</option>
                   <option value="0">Ученик</option>
                   <option value="1">Преподаватель</option>
@@ -192,11 +237,21 @@ console.log("attendance", attendance);
               </Form.Group>
               <Form.Group className="mb-3" controlId="notificationDate">
                 <Form.Label>Дата уведомления</Form.Label>
-                <Form.Control onChange={this.handleChange} value={notificationDate} placeholder="введите..." autoComplete="off" />
+                <Form.Control
+                  onChange={this.handleChange}
+                  value={notificationDate}
+                  placeholder="введите..."
+                  autoComplete="off"
+                />
               </Form.Group>
               <Form.Group className="mb-3" controlId="comment">
                 <Form.Label>Причина</Form.Label>
-                <Form.Control onChange={this.handleChange} value={lastName} placeholder="введите..." autoComplete="off" />
+                <Form.Control
+                  onChange={this.handleChange}
+                  value={lastName}
+                  placeholder="введите..."
+                  autoComplete="off"
+                />
               </Form.Group>
               {teacher !== null ? (
                 <>

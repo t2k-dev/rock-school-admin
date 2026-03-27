@@ -1,21 +1,37 @@
 import { format } from "date-fns";
 import React from "react";
-import { Alert, Button, Col, Container, Form, InputGroup, Row, Spinner } from "react-bootstrap";
+import {
+  Alert,
+  Button,
+  Col,
+  Container,
+  Form,
+  InputGroup,
+  Row,
+  Spinner,
+} from "react-bootstrap";
 import "react-datepicker/dist/react-datepicker.css";
 
-import { CalendarIcon, CountIcon, TimeIcon } from "../../../components/icons";
+import {
+  CalendarIcon,
+  CountIcon,
+  TimeIcon,
+} from "../../../components/icons/Icons";
 import { Loading } from "../../../components/Loading";
 import { ScheduleEditorWithDelete } from "../../../components/schedule/ScheduleEditorWithDelete";
 import { getAttendanceLengthName } from "../../../constants/AttendanceLength";
 import { getDisciplineName } from "../../../constants/disciplines";
-import SubscriptionType from '../../../constants/SubscriptionType';
+import SubscriptionType from "../../../constants/SubscriptionType";
 import { convertSlotsToSchedules } from "../../../utils/scheduleUtils";
 import { AvailableSlotsModal } from "../../attendances/AvailableSlotsModal";
 import { DisciplineIcon } from "../../disciplines/DisciplineIcon";
 import { SubscriptionStudents } from "../SubscriptionStudents";
 
 import { getBusySlots } from "../../../services/apiBranchService";
-import { getSubscriptionFormData, updateSubscriptionSchedules } from "../../../services/apiSubscriptionService";
+import {
+  getSubscriptionFormData,
+  updateSubscriptionSchedules,
+} from "../../../services/apiSubscriptionService";
 import { getWorkingPeriods } from "../../../services/apiTeacherService";
 import { AvailableTeachersModal } from "../../attendances/AvailableTeachersModal";
 
@@ -54,14 +70,15 @@ export class SubscriptionScheduleForm extends React.Component {
     };
 
     // AvailableTeachersModal
-    this.showAvailableTeachersModal = this.showAvailableTeachersModal.bind(this);
-    this.handleCloseAvailableTeachersModal = this.handleCloseAvailableTeachersModal.bind(this);
+    this.showAvailableTeachersModal =
+      this.showAvailableTeachersModal.bind(this);
+    this.handleCloseAvailableTeachersModal =
+      this.handleCloseAvailableTeachersModal.bind(this);
 
     this.handleSave = this.handleSave.bind(this);
     this.handleScheduleChange = this.handleScheduleChange.bind(this);
   }
 
-  
   componentDidMount() {
     this.loadFormData();
   }
@@ -70,9 +87,9 @@ export class SubscriptionScheduleForm extends React.Component {
     const { subscriptionId } = this.state;
 
     if (!subscriptionId) {
-      this.setState({ 
-        error: ERROR_MESSAGES.NO_SUBSCRIPTION_ID, 
-        isLoading: false 
+      this.setState({
+        error: ERROR_MESSAGES.NO_SUBSCRIPTION_ID,
+        isLoading: false,
       });
       return;
     }
@@ -83,21 +100,23 @@ export class SubscriptionScheduleForm extends React.Component {
       const formData = await getSubscriptionFormData(subscriptionId);
 
       const subscription = formData.subscription || {};
-    
+
       this.setState({
         subscriptionId: subscription.subscriptionId,
         type: subscription.subscriptionType,
         students: formData.students,
         disciplineId: subscription.disciplineId || "",
         teacher: formData.teacher || {},
-        startDate: subscription.startDate ? format(new Date(subscription.startDate), "dd.MM.yyyy") : "",
+        startDate: subscription.startDate
+          ? format(new Date(subscription.startDate), "dd.MM.yyyy")
+          : "",
         attendanceCount: subscription.attendanceCount || "",
         attendanceLength: subscription.attendanceLength || 0,
         schedules: subscription.scheduleSlots || [],
         isLoading: false,
-        });
+      });
     } catch (error) {
-      console.error('Failed to load form data:', error);
+      console.error("Failed to load form data:", error);
       this.setState({
         error: ERROR_MESSAGES.LOAD_FAILED,
         isLoading: false,
@@ -108,7 +127,7 @@ export class SubscriptionScheduleForm extends React.Component {
   // AvailableTeachersModal
   showAvailableTeachersModal = async (e) => {
     e.preventDefault();
-    
+
     const { teacher } = this.state;
 
     const response = await getWorkingPeriods(teacher.teacherId);
@@ -122,34 +141,49 @@ export class SubscriptionScheduleForm extends React.Component {
 
   handleCloseAvailableTeachersModal = () => {
     if (!this.state.availableSlots || this.state.availableSlots.length === 0) {
-      this.setState({ showAvailableTeacherModal: false, teacherId: "" , selectedTeachers: [] });
+      this.setState({
+        showAvailableTeacherModal: false,
+        teacherId: "",
+        selectedTeachers: [],
+      });
       return;
     }
 
-    const selectedTeacherIds = Array.from(new Set(this.state.availableSlots.map(slot => slot.teacherId)));
-    const selectedTeachers = this.state.availableTeachers.filter(teacher => selectedTeacherIds.includes(teacher.teacherId)); 
-    const newSelectedTeacherId = selectedTeachers.length > 0 && selectedTeachers[0].teacherId;
+    const selectedTeacherIds = Array.from(
+      new Set(this.state.availableSlots.map((slot) => slot.teacherId)),
+    );
+    const selectedTeachers = this.state.availableTeachers.filter((teacher) =>
+      selectedTeacherIds.includes(teacher.teacherId),
+    );
+    const newSelectedTeacherId =
+      selectedTeachers.length > 0 && selectedTeachers[0].teacherId;
 
-    this.setState({ showAvailableTeacherModal: false, teacherId: newSelectedTeacherId , selectedTeachers: selectedTeachers });
+    this.setState({
+      showAvailableTeacherModal: false,
+      teacherId: newSelectedTeacherId,
+      selectedTeachers: selectedTeachers,
+    });
   };
 
   showAvailableSlotsModal = async (e) => {
     e.preventDefault();
-    
+
     const responseData = await getBusySlots(1); // BranchId
 
     this.setState({
-        rooms: responseData,
-        showAvailableSlotsModal: true,
+      rooms: responseData,
+      showAvailableSlotsModal: true,
     });
-  }
+  };
 
   handleCloseAvailableSlotsModal = () => {
     this.setState({ showAvailableSlotsModal: false });
   };
 
   handleSlotsChange = (slots) => {
-    const schedules = convertSlotsToSchedules(slots, { includeTeacherId: true });
+    const schedules = convertSlotsToSchedules(slots, {
+      includeTeacherId: true,
+    });
     this.setState({ availableSlots: slots, schedules: schedules });
   };
 
@@ -159,9 +193,9 @@ export class SubscriptionScheduleForm extends React.Component {
 
   handleSave = async (e) => {
     e.preventDefault();
-    
+
     const { subscriptionId, students, schedules } = this.state;
-    const studentIds = students.map(student => student.studentId);
+    const studentIds = students.map((student) => student.studentId);
 
     const requestBody = {
       subscriptionId: subscriptionId,
@@ -169,7 +203,7 @@ export class SubscriptionScheduleForm extends React.Component {
     };
 
     await updateSubscriptionSchedules(subscriptionId, requestBody);
-    
+
     const firstStudentId = studentIds[0];
     this.props.history.push(`/student/${firstStudentId}`);
   };
@@ -190,8 +224,8 @@ export class SubscriptionScheduleForm extends React.Component {
         <p>{this.state.error}</p>
         <hr />
         <div className="d-flex justify-content-end">
-          <Button 
-            onClick={this.loadFormData} 
+          <Button
+            onClick={this.loadFormData}
             variant="outline-danger"
             disabled={this.state.isLoading}
           >
@@ -204,60 +238,64 @@ export class SubscriptionScheduleForm extends React.Component {
 
   renderType = () => {
     const { disciplineId, type } = this.state;
-    
-    switch (type) { 
+
+    switch (type) {
       case SubscriptionType.LESSON:
-            return (
-              <Form.Group className="mb-3 text-center">
-                <Form.Label>
-                  <DisciplineIcon disciplineId={disciplineId}/>
-                  <span style={{marginLeft: "5px"}}>{getDisciplineName(disciplineId)}</span>
-                </Form.Label>
-              </Form.Group>
-            );
-      case SubscriptionType.RENT:
         return (
           <Form.Group className="mb-3 text-center">
             <Form.Label>
-              Аренда комнаты
+              <DisciplineIcon disciplineId={disciplineId} />
+              <span style={{ marginLeft: "5px" }}>
+                {getDisciplineName(disciplineId)}
+              </span>
             </Form.Label>
           </Form.Group>
-        )
+        );
+      case SubscriptionType.RENT:
+        return (
+          <Form.Group className="mb-3 text-center">
+            <Form.Label>Аренда комнаты</Form.Label>
+          </Form.Group>
+        );
       default:
         return null;
     }
-  }
+  };
 
   renderSelectSlotSection = () => {
     const { teacher, isSaving, type } = this.state;
-    switch (type) { 
+    switch (type) {
       case SubscriptionType.LESSON:
         return (
           <>
-            <div className="mb-3 mt-3"><b>Преподаватель</b></div>
-            <Form.Group className="mb-3" >
+            <div className="mb-3 mt-3">
+              <b>Преподаватель</b>
+            </div>
+            <Form.Group className="mb-3">
               <div className="mb-4">
-                  <InputGroup className="mb-3 d-flex">
-                    <Form.Label className="flex-grow-1">{teacher.firstName} {teacher.lastName}</Form.Label>
-                    <Button 
-                      variant="outline-secondary" 
-                      onClick={this.showAvailableTeachersModal}
-                      disabled={!teacher?.teacherId || isSaving}
-                    >
-                      Доступные окна...
-                    </Button>
-
-                  </InputGroup>
+                <InputGroup className="mb-3 d-flex">
+                  <Form.Label className="flex-grow-1">
+                    {teacher.firstName} {teacher.lastName}
+                  </Form.Label>
+                  <Button
+                    variant="outline-secondary"
+                    onClick={this.showAvailableTeachersModal}
+                    disabled={!teacher?.teacherId || isSaving}
+                  >
+                    Доступные окна...
+                  </Button>
+                </InputGroup>
               </div>
             </Form.Group>
           </>
         );
       case SubscriptionType.RENT:
         return (
-          <Button 
-              variant="outline-secondary" 
-              type="null" 
-              onClick={this.showAvailableSlotsModal}>
+          <Button
+            variant="outline-secondary"
+            type="null"
+            onClick={this.showAvailableSlotsModal}
+          >
             Доступные окна...
           </Button>
         );
@@ -313,11 +351,16 @@ export class SubscriptionScheduleForm extends React.Component {
               </Form.Group>
 
               <Form.Group className="mb-2">
-                <Form.Label><CountIcon /> Количество уроков: {attendanceCount}</Form.Label>
+                <Form.Label>
+                  <CountIcon /> Количество уроков: {attendanceCount}
+                </Form.Label>
               </Form.Group>
 
               <Form.Group className="mb-2">
-                <Form.Label><TimeIcon /> Длительность урока: {getAttendanceLengthName(attendanceLength)}</Form.Label>
+                <Form.Label>
+                  <TimeIcon /> Длительность урока:{" "}
+                  {getAttendanceLengthName(attendanceLength)}
+                </Form.Label>
               </Form.Group>
 
               {this.renderSelectSlotSection()}
@@ -349,7 +392,11 @@ export class SubscriptionScheduleForm extends React.Component {
 
               <hr></hr>
               <Container className="text-center">
-                <Button variant="primary" disabled={isSaving} onClick={this.handleSave}>
+                <Button
+                  variant="primary"
+                  disabled={isSaving}
+                  onClick={this.handleSave}
+                >
                   {isSaving ? (
                     <>
                       <Spinner
@@ -363,7 +410,7 @@ export class SubscriptionScheduleForm extends React.Component {
                       Сохранение...
                     </>
                   ) : (
-                    'Сохранить'
+                    "Сохранить"
                   )}
                 </Button>
               </Container>

@@ -4,7 +4,7 @@ import { Button, Container, Form, Row, Table } from "react-bootstrap";
 import { getDayName } from "../../constants/days";
 import { getRoomName } from "../../constants/rooms";
 
-import { CalendarIcon } from "../icons/CalendarIcon";
+import { CalendarIcon } from "../icons/Icons/CalendarIcon";
 
 export class ScheduleEditorWithDelete extends React.Component {
   constructor(props) {
@@ -25,9 +25,11 @@ export class ScheduleEditorWithDelete extends React.Component {
   deleteRecord = (itemIndex) => {
     this.setState(
       (prevState) => ({
-        schedules: prevState.schedules.filter((_, index) => index !== itemIndex),
+        schedules: prevState.schedules.filter(
+          (_, index) => index !== itemIndex,
+        ),
       }),
-      () => this.props.onChange(this.state.schedules)
+      () => this.props.onChange(this.state.schedules),
     );
   };
 
@@ -35,36 +37,43 @@ export class ScheduleEditorWithDelete extends React.Component {
     const { schedules } = this.state;
     let schedulesList;
     if (schedules && schedules.length > 0) {
-
-      schedulesList =
-      <Table striped bordered hover style={{ marginTop: "20px" }}>
-        <tbody>
-          {schedules.map((item, index) => (
-            <tr key={index}>
-              <td>{index + 1}</td>
-              <td>
-                <Container className="d-flex p-0">
-                  <div className="flex-grow-1">
-                    {`${getDayName(item.weekDay)} в ${item.startTime} (${getRoomName(item.roomId)})`}
-                  </div>
-                  <div className="flex-shrink-1">
-                    <Button
-                      variant="outline-danger"
-                      style={{ fontSize: "10px", marginLeft: "10px", borderRadius: "25px" }}
-                      onClick={() => this.deleteRecord(index)}
-                    >
-                      X
-                    </Button>
-                  </div>
-                </Container>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>;
+      schedulesList = (
+        <Table striped bordered hover style={{ marginTop: "20px" }}>
+          <tbody>
+            {schedules.map((item, index) => (
+              <tr key={index}>
+                <td>{index + 1}</td>
+                <td>
+                  <Container className="d-flex p-0">
+                    <div className="flex-grow-1">
+                      {`${getDayName(item.weekDay)} в ${item.startTime} (${getRoomName(item.roomId)})`}
+                    </div>
+                    <div className="flex-shrink-1">
+                      <Button
+                        variant="outline-danger"
+                        style={{
+                          fontSize: "10px",
+                          marginLeft: "10px",
+                          borderRadius: "25px",
+                        }}
+                        onClick={() => this.deleteRecord(index)}
+                      >
+                        X
+                      </Button>
+                    </div>
+                  </Container>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      );
     } else {
       schedulesList = (
-        <div className="text-center py-2 mb-3" style={{ backgroundColor: "#f8f9fa", borderRadius: "5px" }}>
+        <div
+          className="text-center py-2 mb-3"
+          style={{ backgroundColor: "#f8f9fa", borderRadius: "5px" }}
+        >
           <p className="text-muted mb-0">Нет записей</p>
         </div>
       );
@@ -77,9 +86,7 @@ export class ScheduleEditorWithDelete extends React.Component {
           Расписание
         </b>
         <Row>
-          <Container>
-              {schedulesList}
-          </Container>
+          <Container>{schedulesList}</Container>
         </Row>
       </Form.Group>
     );

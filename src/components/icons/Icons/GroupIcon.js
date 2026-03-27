@@ -1,6 +1,10 @@
 import { useState } from "react";
 
+<<<<<<< HEAD:src/components/icons/GroupIcon.js
 function GroupIcon({ onIconClick, size="30px", color="currentColor" }) {
+=======
+export function GroupIcon({ onIconClick, size = "30px", color = "#000000" }) {
+>>>>>>> 995dbf5 (﻿add uqly icons, add ts, doing header):src/components/icons/Icons/GroupIcon.js
   const [setColor] = useState("#000000"); // Default color
 
   const handleClick = (e) => {
@@ -21,8 +25,8 @@ function GroupIcon({ onIconClick, size="30px", color="currentColor" }) {
         y="0px"
         viewBox="0 0 511.999 511.999"
         style={{
-          enableBackground:'new 0 0 511.999 511.999',
-          fill:{color}
+          enableBackground: "new 0 0 511.999 511.999",
+          fill: { color },
         }}
       >
         <g>
@@ -101,9 +105,6 @@ function GroupIcon({ onIconClick, size="30px", color="currentColor" }) {
         <g></g>
         <g></g>
       </svg>
-      
     </span>
   );
 }
-
-export default GroupIcon;

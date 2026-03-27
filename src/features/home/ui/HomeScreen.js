@@ -1,18 +1,34 @@
 import { format } from "date-fns";
 import React from "react";
-import { Button, Container, Form, Row, Tab, Table, Tabs } from "react-bootstrap";
+import {
+  Button,
+  Container,
+  Form,
+  Row,
+  Tab,
+  Table,
+  Tabs,
+} from "react-bootstrap";
 import { Link } from "react-router-dom";
 
-import { CalendarDay } from "../../components/calendar/CalendarDay";
-import { EditIcon } from "../../components/icons";
-import { Loading } from "../../components/Loading";
-import { AttendanceModal } from "../attendances/AttendanceModal/AttendanceModal";
+import { CalendarDay } from "../../../components/calendar/CalendarDay";
+import { EditIcon } from "../../../components/icons/Icons";
+import { Loading } from "../../../components/Loading";
+import { AttendanceModal } from "../../attendances/AttendanceModal/AttendanceModal";
 
+<<<<<<< HEAD:src/features/home/HomeScreen.js
 import { NoRecords } from "../../components/NoRecords";
 import { Colors } from "../../constants/Colors";
 import { getHomeScreenDetails } from "../../services/apiHomeService";
 import { markComplete } from "../../services/apiNoteService";
 import { isCancelledAttendanceStatus } from "../attendances/attendanceHelper";
+=======
+import { isCancelledAttendanceStatus } from "../../attendances/attendanceHelper";
+
+import { NoRecords } from "../../../components/NoRecords";
+import { getHomeScreenDetails } from "../../../services/apiHomeService";
+import { markComplete } from "../../../services/apiNoteService";
+>>>>>>> 04387c4 (﻿add uqly icons, add ts, doing header):src/features/home/ui/HomeScreen.js
 
 class HomeScreen extends React.Component {
   constructor(props) {
@@ -28,7 +44,7 @@ class HomeScreen extends React.Component {
 
       isLoading: true,
     };
-    
+
     this.handleChangeNoteStatus = this.handleChangeNoteStatus.bind(this);
     this.handleShowCanceled = this.handleShowCanceled.bind(this);
     this.handleAttendanceUpdate = this.handleAttendanceUpdate.bind(this);
@@ -43,7 +59,7 @@ class HomeScreen extends React.Component {
       this.setState({ isLoading: true, error: null, noteError: null });
 
       const details = await getHomeScreenDetails(1);
-      
+
       this.setState({
         rooms: details.rooms,
         notes: details.notes,
@@ -58,7 +74,6 @@ class HomeScreen extends React.Component {
         isLoading: false,
       });
     }
-    
   }
 
   handleShowCanceled = (e) => {
@@ -66,14 +81,19 @@ class HomeScreen extends React.Component {
   };
 
   handleSelectEvent = (slotInfo) => {
-    const newSelectedAttendance = this.state.attendances.filter((a) => a.attendanceId === slotInfo.id)[0];
-    this.setState({ showAttendanceModal: true, selectedAttendance: newSelectedAttendance });
+    const newSelectedAttendance = this.state.attendances.filter(
+      (a) => a.attendanceId === slotInfo.id,
+    )[0];
+    this.setState({
+      showAttendanceModal: true,
+      selectedAttendance: newSelectedAttendance,
+    });
   };
 
   handleCloseAttendanceModal = () => {
-    this.setState({ 
+    this.setState({
       showAttendanceModal: false,
-      selectedAttendance: null, 
+      selectedAttendance: null,
     });
   };
 
@@ -83,7 +103,7 @@ class HomeScreen extends React.Component {
     this.setState((prevState) => {
       // Create a new array with updated notes
       const updatedNotes = prevState.notes.map((note) =>
-        note.noteId === noteId ? { ...note, status: status } : note
+        note.noteId === noteId ? { ...note, status: status } : note,
       );
 
       // Return the new state object
@@ -97,16 +117,18 @@ class HomeScreen extends React.Component {
     this.setState((prevState) => {
       // Update the attendance in the attendances array
       const updatedAttendances = prevState.attendances.map((attendance) =>
-        attendance.attendanceId === updatedData.attendanceId 
+        attendance.attendanceId === updatedData.attendanceId
           ? { ...attendance, ...updatedData }
-          : attendance
+          : attendance,
       );
 
-      return { 
+      return {
         attendances: updatedAttendances,
-        selectedAttendance: prevState.selectedAttendance?.attendanceId === updatedData.attendanceId
-          ? { ...prevState.selectedAttendance, ...updatedData }
-          : prevState.selectedAttendance
+        selectedAttendance:
+          prevState.selectedAttendance?.attendanceId ===
+          updatedData.attendanceId
+            ? { ...prevState.selectedAttendance, ...updatedData }
+            : prevState.selectedAttendance,
       };
     });
   };
@@ -114,36 +136,34 @@ class HomeScreen extends React.Component {
   getEventTitle = (attendance) => {
     if (attendance.attendees?.length > 1) {
       return attendance.attendees
-        .map(attendee => attendee.student.firstName)
+        .map((attendee) => attendee.student.firstName)
         .join(", ");
     }
-    
+
     return `${attendance.attendees[0]?.student?.firstName} ${attendance.attendees[0]?.student?.lastName}`;
   };
 
   render() {
-    const { 
+    const {
       isLoading,
-      attendances, 
-      showCanceled, 
-      selectedAttendance, 
-      notes, 
-      showAttendanceModal 
+      attendances,
+      showCanceled,
+      selectedAttendance,
+      notes,
+      showAttendanceModal,
     } = this.state;
 
     if (isLoading) {
-      return <Loading
-        message="Загрузка данных ..."
-      />
+      return <Loading message="Загрузка данных ..." />;
     }
 
     // Events
     let events;
     if (attendances) {
-
-      const filteredAttendancies = showCanceled === false 
-        ? attendances.filter((a) => !isCancelledAttendanceStatus(a.status)) 
-        : attendances;
+      const filteredAttendancies =
+        showCanceled === false
+          ? attendances.filter((a) => !isCancelledAttendanceStatus(a.status))
+          : attendances;
 
       events = filteredAttendancies.map((attendance) => ({
         id: attendance.attendanceId,
@@ -173,7 +193,9 @@ class HomeScreen extends React.Component {
           <tbody>
             {activeNotes.map((item, index) => (
               <tr key={index}>
-                <td style={{ width: "100px" }}>{format(item.completeDate, "HH:mm")}</td>
+                <td style={{ width: "100px" }}>
+                  {format(item.completeDate, "HH:mm")}
+                </td>
                 <td>
                   <Container className="d-flex p-0">
                     <div className="flex-grow-1">
@@ -190,7 +212,9 @@ class HomeScreen extends React.Component {
                       <Button
                         variant="outline-primary"
                         size="sm"
-                        onClick={(e) => this.handleChangeNoteStatus(item.noteId, 2)}
+                        onClick={(e) =>
+                          this.handleChangeNoteStatus(item.noteId, 2)
+                        }
                         style={{ marginLeft: "10px" }}
                       >
                         Выполнено
@@ -198,7 +222,9 @@ class HomeScreen extends React.Component {
                       <Button
                         variant="outline-danger"
                         size="sm"
-                        onClick={(e) => this.handleChangeNoteStatus(item.noteId, 3)}
+                        onClick={(e) =>
+                          this.handleChangeNoteStatus(item.noteId, 3)
+                        }
                         style={{ marginLeft: "10px", marginRight: "10px" }}
                       >
                         Отменено
@@ -222,7 +248,9 @@ class HomeScreen extends React.Component {
           <tbody>
             {completedNotes.map((item, index) => (
               <tr key={index}>
-                <td style={{ width: "100px" }}>{format(item.completeDate, "HH:mm")}</td>
+                <td style={{ width: "100px" }}>
+                  {format(item.completeDate, "HH:mm")}
+                </td>
                 <td>
                   <Container className="d-flex p-0">
                     <div className="flex-grow-1 text-decoration-line-through">
@@ -239,7 +267,9 @@ class HomeScreen extends React.Component {
                       <Button
                         variant="secondary"
                         size="sm"
-                        onClick={(e) => this.handleChangeNoteStatus(item.noteId, 1)}
+                        onClick={(e) =>
+                          this.handleChangeNoteStatus(item.noteId, 1)
+                        }
                         style={{ marginRight: "10px" }}
                       >
                         Не выполнено
@@ -305,15 +335,26 @@ class HomeScreen extends React.Component {
         <Row>
           <div className="d-flex mb-2">
             <div className="flex-grow-1">
-              <div style={{ fontWeight: "bold", fontSize: "20px" }}>Активности</div>
+              <div style={{ fontWeight: "bold", fontSize: "20px" }}>
+                Активности
+              </div>
             </div>
             <div>
-              <Button as={Link} to="/notes/addNote" variant="outline-success" size="sm">
+              <Button
+                as={Link}
+                to="/notes/addNote"
+                variant="outline-success"
+                size="sm"
+              >
                 + Новая активность
               </Button>
             </div>
           </div>
-          <Tabs defaultActiveKey="active" id="uncontrolled-tab-example" className="mb-3">
+          <Tabs
+            defaultActiveKey="active"
+            id="uncontrolled-tab-example"
+            className="mb-3"
+          >
             <Tab eventKey="active" title="На сегодня">
               {activeNotesTable}
               <hr></hr>

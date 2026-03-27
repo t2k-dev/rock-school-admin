@@ -1,16 +1,21 @@
 import { format } from "date-fns";
 import { ru } from "date-fns/locale";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 import { useHistory } from "react-router-dom";
-import { CalendarIcon, DoorIcon, EditIcon, TimeIcon } from "../../../components/icons";
+import {
+  CalendarIcon,
+  DoorIcon,
+  EditIcon,
+  TimeIcon,
+} from "../../../components/icons/Icons";
 import { getRoomName } from "../../../constants/rooms";
 import { isCancelledAttendanceStatus } from "../attendanceHelper";
 
-export const AttendanceDateAndRoom = ({ 
+export const AttendanceDateAndRoom = ({
   attendanceId,
-  roomId, 
-  startDate, 
-  endDate, 
+  roomId,
+  startDate,
+  endDate,
   isCompleted = false,
   status = 0,
   showRescheduleLink = true,
@@ -27,8 +32,8 @@ export const AttendanceDateAndRoom = ({
       const dateObj = date instanceof Date ? date : new Date(date);
       return format(dateObj, formatStr, { locale: ru });
     } catch (error) {
-      console.error('Date formatting error:', error);
-      return 'Некорректная дата';
+      console.error("Date formatting error:", error);
+      return "Некорректная дата";
     }
   };
 
@@ -37,8 +42,8 @@ export const AttendanceDateAndRoom = ({
       const dateObj = date instanceof Date ? date : new Date(date);
       return format(dateObj, formatStr);
     } catch (error) {
-      console.error('Time formatting error:', error);
-      return '--:--';
+      console.error("Time formatting error:", error);
+      return "--:--";
     }
   };
 
@@ -54,19 +59,22 @@ export const AttendanceDateAndRoom = ({
   const shouldShowRescheduleLink = () => {
     return (
       showRescheduleLink &&
-      !isCompleted && 
+      !isCompleted &&
       !isCancelledAttendanceStatus(status) &&
       attendanceId
     );
   };
 
   return (
-    <div className={`text-start ${className}`} style={{ position: 'relative', ...style }}>
+    <div
+      className={`text-start ${className}`}
+      style={{ position: "relative", ...style }}
+    >
       {/* Edit Icon - Top Right Corner */}
       {shouldShowRescheduleLink() && (
-        <div style={{ position: 'absolute', top: '0', right: '0' }}>
-          <EditIcon 
-            onIconClick={handleEditClick} 
+        <div style={{ position: "absolute", top: "0", right: "0" }}>
+          <EditIcon
+            onIconClick={handleEditClick}
             size="18px"
             title="Перенести урок"
           />
@@ -99,10 +107,13 @@ export const AttendanceDateAndRoom = ({
 };
 
 AttendanceDateAndRoom.propTypes = {
-  attendanceId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  attendanceId: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+    .isRequired,
   roomId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-  startDate: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)]).isRequired,
-  endDate: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)]).isRequired,
+  startDate: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)])
+    .isRequired,
+  endDate: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)])
+    .isRequired,
   isCompleted: PropTypes.bool,
   status: PropTypes.number,
   showRescheduleLink: PropTypes.bool,

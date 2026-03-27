@@ -3,7 +3,7 @@ import { Badge, Button, Form, Modal } from "react-bootstrap";
 import { v4 as uuidv4 } from "uuid";
 
 import { CalendarWeek } from "../../components/calendar/CalendarWeek";
-import { CopyIcon, DoorIcon } from "../../components/icons";
+import { CopyIcon, DoorIcon } from "../../components/icons/Icons";
 import { formatDate, formatTime } from "../../utils/dateTime";
 
 export class AvailableSlotsModal extends React.Component {
@@ -48,9 +48,7 @@ export class AvailableSlotsModal extends React.Component {
   };
 
   generateSelectedSlotsText(availableSlots) {
-    return availableSlots
-          .map(slot => slot.description)
-          .join('\n');
+    return availableSlots.map((slot) => slot.description).join("\n");
   }
 
   getWorkloadBadgeColor = (workload) => {
@@ -63,7 +61,9 @@ export class AvailableSlotsModal extends React.Component {
   };
 
   createNewSlot = (room, slotInfo, slotId) => {
-    const dayName = new Intl.DateTimeFormat("ru-RU", { weekday: "long" }).format(slotInfo.start);
+    const dayName = new Intl.DateTimeFormat("ru-RU", {
+      weekday: "long",
+    }).format(slotInfo.start);
 
     return {
       id: slotId,
@@ -73,13 +73,13 @@ export class AvailableSlotsModal extends React.Component {
       end: slotInfo.end,
       description: this.generateSlotDescription(room, dayName, slotInfo),
     };
-  }
+  };
 
   generateSlotDescription = (room, dayName, slotInfo) => {
     const timeString = `${formatDate(slotInfo.start)} в ${formatTime(slotInfo.start)}`;
     return `${room.name}: ${dayName}, ${timeString}`;
   };
-  
+
   createNewAttendance = (slotId, slotInfo) => ({
     attendanceId: slotId,
     id: slotId,
@@ -92,7 +92,7 @@ export class AvailableSlotsModal extends React.Component {
   });
 
   updateRoomAttendances = (rooms, roomId, newAttendance) => {
-    return rooms.map(room => {
+    return rooms.map((room) => {
       if (room.id !== roomId) return room;
 
       const currentAttendances = room.attendances || [];
@@ -104,12 +104,15 @@ export class AvailableSlotsModal extends React.Component {
   };
 
   removeAttendanceFromRoom = (rooms, roomId, attendanceId) => {
-    return rooms.map(room => {
+    return rooms.map((room) => {
       if (room.id !== roomId) return room;
 
       return {
         ...room,
-        attendances: room.attendances?.filter(a => a.attendanceId !== attendanceId && a.id !== attendanceId) || [],
+        attendances:
+          room.attendances?.filter(
+            (a) => a.attendanceId !== attendanceId && a.id !== attendanceId,
+          ) || [],
       };
     });
   };
@@ -128,7 +131,7 @@ export class AvailableSlotsModal extends React.Component {
     try {
       await navigator.clipboard.writeText(this.state.selectedSlotsText);
       this.setState({ copySuccess: "Текст скопирован в буфер обмена!" });
-      
+
       // Clear success message after 3 seconds
       setTimeout(() => {
         this.setState({ copySuccess: "" });
@@ -164,23 +167,25 @@ export class AvailableSlotsModal extends React.Component {
     if (!slotInfo.isNew) return;
 
     // Update available slots
-    const updatedSlots = this.state.availableSlots.filter((s) => s.id !== slotInfo.id);
+    const updatedSlots = this.state.availableSlots.filter(
+      (s) => s.id !== slotInfo.id,
+    );
 
     // Update room attendances
     const updatedRooms = this.removeAttendanceFromRoom(
       this.state.rooms,
       room.id,
-      slotInfo.id
+      slotInfo.id,
     );
 
     const slotsTxt = this.generateSelectedSlotsText(updatedSlots);
 
-    this.setState({ 
-      availableSlots: updatedSlots, 
-      rooms: updatedRooms, 
-      selectedSlotsText: slotsTxt 
+    this.setState({
+      availableSlots: updatedSlots,
+      rooms: updatedRooms,
+      selectedSlotsText: slotsTxt,
     });
-    
+
     this.notifyParent(updatedSlots);
   };
 
@@ -192,13 +197,15 @@ export class AvailableSlotsModal extends React.Component {
     const updatedRooms = this.updateRoomAttendances(
       this.state.rooms,
       room.id,
-      newAttendance
+      newAttendance,
     );
 
     // Add the selected slot to the availableSlots array
     const newSlot = this.createNewSlot(room, slotInfo, slotId);
     const updatedAvailableSlots = [...this.state.availableSlots, newSlot];
-    const availableSlotsTxt = this.generateSelectedSlotsText(updatedAvailableSlots);
+    const availableSlotsTxt = this.generateSelectedSlotsText(
+      updatedAvailableSlots,
+    );
 
     // Update the state with the modified arrays
     this.setState({
@@ -215,9 +222,9 @@ export class AvailableSlotsModal extends React.Component {
 
   clearAllSlots = () => {
     // Remove all new attendances from rooms
-    const updatedRooms = this.state.rooms.map(room => ({
+    const updatedRooms = this.state.rooms.map((room) => ({
       ...room,
-      attendances: room.attendances?.filter(a => !a.isNew) || [],
+      attendances: room.attendances?.filter((a) => !a.isNew) || [],
     }));
 
     this.setState({
@@ -240,8 +247,8 @@ export class AvailableSlotsModal extends React.Component {
 
   // Render Methods
   renderWorkloadBadge = (teacher) => (
-    <Badge 
-      className="ms-1" 
+    <Badge
+      className="ms-1"
       bg={this.getWorkloadBadgeColor(teacher.workload)}
       aria-label={`Загруженность ${teacher.workload}%`}
     >
@@ -250,26 +257,35 @@ export class AvailableSlotsModal extends React.Component {
   );
 
   renderTeacher = (teacher, index) => {
-    const backgroundEvents = this.mapWorkingPeriodsToBackgroundEvents(teacher.scheduledWorkingPeriods);
+    const backgroundEvents = this.mapWorkingPeriodsToBackgroundEvents(
+      teacher.scheduledWorkingPeriods,
+    );
     const attendanceEvents = this.mapAttendancesToEvents(teacher.attendances);
     const busySlotEvents = this.mapBusySlotsToEvents(this.state.busySlots);
-    
+
     // Combine all events
     const events = [...attendanceEvents, ...busySlotEvents];
 
     return (
-      <div className="mb-4" key={teacher.teacherId} id={`teacher-${teacher.teacherId}`}>
+      <div
+        className="mb-4"
+        key={teacher.teacherId}
+        id={`teacher-${teacher.teacherId}`}
+      >
         <div className="mb-3">
           <span style={{ fontWeight: "bold" }}>
             {teacher.firstName} {teacher.lastName}
           </span>
-          {typeof teacher.workload === 'number' && this.renderWorkloadBadge(teacher)}
+          {typeof teacher.workload === "number" &&
+            this.renderWorkloadBadge(teacher)}
         </div>
         <CalendarWeek
           backgroundEvents={backgroundEvents}
           events={events}
           onSelectSlot={(slotInfo) => this.handleSelectSlot(teacher, slotInfo)}
-          onSelectEvent={(slotInfo) => this.handleSelectEvent(teacher.teacherId, slotInfo)}
+          onSelectEvent={(slotInfo) =>
+            this.handleSelectEvent(teacher.teacherId, slotInfo)
+          }
         />
       </div>
     );
@@ -277,8 +293,8 @@ export class AvailableSlotsModal extends React.Component {
 
   mapWorkingPeriodsToBackgroundEvents = (scheduledWorkingPeriods) => {
     if (!scheduledWorkingPeriods) return [];
-    
-    return scheduledWorkingPeriods.map(period => ({
+
+    return scheduledWorkingPeriods.map((period) => ({
       id: period.scheduledWorkingPeriodId,
       start: period.startDate,
       end: period.endDate,
@@ -288,8 +304,8 @@ export class AvailableSlotsModal extends React.Component {
 
   mapAttendancesToEvents = (attendances) => {
     if (!attendances) return [];
-    
-    return attendances.map(attendance => ({
+
+    return attendances.map((attendance) => ({
       id: attendance.attendanceId || attendance.id,
       title: attendance.isNew ? "Окно" : "Занято",
       start: new Date(attendance.startDate || attendance.start),
@@ -312,18 +328,18 @@ export class AvailableSlotsModal extends React.Component {
     }
 
     // Render a calendar for each room
-    return rooms.map(room => this.renderRoomCalendar(room));
+    return rooms.map((room) => this.renderRoomCalendar(room));
   };
 
   renderRoomCalendar = (room) => {
     // Map room attendances to events for this specific room
     const attendanceEvents = this.mapAttendancesToEvents(room.attendances);
-    
+
     return (
       <div className="mb-4" key={room.id}>
         <div className="mb-3">
           <span style={{ fontWeight: "bold" }}>
-            <DoorIcon/> {room.name}
+            <DoorIcon /> {room.name}
           </span>
         </div>
         <CalendarWeek
@@ -344,15 +360,19 @@ export class AvailableSlotsModal extends React.Component {
         <Form.Group className="mb-3" controlId="selectedSlotsText">
           <div className="d-flex mb-1">
             <span className="flex-grow-1">Свободные окна</span>
-              <Button
-                size="sm"
-                variant="outline-secondary"
+            <Button
+              size="sm"
+              variant="outline-secondary"
+              onClick={this.handleCopy}
+              disabled={!selectedSlotsText.trim()}
+              id="copy-help-text"
+              aria-describedby="copy-button-help"
+            >
+              <CopyIcon
+                size="15px"
+                style={{ cursor: "pointer" }}
                 onClick={this.handleCopy}
-                disabled={!selectedSlotsText.trim()}
-                id="copy-help-text"
-                aria-describedby="copy-button-help"
-              >
-              <CopyIcon size="15px" style={{ cursor: "pointer" }} onClick={this.handleCopy}></CopyIcon>
+              ></CopyIcon>
             </Button>
           </div>
 
@@ -374,9 +394,9 @@ export class AvailableSlotsModal extends React.Component {
     if (!show) return null;
 
     return (
-      <Modal 
-        size="xl" 
-        show={show} 
+      <Modal
+        size="xl"
+        show={show}
         onHide={this.props.onClose}
         aria-labelledby="available-slots-modal-title"
       >
@@ -388,9 +408,13 @@ export class AvailableSlotsModal extends React.Component {
 
         <Modal.Body>
           <div className="d-flex" role="main">
-            <div 
-              className="flex-grow-1" 
-              style={{ height: "640px", overflow: "auto", paddingRight: "15px" }}
+            <div
+              className="flex-grow-1"
+              style={{
+                height: "640px",
+                overflow: "auto",
+                paddingRight: "15px",
+              }}
               role="region"
               aria-label="Список комнат"
             >
