@@ -8,11 +8,11 @@ import { EditIcon } from "../../components/icons";
 import { Loading } from "../../components/Loading";
 import { AttendanceModal } from "../attendances/AttendanceModal/AttendanceModal";
 
-import { isCancelledAttendanceStatus } from "../attendances/attendanceHelper";
-
 import { NoRecords } from "../../components/NoRecords";
+import { Colors } from "../../constants/Colors";
 import { getHomeScreenDetails } from "../../services/apiHomeService";
 import { markComplete } from "../../services/apiNoteService";
+import { isCancelledAttendanceStatus } from "../attendances/attendanceHelper";
 
 class HomeScreen extends React.Component {
   constructor(props) {
@@ -273,7 +273,7 @@ class HomeScreen extends React.Component {
             </div>
           </div>
         </Row>
-        <Row className="mb-5">
+        <Row className={`mb-5 bg-[${Colors.cardBg}] p-5 rounded-[10px]`}>
           <CalendarDay
             events={events}
             onSelectEvent={(slotInfo) => {

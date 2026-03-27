@@ -1,9 +1,10 @@
 import React from "react";
-import { Button, Col, Container, Form, Row } from "react-bootstrap";
+import { Button, Col, Form, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { Loading } from "../../components/Loading";
-import { NoRecords } from "../../components/NoRecords";
-import { getBands } from "../../services/apiBandService";
+import { Loading } from "../../../components/Loading";
+import { NoRecords } from "../../../components/NoRecords";
+import { Container } from "../../../components/ui";
+import { getBands } from "../../../services/apiBandService";
 import BandCard from "./BandCard";
 
 class Bands extends React.Component {
@@ -32,20 +33,21 @@ class Bands extends React.Component {
     this.setState({ bands: returnedBands, isLoading: false });
   }
 
-  renderBands(bands) {
+  renderBandsList(bands) {
     const { searchText } = this.state;
+    const normalizedSearchText = searchText.toLowerCase();
     
-    const activeBands = bands?.
-      filter((b) => b.name.toLowerCase().includes(searchText.toLowerCase())).
-      sort((a, b) => a.name.localeCompare(b.name));
+    const filteredBands = bands?.
+      filter((band) => band.name.toLowerCase().includes(normalizedSearchText)).
+      sort((left, right) => left.name.localeCompare(right.name));
 
-    if (!activeBands || activeBands.length === 0) {
+    if (!filteredBands || filteredBands.length === 0) {
       return <NoRecords />;
     } 
 
     return(
       <>
-      {activeBands.map((item, index) => <BandCard key={index} item={item} />)}
+      {filteredBands.map((item, index) => <BandCard key={index} item={item} />)}
       </>
     );
   }
@@ -61,7 +63,7 @@ class Bands extends React.Component {
     const inactiveBands = bands?.filter((b) => !b.isActive);
 
     return (
-      <Container style={{ marginTop: "40px" }}>
+      <div style={{ marginTop: "40px" }}>
         <Row>
           <Col md="2"></Col>
           <Col md="8">
@@ -70,20 +72,24 @@ class Bands extends React.Component {
                 <div style={{ fontWeight: "bold", fontSize: "28px" }}>Группы</div>
               </div>
               <div>
+              </div>
+            </div>
+            <Container>
+              <div>
+              <Form.Control className="mb-4" placeholder="Поиск..." value={searchText} onChange={(e) => this.handleSearchChange(e)}></Form.Control>
+              </div>
+              <div className="mb-3 text-center">
                 <Button as={Link} to="/admin/registerBand" variant="outline-success">
                   + Новая группа
                 </Button>
               </div>
-            </div>
-            <div>
-              <Form.Control className="mb-4" placeholder="Поиск..." value={searchText} onChange={(e) => this.handleSearchChange(e)}></Form.Control>
-            </div>
-            <div>{this.renderBands(activeBands)}</div>
-            <h4 className="mb-3">Неактивные</h4>
-            <div>{this.renderBands(inactiveBands)}</div>
+              <div className="space-y-5">{this.renderBandsList(activeBands)}</div>
+              <h4 className="mb-3">Неактивные</h4>
+              <div className="space-y-5">{this.renderBandsList(inactiveBands)}</div>
+            </Container>
           </Col>
         </Row>
-      </Container>
+      </div>
     );
   }
 }

@@ -57,7 +57,7 @@ export class CalendarDay extends React.Component {
     ];
 
     return (
-      <div style={{ height: 550 }}>
+      <div style={{ height: 600 }}>
         <Calendar
           events={this.props.events}
           localizer={localizer}

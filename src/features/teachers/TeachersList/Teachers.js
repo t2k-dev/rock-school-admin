@@ -1,9 +1,10 @@
 import React from "react";
-import { Button, Col, Container, Form, Row } from "react-bootstrap";
+import { Button, Col, Form, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { Loading } from "../../components/Loading";
-import { NoRecords } from "../../components/NoRecords";
-import { getTeachers } from "../../services/apiTeacherService";
+import { Loading } from "../../../components/Loading";
+import { NoRecords } from "../../../components/NoRecords";
+import { Container } from "../../../components/ui";
+import { getTeachers } from "../../../services/apiTeacherService";
 import TeacherCard from "./TeacherCard";
 
 class Teachers extends React.Component {
@@ -67,7 +68,7 @@ class Teachers extends React.Component {
     const inactiveTeachers = teachers?.filter((t) => !t.isActive);
 
     return (
-      <Container style={{ marginTop: "40px" }}>
+      <div style={{ marginTop: "40px" }}>
         <Row>
           <Col md="2"></Col>
           <Col md="8">
@@ -76,20 +77,24 @@ class Teachers extends React.Component {
                 <div style={{ fontWeight: "bold", fontSize: "28px" }}>Преподаватели</div>
               </div>
               <div>
+              </div>
+            </div>
+            <Container>
+              <div>
+                <Form.Control className="mb-4" placeholder="Поиск..." value={searchText} onChange={(e) => this.handleSearchChange(e)}></Form.Control>
+              </div>
+              <div className="mb-3 text-center">
                 <Button as={Link} to="/admin/registerTeacher" variant="outline-success">
                   + Новый преподаватель
                 </Button>
               </div>
-            </div>
-            <div>
-              <Form.Control className="mb-4" placeholder="Поиск..." value={searchText} onChange={(e) => this.handleSearchChange(e)}></Form.Control>
-            </div>
-            <div>{this.renderTeachers(activeTeachers)}</div>
-            <h4 className="mb-3"> Неактивные </h4>
-            <div>{this.renderTeachers(inactiveTeachers)}</div>
+              <div className="space-y-5">{this.renderTeachers(activeTeachers)}</div>
+              <h4 className="mb-3"> Неактивные </h4>
+              <div className="space-y-5">{this.renderTeachers(inactiveTeachers)}</div>
+            </Container>
           </Col>
         </Row>
-      </Container>
+      </div>
     );
   }
 }
