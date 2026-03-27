@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { Card, Col, Row } from 'react-bootstrap';
+import { Col, Row } from 'react-bootstrap';
 import { CalendarIcon } from '../../components/icons';
 import { HoverCard } from '../../components/ui/HoverCard';
 import PaymentType, { getPaymentTypeName } from '../../constants/PaymentType';
@@ -30,7 +30,6 @@ const PaymentCard = ({ payment, index }) => {
     <HoverCard
         className='mb-3'
     >
-      <Card.Body>
         <Row className="align-items-center">
           <Col md="3">
             <div className="text-muted small"><CalendarIcon size="16px" color="gray"/> Дата</div>
@@ -72,7 +71,6 @@ const PaymentCard = ({ payment, index }) => {
             </div>
           </Col>
         </Row>
-      </Card.Body>
     </HoverCard>
   );
 };

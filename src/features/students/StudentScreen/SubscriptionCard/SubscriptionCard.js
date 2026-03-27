@@ -1,6 +1,6 @@
 import { format } from "date-fns";
 import PropTypes from "prop-types";
-import { Badge, Card, Col, Row } from "react-bootstrap";
+import { Badge, Col, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 import { CalendarIcon, CoinsIcon } from "../../../../components/icons";
@@ -190,11 +190,9 @@ export const SubscriptionCard = ({
       className="mb-3"
       onClick={() => onClick(subscription)}
     >
-        <Card.Body>
           <Row className="align-items-center">
             {renderColumns()}
           </Row>
-        </Card.Body>
     </HoverCard>
   );
 };

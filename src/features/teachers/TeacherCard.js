@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Col, Row } from 'react-bootstrap';
+import { Col, Row } from 'react-bootstrap';
 import { Link } from "react-router-dom";
 import { Avatar } from "../../components/Avatar";
 import { HoverCard } from "../../components/ui";
@@ -11,7 +11,6 @@ class TeacherCard extends React.Component{
     render(){
         return(
                 <HoverCard className="ms-col-2 mb-2">
-                    <Card.Body>
                         <Row>
                             <Col md="2">
                                 <Avatar style={{ width: "70px", height: "70px" }} />
@@ -48,7 +47,6 @@ class TeacherCard extends React.Component{
                                 </div>
                             </Col>
                         </Row>
-                    </Card.Body>
                 </HoverCard>
         )
     }

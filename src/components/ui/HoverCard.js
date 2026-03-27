@@ -1,37 +1,52 @@
 import PropTypes from "prop-types";
-import { Card } from "react-bootstrap";
+import { Colors } from "../../constants/Colors";
 
-import styles from "./HoverCard.module.css";
-
-export const HoverCard = ({ 
-  children, 
-  onClick, 
-  className = "", 
+export const HoverCard = ({
+  children,
+  onClick,
+  className = "",
   style = {},
-  hoverTransform = 'translateY(-2px)',
-  hoverShadow = '0 4px 8px rgba(0,0,0,0.1)',
-  transition = 'transform 0.2s, box-shadow 0.2s',
+  hoverTransform = "translateY(-2px)",
+  transition = "transform 0.2s, box-shadow 0.2s",
   clickable = true,
-  ...props 
+  as: Component = "div",
+  onMouseEnter,
+  onMouseLeave,
+  ...props
 }) => {
+  const baseTransform = style.transform || "translateY(0)";
+  const baseShadow = style.boxShadow || "";
+
   const cardStyle = {
-    cursor: clickable ? 'pointer' : 'default',
+    cursor: clickable ? "pointer" : "default",
     transition,
-    ...style
+    backgroundColor: Colors.innerBg,
+    color: Colors.textMain,
+    ...style,
   };
+
+  const cardClassName = [
+    "block overflow-hidden rounded-[10px] border-0 p-4 no-underline shadow-none",
+    clickable ? "cursor-pointer" : "cursor-default",
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   const handleMouseEnter = (e) => {
     if (clickable) {
       e.currentTarget.style.transform = hoverTransform;
-      e.currentTarget.style.boxShadow = hoverShadow;
     }
+
+    onMouseEnter?.(e);
   };
 
   const handleMouseLeave = (e) => {
     if (clickable) {
-      e.currentTarget.style.transform = 'translateY(0)';
-      e.currentTarget.style.boxShadow = '';
+      e.currentTarget.style.transform = baseTransform;
     }
+
+    onMouseLeave?.(e);
   };
 
   const handleClick = (e) => {
@@ -41,8 +56,8 @@ export const HoverCard = ({
   };
 
   return (
-    <Card 
-      className={`${styles.card} ${className}`}
+    <Component
+      className={cardClassName}
       style={cardStyle}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
@@ -50,7 +65,7 @@ export const HoverCard = ({
       {...props}
     >
       {children}
-    </Card>
+    </Component>
   );
 };
 
@@ -63,4 +78,7 @@ HoverCard.propTypes = {
   hoverShadow: PropTypes.string,
   transition: PropTypes.string,
   clickable: PropTypes.bool,
+  as: PropTypes.elementType,
+  onMouseEnter: PropTypes.func,
+  onMouseLeave: PropTypes.func,
 };

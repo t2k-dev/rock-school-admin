@@ -1,6 +1,6 @@
 import { format } from 'date-fns';
 import PropTypes from "prop-types";
-import { Card, Col, Row } from "react-bootstrap";
+import { Col, Row } from "react-bootstrap";
 import { CalendarIcon, DoorIcon, TimeIcon } from '../../components/icons';
 import { HoverCard } from "../../components/ui";
 import { getRoomName } from "../../constants/rooms";
@@ -24,7 +24,6 @@ export const AttendanceCard = ({
       className="mb-3"
       onClick={() => onClick && onClick(attendance)}
     >
-      <Card.Body>
         <Row className="align-items-center">
           <Col md="3">
             <div className="text-muted small"><CalendarIcon size="16px" color="gray"/> Дата</div>
@@ -64,7 +63,6 @@ export const AttendanceCard = ({
             </div>
           </Col>
         </Row>
-      </Card.Body>
     </HoverCard>
   );
 };

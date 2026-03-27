@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { Card, Col, Row } from "react-bootstrap";
+import { Col, Row } from "react-bootstrap";
 import { CalendarIcon } from "../../components/icons";
 import { HoverCard } from "../../components/ui";
 import { formatDateWithLetters } from "../../utils/dateTime";
@@ -14,7 +14,6 @@ export const BandAttendanceCard = ({
       className="mb-3"
       onClick={() => onClick && onClick(attendance)}
     >
-      <Card.Body>
         <Row className="align-items-center">
           <Col md="6">
             <div className="text-muted small"><CalendarIcon size="16px" color="gray"/> Дата</div>
@@ -24,7 +23,6 @@ export const BandAttendanceCard = ({
             <AttendanceStatusBadge status={attendance.status} />
           </Col>
         </Row>
-      </Card.Body>
     </HoverCard>
   );
 };
