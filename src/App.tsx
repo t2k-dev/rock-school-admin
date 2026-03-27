@@ -7,7 +7,7 @@ import { BandScheduleForm } from "./features/bands/BandScheduleForm";
 import { BandScreen } from "./features/bands/BandScreen";
 import Bands from "./features/bands/BandsList/Bands";
 import { BranchScreen } from "./features/branches/BranchScreen";
-import HomeScreen from "./features/home/ui/HomeScreen";
+import HomeScreen from "./features/home/HomeScreen";
 import NoteForm from "./features/notes/NoteForm";
 import { ChangePasswordScreen } from "./features/profile/ChangePasswordScreen";
 import { ProfileScreen } from "./features/profile/ProfileScreen";
@@ -26,14 +26,10 @@ import { TariffList } from "./features/tariffs/TariffList";
 import TeacherForm from "./features/teachers/TeacherForm";
 import TeacherPeriods from "./features/teachers/TeacherPeriods";
 import TeacherScreen from "./features/teachers/TeacherScreen/TeacherScreen";
-<<<<<<< HEAD:src/App.js
 import Teachers from "./features/teachers/TeachersList/Teachers";
-
-=======
->>>>>>> 04387c4 (﻿add uqly icons, add ts, doing header):src/App.tsx
+import "./index.css";
 import Footer from "./layout/Footer";
 import Sidebar from "./layout/Navbar/ui/SideBar";
-import "./index.css";
 
 function App() {
   const location = useLocation();

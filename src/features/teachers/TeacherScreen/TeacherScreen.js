@@ -307,7 +307,6 @@ class TeacherScreen extends React.Component {
     return (
       <Container style={{ marginTop: "40px" }}>
         <Row>
-<<<<<<< HEAD
           <ScreenHeader
             avatar={<Avatar style={{ width: "72px", height: "72px" }} />}
             title={
@@ -364,13 +363,6 @@ class TeacherScreen extends React.Component {
           >
 
           </ScreenHeader>
-=======
-          <TeacherScreenCard
-            item={teacher}
-            bands={bands}
-            history={this.props.history}
-          />
->>>>>>> 04387c4 (﻿add uqly icons, add ts, doing header)
         </Row>
         <Row>
           <h3>

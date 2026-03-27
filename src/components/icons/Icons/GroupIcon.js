@@ -1,10 +1,7 @@
 import { useState } from "react";
 
-<<<<<<< HEAD:src/components/icons/GroupIcon.js
-function GroupIcon({ onIconClick, size="30px", color="currentColor" }) {
-=======
-export function GroupIcon({ onIconClick, size = "30px", color = "#000000" }) {
->>>>>>> 995dbf5 (﻿add uqly icons, add ts, doing header):src/components/icons/Icons/GroupIcon.js
+
+export function GroupIcon({ onIconClick, size="30px", color="currentColor" }) {
   const [setColor] = useState("#000000"); // Default color
 
   const handleClick = (e) => {

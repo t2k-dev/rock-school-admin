@@ -1,12 +1,7 @@
 import { format } from "date-fns";
 import PropTypes from "prop-types";
-<<<<<<< HEAD
 import { Col, Row } from "react-bootstrap";
 import { CalendarIcon, DoorIcon, TimeIcon } from '../../components/icons';
-=======
-import { Card, Col, Row } from "react-bootstrap";
-import { CalendarIcon, DoorIcon, TimeIcon } from "../../components/icons/Icons";
->>>>>>> 04387c4 (﻿add uqly icons, add ts, doing header)
 import { HoverCard } from "../../components/ui";
 import { getRoomName } from "../../constants/rooms";
 import { formatDateWithLetters } from "../../utils/dateTime";
@@ -22,15 +17,10 @@ export const AttendanceCard = ({ attendance, onClick }) => {
   };
 
   return (
-<<<<<<< HEAD
     <HoverCard 
       className="mb-3"
       onClick={() => onClick && onClick(attendance)}
     >
-=======
-    <HoverCard className="mb-3" onClick={() => onClick && onClick(attendance)}>
-      <Card.Body>
->>>>>>> 04387c4 (﻿add uqly icons, add ts, doing header)
         <Row className="align-items-center">
           <Col md="3">
             <div className="text-muted small">

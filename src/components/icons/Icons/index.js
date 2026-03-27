@@ -1,14 +1,14 @@
 // Shared Icons Exports
-export { BassGuitarIcon } from "./Disciplines/BassGuitarIcon";
-export { DrumsIcon } from "./Disciplines/DrumsIcon";
-export { ElectroGuitarIcon } from "./Disciplines/ElectroGuitarIcon";
-export { ExtremeVocalIcon } from "./Disciplines/ExtremeVocalIcon";
-export { GuitarIcon } from "./Disciplines/GuitarIcon";
-export { PianoIcon } from "./Disciplines/PianoIcon";
-export { UkuleleIcon } from "./Disciplines/UkuleleIcon";
-export { ViolaIcon } from "./Disciplines/ViolaIcon";
-export { VocalIcon } from "./Disciplines/VocalIcon";
-export { default as GroupIcon } from "./GroupIcon";
+export { BassGuitarIcon } from "../Disciplines/BassGuitarIcon";
+export { DrumsIcon } from "../Disciplines/DrumsIcon";
+export { ElectroGuitarIcon } from "../Disciplines/ElectroGuitarIcon";
+export { ExtremeVocalIcon } from "../Disciplines/ExtremeVocalIcon";
+export { GuitarIcon } from "../Disciplines/GuitarIcon";
+export { PianoIcon } from "../Disciplines/PianoIcon";
+export { UkuleleIcon } from "../Disciplines/UkuleleIcon";
+export { ViolaIcon } from "../Disciplines/ViolaIcon";
+export { VocalIcon } from "../Disciplines/VocalIcon";
+export { GroupIcon } from "./GroupIcon";
 export { InstagramIcon } from "./InstagramIcon";
 export { LocationIcon } from "./LocationIcon";
 export { RefreshIcon } from "./RefreshIcon";

@@ -1,6 +1,4 @@
 import React from "react";
-<<<<<<< HEAD
-import { CancelIcon } from "../../components/icons/CancelIcon";
 import { BassGuitarIcon } from "../../components/icons/Disciplines/BassGuitarIcon";
 import { DrumsIcon } from "../../components/icons/Disciplines/DrumsIcon";
 import { ElectroGuitarIcon } from "../../components/icons/Disciplines/ElectroGuitarIcon";
@@ -10,18 +8,7 @@ import { PianoIcon } from "../../components/icons/Disciplines/PianoIcon";
 import { UkuleleIcon } from "../../components/icons/Disciplines/UkuleleIcon";
 import { ViolaIcon } from "../../components/icons/Disciplines/ViolaIcon";
 import { VocalIcon } from "../../components/icons/Disciplines/VocalIcon";
-=======
-import { BassGuitarIcon } from "../../components/icons/Icons/BassGuitarIcon";
 import { CancelIcon } from "../../components/icons/Icons/CancelIcon";
-import { DrumsIcon } from "../../components/icons/Icons/DrumsIcon";
-import { ElectroGuitarIcon } from "../../components/icons/Icons/ElectroGuitarIcon";
-import { ExtremeVocalIcon } from "../../components/icons/Icons/ExtremeVocalIcon";
-import { GuitarIcon } from "../../components/icons/Icons/GuitarIcon";
-import { PianoIcon } from "../../components/icons/Icons/PianoIcon";
-import { UkuleleIcon } from "../../components/icons/Icons/UkuleleIcon";
-import { ViolaIcon } from "../../components/icons/Icons/ViolaIcon";
-import { VocalIcon } from "../../components/icons/Icons/VocalIcon";
->>>>>>> 995dbf5 (﻿add uqly icons, add ts, doing header)
 
 export class DisciplineIcon extends React.Component {
   constructor(props) {

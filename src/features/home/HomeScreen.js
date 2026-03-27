@@ -11,24 +11,18 @@ import {
 } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
-import { CalendarDay } from "../../../components/calendar/CalendarDay";
-import { EditIcon } from "../../../components/icons/Icons";
-import { Loading } from "../../../components/Loading";
-import { AttendanceModal } from "../../attendances/AttendanceModal/AttendanceModal";
+import { CalendarDay } from "../../components/calendar/CalendarDay";
+import { EditIcon } from "../../components/icons/Icons";
+import { Loading } from "../../components/Loading";
+import { AttendanceModal } from "../attendances/AttendanceModal/AttendanceModal";
 
-<<<<<<< HEAD:src/features/home/HomeScreen.js
+
 import { NoRecords } from "../../components/NoRecords";
 import { Colors } from "../../constants/Colors";
 import { getHomeScreenDetails } from "../../services/apiHomeService";
 import { markComplete } from "../../services/apiNoteService";
 import { isCancelledAttendanceStatus } from "../attendances/attendanceHelper";
-=======
-import { isCancelledAttendanceStatus } from "../../attendances/attendanceHelper";
 
-import { NoRecords } from "../../../components/NoRecords";
-import { getHomeScreenDetails } from "../../../services/apiHomeService";
-import { markComplete } from "../../../services/apiNoteService";
->>>>>>> 04387c4 (﻿add uqly icons, add ts, doing header):src/features/home/ui/HomeScreen.js
 
 class HomeScreen extends React.Component {
   constructor(props) {
