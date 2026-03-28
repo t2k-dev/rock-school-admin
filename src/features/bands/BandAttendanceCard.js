@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 
 import { Col, Row } from "react-bootstrap";
-import { CalendarIcon } from "../../components/icons/Icons";
+import { CalendarIcon } from "../../components/icons";
 
 import { HoverCard } from "../../components/ui";
 import { formatDateWithLetters } from "../../utils/dateTime";

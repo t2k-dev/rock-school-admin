@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import { Card, Col, Row } from "react-bootstrap";
-import { CalendarIcon } from "../../components/icons/Icons";
+import { CalendarIcon } from "../../components/icons";
 import { HoverCard } from "../../components/ui/HoverCard";
 import PaymentType, { getPaymentTypeName } from "../../constants/PaymentType";
 import { formatDateWithLetters } from "../../utils/dateTime";

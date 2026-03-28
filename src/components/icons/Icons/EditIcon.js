@@ -1,9 +1,9 @@
 import { useState } from "react";
 
 
-export function EditIcon({onIconClick, title, size = '20px'}) {
+export function EditIcon({onIconClick, color="currentColor", title, size = '20px'}) {
     
-    const [color, setColor ] = useState('#000000');  // Default color
+    const [setColor ] = useState('#000000');  // Default color
     
     const handleClick = (e) => {
         if(onIconClick) {

@@ -16,7 +16,7 @@ import {
   CalendarIcon,
   CountIcon,
   TimeIcon,
-} from "../../../components/icons/Icons";
+} from "../../../components/icons";
 import { Loading } from "../../../components/Loading";
 import { ScheduleEditorWithDelete } from "../../../components/schedule/ScheduleEditorWithDelete";
 import { getAttendanceLengthName } from "../../../constants/AttendanceLength";

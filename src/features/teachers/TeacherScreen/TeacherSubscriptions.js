@@ -1,9 +1,11 @@
 import { format } from "date-fns";
-import { Badge, Form, Table } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
-import { EditIcon } from "../../../components/icons/Icons";
+import { CalendarIcon } from "../../../components/icons";
 import { NoRecords } from "../../../components/NoRecords";
+import { ToneBadge } from "../../../components/ui";
+import { Colors } from "../../../constants/Colors";
 import { getDisciplineName } from "../../../constants/disciplines";
 import MyDateFormat from "../../../constants/formats";
 import {
@@ -31,16 +33,15 @@ export function TeacherSubscriptions({
   const renderHeaders = (subscription) => {
     return (
       <tr>
-        <th className="date-column">Начало</th>
-        <th>Ученик</th>
-        <th className="discipline-column">Направление</th>
-        <th>
+        <th className="date-column px-4 py-3"><CalendarIcon/> Начало</th>
+        <th className="px-4 py-3">Ученик</th>
+        <th className="discipline-column px-4 py-3">Направление</th>
+        <th className="px-4 py-3">
           {subscription.subscriptionType === SubscriptionType.TRIAL_LESSON
             ? "Решение"
             : "Осталось занятий"}
         </th>
-        <th>Статус</th>
-        <th></th>
+        <th className="px-4 py-3">Статус</th>
       </tr>
     );
   };
@@ -76,55 +77,57 @@ export function TeacherSubscriptions({
 
   return (
     <>
-      <Table striped bordered hover>
-        <thead>{renderHeaders(subscriptions[0])}</thead>
-        <tbody>
-          {subscriptions.map((subscription, idx) => (
-            <tr
-              key={idx}
-              onClick={() => onViewAttendances(subscription)}
-              style={{
-                cursor: "pointer",
-                transition: "background-color 0.2s",
-              }}
-            >
-              <td>{format(subscription.startDate, MyDateFormat)}</td>
-              <td>
-                <Link
-                  key={idx}
-                  onClick={(e) => e.stopPropagation()}
-                  to={"/student/" + subscription.studentId}
-                >
-                  {subscription.studentFullName}
-                </Link>
-              </td>
-              <td>{renderSubscriptionInfo(subscription)}</td>
-              <td>
-                {subscription.subscriptionType ===
-                SubscriptionType.TRIAL_LESSON ? (
-                  <Badge bg={getTrialDecisionColor(subscription.trialDecision)}>
-                    {getTrialDecisionName(subscription.trialDecision)}
-                  </Badge>
-                ) : (
-                  `${subscription.attendancesLeft} из ${subscription.attendanceCount}`
-                )}
-              </td>
-              <td>
-                <Badge bg={getSubscriptionStatusColor(subscription.status)}>
-                  {getSubscriptionStatusName(subscription.status)}
-                </Badge>
-              </td>
-              <td>
-                <EditIcon
-                  onIconClick={(e, _item) =>
-                    onEditSubscription(e, subscription)
-                  }
-                />
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
+      <div className="overflow-x-auto rounded-[10px]">
+        <table className="min-w-full border-collapse text-sm">
+          <thead
+            className="text-left uppercase tracking-[0.08em] text-[var(--teacher-subscriptions-header)]"
+            style={{ "--teacher-subscriptions-header": Colors.textMuted }}
+          >
+            {renderHeaders(subscriptions[0])}
+          </thead>
+          <tbody>
+            {subscriptions.map((subscription, idx) => (
+              <tr
+                key={idx}
+                onClick={() => onViewAttendances(subscription)}
+                className="cursor-pointer border-t border-slate-700/60 transition-colors hover:bg-slate-800/40"
+              >
+                <td className="whitespace-nowrap px-4 py-3">{format(subscription.startDate, MyDateFormat)}</td>
+                <td className="px-4 py-3">
+                  <Link
+                    key={idx}
+                    onClick={(e) => e.stopPropagation()}
+                    to={"/student/" + subscription.studentId}
+                    className="text-slate-100 no-underline hover:text-blue-300"
+                  >
+                    {subscription.studentFullName}
+                  </Link>
+                </td>
+                <td className="px-4 py-3">
+                  <div className="flex items-center gap-2">{renderSubscriptionInfo(subscription)}</div>
+                </td>
+                <td className="whitespace-nowrap px-4 py-3">
+                  {subscription.subscriptionType ===
+                  SubscriptionType.TRIAL_LESSON ? (
+                    <ToneBadge
+                      label={getTrialDecisionName(subscription.trialDecision)}
+                      tone={getTrialDecisionColor(subscription.trialDecision)}
+                    />
+                  ) : (
+                    `${subscription.attendancesLeft} из ${subscription.attendanceCount}`
+                  )}
+                </td>
+                <td className="whitespace-nowrap px-4 py-3">
+                  <ToneBadge
+                    label={getSubscriptionStatusName(subscription.status)}
+                    tone={getSubscriptionStatusColor(subscription.status)}
+                  />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
       <div className="d-flex mt-2">
         <div className="flex-grow-1"></div>
         <Form.Check

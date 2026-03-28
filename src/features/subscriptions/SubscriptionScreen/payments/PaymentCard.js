@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import { CalendarIcon } from '../../../../components/icons';
+import { ToneBadge } from '../../../../components/ui';
 import { HoverCard } from '../../../../components/ui/HoverCard';
 import { Colors } from '../../../../constants/Colors';
 import PaymentType, { getPaymentTypeName } from '../../../../constants/PaymentType';
@@ -7,17 +8,6 @@ import { formatDateWithLetters } from '../../../../utils/dateTime';
 import { toMoneyString } from '../../../../utils/moneyUtils';
 
 const PaymentCard = ({ payment }) => {
-  const getToneColor = (tone) => {
-    const toneMap = {
-      success: Colors.success,
-      warning: Colors.warning,
-      danger: Colors.danger,
-      secondary: Colors.secondary,
-    };
-
-    return toneMap[tone] || Colors.secondary;
-  };
-
   const getStatusConfig = () => {
     let tone = 'warning';
     let text = 'Не оплачено';
@@ -49,23 +39,6 @@ const PaymentCard = ({ payment }) => {
       </div>
     </div>
   );
-
-  const renderBadge = (label, tone) => {
-    const badgeColor = getToneColor(tone);
-
-    return (
-      <span
-        className="inline-flex min-h-7 items-center rounded-full border px-3 py-1 text-xs font-semibold tracking-[0.04em]"
-        style={{
-          borderColor: `${badgeColor}44`,
-          backgroundColor: `${badgeColor}22`,
-          color: badgeColor,
-        }}
-      >
-        {label}
-      </span>
-    );
-  };
 
   const renderComment = () => {
     if (!payment.comment) {
@@ -107,7 +80,7 @@ const PaymentCard = ({ payment }) => {
           {renderMeta('Комментарий', renderComment())}
         </div>
         <div className="md:col-span-2 md:justify-self-end">
-          {renderBadge(statusConfig.text, statusConfig.tone)}
+          <ToneBadge label={statusConfig.text} tone={statusConfig.tone} />
         </div>
       </div>
     </HoverCard>

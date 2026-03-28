@@ -7,7 +7,7 @@ import { Button, Col, Container, Form, Row, Stack } from "react-bootstrap";
 
 import { Avatar } from "../../components/Avatar";
 
-import { CalendarIcon } from "../../components/icons/Icons";
+import { CalendarIcon } from "../../components/icons";
 import AttendanceType from "../../constants/AttendanceType";
 import { getDisciplineName } from "../../constants/disciplines";
 import { rescheduleAttendance } from "../../services/apiAttendanceService";

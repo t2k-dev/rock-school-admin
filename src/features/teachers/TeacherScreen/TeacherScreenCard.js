@@ -2,7 +2,7 @@ import React from "react";
 import { Card, Col, Container, Row } from "react-bootstrap";
 import { Doughnut } from "react-chartjs-2";
 import { Avatar } from "../../../components/Avatar";
-import { EditIcon } from "../../../components/icons/Icons";
+import { EditIcon } from "../../../components/icons";
 import { DisciplineIcon } from "../../disciplines/DisciplineIcon";
 import BandList from "../../students/BandList";
 

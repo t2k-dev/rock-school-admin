@@ -5,7 +5,7 @@ import {
   CalendarIcon,
   EditIcon,
   GroupIcon,
-} from "../../components/icons/Icons";
+} from "../../components/icons";
 import { generateAttendances } from "../../services/apiBandService";
 
 export const BandScreenCard = ({ band, onActivateToggle, onEditSchedules }) => {

@@ -2,7 +2,7 @@ import React from "react";
 import { Card, Col, Container, Row, Stack } from "react-bootstrap";
 
 import { Avatar } from "../../../components/Avatar";
-import { EditIcon, InstagramIcon } from "../../../components/icons/Icons";
+import { EditIcon, InstagramIcon } from "../../../components/icons";
 import BandList from "../BandList";
 
 class StudentScreenCard extends React.Component {

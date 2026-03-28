@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, Col, Container, Form, InputGroup, Row } from "react-bootstrap";
 
-import { CalendarIcon } from "../../../components/icons/Icons";
+import { CalendarIcon } from "../../../components/icons";
 import SubscriptionType from "../../../constants/SubscriptionType";
 import { getStudent } from "../../../services/apiStudentService";
 import { addTrialSubscription } from "../../../services/apiSubscriptionService";

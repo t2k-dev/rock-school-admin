@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { CalendarIcon } from "../../components/icons/Icons";
+import { CalendarIcon } from "../../components/icons";
 import { toMoneyString } from "../../utils/moneyUtils";
 
 const TariffCard = ({

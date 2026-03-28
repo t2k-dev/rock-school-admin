@@ -15,7 +15,7 @@ import { getTeacherScreenDetails } from "../../../services/apiTeacherService";
 import SubscriptionStatus from "../../../constants/SubscriptionStatus";
 
 import { CalendarWeek } from "../../../components/calendar/CalendarWeek";
-import { CalendarIcon, EditIcon } from "../../../components/icons/Icons";
+import { CalendarIcon, EditIcon } from "../../../components/icons";
 import { Loading } from "../../../components/Loading";
 import SubscriptionType from "../../../constants/SubscriptionType";
 import { AttendanceModal } from "../../attendances/AttendanceModal/AttendanceModal";
@@ -305,9 +305,9 @@ class TeacherScreen extends React.Component {
     ];
 
     return (
-      <Container style={{ marginTop: "40px" }}>
-        <Row>
+      <div style={{ marginTop: "40px" }}>
           <ScreenHeader
+            className="mb-3"
             avatar={<Avatar style={{ width: "72px", height: "72px" }} />}
             title={
               <>
@@ -363,20 +363,21 @@ class TeacherScreen extends React.Component {
           >
 
           </ScreenHeader>
-        </Row>
-        <Row>
+        <div className="mb-5">
           <h3>
             <CalendarIcon />
             Расписание
             <EditIcon onIconClick={this.handleScheduleClick} />
           </h3>
-          <CalendarWeek
-            events={events}
-            backgroundEvents={backgroundEvents}
-            onSelectEvent={(slotInfo) => {
-              this.handleSelectEvent(slotInfo);
-            }}
-          />
+          <div className="mt-3 rounded-[10px] bg-[var(--card-bg)] p-5">
+            <CalendarWeek
+              events={events}
+              backgroundEvents={backgroundEvents}
+              onSelectEvent={(slotInfo) => {
+                this.handleSelectEvent(slotInfo);
+              }}
+            />
+          </div>
 
           <AttendanceModal
             attendance={selectedAttendance}
@@ -385,12 +386,11 @@ class TeacherScreen extends React.Component {
             onAttendanceUpdate={this.handleAttendanceUpdate}
             history={this.props.history}
           />
-        </Row>
-        <Row className="mt-3">
+        </div>
+        <div>
           <Tabs
             defaultActiveKey="subscriptions"
             id="uncontrolled-tab-example"
-            className="mb-3"
           >
             <Tab eventKey="subscriptions" title="Абонементы">
               <TeacherSubscriptions
@@ -420,11 +420,11 @@ class TeacherScreen extends React.Component {
               />
             </Tab>
           </Tabs>
-        </Row>
-        <Row style={{ marginTop: "20px" }}>
+        </div>
+        <div style={{ marginTop: "20px" }}>
           <Col md="12"></Col>
-        </Row>
-      </Container>
+        </div>
+      </div>
     );
   }
 }

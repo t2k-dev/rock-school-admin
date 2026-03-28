@@ -7,7 +7,7 @@ import {
   DoorIcon,
   EditIcon,
   TimeIcon,
-} from "../../../components/icons/Icons";
+} from "../../../components/icons";
 import { getRoomName } from "../../../constants/rooms";
 import { isCancelledAttendanceStatus } from "../attendanceHelper";
 

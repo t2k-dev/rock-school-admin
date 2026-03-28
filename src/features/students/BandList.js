@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { GroupIcon } from "../../components/icons/Icons";
+import { GroupIcon } from "../../components/icons";
 
 class BandList extends React.Component {
   render() {

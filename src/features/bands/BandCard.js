@@ -1,6 +1,6 @@
 import { Badge, Card, Col, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { GroupIcon } from "../../components/icons/Icons";
+import { GroupIcon } from "../../components/icons";
 import { HoverCard } from "../../components/ui";
 
 const BandCard = ({ item }) => {

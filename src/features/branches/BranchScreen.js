@@ -4,7 +4,7 @@ import { Button, Container, Row, Tab, Table, Tabs } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 import { CalendarDay } from "../../components/calendar/CalendarDay";
-import { EditIcon } from "../../components/icons/Icons";
+import { EditIcon } from "../../components/icons";
 
 import { getHomeScreenDetails } from "../../services/apiHomeService";
 import { markComplete } from "../../services/apiNoteService";

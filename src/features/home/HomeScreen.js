@@ -12,7 +12,7 @@ import {
 import { Link } from "react-router-dom";
 
 import { CalendarDay } from "../../components/calendar/CalendarDay";
-import { EditIcon } from "../../components/icons/Icons";
+import { EditIcon } from "../../components/icons";
 import { Loading } from "../../components/Loading";
 import { AttendanceModal } from "../attendances/AttendanceModal/AttendanceModal";
 
@@ -297,7 +297,10 @@ class HomeScreen extends React.Component {
             </div>
           </div>
         </Row>
-        <Row className={`mb-5 bg-[${Colors.cardBg}] p-5 rounded-[10px]`}>
+        <Row
+          className="mb-5 rounded-[10px] bg-[var(--home-card-bg)] p-5"
+          style={{ "--home-card-bg": Colors.cardBg }}
+        >
           <CalendarDay
             events={events}
             onSelectEvent={(slotInfo) => {

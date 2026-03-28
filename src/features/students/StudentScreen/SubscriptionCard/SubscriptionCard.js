@@ -3,9 +3,8 @@ import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 
 
-import { CalendarIcon, CoinsIcon } from "../../../../components/icons";
-import { NextIcon } from "../../../../components/icons/Icons/NextIcon";
-import { HoverCard } from "../../../../components/ui";
+import { CalendarIcon, CoinsIcon, NextIcon } from "../../../../components/icons";
+import { HoverCard, ToneBadge } from "../../../../components/ui";
 import { Colors } from "../../../../constants/Colors";
 import { getDisciplineName } from "../../../../constants/disciplines";
 import MyDateFormat from "../../../../constants/formats";
@@ -22,18 +21,6 @@ export const SubscriptionCard = ({
   onResubscribeClick,
 }) => {
 
-  const getToneColor = (tone) => {
-    const toneMap = {
-      primary: Colors.primary,
-      success: Colors.success,
-      warning: Colors.warning,
-      danger: Colors.danger,
-      secondary: Colors.secondary,
-    };
-
-    return toneMap[tone] || Colors.secondary;
-  };
-
   const renderMeta = (label, value, className = "") => (
     <div className={className}>
       <div
@@ -45,23 +32,6 @@ export const SubscriptionCard = ({
       <div className="font-semibold leading-5">{value}</div>
     </div>
   );
-
-  const renderBadge = (label, tone) => {
-    const badgeColor = getToneColor(tone);
-     
-    return (
-      <span
-        className="inline-flex min-h-7 items-center rounded-full border px-3 py-1 text-xs font-semibold tracking-[0.04em]"
-        style={{
-          borderColor: `${badgeColor}44`,
-          backgroundColor: `${badgeColor}22`,
-          color: badgeColor,
-        }}
-      >
-        {label}
-      </span>
-    );
-  };
 
   const renderTeacherLink = (name) => (
     <Link
@@ -115,20 +85,20 @@ export const SubscriptionCard = ({
           <div className="md:col-span-1">
             {renderMeta(
               "Решение",
-              renderBadge(
-                getTrialDecisionName(subscription.trialDecision),
-                getTrialDecisionColor(subscription.trialDecision)
-              )
+              <ToneBadge
+                label={getTrialDecisionName(subscription.trialDecision)}
+                tone={getTrialDecisionColor(subscription.trialDecision)}
+              />
             )}
           </div>
           <div className="md:col-span-1">
             {renderMeta("Причина", subscription.statusReason || "—")}
           </div>
           <div className="md:col-span-1">
-            {renderBadge(
-              getSubscriptionStatusName(subscription.status),
-              getSubscriptionStatusColor(subscription.status)
-            )}
+            <ToneBadge
+              label={getSubscriptionStatusName(subscription.status)}
+              tone={getSubscriptionStatusColor(subscription.status)}
+            />
           </div>
           <div className="md:col-span-1">
             {renderActions(
@@ -177,10 +147,10 @@ export const SubscriptionCard = ({
             )}
           </div>
           <div className="md:col-span-1">
-            {renderBadge(
-              getSubscriptionStatusName(subscription.status),
-              getSubscriptionStatusColor(subscription.status)
-            )}
+            <ToneBadge
+              label={getSubscriptionStatusName(subscription.status)}
+              tone={getSubscriptionStatusColor(subscription.status)}
+            />
           </div>
           <div className="md:col-span-1">
             {renderActions(
@@ -227,10 +197,10 @@ export const SubscriptionCard = ({
             )}
           </div>
           <div className="md:col-span-1">
-            {renderBadge(
-              getSubscriptionStatusName(subscription.status),
-              getSubscriptionStatusColor(subscription.status)
-            )}
+            <ToneBadge
+              label={getSubscriptionStatusName(subscription.status)}
+              tone={getSubscriptionStatusColor(subscription.status)}
+            />
           </div>
           <div className="md:col-span-1">
             {renderActions(

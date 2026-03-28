@@ -3,7 +3,7 @@ import { Badge, Button, Form, Modal } from "react-bootstrap";
 import { v4 as uuidv4 } from "uuid";
 
 import { CalendarWeek } from "../../components/calendar/CalendarWeek";
-import { CopyIcon } from "../../components/icons/Icons";
+import { CopyIcon } from "../../components/icons";
 import { formatDate, formatTime } from "../../utils/dateTime";
 
 export class AvailableTeachersModal extends React.Component {
