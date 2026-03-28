@@ -30,6 +30,9 @@
   .bg-card-bg {
     background-color: var(--card-bg);
   }
+  .bg-card-bg\/40 {
+    background-color: rgba(var(--card-bg), 0.4);
+  }
   .bg-inner-bg {
     background-color: var(--inner-bg);
   }

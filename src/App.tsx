@@ -21,7 +21,7 @@ import { SubscriptionForm } from "./features/subscriptions/forms/SubscriptionFor
 import { SubscriptionScheduleForm } from "./features/subscriptions/forms/SubscriptionScheduleForm";
 import { TrialSubscriptionForm } from "./features/subscriptions/forms/TrialSubscriptionForm";
 import SubscriptionScreenContainer from "./features/subscriptions/SubscriptionScreen/SubscriptionScreenContainer";
-import TariffForm from "./features/tariffs/TariffForm";
+import TariffForm from "./features/tariffs/TariffForm/ui/TariffForm";
 import { TariffList } from "./features/tariffs/TariffList";
 import TeacherForm from "./features/teachers/TeacherForm";
 import TeacherPeriods from "./features/teachers/TeacherPeriods";

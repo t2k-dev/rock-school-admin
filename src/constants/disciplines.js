@@ -12,9 +12,13 @@ export const DISCIPLINES = [
 ];
 
 // Available disciplines for selection (excluding "Unknown")
-export const SELECTABLE_DISCIPLINES = DISCIPLINES.filter(discipline => discipline.id !== 0);
+export const SELECTABLE_DISCIPLINES = DISCIPLINES.filter(
+  (discipline) => discipline.id !== 0,
+);
 
 export function getDisciplineName(disciplineId) {
-  const discipline = DISCIPLINES.find((discipline) => discipline.id === disciplineId);
+  const discipline = DISCIPLINES.find(
+    (discipline) => discipline.id === disciplineId,
+  );
   return discipline ? discipline.name : "Неизвестно";
 }
