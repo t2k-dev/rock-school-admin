@@ -34,59 +34,27 @@ export const DisciplineGridSelector = ({
     }
   };
 
-  const handleMouseEnter = (e, disciplineId) => {
-    if (!isDisciplineSelected(disciplineId)) {
-      e.currentTarget.style.backgroundColor = '#f8f9fa';
-    }
-  };
-
-  const handleMouseLeave = (e, disciplineId) => {
-    if (!isDisciplineSelected(disciplineId)) {
-      e.currentTarget.style.backgroundColor = '';
-    }
-  };
-
   return (
-    <div className="mb-4">
-      {label && <label className="form-label mb-2">{label}</label>}
-      <div 
-        className="d-flex flex-wrap justify-content-center" 
-        style={{ gap: '10px', maxWidth: '400px', margin: '0 auto' }}
-      >
+    <div className="flex flex-col gap-4">
+      {label && <label className="text-[14px] text-text-main opacity-60">{label}</label>}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
         {SELECTABLE_DISCIPLINES.map((discipline) => {
           const isSelected = isDisciplineSelected(discipline.id);
           return (
             <div
               key={discipline.id}
-              className={`p-1 border rounded text-center ${
+              className={`group relative flex h-[104px] cursor-pointer flex-col items-center justify-center rounded-[18px] border p-2 text-center transition ${
                 isSelected 
-                  ? 'border-primary bg-light' 
-                  : 'border-secondary'
+                  ? 'border-[var(--accent)] bg-accent/20 text-text-main shadow-[0_0_0_1px_rgba(69,92,200,0.15)]' 
+                  : 'border-white/10 bg-inner-bg text-text-muted hover:border-white/20 hover:bg-white/[0.03]'
               }`}
-              style={{
-                width: '100px',
-                height: '100px',
-                cursor: 'pointer',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                transition: 'all 0.2s ease',
-                position: 'relative'
-              }}
               onClick={() => handleDisciplineClick(discipline.id)}
-              onMouseEnter={(e) => handleMouseEnter(e, discipline.id)}
-              onMouseLeave={(e) => handleMouseLeave(e, discipline.id)}
             >
-              {/* Multi-select indicator */}
-              {/*multiSelect && isSelected && (
-                <div 
-                  className="position-absolute top-0 end-0 bg-primary text-white rounded-circle d-flex align-items-center justify-content-center"
-                  style={{ width: '20px', height: '20px', fontSize: '12px', marginTop: '2px', marginRight: '2px' }}
-                >
+              {multiSelect && isSelected && (
+                <div className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-accent text-[11px] font-semibold text-text-main">
                   ✓
                 </div>
-              )*/}
+              )}
               
               <DisciplineIcon 
                 disciplineId={discipline.id} 
@@ -94,8 +62,7 @@ export const DisciplineGridSelector = ({
                 color={isSelected ? '#0d6efd' : '#6c757d'}
               />
               <small 
-                className={isSelected ? "text-primary fw-bold mt-2" : "mt-2" }
-                style={{ fontSize: '12px', lineHeight: '1.2', textAlign: 'center' }}
+                className={`mt-2 text-center text-[12px] leading-[1.2] ${isSelected ? 'font-bold text-accent' : 'text-text-muted'}`}
                 >
                 {discipline.name}
               </small>

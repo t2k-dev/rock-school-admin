@@ -10,7 +10,8 @@ import { Doughnut } from "react-chartjs-2";
 
 import { Avatar } from "../../../components/Avatar";
 import ScreenHeader from "../../../components/screens/ScreenHeader";
-import { getTeacherScreenDetails } from "../../../services/apiTeacherService";
+import { Button as UiButton } from "../../../components/ui";
+import { activateTeacher, deactivateTeacher, getTeacherScreenDetails } from "../../../services/apiTeacherService";
 
 import SubscriptionStatus from "../../../constants/SubscriptionStatus";
 
@@ -51,6 +52,8 @@ class TeacherScreen extends React.Component {
     this.handleEditSubscriptionClick =
       this.handleEditSubscriptionClick.bind(this);
     this.handleScheduleClick = this.handleScheduleClick.bind(this);
+    this.handleDeactivateTeacher = this.handleDeactivateTeacher.bind(this);
+    this.handleActivateTeacher = this.handleActivateTeacher.bind(this);
   }
 
   componentDidMount() {
@@ -94,6 +97,18 @@ class TeacherScreen extends React.Component {
   handleScheduleClick = (e) => {
     e.preventDefault();
     this.props.history.push(`/teacher/${this.props.match.params.id}/schedule`);
+  };
+
+  handleDeactivateTeacher = async (e) => {
+    e.preventDefault();
+    await deactivateTeacher(this.props.match.params.id);
+    this.loadTeacherData();
+  };
+
+  handleActivateTeacher = async (e) => {
+    e.preventDefault();
+    await activateTeacher(this.props.match.params.id);
+    this.loadTeacherData();
   };
 
   handleSelectEvent = (slotInfo) => {
@@ -318,6 +333,20 @@ class TeacherScreen extends React.Component {
                   </span>
                 )}
               </>
+            }
+            aside={
+              <div className="flex flex-col gap-3 md:items-stretch">
+                ???
+                {teacher.isActive ? (
+                  <UiButton variant="outlineDanger" onClick={this.handleDeactivateTeacher}>
+                    Отключить
+                  </UiButton>
+                ) : (
+                  <UiButton variant="outlineSuccess" onClick={this.handleActivateTeacher}>
+                    Включить
+                  </UiButton>
+                )}
+              </div>
             }
             subtitle={<>
               Преподаватель

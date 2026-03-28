@@ -9,6 +9,7 @@
     --main-bg: #121519;
     --card-bg: #22272e;
     --inner-bg: #161920;
+    --input-bg: #363b42;
     --text-main: #e2e7f6;
     --text-muted: #94a3b8;
     --accent: #455cc8;
@@ -32,6 +33,9 @@
   }
   .bg-inner-bg {
     background-color: var(--inner-bg);
+  }
+  .bg-input-bg {
+    background-color: var(--input-bg);
   }
 
   .text-text-main {

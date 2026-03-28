@@ -1,11 +1,10 @@
+import { parse } from "date-fns";
 import React from "react";
-import { Button, Col, Container, Form, FormCheck, Row } from "react-bootstrap";
-
-import { format, parse } from "date-fns";
 import { SexControl } from "../../components/SexControl";
+import { Button, Input } from "../../components/ui";
 import { DisciplineGridSelector } from "../disciplines/DisciplineGridSelector";
 
-import { activateTeacher, addTeacher, deactivateTeacher, getTeacher, saveTeacher } from "../../services/apiTeacherService";
+import { addTeacher, getTeacher, saveTeacher } from "../../services/apiTeacherService";
 
 import { ru } from "date-fns/locale";
 import DatePicker from "react-datepicker";
@@ -21,7 +20,7 @@ class TeacherForm extends React.Component {
       periodsChanged: false,
       teacher: {
         teacherId: "",
-        //email: "",
+        email: "",
         firstName: "",
         lastName: "",
         birthDate: "",
@@ -29,7 +28,7 @@ class TeacherForm extends React.Component {
         sex: 1,
         //userId: 1,
         disciplines: [],
-        brachId: 0,
+        branchId: "",
         allowGroupLessons: false,
         allowBands: false,
         ageLimit: "",
@@ -59,7 +58,7 @@ class TeacherForm extends React.Component {
     this.setState({
       teacher: {
         teacherId: this.props.match.params.id,
-        //email: teacher.email,
+        email: teacher.email || "",
         firstName: teacher.firstName,
         lastName: teacher.lastName,
         birthDate: new Date(teacher.birthDate),
@@ -166,27 +165,6 @@ class TeacherForm extends React.Component {
     this.setState({ teacher });
   };
 
-  handleDateChange = (date) => {
-    this.setState((prevState) => ({
-      teacher: {
-        ...prevState.teacher,
-        birthDate: format(date, "dd.MM.yyyy"),
-      },
-    }));
-  };
-
-  handleDeactivate = async (e) => {
-    e.preventDefault();
-    await deactivateTeacher(this.state.teacher.teacherId);
-    this.props.history.push(`/teachers`);
-  };
-
-  handleActivate = async (e) => {
-    e.preventDefault();
-    await activateTeacher(this.state.teacher.teacherId);
-    this.props.history.push(`/teachers`);
-  };
-
   handleSave = async (e) => {
     e.preventDefault();
 
@@ -220,141 +198,175 @@ class TeacherForm extends React.Component {
   };
 
   render() {
-    const { isActive, email, firstName, lastName, birthDate, phone, sex, ageLimit, allowGroupLessons, allowBands, disciplines, branchId } = this.state.teacher;
+    const { email, firstName, lastName, birthDate, phone, sex, ageLimit, allowGroupLessons, allowBands, disciplines, branchId } = this.state.teacher;
     const { isNew } = this.state;
     
     return (
-      <Container style={{ marginTop: "40px" }}>
-        <Row>
-          <Col md="4"></Col>
-          <Col md="4">
-            <h2 className="mb-4 text-center">{isNew ? "Новый преподаватель" : "Редактировать преподавателя"}</h2>
-            <Form>
-              <Row className="mb-3">
-                <Form.Group as={Col} controlId="firstName">
-                  <Form.Label>Имя</Form.Label>
-                  <Form.Control onChange={this.handleChange} value={firstName} placeholder="введите имя..." autoComplete="off" />
-                </Form.Group>
-                <Form.Group as={Col} controlId="lastName">
-                  <Form.Label>Фамилия</Form.Label>
-                  <Form.Control onChange={this.handleChange} value={lastName} placeholder="введите фамилию..." autoComplete="off" />
-                </Form.Group>
-              </Row>
-              <Row>
-                <Form.Group className="mb-3" controlId="birthDate">
-                  <Form.Label>Дата рождения</Form.Label>
-                  <div>
-                  <Form.Control
-                    as={DatePicker}
-                    locale={ru} // Russian locale for date
-                    selected={birthDate} // Correctly bind the date object
-                    onChange={(date) => {
-                      if (date) {
-                        this.handleUpdateBirthDate(date)
-                      }
-                    }}
-                    onChangeRaw={(e) => {
-                      const rawValue = e.target.value;
-                      try {
-                        // Parse the raw input based on the expected format
-                        const parsedDate = parse(rawValue, "dd.MM.yyyy", new Date());
-                        if (!isNaN(parsedDate)) {
-                          this.handleUpdateBirthDate(parsedDate); // Only set valid dates
-                        }
-                      } catch (error) {
-                        console.error("Invalid date format"); // Handle invalid format
-                      }
-                    }}
-                    dateFormat="dd.MM.yyyy" // Format for the displayed date
-                    placeholderText="дд.мм.гггг" // Input placeholder
-                    shouldCloseOnSelect={true}
-                    autoComplete="off"
-                  />
-                  </div>
-                </Form.Group>
-              </Row>
+      <div className="px-4 pb-8 pt-10 sm:px-6 lg:px-8">
+              <h2 className="m-0 text-[28px] font-semibold text-text-main sm:text-[34px] text-center mb-8">
+                {isNew ? "Новый преподаватель" : "Редактировать преподавателя"}
+              </h2>
+        
+        <div className="mx-auto max-w-3xl rounded-[32px] bg-card-bg p-6 shadow-2xl sm:p-8">
+          <form onSubmit={this.handleSave} className="flex flex-col gap-8">
 
-              <Row>
-                <SexControl value={sex} onChange={this.handleSexChange}></SexControl>
-              </Row>
-              <Row className="mb-3">
-                <Form.Group as={Col} controlId="phone">
-                  <Form.Label>Телефон</Form.Label>
-                  <Form.Control
-                    type="tel"
-                    onChange={this.handlePhoneChange}
-                    value={phone}
-                    placeholder="+7 777 777 77 77"
-                    maxLength="16"
-                  />
-                </Form.Group>
-
-                <Form.Group as={Col} controlId="email">
-                  <Form.Label>Email</Form.Label>
-                  <Form.Control onChange={this.handleChange} value={email} placeholder="введите email..." autoComplete="off" />
-                </Form.Group>
-              </Row>
-
-              <hr></hr>
-
-              <DisciplineGridSelector 
-                multiSelect={true}
-                selectedDisciplineIds={disciplines}
-                onMultiDisciplineChange={this.handleDisciplineSelect}
-                label="Направления"
-              />
-
-              <hr></hr>
-              <Form.Group className="mb-3" controlId="ageLimit">
-                <Form.Label>Ученики от</Form.Label>
-                <Form.Control onChange={this.handleChange} value={ageLimit} placeholder="введите возраст..." autoComplete="off" />
-              </Form.Group>
-
-              <Form.Group className="mb-3" controlId="supportGroups">
-                <FormCheck
-                  id="supportGroups"
-                  key="supportGroups"
-                  label="Групповые уроки"
-                  checked={allowGroupLessons}
-                  onChange={this.handleAllowGroupLessonsChange}
-                  style={{ marginTop: "10px" }}
+            <div className="grid gap-5 sm:grid-cols-2">
+              <label className="flex flex-col gap-3">
+                <span className="text-[14px] text-text-main opacity-60">Имя</span>
+                <Input
+                  id="firstName"
+                  onChange={this.handleChange}
+                  value={firstName}
+                  placeholder="введите имя..."
+                  autoComplete="off"
                 />
-              </Form.Group>
+              </label>
 
-              <Form.Group className="mb-3" controlId="allowBands">
-                <FormCheck
-                  id="allowBands"
-                  key="allowBands"
-                  label="Музыкальные группы"
-                  checked={allowBands}
-                  onChange={this.handleAllowBandsChange}
-                  style={{ marginTop: "10px" }}
+              <label className="flex flex-col gap-3">
+                <span className="text-[14px] text-text-main opacity-60">Фамилия</span>
+                <Input
+                  id="lastName"
+                  onChange={this.handleChange}
+                  value={lastName}
+                  placeholder="введите фамилию..."
+                  autoComplete="off"
                 />
-              </Form.Group>
+              </label>
+            </div>
 
-              <hr></hr>
+            <div className="grid gap-5 sm:grid-cols-[minmax(0,1fr)_220px]">
+              <label className="flex flex-col gap-3">
+                <span className="text-[14px] text-text-main opacity-60">Дата рождения</span>
+                <DatePicker
+                  id="birthDate"
+                  locale={ru}
+                  selected={birthDate}
+                  onChange={(date) => {
+                    if (date) {
+                      this.handleUpdateBirthDate(date);
+                    }
+                  }}
+                  onChangeRaw={(e) => {
+                    const rawValue = e.target.value;
+                    try {
+                      const parsedDate = parse(rawValue, "dd.MM.yyyy", new Date());
+                      if (!isNaN(parsedDate)) {
+                        this.handleUpdateBirthDate(parsedDate);
+                      }
+                    } catch (error) {
+                      console.error("Invalid date format");
+                    }
+                  }}
+                  dateFormat="dd.MM.yyyy"
+                  placeholderText="дд.мм.гггг"
+                  shouldCloseOnSelect={true}
+                  autoComplete="off"
+                  wrapperClassName="w-full"
+                  customInput={<Input id="birthDate" />}
+                />
+              </label>
 
-              <Form.Group className="mb-4" controlId="branchId">
-                <Form.Label>Филиал</Form.Label>
-                <Form.Select aria-label="Веберите..." value={branchId} onChange={this.handleChange}>
-                  <option>выберите...</option>
-                  <option value="1">На Абая</option>
-                  <option value="2">На Аль-Фараби</option>
-                </Form.Select>
-              </Form.Group>
+              <SexControl value={sex} onChange={this.handleSexChange}></SexControl>
+            </div>
 
-              <hr></hr>
-              <Form.Group className="mb-3 d-flex justify-content-between">
-                {isActive 
-                  ? <Button variant="outline-danger" onClick={this.handleDeactivate}>Отключить</Button> 
-                  : <Button variant="outline-success" onClick={this.handleActivate}>Включить</Button>
-                }
-                <Button variant="primary" type="null" onClick={this.handleSave}>Сохранить</Button>
-              </Form.Group>
-            </Form>
-          </Col>
-        </Row>
-      </Container>
+            <div className="grid gap-5 sm:grid-cols-2">
+              <label className="flex flex-col gap-3">
+                <span className="text-[14px] text-text-main opacity-60">Телефон</span>
+                <Input
+                  id="phone"
+                  type="tel"
+                  onChange={this.handlePhoneChange}
+                  value={phone}
+                  placeholder="+7 777 777 77 77"
+                  maxLength="16"
+                />
+              </label>
+
+              <label className="flex flex-col gap-3">
+                <span className="text-[14px] text-text-main opacity-60">Email</span>
+                <Input
+                  id="email"
+                  onChange={this.handleChange}
+                  value={email}
+                  placeholder="введите email..."
+                  autoComplete="off"
+                />
+              </label>
+            </div>
+
+            <div className="h-px bg-white/10" />
+
+            <DisciplineGridSelector 
+              multiSelect={true}
+              selectedDisciplineIds={disciplines}
+              onMultiDisciplineChange={this.handleDisciplineSelect}
+              label="Направления"
+            />
+
+            <div className="h-px bg-white/10" />
+
+            <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+              <label className="flex flex-col gap-3">
+                <span className="text-[14px] text-text-main opacity-60">Ученики от</span>
+                <Input
+                  id="ageLimit"
+                  onChange={this.handleChange}
+                  value={ageLimit}
+                  placeholder="введите возраст..."
+                  autoComplete="off"
+                />
+              </label>
+
+              <div className="grid gap-3 rounded-[20px] bg-inner-bg p-4">
+                <label className="flex cursor-pointer items-center gap-3 rounded-[14px] px-1 py-2 text-[15px] text-text-main">
+                  <input
+                    id="supportGroups"
+                    type="checkbox"
+                    checked={allowGroupLessons}
+                    onChange={this.handleAllowGroupLessonsChange}
+                    className="h-4 w-4 rounded border-white/20 bg-transparent text-accent focus:ring-accent"
+                  />
+                  <span>Групповые уроки</span>
+                </label>
+
+                <label className="flex cursor-pointer items-center gap-3 rounded-[14px] px-1 py-2 text-[15px] text-text-main">
+                  <input
+                    id="allowBands"
+                    type="checkbox"
+                    checked={allowBands}
+                    onChange={this.handleAllowBandsChange}
+                    className="h-4 w-4 rounded border-white/20 bg-transparent text-accent focus:ring-accent"
+                  />
+                  <span>Музыкальные группы</span>
+                </label>
+              </div>
+            </div>
+
+            <div className="h-px bg-white/10" />
+
+            <label className="flex flex-col gap-3">
+              <span className="text-[14px] text-text-main opacity-60">Филиал</span>
+              <select
+                id="branchId"
+                aria-label="Выберите филиал"
+                value={branchId}
+                onChange={this.handleChange}
+                className="rounded-[14px] border border-white/10 bg-input-bg px-4 py-3 text-[16px] text-text-main outline-none transition focus:border-white/20 focus:ring-2 focus:ring-accent"
+              >
+                <option value="">выберите...</option>
+                <option value="1">На Абая</option>
+                <option value="2">На Аль-Фараби</option>
+              </select>
+            </label>
+
+            <div className="h-px bg-white/10" />
+
+            <div className="text-center">
+              <Button type="submit">Сохранить</Button>
+            </div>
+          </form>
+        </div>
+      </div>
     );
   }
 }

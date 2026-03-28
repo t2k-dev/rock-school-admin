@@ -1,7 +1,49 @@
 import React from "react";
-import { Button, Container, Form, Row, Table } from "react-bootstrap";
+import { getDayName } from "../../constants/days";
 import { getRoomName } from "../../constants/rooms";
 import { CalendarIcon } from "../icons/Icons/CalendarIcon";
+import { NoRecords } from "../NoRecords";
+import { Button } from "../ui";
+
+const ROOM_OPTIONS = [
+  { value: "", label: "выберите комнату..." },
+  { value: "1", label: "Красная" },
+  { value: "2", label: "Вокальная" },
+  { value: "4", label: "Барабанная" },
+  { value: "5", label: "Желтая" },
+  { value: "6", label: "Зеленая" },
+];
+
+const DAY_OPTIONS = [
+  { value: "", label: "День недели..." },
+  { value: "1", label: "Понедельник" },
+  { value: "2", label: "Вторник" },
+  { value: "3", label: "Среда" },
+  { value: "4", label: "Четверг" },
+  { value: "5", label: "Пятница" },
+  { value: "6", label: "Суббота" },
+  { value: "0", label: "Воскресенье" },
+];
+
+const TIME_OPTIONS = [
+  "10:00",
+  "11:00",
+  "12:00",
+  "13:00",
+  "14:00",
+  "15:00",
+  "16:00",
+  "17:00",
+  "18:00",
+  "19:00",
+  "20:00",
+  "21:00",
+  "22:00",
+  "23:00",
+];
+
+const selectClassName =
+  "w-full rounded-[14px] border border-white/10 bg-input-bg px-4 py-3 text-[16px] text-text-main outline-none transition focus:border-white/20 focus:ring-2 focus:ring-accent";
 
 export class ScheduleEditor extends React.Component {
   constructor(props) {
@@ -36,31 +78,12 @@ export class ScheduleEditor extends React.Component {
     this.props.handlePeriodsChange(updatedPeriods);
   };
 
-  getDayName = (dayIndex) => {
-    switch (dayIndex) {
-      case 1:
-        return "Понедельник";
-      case 2:
-        return "Вторник";
-      case 3:
-        return "Среда";
-      case 4:
-        return "Четверг";
-      case 5:
-        return "Пятница";
-      case 6:
-        return "Суббота";
-      case 0:
-        return "Воскресенье";
-    }
-  };
-
   render() {
     const periods = this.periods;
 
     let periodsList;
     if (periods && periods.length > 0) {
-      const sortedPeriods = periods.sort((a, b) => {
+      const sortedPeriods = [...periods].sort((a, b) => {
         // Special condition: Always place `weekDay = 0` at the end
         if (a.weekDay === 0 && b.weekDay !== 0) {
           return 1; // Move `a` to after `b`
@@ -79,153 +102,140 @@ export class ScheduleEditor extends React.Component {
       });
 
       periodsList = sortedPeriods.map((item, index) => (
-        <tr key={index}>
-          <td>{index + 1}</td>
-          <td>
-            <Container className="d-flex p-0">
-              <div className="flex-grow-1">
-                {this.getDayName(item.weekDay)} {item.startTime.substring(0, 5)}{" "}
-                - {item.endTime.substring(0, 5)} ({getRoomName(item.roomId)})
+        <div
+          key={`${item.weekDay}-${item.startTime}-${item.endTime}-${item.roomId}-${index}`}
+          className="flex items-start gap-3 rounded-[18px] border border-white/10 bg-inner-bg px-4 py-3"
+        >
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent/20 text-[13px] font-semibold text-text-main">
+            {index + 1}
+          </div>
+          <div className="grid min-w-0 flex-1 gap-3 text-[15px] text-text-main sm:grid-cols-[minmax(0,1fr)_160px_140px] sm:items-center">
+            <div className="min-w-0">
+              <div className="font-medium capitalize">
+                {getDayName(item.weekDay)}
               </div>
-              <div className="flex-shrink-1">
-                <Button
-                  variant="outline-danger"
-                  style={{
-                    fontSize: "10px",
-                    marginLeft: "10px",
-                    borderRadius: "25px",
-                  }}
-                  onClick={() => this.deletePeriod(index)}
-                >
-                  X
-                </Button>
+            </div>
+            <div className="min-w-0">
+              <div className="text-text-muted">
+                {item.startTime.substring(0, 5)} - {item.endTime.substring(0, 5)}
               </div>
-            </Container>
-          </td>
-        </tr>
+            </div>
+            <div className="min-w-0">
+              <div className="text-text-muted">{getRoomName(item.roomId)}</div>
+            </div>
+          </div>
+          <div className="shrink-0">
+            <Button
+              variant="outlineDanger"
+              size="sm"
+              onClick={() => this.deletePeriod(index)}
+            >
+              X
+            </Button>
+          </div>
+        </div>
       ));
     } else {
       periodsList = (
-        <tr key={1}>
-          <td colSpan="5" style={{ textAlign: "center" }}>
-            Нет записей
-          </td>
-        </tr>
+        <div className="rounded-[18px] border border-dashed border-white/10 bg-inner-bg px-4 py-6 text-center text-[15px] text-text-muted">
+          <NoRecords />
+        </div>
       );
     }
 
     return (
-      <Form.Group className="mb-3">
-        <Form.Label>
-          <b>
+      <div className="flex flex-col gap-5 rounded-[24px] bg-card-bg p-5 shadow-[0_12px_32px_rgba(0,0,0,0.16)] sm:p-6">
+        <div className="flex items-center gap-3">
+          <div className="flex h-11 w-11 items-center justify-center rounded-[14px] bg-accent/20 text-text-main">
             <CalendarIcon />
-            Расписание
-          </b>
-        </Form.Label>
+          </div>
+          <div>
+            <div className="text-[13px] font-medium uppercase tracking-[0.2em] text-text-muted opacity-70">
+              Рабочие слоты
+            </div>
+            <div className="text-[20px] font-semibold text-text-main">
+              Расписание
+            </div>
+          </div>
+        </div>
 
-        <Row>
-          <Container>
-            <Form.Select
-              aria-label="Веберите день..."
-              value={this.state.roomId}
-              onChange={(e) => this.setState({ roomId: e.target.value })}
-            >
-              <option>выберите комнату...</option>
-              <option value="1">Красная</option>
-              <option value={2}>Вокальная</option>
-              <option value={4}>Барабанная</option>
-              <option value={5}>Желтая</option>
-              <option value={6}>Зеленая</option>
-            </Form.Select>
-          </Container>
-        </Row>
+        <div className="grid gap-5">
+          <div className="grid gap-4 rounded-[20px] bg-inner-bg p-4 sm:grid-cols-[160px_minmax(0,1fr)_auto] sm:items-end">
+            <label className="flex flex-col gap-3 sm:col-span-3">
+              <span className="text-[14px] text-text-main opacity-60">Новый слот</span>
+              <select
+                aria-label="Выберите комнату"
+                value={this.state.roomId}
+                onChange={(e) => this.setState({ roomId: e.target.value })}
+                className={selectClassName}
+              >
+                {ROOM_OPTIONS.map((option) => (
+                  <option key={option.value || "empty-room"} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </label>
 
-        <Row style={{ marginTop: "20px" }}>
-          <Container className="d-flex">
-            <div style={{ width: "150px" }}>
-              <Form.Select
-                aria-label="Веберите день..."
+            <label className="flex flex-col gap-3">
+              <select
+                aria-label="Выберите день"
                 value={this.state.periodDay}
                 onChange={(e) => this.setState({ periodDay: e.target.value })}
+                className={selectClassName}
               >
-                <option>День недели...</option>
-                <option value="1">Понедельник</option>
-                <option value="2">Вторник</option>
-                <option value="3">Среда</option>
-                <option value="4">Четверг</option>
-                <option value="5">Пятница</option>
-                <option value="6">Суббота</option>
-                <option value="0">Воскресенье</option>
-              </Form.Select>
+                {DAY_OPTIONS.map((option) => (
+                  <option key={option.value || "empty-day"} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <div className="grid gap-4 sm:grid-cols-[auto_minmax(0,1fr)_auto_minmax(0,1fr)] sm:items-end">
+              <div className="pb-3 text-center text-[14px] font-medium text-text-muted">с</div>
+              <label className="flex flex-col gap-3">
+                <select
+                  aria-label="Время начала"
+                  value={this.state.periodStart}
+                  onChange={(e) => this.setState({ periodStart: e.target.value })}
+                  className={selectClassName}
+                >
+                  <option value="">чч:мм</option>
+                  {TIME_OPTIONS.map((time) => (
+                    <option key={time} value={time}>
+                      {time}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <div className="pb-3 text-center text-[14px] font-medium text-text-muted">по</div>
+
+              <label className="flex flex-col gap-3">
+                <select
+                  aria-label="Время окончания"
+                  value={this.state.periodEnd}
+                  onChange={(e) => this.setState({ periodEnd: e.target.value })}
+                  className={selectClassName}
+                >
+                  <option value="">чч:мм</option>
+                  {TIME_OPTIONS.map((time) => (
+                    <option key={time} value={time}>
+                      {time}
+                    </option>
+                  ))}
+                </select>
+              </label>
             </div>
-            <div className="d-flex flex-fill">
-              <span className="mt-1" style={{ margin: "6px 8px" }}>
-                с
-              </span>
-              <Form.Select
-                aria-label="Веберите день..."
-                value={this.state.periodStart}
-                onChange={(e) => this.setState({ periodStart: e.target.value })}
-              >
-                <option>чч:мм</option>
-                <option value="10:00">10:00</option>
-                <option value="11:00">11:00</option>
-                <option value="12:00">12:00</option>
-                <option value="13:00">13:00</option>
-                <option value="14:00">14:00</option>
-                <option value="15:00">15:00</option>
-                <option value="16:00">16:00</option>
-                <option value="17:00">17:00</option>
-                <option value="18:00">18:00</option>
-                <option value="19:00">19:00</option>
-                <option value="20:00">20:00</option>
-                <option value="21:00">21:00</option>
-                <option value="22:00">22:00</option>
-                <option value="23:00">23:00</option>
-              </Form.Select>
-              <span className="mt-1" style={{ margin: "6px 8px" }}>
-                по
-              </span>
-              <Form.Select
-                value={this.state.periodEnd}
-                onChange={(e) => this.setState({ periodEnd: e.target.value })}
-              >
-                <option>чч:мм</option>
-                <option value="10:00">10:00</option>
-                <option value="11:00">11:00</option>
-                <option value="12:00">12:00</option>
-                <option value="13:00">13:00</option>
-                <option value="14:00">14:00</option>
-                <option value="15:00">15:00</option>
-                <option value="16:00">16:00</option>
-                <option value="17:00">17:00</option>
-                <option value="18:00">18:00</option>
-                <option value="19:00">19:00</option>
-                <option value="20:00">20:00</option>
-                <option value="21:00">21:00</option>
-                <option value="22:00">22:00</option>
-                <option value="23:00">23:00</option>
-              </Form.Select>
-            </div>
-            <div style={{ width: "40px", marginLeft: "10px" }}>
-              <Button
-                variant="outline-success"
-                style={{ width: "40px" }}
-                onClick={this.addPeriod}
-              >
-                +
-              </Button>
-            </div>
-          </Container>
-        </Row>
-        <Row>
-          <Container>
-            <Table striped bordered hover style={{ marginTop: "20px" }}>
-              <tbody>{periodsList}</tbody>
-            </Table>
-          </Container>
-        </Row>
-      </Form.Group>
+
+            <Button variant="outlineSuccess" onClick={this.addPeriod} className="sm:self-end">
+              +
+            </Button>
+          </div>
+          <div className="flex flex-col gap-3">{periodsList}</div>
+        </div>
+      </div>
     );
   }
 }
