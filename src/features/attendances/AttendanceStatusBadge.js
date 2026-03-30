@@ -1,5 +1,4 @@
-import { Badge } from 'react-bootstrap';
-
+import { ToneBadge } from '../../components/ui';
 import AttendanceStatus, { getAttendanceStatusName } from '../../constants/AttendanceStatus';
 
 export const AttendanceStatusBadge = ({ 
@@ -48,14 +47,12 @@ export const AttendanceStatusBadge = ({
   };
 
   return (
-    <Badge 
-      pill={pill} 
-      bg={variant}
+    <ToneBadge
+      label={statusName}
+      tone={variant}
       className={className}
       style={finalStyle}
       aria-label={`Статус: ${statusName}`}
-    >
-      {statusName}
-    </Badge>
+    />
   );
 };

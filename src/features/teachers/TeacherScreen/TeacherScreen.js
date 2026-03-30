@@ -334,23 +334,9 @@ class TeacherScreen extends React.Component {
                 )}
               </>
             }
-            aside={
-              <div className="flex flex-col gap-3 md:items-stretch">
-                ???
-                {teacher.isActive ? (
-                  <UiButton variant="outlineDanger" onClick={this.handleDeactivateTeacher}>
-                    Отключить
-                  </UiButton>
-                ) : (
-                  <UiButton variant="outlineSuccess" onClick={this.handleActivateTeacher}>
-                    Включить
-                  </UiButton>
-                )}
-              </div>
-            }
             subtitle={<>
               Преподаватель
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2 mt-2">
                 {teacher.disciplines &&
                   teacher.disciplines.map((id) => (
                     <DisciplineIcon key={id} disciplineId={id} />
@@ -371,9 +357,9 @@ class TeacherScreen extends React.Component {
                   {metrics.map((metric) => (
                     <div
                       key={metric.title}
-                      className="w-[112px] shrink-0 rounded-xl bg-[#161920] px-2 py-2"
+                      className="w-[112px] shrink-0 rounded-xl px-2 py-2"
                     >
-                      <div className="mb-2 text-center text-xs font-medium text-[#94A3B8]">
+                      <div className="mb-2 text-center font-medium text-[#94A3B8]">
                         {metric.title}
                       </div>
                       <div className="mx-auto h-[96px] w-[96px]">
@@ -387,6 +373,17 @@ class TeacherScreen extends React.Component {
                     </div>
                   ))}
                 </div>
+                <div className="flex flex-col gap-3 md:items-stretch">
+                  {teacher.isActive ? (
+                    <UiButton variant="outlineDanger" onClick={this.handleDeactivateTeacher}>
+                      Отключить
+                    </UiButton>
+                  ) : (
+                    <UiButton variant="outlineSuccess" onClick={this.handleActivateTeacher}>
+                      Включить
+                    </UiButton>
+                  )}
+              </div>
               </div>
             }
           >

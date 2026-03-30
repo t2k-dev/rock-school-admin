@@ -8,8 +8,8 @@ class BandList extends React.Component {
 
     return (
 
-      <div className="min-w-[180px] rounded-xl bg-[#161920] px-4 py-3">
-        <div className="mb-2 flex items-center gap-2 text-[16px] font-bold text-[#E2E7F6]">
+      <div className="min-w-[180px] rounded-xl px-4 py-3">
+        <div className="mb-2 flex items-center gap-2 font-bold text-[#E2E7F6]">
           <GroupIcon size="20px" />
           <span>Группы</span>
         </div>

@@ -1,11 +1,12 @@
 
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
-import { Button, Container, Tab, Tabs } from 'react-bootstrap';
+import { Container, Tab, Tabs } from 'react-bootstrap';
 import { Link, useHistory, useParams } from 'react-router-dom';
 import { CalendarIcon, CancelIcon, CoinsIcon, CountIcon } from '../../../components/icons';
 import { Loading } from '../../../components/Loading';
 import ScreenHeader from '../../../components/screens/ScreenHeader';
+import { Button } from '../../../components/ui';
 import { getDisciplineName } from '../../../constants/disciplines';
 import SubscriptionStatus from '../../../constants/SubscriptionStatus';
 import SubscriptionType from '../../../constants/SubscriptionType';

@@ -11,7 +11,7 @@ const TONE_MAP = {
 
 const resolveToneColor = (tone) => TONE_MAP[tone] || tone || Colors.secondary;
 
-export const ToneBadge = ({ label, tone, className = "" }) => {
+export const ToneBadge = ({ label, tone, className = "", style = {}, ...props }) => {
   const badgeColor = resolveToneColor(tone);
 
   return (
@@ -26,7 +26,9 @@ export const ToneBadge = ({ label, tone, className = "" }) => {
         borderColor: `${badgeColor}44`,
         backgroundColor: `${badgeColor}22`,
         color: badgeColor,
+        ...style,
       }}
+      {...props}
     >
       {label}
     </span>
@@ -37,4 +39,5 @@ ToneBadge.propTypes = {
   label: PropTypes.node.isRequired,
   tone: PropTypes.string,
   className: PropTypes.string,
+  style: PropTypes.object,
 };

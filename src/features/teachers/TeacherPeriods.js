@@ -1,6 +1,7 @@
 import React from "react";
-import { Button, Col, Container, Row } from "react-bootstrap";
+import { Col, Container, Row } from "react-bootstrap";
 import { ScheduleEditor } from "../../components/schedule/ScheduleEditor";
+import { Button } from "../../components/ui";
 import { getTeacher, saveWorkingPeriods } from "../../services/apiTeacherService";
 
 export class TeacherPeriods extends React.Component {

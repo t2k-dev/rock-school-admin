@@ -2,9 +2,13 @@ import type { ButtonHTMLAttributes } from "react";
 
 const VARIANT_CLASSES = {
   primary: "bg-accent text-text-main hover:opacity-90",
+  danger: "bg-danger text-text-main hover:opacity-90",
+  secondary: "bg-secondary text-text-main hover:opacity-90",
+  
   outlineDanger:"border border-[var(--danger)] text-danger bg-[rgba(200,69,69,0.12)] hover:bg-[rgba(200,69,69,0.2)]",
   outlineSuccess: "border border-emerald-500/60 text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20",
   ghost: "border border-white/10 text-text-main hover:bg-white/[0.04]",
+  
 } as const;
 
 const SIZE_CLASSES = {
