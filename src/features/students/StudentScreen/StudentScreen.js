@@ -12,7 +12,7 @@ import { CalendarIcon, InstagramIcon } from "../../../components/icons";
 import { Loading } from "../../../components/Loading";
 import ScreenHeader from "../../../components/screens/ScreenHeader";
 import AttendanceType from "../../../constants/AttendanceType";
-import { SectionWrapper } from "../../../layout";
+import { SectionTitle, SectionWrapper } from "../../../layout";
 import { getStudentScreenDetails } from "../../../services/apiStudentService";
 import { AttendanceModal } from "../../attendances/AttendanceModal/AttendanceModal";
 import PaymentModal from "../../payments/PaymentModal";
@@ -315,9 +315,10 @@ class StudentScreen extends React.Component {
 
     return (
       <SectionWrapper>
+        <SectionTitle>Ученик</SectionTitle>
         <ScreenHeader
           className="mb-4"
-          avatar={<Avatar style={{ width: "72px", height: "72px" }} />}
+          avatar={<Avatar style={{ width: "90px", height: "90px" }} />}
           title={`${student.firstName} ${student.lastName}`}
           titleClassName="text-[24px]"
           onEdit={this.handleEditClick}

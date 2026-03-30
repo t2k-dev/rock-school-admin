@@ -18,7 +18,7 @@ import { CalendarIcon, EditIcon } from "../../../components/icons";
 import { Loading } from "../../../components/Loading";
 import SubscriptionStatus from "../../../constants/SubscriptionStatus";
 import SubscriptionType from "../../../constants/SubscriptionType";
-import { SectionWrapper } from "../../../layout";
+import { SectionTitle, SectionWrapper } from "../../../layout";
 import { AttendanceModal } from "../../attendances/AttendanceModal/AttendanceModal";
 import { DisciplineIcon } from "../../disciplines/DisciplineIcon";
 import BandList from "../../students/BandList";
@@ -321,9 +321,10 @@ class TeacherScreen extends React.Component {
 
     return (
       <SectionWrapper>
+        <SectionTitle>Преподаватель</SectionTitle>
           <ScreenHeader
             className="mb-4"
-            avatar={<Avatar style={{ width: "72px", height: "72px" }} />}
+            avatar={<Avatar style={{ width: "90px", height: "90px" }} />}
             title={
               <>
                 {teacher.firstName} {teacher.lastName}

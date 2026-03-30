@@ -253,7 +253,6 @@ export class BandScreen extends React.Component {
             title={band.name}
             titleClassName="text-[24px]"
             onEdit={this.handleEditClick}
-            subtitle={band.isActive ? "Активная группа" : "Неактивная группа"}
             asideClassName="w-full lg:w-auto lg:min-w-[240px]"
             aside={
               <div className="flex w-full flex-col gap-3 lg:w-[240px]">

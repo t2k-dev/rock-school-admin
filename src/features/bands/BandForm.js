@@ -349,7 +349,6 @@ export class BandForm extends React.Component {
             <div className="h-px bg-white/10" />
 
             <div className="flex flex-col gap-4">
-              <span className="text-[14px] text-text-main opacity-60">Расписание</span>
               <ScheduleEditorWithDelete
                 schedules={scheduleSlots}
                 onChange={this.handleScheduleChange}

@@ -1,7 +1,7 @@
 import React from "react";
-import { Button, Card, Col, Modal, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { Avatar } from "../../components/Avatar";
+import { Button } from "../../components/ui";
 import { getDisciplineName } from "../../constants/disciplines";
 import { calculateAge } from "../../utils/dateTime";
 import { DisciplineGridSelector } from "../disciplines/DisciplineGridSelector";
@@ -41,102 +41,122 @@ export class BandStudents extends React.Component {
     this.handleCloseRoleModal();
   };
 
+  getRoleId = (bandMember) => {
+    return bandMember.roleId ?? bandMember.bandRoleId ?? null;
+  };
+
   renderStudent = (bandMember, index) => {
     const age = calculateAge(bandMember.birthDate);
     const { onDeleteStudent } = this.props;
+    const roleId = this.getRoleId(bandMember);
     
     return (
-      <Card key={index} className="mb-2">
-        <Card.Body className="py-2">
-          <Row className="align-items-center">
-            <Col md="2" className="text-center">
-              <Avatar style={{ width: "30px", height: "30px" }} />
-            </Col>
-            <Col md="8">
-              <div>
-                <strong>
-                  <Link to={`/student/${bandMember.studentId}`}>
-                    {bandMember.firstName} {bandMember.lastName}
-                  </Link>
-                </strong>
-                <div className="text-muted small">
-                  {age} лет • {" "}
-                  <span 
-                    className="text-muted"
-                    style={{ cursor: 'pointer'}}
-                    onClick={() => this.handleShowRoleModal(index)}
-                  >
-                    {bandMember.bandRoleId 
-                        ? <>
-                            <span style={{ marginRight: "5px" }}>{getDisciplineName(bandMember.bandRoleId)}</span>
-                            <DisciplineIcon disciplineId={bandMember.bandRoleId} size="20px"/> 
-                        </> 
-                        : "Выбрать роль"}
-                  </span>
-                </div>
-              </div>
-            </Col>
-            <Col md="2" className="text-end">
-              <Button
-                variant="outline-danger"
-                style={{ fontSize: "10px", marginLeft: "10px", borderRadius: "25px" }}
-                onClick={() => onDeleteStudent(index)}
-              >
-                X
-              </Button>
-            </Col>
-          </Row>
-        </Card.Body>
-      </Card>
+      <div
+        key={index}
+        className="grid grid-cols-[48px_minmax(0,1fr)_auto] items-center gap-4 rounded-[20px] border border-white/10 bg-inner-bg px-4 py-3"
+      >
+        <div className="flex justify-center">
+          <Avatar style={{ width: "36px", height: "36px" }} />
+        </div>
+
+        <div className="min-w-0">
+          <Link
+            to={`/student/${bandMember.studentId}`}
+            className="block truncate text-[16px] font-semibold text-text-main no-underline transition hover:text-white"
+          >
+            {bandMember.firstName} {bandMember.lastName}
+          </Link>
+
+          <div className="mt-1 flex flex-wrap items-center gap-2 text-[13px] text-text-muted">
+            <span>{age} лет</span>
+            <span className="opacity-40">•</span>
+            <button
+              type="button"
+              className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-[13px] text-text-muted transition hover:border-white/20 hover:text-text-main"
+              onClick={() => this.handleShowRoleModal(index)}
+            >
+              {roleId ? (
+                <>
+                  <span>{getDisciplineName(roleId)}</span>
+                  <DisciplineIcon disciplineId={roleId} size="18px" />
+                </>
+              ) : (
+                <span>Выбрать роль</span>
+              )}
+            </button>
+          </div>
+        </div>
+
+        <Button
+          variant="outlineDanger"
+          size="sm"
+          onClick={() => onDeleteStudent(index)}
+        >
+          X
+        </Button>
+      </div>
     );
   };
 
   render() {
     const { bandMembers, onAddStudent, showLabel = false } = this.props;
     const { showRoleModal, selectedStudentIndex } = this.state;
+    const selectedBandMember = selectedStudentIndex !== null ? bandMembers[selectedStudentIndex] : null;
 
     return (
       <>
-      {showLabel && <strong>Участники</strong>}
-      <div className="mt-2">
-        {bandMembers.length > 0 ? (
-          <div className="mb-3">
-            {bandMembers.map((bandMember, index) => this.renderStudent(bandMember, index))}
-          </div>
-        ) : (
-          <div className="text-center py-2 mb-3" style={{ backgroundColor: "#f8f9fa", borderRadius: "5px" }}>
-            <p className="text-muted mb-0">Ученики не добавлены</p>
-          </div>
-        )}
-        
-        <div className="text-center">
-          <Button 
-              variant="outline-success" 
-              size="sm"
-              onClick={onAddStudent}
-          >
+        <div className="flex flex-col gap-4">
+          {showLabel && (
+            <div className="text-[14px] text-text-main opacity-60">Участники</div>
+          )}
+
+          {bandMembers.length > 0 ? (
+            <div className="flex flex-col gap-3">
+              {bandMembers.map((bandMember, index) => this.renderStudent(bandMember, index))}
+            </div>
+          ) : (
+            <div className="rounded-[20px] border border-white/10 bg-inner-bg px-4 py-6 text-center text-[14px] text-text-muted">
+              Участники не добавлены
+            </div>
+          )}
+
+          <div className="text-center">
+            <Button variant="primary" size="sm" onClick={onAddStudent}>
               + Добавить
-          </Button>
+            </Button>
+          </div>
         </div>
 
-        {/* Role Selection Modal */}
-        <Modal show={showRoleModal} onHide={this.handleCloseRoleModal}>
-          <Modal.Header closeButton>
-            <Modal.Title>Выберите роль ученика</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <DisciplineGridSelector
-              selectedDisciplineId={
-                selectedStudentIndex !== null 
-                  ? bandMembers[selectedStudentIndex]?.roleId 
-                  : null
-              }
-              onDisciplineChange={this.handleRoleSelect}
-              multiSelect={false}
-            />
-          </Modal.Body>
-        </Modal>
-      </div>
+        {showRoleModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4 py-6">
+            <div className="w-full max-w-4xl rounded-[28px] border border-white/10 bg-card-bg p-6 shadow-2xl sm:p-8">
+              <div className="mb-6 flex items-start justify-between gap-4">
+                <div>
+                  <div className="text-[24px] font-semibold text-text-main">Выберите роль ученика</div>
+                  {selectedBandMember ? (
+                    <div className="mt-2 text-[14px] text-text-muted">
+                      {selectedBandMember.firstName} {selectedBandMember.lastName}
+                    </div>
+                  ) : null}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={this.handleCloseRoleModal}
+                  className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-[14px] text-text-muted transition hover:border-white/20 hover:text-text-main"
+                >
+                  Закрыть
+                </button>
+              </div>
+
+              <DisciplineGridSelector
+                selectedDisciplineId={selectedBandMember ? this.getRoleId(selectedBandMember) : null}
+                onDisciplineChange={this.handleRoleSelect}
+                multiSelect={false}
+              />
+            </div>
+          </div>
+        )}
       </>
     );
   }
