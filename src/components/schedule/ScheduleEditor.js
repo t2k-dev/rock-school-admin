@@ -144,7 +144,7 @@ export class ScheduleEditor extends React.Component {
     }
 
     return (
-      <div className="flex flex-col gap-5 rounded-[24px] bg-card-bg p-5 shadow-[0_12px_32px_rgba(0,0,0,0.16)] sm:p-6">
+      <div className="flex flex-col gap-5 rounded-[24px] p-5 sm:p-6">
         <div className="flex items-center gap-3">
           <div className="flex h-11 w-11 items-center justify-center rounded-[14px] bg-accent/20 text-text-main">
             <CalendarIcon />

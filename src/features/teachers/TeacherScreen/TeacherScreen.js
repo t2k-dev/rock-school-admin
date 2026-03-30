@@ -13,12 +13,12 @@ import ScreenHeader from "../../../components/screens/ScreenHeader";
 import { Button as UiButton } from "../../../components/ui";
 import { activateTeacher, deactivateTeacher, getTeacherScreenDetails } from "../../../services/apiTeacherService";
 
-import SubscriptionStatus from "../../../constants/SubscriptionStatus";
-
 import { CalendarWeek } from "../../../components/calendar/CalendarWeek";
 import { CalendarIcon, EditIcon } from "../../../components/icons";
 import { Loading } from "../../../components/Loading";
+import SubscriptionStatus from "../../../constants/SubscriptionStatus";
 import SubscriptionType from "../../../constants/SubscriptionType";
+import { SectionWrapper } from "../../../layout";
 import { AttendanceModal } from "../../attendances/AttendanceModal/AttendanceModal";
 import { DisciplineIcon } from "../../disciplines/DisciplineIcon";
 import BandList from "../../students/BandList";
@@ -320,9 +320,9 @@ class TeacherScreen extends React.Component {
     ];
 
     return (
-      <div style={{ marginTop: "40px" }}>
+      <SectionWrapper>
           <ScreenHeader
-            className="mb-3"
+            className="mb-4"
             avatar={<Avatar style={{ width: "72px", height: "72px" }} />}
             title={
               <>
@@ -389,68 +389,65 @@ class TeacherScreen extends React.Component {
           >
 
           </ScreenHeader>
-        <div className="mb-5">
-          <h3>
-            <CalendarIcon />
-            Расписание
-            <EditIcon onIconClick={this.handleScheduleClick} />
-          </h3>
-          <div className="mt-3 rounded-[10px] bg-[var(--card-bg)] p-5">
-            <CalendarWeek
-              events={events}
-              backgroundEvents={backgroundEvents}
-              onSelectEvent={(slotInfo) => {
-                this.handleSelectEvent(slotInfo);
-              }}
+          <div className="mb-5">
+            <h3>
+              <CalendarIcon />
+              Расписание
+              <EditIcon onIconClick={this.handleScheduleClick} />
+            </h3>
+            <div className="mt-3 rounded-[10px] bg-[var(--card-bg)] p-5">
+              <CalendarWeek
+                events={events}
+                backgroundEvents={backgroundEvents}
+                onSelectEvent={(slotInfo) => {
+                  this.handleSelectEvent(slotInfo);
+                }}
+              />
+            </div>
+
+            <AttendanceModal
+              attendance={selectedAttendance}
+              show={showAttendanceModal}
+              handleClose={this.handleCloseModal}
+              onAttendanceUpdate={this.handleAttendanceUpdate}
+              history={this.props.history}
             />
           </div>
-
-          <AttendanceModal
-            attendance={selectedAttendance}
-            show={showAttendanceModal}
-            handleClose={this.handleCloseModal}
-            onAttendanceUpdate={this.handleAttendanceUpdate}
-            history={this.props.history}
-          />
-        </div>
-        <div>
-          <Tabs
-            defaultActiveKey="subscriptions"
-            id="uncontrolled-tab-example"
-          >
-            <Tab eventKey="subscriptions" title="Абонементы">
-              <TeacherSubscriptions
-                subscriptions={nonTrialSubscriptions}
-                showCompleted={this.state.showCompleted}
-                onShowCompletedChange={this.handleShowCompletedChange}
-                onViewAttendances={this.handleViewSubscriptionAttendances}
-                onEditSubscription={this.handleEditSubscriptionClick}
-              />
-            </Tab>
-            <Tab eventKey="trials" title="Пробные уроки">
-              <TeacherSubscriptions
-                subscriptions={trialSubscriptions}
-                showCompleted={this.state.showCompleted}
-                onShowCompletedChange={this.handleShowCompletedChange}
-                onViewAttendances={this.handleViewSubscriptionAttendances}
-                onEditSubscription={this.handleEditSubscriptionClick}
-              />
-            </Tab>
-            <Tab eventKey="rehearsals" title="Репетиции">
-              <TeacherSubscriptions
-                subscriptions={rehearsalSubscriptions}
-                showCompleted={this.state.showCompleted}
-                onShowCompletedChange={this.handleShowCompletedChange}
-                onViewAttendances={this.handleViewSubscriptionAttendances}
-                onEditSubscription={this.handleEditSubscriptionClick}
-              />
-            </Tab>
-          </Tabs>
-        </div>
-        <div style={{ marginTop: "20px" }}>
-          <Col md="12"></Col>
-        </div>
-      </div>
+          <div>
+            <Tabs
+              defaultActiveKey="subscriptions"
+              id="uncontrolled-tab-example"
+            >
+              <Tab eventKey="subscriptions" title="Абонементы">
+                <TeacherSubscriptions
+                  subscriptions={nonTrialSubscriptions}
+                  showCompleted={this.state.showCompleted}
+                  onShowCompletedChange={this.handleShowCompletedChange}
+                  onViewAttendances={this.handleViewSubscriptionAttendances}
+                  onEditSubscription={this.handleEditSubscriptionClick}
+                />
+              </Tab>
+              <Tab eventKey="trials" title="Пробные уроки">
+                <TeacherSubscriptions
+                  subscriptions={trialSubscriptions}
+                  showCompleted={this.state.showCompleted}
+                  onShowCompletedChange={this.handleShowCompletedChange}
+                  onViewAttendances={this.handleViewSubscriptionAttendances}
+                  onEditSubscription={this.handleEditSubscriptionClick}
+                />
+              </Tab>
+              <Tab eventKey="rehearsals" title="Репетиции">
+                <TeacherSubscriptions
+                  subscriptions={rehearsalSubscriptions}
+                  showCompleted={this.state.showCompleted}
+                  onShowCompletedChange={this.handleShowCompletedChange}
+                  onViewAttendances={this.handleViewSubscriptionAttendances}
+                  onEditSubscription={this.handleEditSubscriptionClick}
+                />
+              </Tab>
+            </Tabs>
+          </div>
+      </SectionWrapper>
     );
   }
 }

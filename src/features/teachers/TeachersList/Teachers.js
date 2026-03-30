@@ -1,9 +1,9 @@
 import React from "react";
-import { Button, Col, Form, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { Loading } from "../../../components/Loading";
 import { NoRecords } from "../../../components/NoRecords";
-import { Container } from "../../../components/ui";
+import { Button, Container, Input } from "../../../components/ui";
+import { SectionTitle, SectionWrapper } from "../../../layout";
 import { getTeachers } from "../../../services/apiTeacherService";
 import TeacherCard from "./TeacherCard";
 
@@ -68,33 +68,58 @@ class Teachers extends React.Component {
     const inactiveTeachers = teachers?.filter((t) => !t.isActive);
 
     return (
-      <div style={{ marginTop: "40px" }}>
-        <Row>
-          <Col md="2"></Col>
-          <Col md="8">
-            <div className="d-flex mb-5">
-              <div className="flex-grow-1">
-                <div style={{ fontWeight: "bold", fontSize: "28px" }}>Преподаватели</div>
-              </div>
-              <div>
-              </div>
-            </div>
-            <Container>
-              <div>
-                <Form.Control className="mb-4" placeholder="Поиск..." value={searchText} onChange={(e) => this.handleSearchChange(e)}></Form.Control>
-              </div>
-              <div className="mb-3 text-center">
-                <Button as={Link} to="/admin/registerTeacher" variant="outline-success">
+      <SectionWrapper>
+        <div className="mx-auto max-w-5xl">
+
+          <SectionTitle>Преподаватели</SectionTitle>
+
+          <Container className="flex flex-col gap-8">
+
+              {/* Search*/}
+              <label className="flex flex-col gap-3 mb-6">
+                <Input
+                  placeholder="Поиск..."
+                  value={searchText}
+                  onChange={this.handleSearchChange}
+                />
+              </label>
+
+              {/* Add button */}
+              <div className="text-center">
+                <Button
+                  as={Link}
+                  to="/admin/registerTeacher"
+                  variant="primary"
+                >
                   + Новый преподаватель
                 </Button>
               </div>
-              <div className="space-y-5">{this.renderTeachers(activeTeachers)}</div>
-              <h4 className="mb-3"> Неактивные </h4>
-              <div className="space-y-5">{this.renderTeachers(inactiveTeachers)}</div>
-            </Container>
-          </Col>
-        </Row>
-      </div>
+
+              {/* Teachers lists */}
+              <div className="flex flex-col gap-4">
+                <div className="flex items-center justify-between gap-3">
+                  <h3 className="m-0 text-[18px] font-semibold text-text-main">Активные</h3>
+                  <span className="rounded-full border border-white/10 px-3 py-1 text-[12px] uppercase tracking-[0.16em] text-text-muted">
+                    {activeTeachers?.length || 0}
+                  </span>
+                </div>
+                <div className="space-y-5">{this.renderTeachers(activeTeachers)}</div>
+              </div>
+
+              <div className="h-px bg-white/10" />
+
+              <div className="flex flex-col gap-4">
+                <div className="flex items-center justify-between gap-3">
+                  <h3 className="m-0 text-[18px] font-semibold text-text-main">Неактивные</h3>
+                  <span className="rounded-full border border-white/10 px-3 py-1 text-[12px] uppercase tracking-[0.16em] text-text-muted">
+                    {inactiveTeachers?.length || 0}
+                  </span>
+                </div>
+                <div className="space-y-5">{this.renderTeachers(inactiveTeachers)}</div>
+              </div>
+          </Container>
+        </div>
+      </SectionWrapper>
     );
   }
 }

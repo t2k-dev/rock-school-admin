@@ -1,6 +1,8 @@
 import React from "react";
-import { Alert, Button, Col, Container, Form, InputGroup, Row, Spinner } from "react-bootstrap";
+import { Loading } from "../../components/Loading";
 import { ScheduleEditorWithDelete } from "../../components/schedule/ScheduleEditorWithDelete";
+import { Button, FormWrapper } from "../../components/ui";
+import { SectionTitle, SectionWrapper } from "../../layout";
 import { getBandFormData, updateBandSchedules } from "../../services/apiBandService";
 import { getWorkingPeriods } from "../../services/apiTeacherService";
 import { convertSlotsToSchedules } from "../../utils/scheduleUtils";
@@ -133,53 +135,46 @@ export class BandScheduleForm extends React.Component {
   };
 
   renderLoadingState = () => (
-    <Container className="text-center" style={{ marginTop: "100px" }}>
-      <Spinner animation="border" role="status" className="mb-3">
-        <span className="visually-hidden">Загрузка...</span>
-      </Spinner>
-      <div>Загрузка данных...</div>
-    </Container>
+    <Loading message="Загрузка данных..." />
   );
 
   renderErrorState = () => (
-    <Container style={{ marginTop: "40px" }}>
-      <Alert variant="danger">
-        <Alert.Heading>Ошибка</Alert.Heading>
-        <p>{this.state.error}</p>
-        <hr />
-        <div className="d-flex justify-content-end">
+    <SectionWrapper>
+      <div className="mx-auto max-w-3xl rounded-[32px] border border-danger/40 bg-danger/10 p-6 shadow-2xl sm:p-8">
+        <div className="mb-3 text-[24px] font-semibold text-text-main">Ошибка</div>
+        <p className="m-0 text-[15px] text-text-muted">{this.state.error}</p>
+        <div className="mt-6 flex justify-end">
           <Button
-            onClick={this.loadFormData}
-            variant="outline-danger"
+            onClick={() => this.loadFormData()}
+            variant="outlineDanger"
             disabled={this.state.isLoading}
           >
             Попробовать снова
           </Button>
         </div>
-      </Alert>
-    </Container>
+      </div>
+    </SectionWrapper>
   );
 
   renderSelectSlotSection = () => {
     const { teacher, isSaving } = this.state;
     return (
-      <>
-        <div className="mb-3 mt-3"><b>Куратор</b></div>
-        <Form.Group className="mb-3">
-          <div className="mb-4">
-            <InputGroup className="mb-3 d-flex">
-              <Form.Label className="flex-grow-1">{teacher?.firstName} {teacher?.lastName}</Form.Label>
-              <Button
-                variant="outline-secondary"
-                onClick={this.showAvailableTeachersModal}
-                disabled={!teacher?.teacherId || isSaving}
-              >
-                Доступные окна...
-              </Button>
-            </InputGroup>
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+        <div className="flex flex-col gap-3">
+          <span className="text-text-main">Куратор</span>
+          <div className="rounded-[14px] border border-white/10 bg-input-bg px-4 py-3 text-[16px] text-text-main">
+            {teacher?.firstName} {teacher?.lastName}
           </div>
-        </Form.Group>
-      </>
+        </div>
+        <Button
+          type="button"
+          onClick={this.showAvailableTeachersModal}
+          disabled={!teacher?.teacherId || isSaving}
+          className="lg:min-w-[220px]"
+        >
+          Доступные окна...
+        </Button>
+      </div>
     );
   };
 
@@ -195,64 +190,48 @@ export class BandScheduleForm extends React.Component {
     }
 
     return (
-      <Container style={{ marginTop: "40px", paddingBottom: "50px" }}>
-        <Row>
-          <Col md="4"></Col>
-          <Col md="4">
-            <h2 className="mb-4 text-center">Редактировать расписание</h2>
+      <SectionWrapper>
+        <SectionTitle className="text-center">Редактировать расписание</SectionTitle>
 
-            <Form>
-              <Form.Group className="mb-3 text-center">
-                <Form.Label style={{ fontSize: "18px", fontWeight: "bold" }}>
-                  Группа "{bandName}"
-                </Form.Label>
-              </Form.Group>
+        <FormWrapper>
+          <form onSubmit={this.handleSave} className="flex flex-col gap-8">
+            <div className="text-center text-[18px] font-semibold text-text-main">
+              Группа "{bandName}"
+            </div>
 
-              {this.renderSelectSlotSection()}
+            {this.renderSelectSlotSection()}
 
-              <AvailableTeachersModal
-                show={showAvailableTeacherModal}
-                teachers={availableTeachers}
-                onSlotsChange={this.handleSlotsChange}
-                onClose={this.handleCloseAvailableTeachersModal}
-                slotDuration={120}
-              />
+            <AvailableTeachersModal
+              show={showAvailableTeacherModal}
+              teachers={availableTeachers}
+              onSlotsChange={this.handleSlotsChange}
+              onClose={this.handleCloseAvailableTeachersModal}
+              slotDuration={120}
+            />
 
-              <hr></hr>
+            <div className="h-px bg-white/10" />
 
-                <ScheduleEditorWithDelete
-                  schedules={schedules}
-                  onChange={this.handleScheduleChange}
-                />
+            <ScheduleEditorWithDelete
+              schedules={schedules}
+              onChange={this.handleScheduleChange}
+            />
 
-              <hr></hr>
-              <Container className="text-center">
-                <Button
-                  variant="primary"
-                  disabled={isSaving}
-                  onClick={this.handleSave}
-                >
-                  {isSaving ? (
-                    <>
-                      <Spinner
-                        as="span"
-                        animation="border"
-                        size="sm"
-                        role="status"
-                        aria-hidden="true"
-                        className="me-2"
-                      />
-                      Сохранение...
-                    </>
-                  ) : (
-                    "Сохранить"
-                  )}
-                </Button>
-              </Container>
-            </Form>
-          </Col>
-        </Row>
-      </Container>
+            <div className="h-px bg-white/10" />
+
+            <div className="flex justify-center">
+              <Button
+                type="submit"
+                variant="primary"
+                size="lg"
+                className="min-w-[220px]"
+                disabled={isSaving}
+              >
+                {isSaving ? "Сохранение..." : "Сохранить"}
+              </Button>
+            </div>
+          </form>
+        </FormWrapper>
+      </SectionWrapper>
     );
   }
 }

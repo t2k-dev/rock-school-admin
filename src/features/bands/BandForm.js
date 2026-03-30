@@ -1,8 +1,9 @@
 import React from "react";
-import { Button, Col, Container, Form, InputGroup, Row } from "react-bootstrap";
 
 import { Loading } from "../../components/Loading";
 import { ScheduleEditorWithDelete } from "../../components/schedule/ScheduleEditorWithDelete";
+import { Button, FormWrapper, Input } from "../../components/ui";
+import { SectionTitle, SectionWrapper } from "../../layout";
 import { addBand } from "../../services/apiBandService";
 import { getAvailableTeachers, getRehearsableTeachers, getWorkingPeriods } from "../../services/apiTeacherService";
 import { calculateAge } from "../../utils/dateTime";
@@ -170,7 +171,7 @@ export class BandForm extends React.Component {
   };
 
   sortStudentsByAge = (students) => {
-    return students.sort((a, b) => {
+    return [...students].sort((a, b) => {
       return new Date(b.birthDate) - new Date(a.birthDate);
     });
   };
@@ -267,107 +268,109 @@ export class BandForm extends React.Component {
     const sortedStudents = this.sortStudentsByAge(students);
 
     return (
-      <Container style={{ marginTop: "40px" }}>
-        <Row>
-          <Col md="4"></Col>
-          <Col md="4">
-            <h2 className="text-center mb-5">
-              {isNew ? "Новая группа" : "Редактировать группу"}
-            </h2>
-            <Form>
-              {/* Band Name */}
-              <Form.Group className="mb-3">
-                <Form.Label htmlFor="name" className="fw-bold">Название группы</Form.Label>
-                <Form.Control
-                  type="text"
-                  id="name"
-                  value={name}
-                  onChange={this.handleChange}
-                  placeholder="Введите название группы"
-                  autoComplete="off"
-                />
-              </Form.Group>
+      <SectionWrapper>
+        <SectionTitle className="text-center">
+          {isNew ? "Новая группа" : "Редактировать группу"}
+        </SectionTitle>
 
-              {/* Students Section */}
-              <div className="mb-3">
-                <BandStudents
-                  showLabel={true}
-                  bandMembers={sortedStudents}
-                  onAddStudent={this.showAddStudentModal}
-                  onDeleteStudent={this.deleteStudent}
-                  onRoleChange={this.handleRoleChange}
-                />
+        <FormWrapper>
+          <form onSubmit={this.handleSave} className="flex flex-col gap-8">
+            <label className="flex flex-col gap-3">
+              <span className="text-[14px] text-text-main opacity-60">Название группы</span>
+              <Input
+                type="text"
+                id="name"
+                value={name}
+                onChange={this.handleChange}
+                placeholder="Введите название группы"
+                autoComplete="off"
+              />
+            </label>
 
-                <AddStudentModal
-                  show={showAddStudentModal}
-                  onAddStudent={this.handleAddStudent}
-                  handleClose={this.handleCloseAddStudentModal}
-                  onlyExistingStudents={true}
-                />
-              </div>
+            <div className="h-px bg-white/10" />
 
-              {/* Teacher Section */}
-              <Form.Group className="mb-3">
-                <Form.Label htmlFor="teacherId" className="fw-bold">Преподаватель</Form.Label>
-                <InputGroup>
-                  <Form.Control
-                    as="select"
-                    id="teacherId"
-                    value={teacherId}
-                    style={{ width: "200px" }}
-                    onChange={this.handleTeacherChange}
-                  >
-                    <option value="">Выберите преподавателя...</option>
-                    {teachers
-                        .map(teacher => (
-                        <option key={teacher.teacherId} value={teacher.teacherId}>
-                          {teacher.firstName} {teacher.lastName}
-                        </option>
-                      ))}
-                  </Form.Control>
-                  <Button 
-                    variant="outline-secondary" 
-                    type="button" 
-                    onClick={this.showAvailableTeachersModal}
-                    disabled={!teacherId}
-                  >
-                    Доступные окна...
-                  </Button>
-                </InputGroup>
-              </Form.Group>
-
-              <AvailableTeachersModal
-                show={showAvailableTeacherModal}
-                teachers={availableTeachers}
-                onSlotsChange={this.handleSlotsChange}
-                onClose={this.handleCloseAvailableTeachersModal}
-                step={step}
-                slotDuration={slotDuration}
+            <div className="flex flex-col gap-4">
+              <BandStudents
+                showLabel={true}
+                bandMembers={sortedStudents}
+                onAddStudent={this.showAddStudentModal}
+                onDeleteStudent={this.deleteStudent}
+                onRoleChange={this.handleRoleChange}
               />
 
-              {/* Schedule Section */}
-              
-              <div className="mb-3">
-                <ScheduleEditorWithDelete
-                  schedules={scheduleSlots}
-                  onChange={this.handleScheduleChange}
-                />
-              </div>
+              <AddStudentModal
+                show={showAddStudentModal}
+                onAddStudent={this.handleAddStudent}
+                handleClose={this.handleCloseAddStudentModal}
+                onlyExistingStudents={true}
+              />
+            </div>
 
-              <hr />
-              <div className="text-center">
-                <Button 
-                  variant="primary" 
-                  onClick={this.handleSave}
-                  disabled={isSaving}
+            <div className="h-px bg-white/10" />
+
+            <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+              <label className="flex flex-col gap-3">
+                <span className="text-[14px] text-text-main opacity-60">Преподаватель</span>
+                <select
+                  id="teacherId"
+                  value={teacherId}
+                  onChange={this.handleTeacherChange}
+                  className="w-full rounded-[14px] border border-white/10 bg-input-bg px-4 py-3 text-[16px] text-text-main outline-none transition focus:border-white/20 focus:ring-2 focus:ring-accent"
                 >
-                  {isSaving ? "Сохранение..." : (isNew ? "Создать группу" : "Сохранить изменения")}
-                </Button>
-              </div>
-            </Form>
-          </Col>
-        </Row>
-      </Container>
+                  <option value="">Выберите преподавателя...</option>
+                  {teachers.map((teacher) => (
+                    <option key={teacher.teacherId} value={teacher.teacherId}>
+                      {teacher.firstName} {teacher.lastName}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <Button
+                variant="ghost"
+                type="button"
+                onClick={this.showAvailableTeachersModal}
+                disabled={!teacherId}
+                className="lg:min-w-[220px]"
+              >
+                Доступные окна...
+              </Button>
+            </div>
+
+            <AvailableTeachersModal
+              show={showAvailableTeacherModal}
+              teachers={availableTeachers}
+              onSlotsChange={this.handleSlotsChange}
+              onClose={this.handleCloseAvailableTeachersModal}
+              step={step}
+              slotDuration={slotDuration}
+            />
+
+            <div className="h-px bg-white/10" />
+
+            <div className="flex flex-col gap-4">
+              <span className="text-[14px] text-text-main opacity-60">Расписание</span>
+              <ScheduleEditorWithDelete
+                schedules={scheduleSlots}
+                onChange={this.handleScheduleChange}
+              />
+            </div>
+
+            <div className="h-px bg-white/10" />
+
+            <div className="flex items-center justify-center">
+              <Button
+                type="submit"
+                size="lg"
+                className="min-w-[220px]"
+                disabled={isSaving}
+              >
+                {isSaving ? "Сохранение..." : isNew ? "Создать группу" : "Сохранить изменения"}
+              </Button>
+            </div>
+          </form>
+        </FormWrapper>
+      </SectionWrapper>
     );
   }
 }

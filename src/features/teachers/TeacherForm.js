@@ -1,7 +1,8 @@
 import { parse } from "date-fns";
 import React from "react";
 import { SexControl } from "../../components/SexControl";
-import { Button, Input } from "../../components/ui";
+import { Button, FormWrapper, Input } from "../../components/ui";
+import { SectionTitle, SectionWrapper } from "../../layout";
 import { DisciplineGridSelector } from "../disciplines/DisciplineGridSelector";
 
 import { addTeacher, getTeacher, saveTeacher } from "../../services/apiTeacherService";
@@ -202,12 +203,12 @@ class TeacherForm extends React.Component {
     const { isNew } = this.state;
     
     return (
-      <div className="px-4 pb-8 pt-10 sm:px-6 lg:px-8">
-              <h2 className="m-0 text-[28px] font-semibold text-text-main sm:text-[34px] text-center mb-8">
-                {isNew ? "Новый преподаватель" : "Редактировать преподавателя"}
-              </h2>
+      <SectionWrapper>
+        <SectionTitle className="text-center">
+          {isNew ? "Новый преподаватель" : "Редактировать преподавателя"}
+        </SectionTitle>
         
-        <div className="mx-auto max-w-3xl rounded-[32px] bg-card-bg p-6 shadow-2xl sm:p-8">
+        <FormWrapper>
           <form onSubmit={this.handleSave} className="flex flex-col gap-8">
 
             <div className="grid gap-5 sm:grid-cols-2">
@@ -365,8 +366,8 @@ class TeacherForm extends React.Component {
               <Button type="submit">Сохранить</Button>
             </div>
           </form>
-        </div>
-      </div>
+        </FormWrapper>
+      </SectionWrapper>
     );
   }
 }

@@ -1,8 +1,9 @@
 import React from "react";
-import { Button, Col, Form, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import { Loading } from "../../../components/Loading";
 import { NoRecords } from "../../../components/NoRecords";
-import { Container } from "../../../components/ui";
+import { Button, Container, Input } from "../../../components/ui";
+import { SectionTitle, SectionWrapper } from "../../../layout";
 import { getStudents } from "../../../services/apiStudentService";
 import StudentCard from "./StudentCard";
 
@@ -10,6 +11,7 @@ class Students extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      isLoading: false,
       searchText: "",
       students: [],
     };
@@ -22,8 +24,9 @@ class Students extends React.Component {
   }
 
   async onFormLoad() {
+    this.setState({ isLoading: true });
     const returnedStudents = await getStudents();
-    this.setState({ students: returnedStudents });
+    this.setState({ students: returnedStudents, isLoading: false });
   }
 
   handleSearchChange = (e) => {
@@ -54,31 +57,46 @@ class Students extends React.Component {
   }
 
   render() {
-    const { searchText } = this.state;
+    const { isLoading, searchText } = this.state;
+
+    if (isLoading) {
+      return <Loading />;
+    }
 
     return (
-        <div style={{ marginTop: "40px" }}>
-        <Row className="mb-4">
-          <Col md="2"></Col>
-          <Col md="8">
-            <div className="d-flex mb-5">
-              <div className="flex-grow-1">
-                <div style={{ fontWeight: "bold", fontSize: "28px" }}>Ученики</div>
-              </div>
+      <SectionWrapper>
+        <div className="mx-auto max-w-5xl">
+          <SectionTitle>Ученики</SectionTitle>
+
+          <Container className="flex flex-col gap-8">
+            {/* Search */}
+            <label className="mb-6 flex flex-col gap-3">
+              <Input
+                placeholder="Поиск..."
+                value={searchText}
+                onChange={this.handleSearchChange}
+              />
+            </label>
+            
+            {/* Add button */}
+            <div className="text-center">
+              <Button
+                as={Link}
+                to="/student"
+                variant="primary"
+              >
+                + Новый ученик
+              </Button>
             </div>
-            <Container>
-              <div>
-                <Form.Control className="mb-4" placeholder="Поиск..." value={searchText} onChange={(e) => this.handleSearchChange(e)}></Form.Control>
-              </div>
-              <div className="mb-3 text-center">  
-                  <Button as={Link} to="/student" variant="outline-success">+ Новый ученик</Button>
-              </div>
-              <div>{this.renderStudentsList()}</div>
-            </Container>
-          </Col>
-          
-        </Row>
+            
+            {/* Students list */}
+            <div className="flex flex-col gap-4">
+              <h3 className="m-0 text-[18px] font-semibold text-text-main">Список учеников</h3>
+              <div className="space-y-5">{this.renderStudentsList()}</div>
+            </div>
+          </Container>
         </div>
+      </SectionWrapper>
     );
   }
 }

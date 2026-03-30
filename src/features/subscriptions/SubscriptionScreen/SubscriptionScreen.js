@@ -10,6 +10,7 @@ import { Button } from '../../../components/ui';
 import { getDisciplineName } from '../../../constants/disciplines';
 import SubscriptionStatus from '../../../constants/SubscriptionStatus';
 import SubscriptionType from '../../../constants/SubscriptionType';
+import { SectionWrapper } from '../../../layout';
 import { getSubscriptionScreenData } from '../../../services/apiSubscriptionService';
 import { formatDateWithLetters } from '../../../utils/dateTime';
 import { toMoneyString } from '../../../utils/moneyUtils';
@@ -148,9 +149,10 @@ const SubscriptionScreen = ({
 
   return (
 
-    <Container style={{ marginTop: "40px"}}>
+    <SectionWrapper>
       {/* Subscription Info Card */}
       <ScreenHeader
+        className="mb-4"
         avatar={headerConfig.avatar}
         title={headerConfig.title}
         titleClassName="text-[24px]"
@@ -254,7 +256,7 @@ const SubscriptionScreen = ({
           </Tab>
         </Tabs>
       </div>
-    </Container>
+    </SectionWrapper>
   );
 };
 

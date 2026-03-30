@@ -1,7 +1,7 @@
 import React from "react";
-import { Col, Container, Row } from "react-bootstrap";
 import { ScheduleEditor } from "../../components/schedule/ScheduleEditor";
-import { Button } from "../../components/ui";
+import { Button, FormWrapper } from "../../components/ui";
+import { SectionTitle, SectionWrapper } from "../../layout";
 import { getTeacher, saveWorkingPeriods } from "../../services/apiTeacherService";
 
 export class TeacherPeriods extends React.Component {
@@ -65,36 +65,37 @@ export class TeacherPeriods extends React.Component {
     const { teacherName, workingPeriods, periodsChanged, isLoading } = this.state;
 
     return (
-      <Container style={{ marginTop: "40px" }}>
-        <Row>
-          <Col md="3"></Col>
-          <Col md="6">
-            <h2 className="mb-4 text-center">Расписание: {teacherName}</h2>
-            
-            {isLoading ? (
-              <div className="text-center">Загрузка...</div>
-            ) : (
-              <>
-                <ScheduleEditor
-                  periods={workingPeriods}
-                  handlePeriodsChange={this.handlePeriodsChange}
-                />
+      <SectionWrapper>
+        <SectionTitle className="text-center">
+          Расписание{teacherName ? `: ${teacherName}` : ""}
+        </SectionTitle>
 
-                <hr />
-                <div className="mb-3 text-center">
-                  <Button
-                    variant="primary"
-                    onClick={this.handleSave}
-                    disabled={!periodsChanged}
-                  >
-                    Сохранить
-                  </Button>
-                </div>
-              </>
-            )}
-          </Col>
-        </Row>
-      </Container>
+        <FormWrapper>
+          {isLoading ? (
+            <div className="flex min-h-[240px] items-center justify-center rounded-[20px] border border-white/10 bg-inner-bg px-6 py-10 text-[15px] text-text-muted">
+              Загрузка...
+            </div>
+          ) : (
+            <div className="flex flex-col gap-8">
+              <ScheduleEditor
+                periods={workingPeriods}
+                handlePeriodsChange={this.handlePeriodsChange}
+              />
+
+              <div className="h-px bg-white/10" />
+
+              <div className="text-center">
+                <Button
+                  onClick={this.handleSave}
+                  disabled={!periodsChanged}
+                >
+                  Сохранить
+                </Button>
+              </div>
+            </div>
+          )}
+        </FormWrapper>
+      </SectionWrapper>
     );
   }
 }

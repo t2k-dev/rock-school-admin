@@ -5,6 +5,7 @@ import { getDayName } from "../../constants/days";
 import { getRoomName } from "../../constants/rooms";
 
 import { CalendarIcon } from "../icons/Icons/CalendarIcon";
+import { NoRecords } from "../NoRecords";
 
 export class ScheduleEditorWithDelete extends React.Component {
   constructor(props) {
@@ -70,21 +71,16 @@ export class ScheduleEditorWithDelete extends React.Component {
       );
     } else {
       schedulesList = (
-        <div
-          className="text-center py-2 mb-3"
-          style={{ backgroundColor: "#f8f9fa", borderRadius: "5px" }}
-        >
-          <p className="text-muted mb-0">Нет записей</p>
-        </div>
+        <NoRecords />
       );
     }
 
     return (
       <Form.Group className="mb-3">
-        <b>
+        <div className="text-text-main mb-4">
           <CalendarIcon />
           Расписание
-        </b>
+        </div>
         <Row>
           <Container>{schedulesList}</Container>
         </Row>

@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes } from "react";
+import type { ComponentPropsWithoutRef, ElementType, ReactNode } from "react";
 
 const VARIANT_CLASSES = {
   primary: "bg-accent text-text-main hover:opacity-90",
@@ -20,12 +20,21 @@ const SIZE_CLASSES = {
 type ButtonVariant = keyof typeof VARIANT_CLASSES;
 type ButtonSize = keyof typeof SIZE_CLASSES;
 
-interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
+type ButtonOwnProps<C extends ElementType> = {
+  as?: C;
+  children?: ReactNode;
+  className?: string;
+  disabled?: boolean;
   size?: ButtonSize;
   variant?: ButtonVariant;
-}
+  type?: "button" | "submit" | "reset";
+};
 
-export const Button = ({
+type Props<C extends ElementType> = ButtonOwnProps<C> &
+  Omit<ComponentPropsWithoutRef<C>, keyof ButtonOwnProps<C>>;
+
+export const Button = <C extends ElementType = "button">({
+  as,
   children,
   className = "",
   disabled = false,
@@ -33,19 +42,22 @@ export const Button = ({
   type = "button",
   variant = "primary",
   ...props
-}: Props) => {
+}: Props<C>) => {
+  const Component = as || "button";
   const variantClass = VARIANT_CLASSES[variant];
   const sizeClass = SIZE_CLASSES[size];
+  const disabledClass = disabled ? "cursor-not-allowed opacity-60" : "";
+  const isNativeButton = Component === "button";
 
   return (
-    <button
-      type={type}
-      disabled={disabled}
-      className={`rounded-[14px] font-medium transition ${sizeClass} ${variantClass} ${disabled ? "cursor-not-allowed opacity-60" : ""} ${className}`.trim()}
+    <Component
+      className={`rounded-[14px] font-medium transition no-underline ${sizeClass} ${variantClass} ${disabledClass} ${className}`.trim()}
+      {...(isNativeButton ? { type, disabled } : {})}
+      {...(!isNativeButton && disabled ? { "aria-disabled": true } : {})}
       {...props}
     >
       {children}
-    </button>
+    </Component>
   );
 };
 

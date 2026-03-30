@@ -1,16 +1,18 @@
 import React from "react";
-import { Button, Container, Form, Row, Tab, Tabs } from "react-bootstrap";
+import { Tab, Tabs } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 import { Avatar } from "../../../components/Avatar";
+import { Button } from "../../../components/ui";
 import SubscriptionStatus from "../../../constants/SubscriptionStatus";
 import SubscriptionType from "../../../constants/SubscriptionType";
 
 import { CalendarWeek } from "../../../components/calendar/CalendarWeek";
-import { InstagramIcon } from "../../../components/icons";
+import { CalendarIcon, InstagramIcon } from "../../../components/icons";
 import { Loading } from "../../../components/Loading";
 import ScreenHeader from "../../../components/screens/ScreenHeader";
 import AttendanceType from "../../../constants/AttendanceType";
+import { SectionWrapper } from "../../../layout";
 import { getStudentScreenDetails } from "../../../services/apiStudentService";
 import { AttendanceModal } from "../../attendances/AttendanceModal/AttendanceModal";
 import PaymentModal from "../../payments/PaymentModal";
@@ -26,6 +28,7 @@ class StudentScreen extends React.Component {
         phone: "",
         level: "Начинающий",
       },
+      activeTab: "products",
       subscriptions: [],
 
       showAll: false,
@@ -78,6 +81,10 @@ class StudentScreen extends React.Component {
   handleEditClick = (e) => {
     e.preventDefault();
     this.props.history.push(`/student/edit/${this.props.match.params.id}`);
+  };
+
+  handleTabChange = (activeTab) => {
+    this.setState({ activeTab });
   };
 
   handleSelectEvent = (slotInfo) => {
@@ -196,26 +203,27 @@ class StudentScreen extends React.Component {
   // Render Methods
   renderSubscriptionsTable(subscriptions) {
     return (
-      <>
+      <div className="flex flex-col gap-4">
         <SubscriptionList
           subscriptions={subscriptions}
           onSubscriptionClick={this.handleViewSubscriptionAttendances}
           onPayClick={this.handlePayClick}
           onResubscribeClick={this.handleResubscribeClick}
         />
-        <div className="d-flex mt-2">
-          <div className="flex-grow-1"></div>
-          <Form.Check
-            type="switch"
-            id="custom-switch"
-            label="Показывать все"
-            checked={this.state.showAll}
-            onChange={(e) => {
-              this.setState({ showAll: e.target.checked });
-            }}
-          />
+        <div className="flex justify-end">
+          <label className="inline-flex cursor-pointer items-center gap-3 rounded-full border border-white/10 bg-inner-bg px-4 py-2 text-[14px] text-text-main">
+            <input
+              type="checkbox"
+              checked={this.state.showAll}
+              onChange={(e) => {
+                this.setState({ showAll: e.target.checked });
+              }}
+              className="h-4 w-4 rounded border-white/20 bg-transparent text-accent focus:ring-accent"
+            />
+            <span>Показывать все</span>
+          </label>
         </div>
-      </>
+      </div>
     );
   }
 
@@ -247,11 +255,21 @@ class StudentScreen extends React.Component {
         onSubscriptionClick={this.handleTrialSubscriptionClick}
         onResubscribeClick={this.handleResubscribeClick}
       />
-    )
+    );
   }
 
   render() {
-    const { isLoading, student, bands, subscriptions, showAll, attendances, selectedAttendance, showAttendanceModal } = this.state;
+    const {
+      activeTab,
+      isLoading,
+      student,
+      bands,
+      subscriptions,
+      showAll,
+      attendances,
+      selectedAttendance,
+      showAttendanceModal,
+    } = this.state;
     
     if (isLoading) {
       return <Loading
@@ -259,7 +277,7 @@ class StudentScreen extends React.Component {
       />
     }
 
-    const sortedSubscriptions = subscriptions.sort((a, b) => {
+    const sortedSubscriptions = [...subscriptions].sort((a, b) => {
       const dateA = new Date(a.startDate);
       const dateB = new Date(b.startDate);
       return dateB - dateA; // Descending order
@@ -296,118 +314,124 @@ class StudentScreen extends React.Component {
     }
 
     return (
-      <Container style={{ marginTop: "40px" }}>
-        <Row className="mb-4">
-          <ScreenHeader
-            avatar={<Avatar style={{ width: "72px", height: "72px" }} />}
-            title={`${student.firstName} ${student.lastName}`}
-            titleClassName="text-[24px]"
-            onEdit={this.handleEditClick}
-            meta={<InstagramIcon size="20px" title="Instagram" />}
-            aside={<BandList bands={bands} />}
+      <SectionWrapper>
+        <ScreenHeader
+          className="mb-4"
+          avatar={<Avatar style={{ width: "72px", height: "72px" }} />}
+          title={`${student.firstName} ${student.lastName}`}
+          titleClassName="text-[24px]"
+          onEdit={this.handleEditClick}
+          meta={<InstagramIcon size="20px" title="Instagram" />}
+          aside={<BandList bands={bands} />}
           />
-        </Row>
-        <Row className="mb-3">
-          <Tabs defaultActiveKey="products" id="uncontrolled-tab-example">
-            <Tab eventKey="products" title="Уроки" style={{ backgroundColor: "#22272e" }}>
 
-                <div className="d-flex mb-2 mt-3">
-                  <div className="flex-grow-1"></div>
-                  <div>
-                    <Button
-                      as={Link}
-                      to={{
-                        pathname: `/student/${student.studentId}/subscriptionForm`,
-                        state: { student: student },
-                      }}
-                      variant="outline-success"
-                      type="null"
-                      size="sm"
-                      className="w-100"
-                    >
-                      + Добавить
-                    </Button>
-                  </div>
+        <div>
+            <Tabs
+              activeKey={activeTab}
+              onSelect={(key) => {
+                if (key) {
+                  this.handleTabChange(key);
+                }
+              }}
+              id="student-screen-tabs"
+            >
+              
+              <Tab eventKey="products" title="Уроки">
+                <div className="flex justify-end mb-4">
+                  <Button
+                    as={Link}
+                    to={{
+                      pathname: `/student/${student.studentId}/subscriptionForm`,
+                      state: { student },
+                    }}
+                    variant="primary"
+                  >
+                    + Добавить
+                  </Button>
                 </div>
-                {this.renderSubscriptionsTable(nonTrialSubscriptions)}
-            </Tab>
-            <Tab eventKey="trials" title="Пробные">  
-              <div className="d-flex mb-2 mt-2">
-                  <div className="flex-grow-1"></div>
-                  <div>
-                    <Button
-                      as={Link}
-                      to={{
-                        pathname: `/student/${student.studentId}/addTrial`,
-                        state: { student: student },
-                      }}
-                      variant="outline-success"
-                      type="null"
-                      size="sm"
-                      className="w-100"
-                    >
-                      + Добавить
-                    </Button>
-                  </div>
+                <div className="">{this.renderSubscriptionsTable(nonTrialSubscriptions)}</div>
+              </Tab>
+
+              <Tab eventKey="trials" title="Пробные">
+                <div className="mt-4 flex justify-end">
+                  <Button
+                    as={Link}
+                    to={{
+                      pathname: `/student/${student.studentId}/addTrial`,
+                      state: { student },
+                    }}
+                    variant="primary"
+                    size="sm"
+                  >
+                    + Добавить
+                  </Button>
                 </div>
-                {this.renderTrialsTable(trialSubscriptions)}  
-            </Tab>
-            <Tab eventKey="rents" title="Аренда комнаты">
-                <div className="d-flex mb-2 mt-2">
-                  <div className="flex-grow-1"></div>
-                  <div>
-                    <Button
-                      as={Link}
-                      to={{
-                        pathname: `/student/${student.studentId}/roomRental`,
-                        state: { student: student },
-                      }}
-                      variant="outline-success"
-                      type="null"
-                      size="sm"
-                      className="w-100"
-                    >
-                      + Добавить
-                    </Button>
-                  </div>
+                <div className="mt-4">{this.renderTrialsTable(trialSubscriptions)}</div>
+              </Tab>
+
+              <Tab eventKey="rents" title="Аренда комнаты">
+                <div className="mt-4 flex justify-end">
+                  <Button
+                    as={Link}
+                    to={{
+                      pathname: `/student/${student.studentId}/roomRental`,
+                      state: { student },
+                    }}
+                    variant="primary"
+                    size="sm"
+                  >
+                    + Добавить
+                  </Button>
                 </div>
-                {this.renderRentTable(rentSubscriptions)}
-            </Tab>
-            <Tab eventKey="rehearsals" title="Репетиции"> 
-                <div className="d-flex mb-2 mt-2">
-                  <div className="flex-grow-1"></div>
-                  <div>
-                    <Button
-                      as={Link}
-                      to={{
-                        pathname: `/student/${student.studentId}/rehearsal`,
-                        state: { student: student },
-                      }}
-                      variant="outline-success"
-                      type="null"
-                      size="sm"
-                      className="w-100"
-                    >
-                      + Добавить
-                    </Button>
-                  </div>
+                <div className="mt-4">{this.renderRentTable(rentSubscriptions)}</div>
+              </Tab>
+
+              <Tab eventKey="rehearsals" title="Репетиции">
+                <div className="mt-4 flex justify-end">
+                  <Button
+                    as={Link}
+                    to={{
+                      pathname: `/student/${student.studentId}/rehearsal`,
+                      state: { student },
+                    }}
+                    variant="primary"
+                    size="sm"
+                  >
+                    + Добавить
+                  </Button>
                 </div>
-                {this.renderRerehearsalTable(rehearsalSubscriptions)}
-            </Tab>
-            <Tab eventKey="calendar" title="Календарь">
-              <CalendarWeek
-                events={events}
-                onSelectEvent={(slotInfo) => {this.handleSelectEvent(slotInfo);}}
-              />
-              <AttendanceModal
-                attendance={selectedAttendance}
-                show={showAttendanceModal}
-                handleClose={this.handleCloseModal}
-                onAttendanceUpdate={this.handleAttendanceUpdate}
-                history={this.props.history}
-              />
-            </Tab>
-          </Tabs>
+                <div className="mt-4">{this.renderRerehearsalTable(rehearsalSubscriptions)}</div>
+              </Tab>
+
+              <Tab eventKey="calendar" title="Календарь">
+                <div className="mt-4 flex flex-col gap-4">
+                  <div className="flex items-center gap-3 text-[18px] font-semibold text-text-main">
+                    <CalendarIcon />
+                    <span>Календарь</span>
+                  </div>
+                  <div className="rounded-[20px] bg-inner-bg p-5">
+                    <CalendarWeek
+                      events={events}
+                      onSelectEvent={(slotInfo) => {
+                        this.handleSelectEvent(slotInfo);
+                      }}
+                    />
+                  </div>
+                  <AttendanceModal
+                    attendance={selectedAttendance}
+                    show={showAttendanceModal}
+                    handleClose={this.handleCloseModal}
+                    onAttendanceUpdate={this.handleAttendanceUpdate}
+                    history={this.props.history}
+                  />
+                </div>
+              </Tab>
+            </Tabs>
+          </div>
+        <div className="mx-auto flex max-w-6xl flex-col gap-6">
+
+          
+
 
           <PaymentModal
             show={this.state.showPaymentModal}
@@ -416,11 +440,8 @@ class StudentScreen extends React.Component {
             onPaymentSubmit={this.handlePaymentSubmit}
             isLoading={this.state.isLoadingPayment}
           />
-        </Row>
-        <Row>
-          
-        </Row>
-      </Container>
+        </div>
+      </SectionWrapper>
     );
   }
 }

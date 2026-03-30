@@ -1,9 +1,9 @@
 import React from "react";
-import { Button, Col, Form, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { Loading } from "../../../components/Loading";
 import { NoRecords } from "../../../components/NoRecords";
-import { Container } from "../../../components/ui";
+import { Button, Container, Input } from "../../../components/ui";
+import { SectionTitle, SectionWrapper } from "../../../layout";
 import { getBands } from "../../../services/apiBandService";
 import BandCard from "./BandCard";
 
@@ -63,33 +63,43 @@ class Bands extends React.Component {
     const inactiveBands = bands?.filter((b) => !b.isActive);
 
     return (
-      <div style={{ marginTop: "40px" }}>
-        <Row>
-          <Col md="2"></Col>
-          <Col md="8">
-            <div className="d-flex mb-5">
-              <div className="flex-grow-1">
-                <div style={{ fontWeight: "bold", fontSize: "28px" }}>Группы</div>
-              </div>
-              <div>
-              </div>
+      <SectionWrapper>
+        <div className="mx-auto max-w-5xl">
+          <SectionTitle>Группы</SectionTitle>
+
+          <Container className="flex flex-col gap-8">
+            <label className="mb-6 flex flex-col gap-3">
+              <Input
+                placeholder="Поиск..."
+                value={searchText}
+                onChange={this.handleSearchChange}
+              />
+            </label>
+
+            <div className="text-center">
+              <Button
+                as={Link}
+                to="/admin/registerBand"
+                variant="primary"
+              >
+                + Новая группа
+              </Button>
             </div>
-            <Container>
-              <div>
-              <Form.Control className="mb-4" placeholder="Поиск..." value={searchText} onChange={(e) => this.handleSearchChange(e)}></Form.Control>
-              </div>
-              <div className="mb-3 text-center">
-                <Button as={Link} to="/admin/registerBand" variant="outline-success">
-                  + Новая группа
-                </Button>
-              </div>
+
+            <div className="flex flex-col gap-4">
+              <h3 className="m-0 text-[18px] font-semibold text-text-main">Активные группы</h3>
               <div className="space-y-5">{this.renderBandsList(activeBands)}</div>
-              <h4 className="mb-3">Неактивные</h4>
+            </div>
+
+            <div className="h-px bg-white/10" />
+
+            <div className="flex flex-col gap-4">
+              <h3 className="m-0 text-[18px] font-semibold text-text-main">Неактивные группы</h3>
               <div className="space-y-5">{this.renderBandsList(inactiveBands)}</div>
-            </Container>
-          </Col>
-        </Row>
-      </div>
+            </div>
+          </Container>
+        </div>
+      </SectionWrapper>
     );
   }
 }

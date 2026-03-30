@@ -1,11 +1,12 @@
 import { parse } from "date-fns";
 import { ru } from "date-fns/locale";
 import React from "react";
-import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 import { SexControl } from "../../components/SexControl";
+import { Button, FormWrapper, Input } from "../../components/ui";
+import { SectionTitle, SectionWrapper } from "../../layout";
 import { addStudent, getStudent, saveStudent } from "../../services/apiStudentService";
 import { calculateDateFromAge } from "../../utils/dateTime";
 
@@ -138,107 +139,113 @@ class StudentForm extends React.Component {
   render() {
     const { isNew, email, firstName, lastName, birthDate, phone, sex, age } = this.state;
     return (
-      <Container style={{ marginTop: "40px" }}>
-        <Row>
-          <Col md="4"></Col>
-          <Col md="4">
-            <h2 className="mb-4 text-center">{this.state.isNew ? "Новый ученик" : "Редактировать ученика"}</h2>
-            <Form>
-              <Form.Group className="mb-3" controlId="firstName">
-                <Form.Label>Имя</Form.Label>
-                <Form.Control onChange={this.handleChange} value={firstName} placeholder="введите имя..." autoComplete="off" />
-              </Form.Group>
+      <SectionWrapper>
+        
+        <SectionTitle className="text-center">
+          {isNew ? "Новый ученик" : "Редактировать ученика"}
+        </SectionTitle>
 
-              <Form.Group className="mb-3" controlId="lastName">
-                <Form.Label>Фамилия</Form.Label>
-                <Form.Control onChange={this.handleChange} value={lastName} placeholder="введите фамилию..." autoComplete="off" />
-              </Form.Group>
-              {isNew === false && (
-                <Form.Group className="mb-3" controlId="birthDate">
-                  <Form.Label>Дата рождения</Form.Label>
-                  <div>
-                    <Form.Control
-                      as={DatePicker}
-                      locale={ru}
-                      selected={birthDate}
-                      onChange={(date) => {
-                        if (date) {
-                          this.setState({ birthDate: date });
+        <FormWrapper>
+          <form onSubmit={this.handleSave} className="flex flex-col gap-8">
+            <div className="grid gap-5 sm:grid-cols-2">
+              <label className="flex flex-col gap-3">
+                <span className="text-[14px] text-text-main opacity-60">Имя</span>
+                <Input
+                  id="firstName"
+                  onChange={this.handleChange}
+                  value={firstName}
+                  placeholder="введите имя..."
+                  autoComplete="off"
+                />
+              </label>
+
+              <label className="flex flex-col gap-3">
+                <span className="text-[14px] text-text-main opacity-60">Фамилия</span>
+                <Input
+                  id="lastName"
+                  onChange={this.handleChange}
+                  value={lastName}
+                  placeholder="введите фамилию..."
+                  autoComplete="off"
+                />
+              </label>
+            </div>
+
+            <div className="grid gap-5 sm:grid-cols-[minmax(0,1fr)_220px]">
+              {isNew === false ? (
+                <label className="flex flex-col gap-3">
+                  <span className="text-[14px] text-text-main opacity-60">Дата рождения</span>
+                  <DatePicker
+                    id="birthDate"
+                    locale={ru}
+                    selected={birthDate}
+                    onChange={(date) => {
+                      if (date) {
+                        this.setState({ birthDate: date });
+                      }
+                    }}
+                    onChangeRaw={(e) => {
+                      const rawValue = e.target.value;
+                      try {
+                        const parsedDate = parse(rawValue, "dd.MM.yyyy", new Date());
+                        if (!isNaN(parsedDate)) {
+                          this.setState({ birthDate: parsedDate });
                         }
-                      }}
-                      onChangeRaw={(e) => {
-                        const rawValue = e.target.value;
-                        try {
-                          // Parse the raw input based on the expected format
-                          const parsedDate = parse(rawValue, "dd.MM.yyyy", new Date());
-                          if (!isNaN(parsedDate)) {
-                            this.setState({ birthDate: parsedDate }); // Only set valid dates
-                          }
-                        } catch (error) {
-                          console.error("Invalid date format"); // Handle invalid format
-                        }
-                      }}
-                      dateFormat="dd.MM.yyyy" // Format for the displayed date
-                      placeholderText="дд.мм.гггг" // Input placeholder
-                      shouldCloseOnSelect={true}
-                    />
-                  </div>
-                </Form.Group>
+                      } catch (error) {
+                        console.error("Invalid date format");
+                      }
+                    }}
+                    dateFormat="dd.MM.yyyy"
+                    placeholderText="дд.мм.гггг"
+                    shouldCloseOnSelect={true}
+                    autoComplete="off"
+                    wrapperClassName="w-full"
+                    customInput={<Input id="birthDate" />}
+                  />
+                </label>
+              ) : (
+                <label className="flex flex-col gap-3">
+                  <span className="text-[14px] text-text-main opacity-60">Возраст</span>
+                  <Input
+                    id="age"
+                    onChange={this.handleAgeChange}
+                    value={age}
+                    placeholder="введите возраст..."
+                    autoComplete="off"
+                  />
+                </label>
               )}
-              {isNew && (
-                <Form.Group className="mb-3" controlId="age">
-                  <Form.Label>Возраст</Form.Label>
-                  <Form.Control onChange={this.handleAgeChange} value={age} placeholder="введите возраст..." autoComplete="off" />
-                </Form.Group>
-              )}
+
               <SexControl value={sex} onChange={this.handleSexChange}></SexControl>
+            </div>
 
-              {/*
-              <Form.Group className="mb-3" controlId="email">
-                <Form.Label>Email</Form.Label>
-                <Form.Control onChange={this.handleChange} value={email} placeholder="введите email..." autoComplete="off" />
-              </Form.Group>
-              */}
-              <Form.Group className="mb-5" controlId="phone">
-                <Form.Label>Телефон</Form.Label>
-                <Form.Control
+            <div className="h-px bg-white/10" />
+
+            <div className="grid gap-5 sm:grid-cols-2">
+              <label className="flex flex-col gap-3">
+                <span className="text-[14px] text-text-main opacity-60">Телефон</span>
+                <Input
+                  id="phone"
+                  type="tel"
                   onChange={this.handlePhoneChange}
                   value={phone}
                   placeholder="+7 777 777 77 77"
                   autoComplete="off"
+                  maxLength="16"
                 />
-              </Form.Group>
+              </label>
+            </div>
 
-              {/*
-                <Form.Group className="mb-3" controlId="level">
-                <Form.Label>Уровень</Form.Label>
-                <Form.Select name="level" aria-label="Веберите..." value={level} onChange={(e) => this.setState({ level: e.target.value })}>
-                  <option>выберите...</option>
-                  <option value="0">0 - Начинающий</option>
-                  <option value="1">1 - Начинающий</option>
-                  <option value="2">2 - Начинающий</option>
-                  <option value="3">3 - Продолжающий</option>
-                  <option value="4">4 - Продолжающий</option>
-                  <option value="5">5 - Продолжающий</option>
-                  <option value="6">6</option>
-                  <option value="7">7</option>
-                  <option value="8">8</option>
-                  <option value="9">9</option>
-                  <option value="10">10 - Бог</option>
-                </Form.Select>
-              </Form.Group>
-              */}
+            <div className="h-px bg-white/10" />
 
-              <hr></hr>
-              <div className="text-center">
-                <Button variant="primary" type="null" onClick={this.handleSave}>
-                  Сохранить
-                </Button>
-              </div>
-            </Form>
-          </Col>
-        </Row>
-      </Container>
+            <div className="flex items-center justify-center">
+              <Button type="submit" size="lg" className="min-w-[220px]">
+                Сохранить
+              </Button>
+            </div>
+          </form>
+        </FormWrapper>
+      </SectionWrapper>
     );
   }
 }
