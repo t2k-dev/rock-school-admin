@@ -3,7 +3,7 @@ import { getDayName } from "../../constants/days";
 import { getRoomName } from "../../constants/rooms";
 import { CalendarIcon } from "../icons/Icons/CalendarIcon";
 import { NoRecords } from "../NoRecords";
-import { Button } from "../ui";
+import { Button, FormLabel } from "../ui";
 
 const ROOM_OPTIONS = [
   { value: "", label: "выберите комнату..." },
@@ -162,7 +162,7 @@ export class ScheduleEditor extends React.Component {
         <div className="grid gap-5">
           <div className="grid gap-4 rounded-[20px] bg-inner-bg p-4 sm:grid-cols-[160px_minmax(0,1fr)_auto] sm:items-end">
             <label className="flex flex-col gap-3 sm:col-span-3">
-              <span className="text-[14px] text-text-main opacity-60">Новый слот</span>
+              <FormLabel>Новый слот</FormLabel>
               <select
                 aria-label="Выберите комнату"
                 value={this.state.roomId}

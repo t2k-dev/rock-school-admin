@@ -1,12 +1,13 @@
 import { format } from "date-fns";
 import React from "react";
-import { Button, Col, Container, Form, InputGroup, Row } from "react-bootstrap";
 
 import { Loading } from "../../../components/Loading";
 import { ScheduleEditorWithDelete } from "../../../components/schedule/ScheduleEditorWithDelete";
+import { Button, FormLabel, FormWrapper, Input } from "../../../components/ui";
 import { getAttendanceLengthName } from "../../../constants/AttendanceLength";
 import AttendanceType from "../../../constants/AttendanceType";
 import SubscriptionType from "../../../constants/SubscriptionType";
+import { SectionTitle, SectionWrapper } from "../../../layout";
 import { getStudent } from "../../../services/apiStudentService";
 import { addSubscription } from "../../../services/apiSubscriptionService";
 import { getCurrentTariffs } from "../../../services/apiTariffService";
@@ -244,7 +245,7 @@ export class SubscriptionForm extends React.Component {
   };
 
   sortStudentsByBirthDate = (students) => {
-    return students.sort((a, b) => {
+    return [...students].sort((a, b) => {
       if (!a.birthDate || !b.birthDate) return 0;
       return new Date(b.birthDate) - new Date(a.birthDate);
     });
@@ -359,141 +360,154 @@ export class SubscriptionForm extends React.Component {
       }
     }
 
+    const selectClassName = "w-full rounded-[14px] border border-white/10 bg-input-bg px-4 py-3 text-[16px] text-text-main outline-none transition focus:border-white/20 focus:ring-2 focus:ring-accent disabled:cursor-not-allowed disabled:opacity-60";
+
     return (
-      <Container style={{ marginTop: "40px", paddingBottom: "50px" }}>
-        <Row>
-          <Col md="4"></Col>
-          <Col md="4">
-            <h2 className="mb-4 text-center">{isNew ? "Новый абонемент" : "Редактировать абонемент"}</h2>
+      <SectionWrapper>
+        <SectionTitle className="text-center">
+          {isNew ? "Новый абонемент" : "Редактировать абонемент"}
+        </SectionTitle>
 
-            <Form>
+        <FormWrapper>
+          <form onSubmit={this.handleSave} className="flex flex-col gap-8">
+            <div className="flex flex-col gap-3">
+              <FormLabel>Направление</FormLabel>
+              <button
+                type="button"
+                onClick={basedOnSubscriptionId === null ? this.showDisciplineModal : undefined}
+                disabled={basedOnSubscriptionId !== null}
+                className={`text-left transition ${basedOnSubscriptionId === null ? "cursor-pointer" : "cursor-default"}`}
+              >
+                <DisciplinePlate
+                  disciplineId={disciplineId}
+                  size="fill"
+                />
+              </button>
+            </div>
 
-              {/*Discipline*/}
-              <div className="mb-3">
-                <div 
-                  onClick={basedOnSubscriptionId === null ? this.showDisciplineModal : undefined}
-                  style={{ cursor: 'pointer' }}
-                >
-                  <DisciplinePlate 
-                    disciplineId={disciplineId}
-                    size="fill"
+            <div className="h-px bg-white/10" />
+
+            <SubscriptionStudents
+              students={students}
+              onAddStudent={this.showAddStudentModal}
+              allowAdd={basedOnSubscriptionId === null}
+              allowRemove={basedOnSubscriptionId === null}
+              onRemoveStudent={this.deleteStudent}
+            />
+
+            <AddStudentModal
+              show={showAddStudentModal}
+              handleClose={this.handleCloseAddStudentModal}
+              onAddStudent={this.handleAddStudent}
+            />
+
+            <div className="h-px bg-white/10" />
+
+            <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,280px)] lg:items-start">
+              <div className="flex flex-col gap-5">
+                <label className="flex flex-col gap-3">
+                  <FormLabel>Дата начала</FormLabel>
+                  <Input
+                    type="date"
+                    id="startDate"
+                    value={startDate || ""}
+                    onChange={(e) => this.setState({ startDate: e.target.value })}
                   />
-                </div>
+                </label>
+
+                <label className="flex flex-col gap-3">
+                  <FormLabel>Тариф</FormLabel>
+                  <select
+                    aria-label="Выберите тариф"
+                    value={selectedTariff?.tariffId || ""}
+                    onChange={(e) => this.handleTariffChange(e.target.value)}
+                    disabled={!disciplineId || filteredTariffs.length === 0}
+                    className={selectClassName}
+                  >
+                    <option value="">выберите тариф...</option>
+                    {filteredTariffs.map((tariff) => (
+                      <option key={tariff.tariffId} value={tariff.tariffId}>
+                        {tariff.attendanceCount} уроков, {getAttendanceLengthName(tariff.attendanceLength)} - {toMoneyString(tariff.amount)}
+                      </option>
+                    ))}
+                  </select>
+                </label>
               </div>
 
-              {/*Students*/}
-              <Form.Group className="mb-3" controlId="students">
-                <SubscriptionStudents
-                  students={students}
-                  onAddStudent={this.showAddStudentModal}
-                  allowAdd={basedOnSubscriptionId === null}
-                  allowRemove={basedOnSubscriptionId === null}
-                  onRemoveStudent={this.deleteStudent}
-                  />
-                
-                <AddStudentModal 
-                  show={showAddStudentModal} 
-                  handleClose={this.handleCloseAddStudentModal} 
-                  onAddStudent={this.handleAddStudent}
-                  />
-              </Form.Group>
+              <TariffCard
+                title="Тариф"
+                description={selectedTariff ? `${selectedTariff.attendanceCount} уроков, ${getAttendanceLengthName(selectedTariff.attendanceLength)}` : "Урок"}
+                amount={selectedTariff ? selectedTariff.amount : 0}
+                showIcon={false}
+              />
+            </div>
 
-              <Form.Group className="mb-3">
-                <Form.Label><b>Дата начала</b></Form.Label>
-                <Form.Control
-                  type="date"
-                  name="startDate"
-                  value={startDate || ""}
-                  onChange={(e) => this.setState({ startDate: e.target.value })}
-                />
-              </Form.Group>
+            <div className="h-px bg-white/10" />
 
-              <Form.Group className="mb-3" controlId="TariffSelection">
-                <Form.Label><b>Тариф</b></Form.Label>
-                <Form.Select 
-                  aria-label="Выберите тариф..." 
-                  value={selectedTariff?.tariffId || ""} 
-                  onChange={(e) => this.handleTariffChange(e.target.value)}
-                  disabled={!disciplineId || filteredTariffs.length === 0}
-                >
-                  <option value="">выберите тариф...</option>
-                  {filteredTariffs.map((tariff) => (
-                    <option key={tariff.tariffId} value={tariff.tariffId}>
-                      {tariff.attendanceCount} уроков, {getAttendanceLengthName(tariff.attendanceLength)} - {toMoneyString(tariff.amount)}
-                    </option>
-                  ))}
-                </Form.Select>
-              </Form.Group>
-
-              <b>Преподаватель</b>
-              <InputGroup className="mb-3 mt-4 text-center">
-                <Form.Select
-                  aria-label="Веберите..."
+            <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+              <label className="flex flex-col gap-3">
+                <FormLabel>Преподаватель</FormLabel>
+                <select
+                  aria-label="Выберите преподавателя"
                   value={teacherId}
                   onChange={(e) => this.setState({ teacherId: e.target.value })}
-                  style={{ width: "200px" }}
                   disabled={!teacherId}
+                  className={selectClassName}
                 >
-                  <option>выберите...</option>
+                  <option value="">выберите...</option>
                   {selectedTeachers.map((teacher, index) => (
                     <option key={index} value={teacher.teacherId}>
                       {teacher.firstName} {teacher.lastName}
                     </option>
                   ))}
-                </Form.Select>
+                </select>
+              </label>
 
-                <Button 
-                  variant="outline-secondary" 
-                  type="null" 
-                  onClick={this.showAvailableTeachersModal}
-                  disabled={!disciplineId}
-                  >
-                  Доступные окна...
-                </Button>
-              </InputGroup>
+              <Button
+                variant="ghost"
+                type="button"
+                onClick={this.showAvailableTeachersModal}
+                disabled={!disciplineId}
+                className="lg:min-w-[220px]"
+              >
+                Доступные окна...
+              </Button>
+            </div>
 
-              <AvailableTeachersModal
-                show={showAvailableTeacherModal}
-                teachers={availableTeachers}
-                onSlotsChange={this.handleSlotsChange}
-                onClose={this.handleCloseAvailableTeachersModal}
-              />
-
-              <DisciplineSelectionModal
-                show={showDisciplineModal}
-                onHide={this.handleCloseDisciplineModal}
-                selectedDisciplineId={disciplineId}
-                onDisciplineChange={this.handleDisciplineChange}
-              />
-
-              <Form.Group className="mb-3 mt-3" controlId="Schedule">
-                <ScheduleEditorWithDelete
-                  schedules={filteredSchedules}
-                  onChange={this.handlePeriodsChange}
-                  attendanceLength={attendanceLength}
-                />
-              </Form.Group>
-
-              <hr></hr>
-              <Container className="text-center">
-                <Button variant="primary" type="null" onClick={this.handleSave}>
-                  Сохранить
-                </Button>
-              </Container>
-            </Form>
-          </Col>
-          <Col md="4">
-            {/* Tariff section */}
-            <TariffCard
-              title="Тариф"
-              description="Урок"
-              amount={selectedTariff ? selectedTariff.amount : 0 }
-              style={{ marginTop: '50px' }}
-              showIcon={false}
+            <AvailableTeachersModal
+              show={showAvailableTeacherModal}
+              teachers={availableTeachers}
+              onSlotsChange={this.handleSlotsChange}
+              onClose={this.handleCloseAvailableTeachersModal}
             />
-          </Col>
-        </Row>
-      </Container>
+
+            <DisciplineSelectionModal
+              show={showDisciplineModal}
+              onHide={this.handleCloseDisciplineModal}
+              selectedDisciplineId={disciplineId}
+              onDisciplineChange={this.handleDisciplineChange}
+            />
+
+            <div className="h-px bg-white/10" />
+
+            <div className="flex flex-col gap-4">
+              <ScheduleEditorWithDelete
+                schedules={filteredSchedules}
+                onChange={this.onChange}
+                attendanceLength={attendanceLength}
+              />
+            </div>
+
+            <div className="h-px bg-white/10" />
+
+            <div className="flex items-center justify-center">
+              <Button type="submit" size="lg" className="min-w-[220px]">
+                Сохранить
+              </Button>
+            </div>
+          </form>
+        </FormWrapper>
+      </SectionWrapper>
     );
   }
 }

@@ -5,7 +5,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 import { SexControl } from "../../components/SexControl";
-import { Button, FormWrapper, Input } from "../../components/ui";
+import { Button, FormLabel, FormWrapper, Input } from "../../components/ui";
 import { SectionTitle, SectionWrapper } from "../../layout";
 import { addStudent, getStudent, saveStudent } from "../../services/apiStudentService";
 import { calculateDateFromAge } from "../../utils/dateTime";
@@ -149,7 +149,7 @@ class StudentForm extends React.Component {
           <form onSubmit={this.handleSave} className="flex flex-col gap-8">
             <div className="grid gap-5 sm:grid-cols-2">
               <label className="flex flex-col gap-3">
-                <span className="text-[14px] text-text-main opacity-60">Имя</span>
+                <FormLabel>Имя</FormLabel>
                 <Input
                   id="firstName"
                   onChange={this.handleChange}
@@ -160,7 +160,7 @@ class StudentForm extends React.Component {
               </label>
 
               <label className="flex flex-col gap-3">
-                <span className="text-[14px] text-text-main opacity-60">Фамилия</span>
+                <FormLabel>Фамилия</FormLabel>
                 <Input
                   id="lastName"
                   onChange={this.handleChange}
@@ -174,7 +174,7 @@ class StudentForm extends React.Component {
             <div className="grid gap-5 sm:grid-cols-[minmax(0,1fr)_220px]">
               {isNew === false ? (
                 <label className="flex flex-col gap-3">
-                  <span className="text-[14px] text-text-main opacity-60">Дата рождения</span>
+                  <FormLabel>Дата рождения</FormLabel>
                   <DatePicker
                     id="birthDate"
                     locale={ru}
@@ -205,7 +205,7 @@ class StudentForm extends React.Component {
                 </label>
               ) : (
                 <label className="flex flex-col gap-3">
-                  <span className="text-[14px] text-text-main opacity-60">Возраст</span>
+                  <FormLabel>Возраст</FormLabel>
                   <Input
                     id="age"
                     onChange={this.handleAgeChange}
@@ -223,7 +223,7 @@ class StudentForm extends React.Component {
 
             <div className="grid gap-5 sm:grid-cols-2">
               <label className="flex flex-col gap-3">
-                <span className="text-[14px] text-text-main opacity-60">Телефон</span>
+                <FormLabel>Телефон</FormLabel>
                 <Input
                   id="phone"
                   type="tel"

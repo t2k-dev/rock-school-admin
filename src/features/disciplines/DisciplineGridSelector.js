@@ -1,4 +1,5 @@
 import PropTypes from "prop-types";
+import { FormLabel } from "../../components/ui";
 import { SELECTABLE_DISCIPLINES } from "../../constants/disciplines";
 import { DisciplineIcon } from "./DisciplineIcon";
 
@@ -36,7 +37,7 @@ export const DisciplineGridSelector = ({
 
   return (
     <div className="flex flex-col gap-4">
-      {label && <label className="text-[14px] text-text-main opacity-60">{label}</label>}
+      {label && <FormLabel as="label">{label}</FormLabel>}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
         {SELECTABLE_DISCIPLINES.map((discipline) => {
           const isSelected = isDisciplineSelected(discipline.id);

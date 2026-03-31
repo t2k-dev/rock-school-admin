@@ -1,6 +1,6 @@
 import React from "react";
-import { Button, Col, Container, Form, Modal, Row } from "react-bootstrap";
 
+import { Button, FormLabel } from "../../../components/ui";
 import AttendanceType, { getAttendanceTypeName } from "../../../constants/AttendanceType";
 import { acceptTrial, declineTrial, missedTrial, updateAttendeeStatus } from "../../../services/apiAttendanceService";
 import { AttendanceStatusBadge } from "../AttendanceStatusBadge";
@@ -29,7 +29,16 @@ export class AttendanceModal extends React.Component {
     this.handleChange = this.handleChange.bind(this); 
   }
 
+  componentDidMount() {
+    this.syncBodyScrollLock(this.props.show);
+    document.addEventListener("keydown", this.handleDocumentKeyDown);
+  }
+
   componentDidUpdate(prevProps) {
+    if (prevProps.show !== this.props.show) {
+      this.syncBodyScrollLock(this.props.show);
+    }
+
     if (this.props.attendance && this.props.attendance !== prevProps.attendance) {
       const attendance = this.props.attendance;
       
@@ -47,6 +56,21 @@ export class AttendanceModal extends React.Component {
       });
     }
   }
+
+  componentWillUnmount() {
+    this.syncBodyScrollLock(false);
+    document.removeEventListener("keydown", this.handleDocumentKeyDown);
+  }
+
+  handleDocumentKeyDown = (event) => {
+    if (event.key === "Escape" && this.props.show) {
+      this.handleClose();
+    }
+  };
+
+  syncBodyScrollLock = (isOpen) => {
+    document.body.style.overflow = isOpen ? "hidden" : "";
+  };
 
   handleClose() {
     this.setState({
@@ -148,73 +172,92 @@ export class AttendanceModal extends React.Component {
 
     const { status, attendanceType, isCompleted } = this.props.attendance;
     const { comment, statusReason, showDeclineConfirmation, isSubmittingDecline } = this.state;
+    const textareaClassName = "min-h-[112px] w-full rounded-[14px] border border-white/10 bg-input-bg px-4 py-3 text-[15px] text-text-main outline-none transition placeholder:text-text-muted/30 focus:border-white/20 focus:ring-2 focus:ring-accent";
 
     return (
-        <Modal show={this.props.show} onHide={this.handleClose} size="md" backdrop="static">
-          <Modal.Header closeButton>
-            <Modal.Title>
-              <span style={{ marginRight: "10px" }}>{getAttendanceTypeName(attendanceType)}</span>
-              <AttendanceStatusBadge 
-                status={status}
-                style={{ fontSize: "14px" }}
-              />
-            </Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Container className="mt-2 text-center" style={{ fontSize: "14px" }}>
-              <Row>
-                <Col size="6">
-                  <AttendanceHeaderInfo attendance={this.props.attendance} />
-                </Col>
-                <Col size="6" className="text-end">
-                  <AttendanceDateAndRoom 
-                    {...this.props.attendance}
-                    attendance={this.props.attendance}
-                    className="text-center"
-                  />
-                </Col>
-              </Row>
-            </Container>
+      <div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/70 px-4 py-6 backdrop-blur-sm">
+        <div className="relative flex max-h-[calc(100vh-3rem)] w-full max-w-3xl flex-col overflow-hidden rounded-[28px] border border-white/10 bg-card-bg shadow-2xl">
+          <div className="flex items-start justify-between gap-4 border-b border-white/10 px-6 py-5 sm:px-8">
+            <div className="flex flex-wrap items-center gap-3">
+              <h2 className="text-[22px] font-semibold text-text-main">
+                {getAttendanceTypeName(attendanceType)}
+              </h2>
+              <AttendanceStatusBadge status={status} style={{ fontSize: "14px" }} />
+            </div>
 
-            <hr></hr>
+            <button
+              type="button"
+              onClick={this.handleClose}
+              aria-label="Закрыть"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-inner-bg text-[18px] text-text-main transition hover:border-white/20 hover:bg-white/[0.04]"
+            >
+              ×
+            </button>
+          </div>
 
-            <AttendeesList 
-              attendance={this.props.attendance} 
+          <div className="flex-1 overflow-y-auto px-6 py-5 sm:px-8">
+            <div className="grid gap-4 text-[14px] sm:grid-cols-2">
+              <div className="rounded-[20px] bg-inner-bg p-4">
+                <AttendanceHeaderInfo attendance={this.props.attendance} />
+              </div>
+
+              <div className="rounded-[20px] bg-inner-bg p-4 sm:text-right">
+                <AttendanceDateAndRoom
+                  {...this.props.attendance}
+                  attendance={this.props.attendance}
+                  className="sm:ml-auto"
+                />
+              </div>
+            </div>
+
+            <div className="my-5 h-px bg-white/10" />
+
+            <AttendeesList
+              attendance={this.props.attendance}
               onAttendeeStatusChange={this.handleAttendeeStatusChange.bind(this)}
             />
 
             {comment && (
               <>
-              <hr></hr>
-              <Form.Group className="mb-3 mt-3" controlId="comment">
-                <Form.Label>Комментарий</Form.Label>
-                <Form.Control as="textarea" onChange={this.handleChange} value={comment} placeholder="введите..." autoComplete="off"/>
-              </Form.Group>
-            </>)}
+                <div className="my-5 h-px bg-white/10" />
+                <label className="flex flex-col gap-3">
+                  <FormLabel>Комментарий</FormLabel>
+                  <textarea
+                    rows={4}
+                    onChange={this.handleChange}
+                    value={comment}
+                    placeholder="введите..."
+                    autoComplete="off"
+                    className={textareaClassName}
+                  />
+                </label>
+              </>
+            )}
 
             {showDeclineConfirmation && (
               <>
-                <hr></hr>
-                <Form.Group className="mb-0 mt-3" controlId="statusReason">
-                  <Form.Label>Причина</Form.Label>
-                  <Form.Control
-                    as="textarea"
+                <div className="my-5 h-px bg-white/10" />
+                <label className="flex flex-col gap-3">
+                  <FormLabel>Причина</FormLabel>
+                  <textarea
                     rows={3}
                     onChange={this.handleStatusReasonChange}
                     value={statusReason}
                     placeholder="Укажите причину отказа..."
                     autoComplete="off"
+                    className={textareaClassName}
                   />
-                </Form.Group>
+                </label>
               </>
             )}
-          </Modal.Body>
-          {attendanceType === AttendanceType.TRIAL_LESSON && isCompleted &&(
-            <Modal.Footer>
+          </div>
+
+          {attendanceType === AttendanceType.TRIAL_LESSON && isCompleted && (
+            <div className="flex flex-wrap justify-end gap-3 border-t border-white/10 px-6 py-5 sm:px-8">
               {showDeclineConfirmation ? (
                 <>
                   <Button
-                    variant="outline-secondary"
+                    variant="ghost"
                     onClick={this.handleCancelDeclineTrial}
                     disabled={isSubmittingDecline}
                   >
@@ -230,17 +273,18 @@ export class AttendanceModal extends React.Component {
                 </>
               ) : (
                 <>
-                  <Button variant="outline-secondary" onClick={this.handleDeclineTrial}>
+                  <Button variant="ghost" onClick={this.handleDeclineTrial}>
                     Отклонил
                   </Button>
-                  <Button variant="outline-success" onClick={this.handleAcceptTrial}>
+                  <Button variant="outlineSuccess" onClick={this.handleAcceptTrial}>
                     Решил продолжить
                   </Button>
                 </>
               )}
-            </Modal.Footer>
+            </div>
           )}
-        </Modal>
+        </div>
+      </div>
     );
   }
 }

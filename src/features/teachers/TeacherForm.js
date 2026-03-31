@@ -1,7 +1,7 @@
 import { parse } from "date-fns";
 import React from "react";
 import { SexControl } from "../../components/SexControl";
-import { Button, FormWrapper, Input } from "../../components/ui";
+import { Button, FormLabel, FormWrapper, Input } from "../../components/ui";
 import { SectionTitle, SectionWrapper } from "../../layout";
 import { DisciplineGridSelector } from "../disciplines/DisciplineGridSelector";
 
@@ -213,7 +213,7 @@ class TeacherForm extends React.Component {
 
             <div className="grid gap-5 sm:grid-cols-2">
               <label className="flex flex-col gap-3">
-                <span className="text-[14px] text-text-main opacity-60">Имя</span>
+                <FormLabel>Имя</FormLabel>
                 <Input
                   id="firstName"
                   onChange={this.handleChange}
@@ -224,7 +224,7 @@ class TeacherForm extends React.Component {
               </label>
 
               <label className="flex flex-col gap-3">
-                <span className="text-[14px] text-text-main opacity-60">Фамилия</span>
+                <FormLabel>Фамилия</FormLabel>
                 <Input
                   id="lastName"
                   onChange={this.handleChange}
@@ -237,7 +237,7 @@ class TeacherForm extends React.Component {
 
             <div className="grid gap-5 sm:grid-cols-[minmax(0,1fr)_220px]">
               <label className="flex flex-col gap-3">
-                <span className="text-[14px] text-text-main opacity-60">Дата рождения</span>
+                <FormLabel>Дата рождения</FormLabel>
                 <DatePicker
                   id="birthDate"
                   locale={ru}
@@ -272,7 +272,7 @@ class TeacherForm extends React.Component {
 
             <div className="grid gap-5 sm:grid-cols-2">
               <label className="flex flex-col gap-3">
-                <span className="text-[14px] text-text-main opacity-60">Телефон</span>
+                <FormLabel>Телефон</FormLabel>
                 <Input
                   id="phone"
                   type="tel"
@@ -284,7 +284,7 @@ class TeacherForm extends React.Component {
               </label>
 
               <label className="flex flex-col gap-3">
-                <span className="text-[14px] text-text-main opacity-60">Email</span>
+                <FormLabel>Email</FormLabel>
                 <Input
                   id="email"
                   onChange={this.handleChange}
@@ -308,7 +308,7 @@ class TeacherForm extends React.Component {
 
             <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
               <label className="flex flex-col gap-3">
-                <span className="text-[14px] text-text-main opacity-60">Ученики от</span>
+                <FormLabel>Ученики от</FormLabel>
                 <Input
                   id="ageLimit"
                   onChange={this.handleChange}
@@ -346,7 +346,7 @@ class TeacherForm extends React.Component {
             <div className="h-px bg-white/10" />
 
             <label className="flex flex-col gap-3">
-              <span className="text-[14px] text-text-main opacity-60">Филиал</span>
+              <FormLabel>Филиал</FormLabel>
               <select
                 id="branchId"
                 aria-label="Выберите филиал"

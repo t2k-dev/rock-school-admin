@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Avatar } from "../../components/Avatar";
-import { Button } from "../../components/ui";
+import { Button, FormLabel } from "../../components/ui";
 import { getDisciplineName } from "../../constants/disciplines";
 import { calculateAge } from "../../utils/dateTime";
 import { DisciplineGridSelector } from "../disciplines/DisciplineGridSelector";
@@ -107,7 +107,7 @@ export class BandStudents extends React.Component {
       <>
         <div className="flex flex-col gap-4">
           {showLabel && (
-            <div className="text-[14px] text-text-main opacity-60">Участники</div>
+            <FormLabel as="div">Участники</FormLabel>
           )}
 
           {bandMembers.length > 0 ? (

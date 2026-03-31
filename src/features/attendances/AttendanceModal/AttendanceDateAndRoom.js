@@ -3,10 +3,10 @@ import { ru } from "date-fns/locale";
 import PropTypes from "prop-types";
 import { useHistory } from "react-router-dom";
 import {
-  CalendarIcon,
-  DoorIcon,
-  EditIcon,
-  TimeIcon,
+    CalendarIcon,
+    DoorIcon,
+    EditIcon,
+    TimeIcon,
 } from "../../../components/icons";
 import { getRoomName } from "../../../constants/rooms";
 import { isCancelledAttendanceStatus } from "../attendanceHelper";
@@ -67,12 +67,11 @@ export const AttendanceDateAndRoom = ({
 
   return (
     <div
-      className={`text-start ${className}`}
-      style={{ position: "relative", ...style }}
+      className={`relative text-start ${className}`.trim()}
+      style={style}
     >
-      {/* Edit Icon - Top Right Corner */}
       {shouldShowRescheduleLink() && (
-        <div style={{ position: "absolute", top: "0", right: "0" }}>
+        <div className="absolute right-0 top-0">
           <EditIcon
             onIconClick={handleEditClick}
             size="18px"
@@ -81,24 +80,19 @@ export const AttendanceDateAndRoom = ({
         </div>
       )}
 
-      {/* Room Information */}
-      <div className="d-flex align-items-center mb-1">
+      <div className="mb-1 flex items-center gap-1.5 text-[14px] text-text-main">
         <DoorIcon />
-        <span className="ms-1">{getRoomName(roomId)}</span>
+        <span>{getRoomName(roomId)}</span>
       </div>
 
-      {/* Date Information */}
-      <div className="d-flex align-items-center mb-1">
+      <div className="mb-1 flex items-center gap-1.5 text-[14px] text-text-main">
         <CalendarIcon />
-        <span className="ms-1" style={{ fontSize: "14px" }}>
-          {formatDate(startDate)}
-        </span>
+        <span>{formatDate(startDate)}</span>
       </div>
 
-      {/* Time Information */}
-      <div className="d-flex align-items-center mb-2">
+      <div className="mb-2 flex items-center gap-1.5 text-[14px] text-text-main">
         <TimeIcon />
-        <span className="ms-1">
+        <span>
           С {formatTime(startDate)} - {formatTime(endDate)}
         </span>
       </div>

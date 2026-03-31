@@ -2,7 +2,7 @@ import React from "react";
 
 import { Loading } from "../../components/Loading";
 import { ScheduleEditorWithDelete } from "../../components/schedule/ScheduleEditorWithDelete";
-import { Button, FormWrapper, Input } from "../../components/ui";
+import { Button, FormLabel, FormWrapper, Input } from "../../components/ui";
 import { SectionTitle, SectionWrapper } from "../../layout";
 import { addBand } from "../../services/apiBandService";
 import { getAvailableTeachers, getRehearsableTeachers, getWorkingPeriods } from "../../services/apiTeacherService";
@@ -276,7 +276,7 @@ export class BandForm extends React.Component {
         <FormWrapper>
           <form onSubmit={this.handleSave} className="flex flex-col gap-8">
             <label className="flex flex-col gap-3">
-              <span className="text-[14px] text-text-main opacity-60">Название группы</span>
+              <FormLabel>Название группы</FormLabel>
               <Input
                 type="text"
                 id="name"
@@ -310,7 +310,7 @@ export class BandForm extends React.Component {
 
             <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
               <label className="flex flex-col gap-3">
-                <span className="text-[14px] text-text-main opacity-60">Преподаватель</span>
+                <FormLabel>Преподаватель</FormLabel>
                 <select
                   id="teacherId"
                   value={teacherId}

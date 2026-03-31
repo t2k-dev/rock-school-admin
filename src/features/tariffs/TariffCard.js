@@ -10,20 +10,16 @@ const TariffCard = ({
   className = "",
   showIcon = true,
 }) => {
-  const defaultStyle = {
-    background: "#f8f9fa",
-    padding: "15px 20px",
-    borderRadius: "8px",
-    border: "1px solid #dee2e6",
-    ...style,
-  };
-
   return (
-    <div style={defaultStyle} className={className}>
-      <div style={{ fontSize: "14px", fontWeight: "bold", color: "#495057" }}>
-        {showIcon && <CalendarIcon />} <strong>{title}</strong>
+    <div
+      style={style}
+      className={`rounded-[20px] border border-white/10 bg-inner-bg px-5 py-4 ${className}`.trim()}
+    >
+      <div className="flex items-center gap-2 text-[14px] font-semibold text-text-main">
+        {showIcon && <CalendarIcon />}
+        <strong>{title}</strong>
       </div>
-      <div style={{ fontSize: "13px", color: "#6c757d", marginTop: "5px" }}>
+      <div className="mt-2 text-[13px] text-text-muted">
         {description} {toMoneyString(amount)}
       </div>
     </div>

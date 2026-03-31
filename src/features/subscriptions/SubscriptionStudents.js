@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
-import { Button, Card, Col, Form, Row } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { Avatar } from '../../components/Avatar';
+import { Button, FormLabel } from '../../components/ui';
 import { calculateAge } from '../../utils/dateTime';
 
 export const SubscriptionStudents = ({ 
@@ -15,8 +15,8 @@ export const SubscriptionStudents = ({
   onAddStudent
 }) => {
   const renderEmptyState = () => (
-    <div className="text-center py-2 mb-3" style={{ backgroundColor: "#f8f9fa", borderRadius: "5px" }}>
-      <p className="text-muted mb-0">Нет записей</p>
+    <div className="rounded-[20px] border border-white/10 bg-inner-bg px-4 py-6 text-center text-[14px] text-text-muted">
+      Нет записей
     </div>
   );
 
@@ -24,40 +24,38 @@ export const SubscriptionStudents = ({
     const age = student.birthDate ? calculateAge(student.birthDate) : null;
     
     return (
-      <Card key={student.studentId || index} className="mb-2">
-        <Card.Body className="py-2">
-          <Row className="align-items-center">
-            <Col md="1">
-              <Avatar style={{ width: "30px", height: "30px" }} />
-            </Col>
-            <Col md="9">
-              <div style={{marginLeft: "10px"}}>
-                <strong>
-                  <Link to={`/student/${student.studentId}`}>
-                    {student.firstName} {student.lastName}
-                  </Link>
-                </strong>
-                {age > 0 && (
-                  <div className="text-muted small">
-                    {age} лет
-                  </div>
-                )}
+      <div
+        key={student.studentId || index}
+        className="flex items-center justify-between gap-4 rounded-[20px] border border-white/10 bg-inner-bg px-4 py-3"
+      >
+        <div className="flex min-w-0 items-center gap-3">
+          <Avatar style={{ width: '32px', height: '32px' }} />
+          <div className="min-w-0">
+            <Link
+              to={`/student/${student.studentId}`}
+              className="block truncate text-[15px] font-medium text-text-main no-underline transition hover:text-accent"
+            >
+              {student.firstName} {student.lastName}
+            </Link>
+            {age > 0 && (
+              <div className="text-[13px] text-text-muted">
+                {age} лет
               </div>
-            </Col>
-            <Col md="2" className="text-end">
-              {allowRemove && students.length > 1 && (
-                <Button
-                  variant="outline-danger"
-                  style={{ fontSize: "10px", marginLeft: "10px", borderRadius: "25px" }}
-                  onClick={() => onRemoveStudent && onRemoveStudent(index)}
-                >
-                  X
-                </Button>
-              )}
-            </Col>
-          </Row>
-        </Card.Body>
-      </Card>
+            )}
+          </div>
+        </div>
+
+        {allowRemove && students.length > 1 && (
+          <Button
+            variant="outlineDanger"
+            size="sm"
+            type="button"
+            onClick={() => onRemoveStudent && onRemoveStudent(index)}
+          >
+            X
+          </Button>
+        )}
+      </div>
     );
   };
 
@@ -65,16 +63,14 @@ export const SubscriptionStudents = ({
     if (!showLabel) return null;
     
     return (
-      <Form.Label>
-        <b>{students.length > 1 ? 'Ученики' : 'Ученик'}</b>
-      </Form.Label>
+      <FormLabel>{students.length > 1 ? 'Ученики' : 'Ученик'}</FormLabel>
     );
   };
 
   return (
-    <Form.Group className={`mb-3 ${className}`}>
+    <div className={`flex flex-col gap-4 ${className}`.trim()}>
       {getLabel()}
-      <div className="mt-2">
+      <div className="flex flex-col gap-3">
         {students.length > 0 
           ? students.map(renderStudentCard)
           : renderEmptyState()
@@ -82,12 +78,12 @@ export const SubscriptionStudents = ({
       </div>
       {allowAdd && (
         <div className="text-center">
-          <Button size="sm" variant="outline-success" onClick={onAddStudent}>
+          <Button size="sm" variant="outlineSuccess" type="button" onClick={onAddStudent}>
             + Добавить
           </Button>
         </div>
       )}
-    </Form.Group>
+    </div>
   );
 };
 
