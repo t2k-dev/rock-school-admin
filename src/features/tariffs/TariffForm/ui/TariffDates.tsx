@@ -43,7 +43,11 @@ export const TariffDates = ({
         />
       </div>
       {error && (
-        <p className="mt-2 text-danger text-sm font-medium ml-2">{error}</p>
+        <div className="max-w-40">
+          <p className="mt-2 text-danger text-wrap text-sm font-medium ml-2">
+            {error}
+          </p>
+        </div>
       )}
     </div>
   );

@@ -1,5 +1,6 @@
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useTariffInstrumentSelect } from "../model/useTariffInstrumentSelect";
+import { useState } from "react";
 
 interface InstrumentIcon {
   id: number;
@@ -24,6 +25,8 @@ export const TariffInstrumentSelect = ({
   onChange,
   error,
 }: Props) => {
+  const [isHoverCard, setIsHoverCard] = useState(false);
+
   const { isOpen, containerRef, toggleOpen, toggleInstrument, deleteAll } =
     useTariffInstrumentSelect({ value, name, onChange });
 
@@ -35,7 +38,7 @@ export const TariffInstrumentSelect = ({
     <div className="w-full text-text-main" ref={containerRef}>
       <div className="flex justify-between w-full items-center">
         <label className="block text-lg font-medium mb-3 text-text-muted ml-2">
-          {label} :
+          {label}
         </label>
 
         {value.length > 0 && (
@@ -43,6 +46,7 @@ export const TariffInstrumentSelect = ({
             type="button"
             onClick={deleteAll}
             className="font-medium text-danger rounded-full px-2 transition-all outline-none border-none"
+            style={{ backgroundColor: "transparent" }}
           >
             Очистить всё
           </button>
@@ -53,7 +57,9 @@ export const TariffInstrumentSelect = ({
         <button
           type="button"
           onClick={toggleOpen}
-          className="w-full bg-main-bg flex items-center justify-between px-4 py-3 rounded-2xl outline-none transition-all h-auto border-none"
+          className={`w-full bg-[#363B42] flex items-center justify-between px-4 py-3 outline-none transition-all h-auto border-none
+            ${!isOpen ? "rounded-2xl" : "rounded-t-2xl"}            
+            `}
         >
           <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-text-main">
             {selectedInstruments.length > 0 ? (
@@ -83,8 +89,8 @@ export const TariffInstrumentSelect = ({
         </button>
 
         {isOpen && (
-          <div className="absolute z-20 mt-2 w-full bg-main-bg rounded-3xl p-6 shadow-2xl border border-white/5">
-            <div className="flex flex-wrap justify-center gap-4">
+          <div className="absolute z-20 w-full bg-[#363B42] rounded-b-2xl p-6">
+            <div className="grid grid-cols-3 gap-4 justify-items-center max-h-[420px] overflow-y-auto custom-scrollbar">
               {instruments.map((inst) => {
                 const Icon = inst.icon;
                 const isSelected = value.includes(inst.id);
@@ -93,11 +99,16 @@ export const TariffInstrumentSelect = ({
                     key={inst.id}
                     type="button"
                     onClick={() => toggleInstrument(inst.id)}
-                    className={`transition-all p-3 bg-white/5 rounded-full hover:bg-white/10 outline-none border-none ${
-                      isSelected ? "text-accent" : "text-text-main"
-                    }`}
+                    className={`transition-all w-full h-28 p-3 bg-white/5 rounded-2xl hover:bg-accent/20 
+                      outline-none border-none 
+                      flex flex-col items-center justify-center gap-2 
+                      text-text-main
+                      ${isSelected && "bg-accent"}`}
                   >
-                    <Icon className="w-9 h-9" />
+                    <Icon className="w-9 h-9 shrink-0" />
+                    <p className="text-center text-xs break-words w-full px-1">
+                      {inst.name}
+                    </p>
                   </button>
                 );
               })}

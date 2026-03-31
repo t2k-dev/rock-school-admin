@@ -31,14 +31,18 @@ export const TariffSelect = ({
   return (
     <div className="w-full rounded-xl text-text-main" ref={containerRef}>
       <label className="block text-lg font-medium mb-3 text-text-muted">
-        {label} :
+        {label}
       </label>
 
       <div className="relative">
         <button
           type="button"
           onClick={toggleOpen}
-          className="w-full bg-main-bg text-text-main text-left px-4 py-3 rounded-2xl outline-none transition-all flex justify-between border-none shadow-none"
+          className={`w-full bg-[#363B42] text-text-main text-left px-4 py-3 outline-none transition-all 
+          flex justify-between
+          border-none shadow-none
+          ${!isOpen ? "rounded-2xl" : "rounded-t-2xl"}
+          `}
         >
           <span className="text-xl font-medium">{selectedLabel}</span>
           <div className="ml-4 text-text-muted">
@@ -51,8 +55,8 @@ export const TariffSelect = ({
         </button>
 
         {isOpen && (
-          <div className="absolute z-10 mt-2 w-full rounded-2xl">
-            <ul className="space-y-3 list-none bg-main-bg rounded-2xl p-4 shadow-2xl">
+          <div className="absolute z-10 w-full">
+            <ul className="space-y-3 list-none bg-[#363B42] rounded-b-2xl p-4">
               {options.map((option) => (
                 <li
                   key={option.value}

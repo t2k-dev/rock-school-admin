@@ -77,9 +77,9 @@ const TariffForm = ({ history, type = "New" }) => {
             error={errors.disciplineId}
           />
 
-          <div className="flex justify-between">
+          <div className="flex justify-between my-2">
             <TariffDates
-              label="Дата начала*"
+              label="Дата начала"
               type="date"
               name="startDate"
               value={formData.startDate}
@@ -89,7 +89,7 @@ const TariffForm = ({ history, type = "New" }) => {
             />
 
             <TariffDates
-              label="Дата окончания*"
+              label="Дата окончания"
               type="date"
               name="endDate"
               value={formData.endDate}
@@ -100,7 +100,7 @@ const TariffForm = ({ history, type = "New" }) => {
           </div>
 
           <TariffInput
-            label="Сумма*"
+            label="Сумма"
             type="number"
             name="amount"
             step="0.01"

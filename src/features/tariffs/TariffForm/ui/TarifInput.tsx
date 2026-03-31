@@ -22,7 +22,7 @@ export const TariffInput = ({
   return (
     <div className="w-full text-text-main">
       <label className="block text-lg font-medium mb-3 text-text-muted">
-        {label} :
+        {label}
       </label>
 
       <div className="relative">
@@ -32,8 +32,10 @@ export const TariffInput = ({
           value={value}
           step={step}
           onChange={onChange}
-          placeholder={placeholder}
-          className="w-full bg-main-bg text-text-main px-4 py-3 rounded-2xl outline-none appearance-none transition-all text-xl"
+          placeholder={`${placeholder}...`}
+          className="w-full bg-[#363B42] text-text-main px-4 py-3 rounded-2xl outline-none appearance-none transition-all text-xl
+          placeholder:text-text-main
+          "
           style={{
             boxShadow: "none",
             border: "none",
