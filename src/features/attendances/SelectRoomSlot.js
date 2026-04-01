@@ -1,4 +1,4 @@
-import { Button } from "react-bootstrap";
+import { Button } from "../../components/ui";
 
 import { AvailableSlotsModal } from "./AvailableSlotsModal";
 
@@ -12,13 +12,13 @@ export function SelectRoomSlot({
 }) {
   return (
     <>
-      <div className="text-center">
+      <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
         <Button
-          variant="outline-secondary"
+          variant="ghost"
           onClick={onShowAvailableSlotsModal}
-          size="md"
+          className="justify-center sm:min-w-[190px]"
         >
-          Доступные окна...
+          Доступные окна
         </Button>
       </div>
 

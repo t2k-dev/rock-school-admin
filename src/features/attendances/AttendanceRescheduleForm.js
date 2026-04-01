@@ -3,13 +3,14 @@ import { ru } from "date-fns/locale";
 import { v4 as uuidv4 } from "uuid";
 
 import React from "react";
-import { Button, Col, Container, Form, Row, Stack } from "react-bootstrap";
 
 import { Avatar } from "../../components/Avatar";
+import { Button, FormLabel, FormWrapper, Input, ToneBadge } from "../../components/ui";
 
 import { CalendarIcon } from "../../components/icons";
 import AttendanceType from "../../constants/AttendanceType";
 import { getDisciplineName } from "../../constants/disciplines";
+import { SectionTitle, SectionWrapper } from "../../layout";
 import { rescheduleAttendance } from "../../services/apiAttendanceService";
 import { getBusySlots } from "../../services/apiBranchService";
 import { getNextAvailableSlot } from "../../services/apiSubscriptionService";
@@ -34,7 +35,11 @@ export class AttendanceRescheduleForm extends React.Component {
       selectedSlotId: 0,
       selectedSlot: null,
 
+      cancellationType: "",
+      comment: "",
       notificationDate: format(new Date(), "yyyy-MM-dd HH:mm"),
+      error: "",
+      isSaving: false,
     };
 
     this.handleCloseAvailableTeachersModal =
@@ -114,6 +119,13 @@ export class AttendanceRescheduleForm extends React.Component {
 
     const { selectedSlot, attendance } = this.state;
 
+    if (!selectedSlot) {
+      this.setState({ error: "Выберите новое окно перед сохранением." });
+      return;
+    }
+
+    this.setState({ error: "", isSaving: true });
+
     const requestBody = {
       attendanceId: attendance.attendanceId,
       newStartDate: selectedSlot.start,
@@ -121,12 +133,15 @@ export class AttendanceRescheduleForm extends React.Component {
       roomId: selectedSlot.roomId,
     };
 
-    const response = await rescheduleAttendance(
-      attendance.attendanceId,
-      requestBody,
-    );
-
-    window.history.back();
+    try {
+      await rescheduleAttendance(attendance.attendanceId, requestBody);
+      window.history.back();
+    } catch (error) {
+      console.error("Failed to reschedule attendance:", error);
+      this.setState({ error: "Не удалось перенести занятие. Попробуйте еще раз." });
+    } finally {
+      this.setState({ isSaving: false });
+    }
   };
 
   handleChange = (e) => {
@@ -139,138 +154,147 @@ export class AttendanceRescheduleForm extends React.Component {
 
     switch (attendance?.attendanceType) {
       case AttendanceType.LESSON:
-        return <h2 className="text-center mb-4">Перенос урока</h2>;
+        return "Перенос урока";
       case AttendanceType.TRIAL_LESSON:
-        return <h2 className="text-center mb-4">Перенос пробного урока</h2>;
+        return "Перенос пробного урока";
       default:
-        return <h2 className="text-center mb-4">Перенос</h2>;
+        return "Перенос";
+    }
+  };
+
+  renderAttendanceTypeBadge = (attendanceType) => {
+    switch (attendanceType) {
+      case AttendanceType.LESSON:
+        return <ToneBadge label="Урок" tone="primary" />;
+      case AttendanceType.TRIAL_LESSON:
+        return <ToneBadge label="Пробный урок" tone="warning" />;
+      default:
+        return <ToneBadge label="Занятие" tone="secondary" />;
     }
   };
 
   render() {
     const {
       attendance,
-      lastName,
       showAvailableTeacherModal,
       availableTeachers,
       showAvailableSlotsModal,
       rooms,
       selectedSlot,
       notificationDate,
-      cancalationType,
+      cancellationType,
+      comment,
+      error,
+      isSaving,
     } = this.state;
     if (!attendance) {
       return;
     }
 
-    const { teacher } = this.state.attendance;
+    const { teacher } = attendance;
+    const attendee = attendance.attendees?.[0]?.student;
+    const attendanceStart = new Date(attendance.startDate);
+    const attendanceEnd = new Date(attendance.endDate);
+    const selectedSlotLabel = selectedSlot
+      ? getSlotDescription(selectedSlot)
+      : "Не выбрано";
 
-    let availableSlot;
-    if (selectedSlot) {
-      availableSlot = <>{getSlotDescription(selectedSlot)}</>;
-    } else {
-      availableSlot = <div>Не выбрано</div>;
-    }
-    console.log("attendance", attendance);
     return (
-      <Container style={{ marginTop: "40px" }}>
-        <Row>
-          <Col md="4"></Col>
-          <Col md="4">
-            {this.renderHeader()}
-            <Stack
-              className="mb-3"
-              gap={2}
-              style={{
-                backgroundColor: "#e7e7e7",
-                padding: "15px",
-                borderRadius: "10px",
-              }}
-            >
-              <div>
+        <SectionWrapper className="mx-auto max-w-3xl p-0">
+          <SectionTitle className="text-center">{this.renderHeader()}</SectionTitle>
+
+          <FormWrapper className="mx-auto max-w-[560px] space-y-6">
+            <div className="space-y-4 rounded-[18px] bg-input-bg/50 p-5">
+              <div className="flex items-center gap-2 text-[15px] text-text-main">
                 <DisciplineIcon
                   size="20"
-                  style={{ marginRight: "5px" }}
+                  style={{ marginRight: "4px" }}
                   disciplineId={attendance.disciplineId}
-                />{" "}
-                {getDisciplineName(attendance.disciplineId)}
+                />
+                <span>{getDisciplineName(attendance.disciplineId)}</span>
               </div>
-              <div>
-                <CalendarIcon />
-                <span style={{ fontSize: "14px" }}>
-                  {format(attendance.startDate, "d MMMM, EEEE", { locale: ru })}
-                  , с {format(attendance.startDate, "HH:mm")} -{" "}
-                  {format(attendance.endDate, "HH:mm")}
+
+              <div className="flex items-start gap-2 text-[14px] text-text-main">
+                <span className="mt-[2px] text-text-main">
+                  <CalendarIcon />
+                </span>
+                <span>
+                  {format(attendanceStart, "d MMMM, EEEE", { locale: ru })}, с {format(attendanceStart, "HH:mm")} до {format(attendanceEnd, "HH:mm")}
                 </span>
               </div>
-              <div>
-                <Avatar
-                  style={{ width: "20px", height: "20px", marginRight: "5px" }}
-                ></Avatar>{" "}
-                {attendance.attendees[0].student.firstName}{" "}
-                {attendance.attendees[0].student.lastName}
-              </div>
+
+              {attendee && (
+                <div className="flex items-center gap-2 text-[14px] text-text-main">
+                  <Avatar style={{ width: "20px", height: "20px", marginRight: "4px" }} />
+                  <span>
+                    {attendee.firstName} {attendee.lastName}
+                  </span>
+                </div>
+              )}
+
               {teacher && (
-                <div className="mb-3">
+                <div className="text-[14px] text-text-main">
                   Преподаватель: {teacher.firstName} {teacher.lastName}
                 </div>
               )}
-            </Stack>
-            <hr></hr>
+            </div>
 
-            <Form>
-              <Form.Group className="mb-3" controlId="cancalationType">
-                <Form.Label>Кто переносит</Form.Label>
-                <Form.Select
-                  name="level"
-                  aria-label="Веберите..."
-                  value={cancalationType}
-                  onChange={(e) =>
-                    this.setState({ cancalationType: e.target.value })
-                  }
+            <div className="border-t border-white/10" />
+
+            <form className="space-y-5" onSubmit={this.handleSave}>
+              <label className="flex flex-col gap-2">
+                <FormLabel as="span">Кто переносит</FormLabel>
+                <select
+                  id="cancellationType"
+                  value={cancellationType}
+                  onChange={this.handleChange}
+                  className="w-full rounded-[14px] border border-white/10 bg-input-bg px-4 py-3 text-[16px] text-text-main outline-none transition focus:border-white/20 focus:ring-2 focus:ring-accent"
                 >
-                  <option>выберите...</option>
+                  <option value="">Выберите...</option>
                   <option value="0">Ученик</option>
                   <option value="1">Преподаватель</option>
                   <option value="2">Администрация</option>
-                </Form.Select>
-              </Form.Group>
-              <Form.Group className="mb-3" controlId="notificationDate">
-                <Form.Label>Дата уведомления</Form.Label>
-                <Form.Control
+                </select>
+              </label>
+
+              <label className="flex flex-col gap-2">
+                <FormLabel as="span">Дата уведомления</FormLabel>
+                <Input
+                  id="notificationDate"
                   onChange={this.handleChange}
                   value={notificationDate}
-                  placeholder="введите..."
+                  placeholder="Введите дату и время"
                   autoComplete="off"
                 />
-              </Form.Group>
-              <Form.Group className="mb-3" controlId="comment">
-                <Form.Label>Причина</Form.Label>
-                <Form.Control
+              </label>
+
+              <label className="flex flex-col gap-2">
+                <FormLabel as="span">Причина</FormLabel>
+                <textarea
+                  id="comment"
                   onChange={this.handleChange}
-                  value={lastName}
-                  placeholder="введите..."
+                  value={comment}
+                  placeholder="Введите причину"
                   autoComplete="off"
+                  rows={4}
+                  className="w-full rounded-[14px] border border-white/10 bg-input-bg px-4 py-3 text-[16px] text-text-main outline-none transition placeholder:text-text-muted/30 focus:border-white/20 focus:ring-2 focus:ring-accent"
                 />
-              </Form.Group>
-              {teacher !== null ? (
-                <>
-                  <Form.Group className="mb-4 mt-4">
-                    <SelectTeacherSlot
-                      teacher={teacher}
-                      availableTeachers={availableTeachers}
-                      showAvailableTeacherModal={showAvailableTeacherModal}
-                      selectedSlot={selectedSlot}
-                      attendance={attendance}
-                      onShowAvailableSlotsModal={this.showAvailableSlotsModal}
-                      onCloseModal={this.handleCloseAvailableTeachersModal}
-                      onSlotsChange={this.handleSlotsChange}
-                      onGetNextAvailableSlot={this.handleGetNextAvailableSlot}
-                    />
-                  </Form.Group>
-                </>
-              ) : (
-                <Form.Group className="mb-4 mt-4">
+              </label>
+
+              <div className="pt-2">
+                {teacher ? (
+                  <SelectTeacherSlot
+                    teacher={teacher}
+                    availableTeachers={availableTeachers}
+                    showAvailableTeacherModal={showAvailableTeacherModal}
+                    selectedSlot={selectedSlot}
+                    attendance={attendance}
+                    onShowAvailableSlotsModal={this.showAvailableSlotsModal}
+                    onCloseModal={this.handleCloseAvailableTeachersModal}
+                    onSlotsChange={this.handleSlotsChange}
+                    onGetNextAvailableSlot={this.handleGetNextAvailableSlot}
+                  />
+                ) : (
                   <SelectRoomSlot
                     rooms={rooms}
                     showAvailableSlotsModal={showAvailableSlotsModal}
@@ -279,26 +303,28 @@ export class AttendanceRescheduleForm extends React.Component {
                     onCloseModal={this.handleCloseRoomSlotsModal}
                     onSlotsChange={this.handleSlotsChange}
                   />
-                </Form.Group>
+                )}
+              </div>
+
+              <div className="space-y-2 rounded-[16px] border border-white/10 bg-main-bg/30 px-4 py-4">
+                <div className="text-[15px] font-semibold text-text-main">Новая дата урока</div>
+                <div className="text-[14px] text-text-main">{selectedSlotLabel}</div>
+              </div>
+
+              {error && (
+                <div className="rounded-[14px] border border-danger/40 bg-danger/10 px-4 py-3 text-[14px] text-danger">
+                  {error}
+                </div>
               )}
 
-              <Form.Group className="mb-3" controlId="comment">
-                <div className="mb-3">
-                  <b>Новая дата урока</b>
-                </div>
-                {availableSlot}
-              </Form.Group>
-
-              <hr></hr>
-              <div className="text-center">
-                <Button variant="success" type="null" onClick={this.handleSave}>
-                  Перенести
+              <div className="border-t border-white/10 pt-5 text-center">
+                <Button as="button" type="submit" disabled={isSaving || !selectedSlot}>
+                  {isSaving ? "Сохраняем..." : "Перенести"}
                 </Button>
               </div>
-            </Form>
-          </Col>
-        </Row>
-      </Container>
+            </form>
+          </FormWrapper>
+        </SectionWrapper>
     );
   }
 }

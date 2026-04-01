@@ -1,4 +1,4 @@
-import { Button } from "react-bootstrap";
+import { Button } from "../../components/ui";
 
 import { AvailableTeachersModal } from "./AvailableTeachersModal";
 
@@ -15,28 +15,22 @@ export function SelectTeacherSlot({
 }) {
   return (
     <>
-
-      <div className="text-center">
-
-        
-          <Button
-            variant="outline-secondary"
-            onClick={onShowAvailableSlotsModal}
-            size="md"
-          >
-            Доступные окна...
-          </Button>
-          <Button
-            title="Следующее по расписанию"
-            variant="outline-secondary"
-            type="null"
-            size="md"
-            onClick={onGetNextAvailableSlot}
-            disabled={false}
-          >
-            {">>"}
-          </Button>
-        
+      <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+        <Button
+          onClick={onShowAvailableSlotsModal}
+          className="justify-center sm:min-w-[190px]"
+        >
+          Доступные окна
+        </Button>
+        <Button
+          title="Следующее по расписанию"
+          type="button"
+          onClick={onGetNextAvailableSlot}
+          disabled={false}
+          className="justify-center sm:min-w-[150px]"
+        >
+          Ближайший слот
+        </Button>
       </div>
 
       <AvailableTeachersModal
