@@ -114,7 +114,7 @@ const TariffForm = ({ history, type = "New" }) => {
             <button
               type="submit"
               disabled={isSaving}
-              className="w-full bg-green-600/30 hover:bg-green-600/60 text-text-main font-bold py-4 rounded-2xl transition-all active:scale-95 outline-none appearance-none border-none shadow-none"
+              className="w-full bg-success/40 hover:bg-success/70 text-text-main font-bold py-4 rounded-2xl transition-all active:scale-95 outline-none appearance-none border-none shadow-none"
             >
               {isSaving
                 ? "Сохранение..."

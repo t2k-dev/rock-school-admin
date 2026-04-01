@@ -22,7 +22,7 @@ import { SubscriptionScheduleForm } from "./features/subscriptions/forms/Subscri
 import { TrialSubscriptionForm } from "./features/subscriptions/forms/TrialSubscriptionForm";
 import SubscriptionScreenContainer from "./features/subscriptions/SubscriptionScreen/SubscriptionScreenContainer";
 import TariffForm from "./features/tariffs/TariffForm/ui/TariffForm";
-import { TariffList } from "./features/tariffs/TariffList";
+import { TariffList } from "./features/tariffs/TariffList/ui/TariffList";
 import TeacherForm from "./features/teachers/TeacherForm";
 import TeacherPeriods from "./features/teachers/TeacherPeriods";
 import TeacherScreen from "./features/teachers/TeacherScreen/TeacherScreen";
