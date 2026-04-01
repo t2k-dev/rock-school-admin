@@ -5,7 +5,7 @@ import {
   ElectroGuitarIcon,
   DrumsIcon,
   PianoIcon,
-  VocalIcon,
+  MicroIcon,
   UkuleleIcon,
 } from "../../../../components/icons";
 
@@ -69,7 +69,7 @@ export const Instruments: InstrumentIcon[] = [
   {
     id: 8,
     name: "Вокал",
-    icon: VocalIcon,
+    icon: MicroIcon,
   },
   {
     id: 9,
@@ -77,3 +77,7 @@ export const Instruments: InstrumentIcon[] = [
     icon: UkuleleIcon,
   },
 ];
+
+console.log("Иконки:", {
+  ViolaIcon,
+});
