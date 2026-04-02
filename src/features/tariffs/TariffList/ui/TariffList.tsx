@@ -68,7 +68,9 @@ export const TariffList = () => {
             {tariffs.length === 0 ? (
               <tr>
                 <td colSpan={7} className="bg-card-bg py-10">
-                  <NoRecords />
+                  <div className="flex flex-col items-center justify-center w-full">
+                    <NoRecords />
+                  </div>
                 </td>
               </tr>
             ) : (

@@ -53,6 +53,9 @@
   .text-accent {
     color: var(--accent);
   }
+  .text-accent\/70 {
+    color: rgba(69, 92, 200, 0.7);
+  }
   .text-danger {
     color: var(--danger);
   }
