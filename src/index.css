@@ -10,10 +10,16 @@
     --card-bg: #22272e;
     --inner-bg: #161920;
     --input-bg: #363b42;
+
     --text-main: #e2e7f6;
     --text-muted: #94a3b8;
+
     --accent: #455cc8;
     --danger: #c84545;
+    --secondary: #959eb7;
+    --success: #15a066;
+    --warning: #e6b446;
+    --pink: #c96993;
   }
 
   body {
@@ -31,9 +37,6 @@
   .bg-card-bg {
     background-color: var(--card-bg);
   }
-  .bg-card-bg\/40 {
-    background-color: rgba(var(--card-bg), 0.4);
-  }
   .bg-inner-bg {
     background-color: var(--inner-bg);
   }
@@ -50,8 +53,23 @@
   .text-accent {
     color: var(--accent);
   }
+  .text-accent\/70 {
+    color: rgba(69, 92, 200, 0.7);
+  }
   .text-danger {
     color: var(--danger);
+  }
+  .text-secondary {
+    color: var(--secondary);
+  }
+  .text-success {
+    color: var(--success);
+  }
+  .text-warning {
+    color: var(--warning);
+  }
+  .text-pink {
+    color: var(--pink);
   }
 
   .bg-accent {
@@ -60,20 +78,60 @@
   .bg-danger {
     background-color: var(--danger);
   }
-
-  /* Хак для прозрачности (например bg-accent/20), если нужно */
-  .bg-accent\/20 {
-    background-color: rgba(69, 92, 200, 0.2);
+  .bg-secondary {
+    background-color: var(--secondary);
+  }
+  .bg-success {
+    background-color: var(--success);
+  }
+  .bg-warning {
+    background-color: var(--warning);
+  }
+  .bg-pink {
+    background-color: var(--pink);
   }
 
-  .ring-accent {
-    --tw-ring-color: var(--accent);
+  .bg-accent\/40 {
+    background-color: rgba(69, 92, 200, 0.4);
   }
-  .ring-danger {
-    --tw-ring-color: var(--danger);
+  .bg-accent\/70 {
+    background-color: rgba(69, 92, 200, 0.7);
   }
-}
+  .bg-success\/40 {
+    background-color: rgba(21, 160, 102, 0.4);
+  }
+  .bg-success\/70 {
+    background-color: rgba(21, 160, 102, 0.7);
+  }
+  .bg-warning\/10 {
+    background-color: rgba(230, 180, 70, 0.1);
+  }
+  .bg-danger\/70 {
+    background-color: rgba(200, 69, 69, 0.7);
+  }
+  .bg-danger\/40 {
+    background-color: rgba(200, 69, 69, 0.4);
+  }
+  .bg-secondary\/10 {
+    background-color: rgba(149, 158, 183, 0.1);
+  }
 
-iframe[style*="z-index: 2147483647"] {
-  display: none !important;
+  .border-accent {
+    border-color: var(--accent);
+  }
+  .border-success {
+    border-color: var(--success);
+  }
+  .border-warning {
+    border-color: var(--warning);
+  }
+  .border-danger {
+    border-color: var(--danger);
+  }
+  .border-secondary {
+    border-color: var(--secondary);
+  }
+  .border-secondary\/20 {
+    border-color: rgba(149, 158, 183, 0.2);
+  }
 }

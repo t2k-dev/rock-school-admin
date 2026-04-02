@@ -1,5 +1,16 @@
 import React from "react";
-import { BassGuitarIcon, CancelIcon, DrumsIcon, ElectroGuitarIcon, ExtremeVocalIcon, GuitarIcon, PianoIcon, UkuleleIcon, ViolaIcon, VocalIcon } from "../../components/icons";
+import {
+  BassGuitarIcon,
+  CancelIcon,
+  DrumsIcon,
+  ElectroGuitarIcon,
+  ExtremeVocalIcon,
+  GuitarIcon,
+  PianoIcon,
+  UkuleleIcon,
+  ViolaIcon,
+  MicroIcon,
+} from "../../components/icons";
 
 export class DisciplineIcon extends React.Component {
   constructor(props) {
@@ -31,7 +42,7 @@ export class DisciplineIcon extends React.Component {
         break;
       case 5:
         iconControl = (
-          <VocalIcon color={this.props.color} size={this.props.size} />
+          <MicroIcon color={this.props.color} size={this.props.size} />
         );
         break;
       case 6:

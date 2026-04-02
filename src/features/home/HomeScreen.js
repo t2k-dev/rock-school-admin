@@ -16,13 +16,13 @@ import { EditIcon } from "../../components/icons";
 import { Loading } from "../../components/Loading";
 import { AttendanceModal } from "../attendances/AttendanceModal/AttendanceModal";
 
-
 import { NoRecords } from "../../components/NoRecords";
 import { Colors } from "../../constants/Colors";
 import { getHomeScreenDetails } from "../../services/apiHomeService";
 import { markComplete } from "../../services/apiNoteService";
 import { isCancelledAttendanceStatus } from "../attendances/attendanceHelper";
 
+import { ColorLegend } from "../../components/calendar/ColorLegend";
 
 class HomeScreen extends React.Component {
   constructor(props) {
@@ -307,6 +307,7 @@ class HomeScreen extends React.Component {
               this.handleSelectEvent(slotInfo);
             }}
           />
+
           <div className="d-flex mt-2">
             <div className="flex-grow-1"></div>
             <Form.Check
@@ -329,22 +330,28 @@ class HomeScreen extends React.Component {
             }}
           />
         </Row>
+        <div className="w-full flex justify-between">
+          <ColorLegend />
+          <div>
+            <Button
+              as={Link}
+              to="/notes/addNote"
+              variant="outline-success"
+              size="sm"
+            >
+              + Новая активность
+            </Button>
+          </div>
+        </div>
+
+        <div className="h-10" />
+
         <Row>
           <div className="d-flex mb-2">
             <div className="flex-grow-1">
               <div style={{ fontWeight: "bold", fontSize: "20px" }}>
                 Активности
               </div>
-            </div>
-            <div>
-              <Button
-                as={Link}
-                to="/notes/addNote"
-                variant="outline-success"
-                size="sm"
-              >
-                + Новая активность
-              </Button>
             </div>
           </div>
           <Tabs

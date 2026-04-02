@@ -17,7 +17,7 @@ export const NAV_LINKS: NavLink[] = [
   {
     name: "Филиалы",
     icon: BranchesIcon,
-    path: "/branchScreen",
+    path: "/home",
   },
   {
     name: "Преподаватели",

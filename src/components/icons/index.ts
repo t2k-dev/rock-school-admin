@@ -1,4 +1,4 @@
-// Иконки из папки Icons
+// Иконки из папки Disciplines
 export { BassGuitarIcon } from "./Disciplines/BassGuitarIcon";
 export { DrumsIcon } from "./Disciplines/DrumsIcon";
 export { ElectroGuitarIcon } from "./Disciplines/ElectroGuitarIcon";
@@ -7,7 +7,9 @@ export { GuitarIcon } from "./Disciplines/GuitarIcon";
 export { PianoIcon } from "./Disciplines/PianoIcon";
 export { UkuleleIcon } from "./Disciplines/UkuleleIcon";
 export { ViolaIcon } from "./Disciplines/ViolaIcon";
-export { VocalIcon } from "./Disciplines/VocalIcon";
+export { MicroIcon } from "./Disciplines/MicroIcon";
+
+// Иконки из папки Icons
 export { BackIcon } from "./Icons/BackIcon";
 export { CalendarIcon } from "./Icons/CalendarIcon";
 export { CancelIcon } from "./Icons/CancelIcon";
@@ -29,4 +31,3 @@ export { CoinsBarIcon } from "./SideBarIcons/CoinsBarIcon";
 export { MusicalGroupIcon } from "./SideBarIcons/MusicalGroupIcon";
 export { StudentIcon } from "./SideBarIcons/StudentIcon";
 export { TeacherIcon } from "./SideBarIcons/TeacherIcon";
-

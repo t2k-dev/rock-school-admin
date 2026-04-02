@@ -105,7 +105,11 @@ export const TariffInstrumentSelect = ({
                       text-text-main
                       ${isSelected && "bg-accent"}`}
                   >
-                    <Icon className="w-9 h-9 shrink-0" />
+                    {Icon ? (
+                      <Icon className="w-9 h-9 shrink-0" />
+                    ) : (
+                      <div className="w-9 h-9 bg-gray-500" />
+                    )}
                     <p className="text-center text-xs break-words w-full px-1">
                       {inst.name}
                     </p>

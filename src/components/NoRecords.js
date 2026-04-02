@@ -1,6 +1,3 @@
-
 export const NoRecords = () => (
-      <div style={{ textAlign: "left" }}>
-        Нет записей
-      </div>    
+  <div className="text-accent/70">Нет записей</div>
 );
