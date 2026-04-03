@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 
 import { CalendarWeek } from "../../components/calendar/CalendarWeek";
 import { CopyIcon } from "../../components/icons";
+import { Button, CloseButton, FormLabel, ToneBadge } from "../../components/ui";
 import { formatDate, formatTime } from "../../utils/dateTime";
 
 export class AvailableTeachersModal extends React.Component {
@@ -19,15 +20,41 @@ export class AvailableTeachersModal extends React.Component {
     };
   }
 
+  componentDidMount() {
+    this.syncBodyScrollLock(this.props.show);
+    document.addEventListener("keydown", this.handleDocumentKeyDown);
+  }
+
   componentDidUpdate(prevProps) {
+    if (prevProps.show !== this.props.show) {
+      this.syncBodyScrollLock(this.props.show);
+    }
+
     if (prevProps.show !== this.props.show && this.props.show) {
       this.resetState();
     }
+
     if (prevProps.teachers !== this.props.teachers) {
       this.resetState();
     }
   }
 
+  componentWillUnmount() {
+    this.syncBodyScrollLock(false);
+    document.removeEventListener("keydown", this.handleDocumentKeyDown);
+  }
+
+  handleDocumentKeyDown = (event) => {
+    if (event.key === "Escape" && this.props.show) {
+      this.handleCloseModal();
+    }
+  };
+
+  syncBodyScrollLock = (isOpen) => {
+    document.body.style.overflow = isOpen ? "hidden" : "";
+  };
+
+  // Lifecycle and State Management
   resetState = () => {
     const initialSlots = this.props.initialSlots || [];
     this.setState({
@@ -42,23 +69,30 @@ export class AvailableTeachersModal extends React.Component {
     return availableSlots.map((slot) => slot.description).join("\n");
   }
 
-  getWorkloadBadgeStyles = (workload) => {
-    if (workload < 50) return "bg-danger text-white";
-    if (workload >= 50 && workload < 85) return "bg-warning text-main-bg";
-    if (workload >= 85) return "bg-success text-white";
-    return "bg-secondary text-white";
+  getWorkloadBadgeColor = (workload) => {
+    if (workload < 50) return "danger";
+    if (workload >= 50 && workload < 65) return "warning";
+    if (workload >= 65 && workload < 85) return "warning";
+    if (workload >= 85) return "success";
+
+    return "secondary";
   };
 
   createNewSlot = (teacher, slotInfo, slotId) => {
     const dayName = new Intl.DateTimeFormat("ru-RU", {
       weekday: "long",
     }).format(slotInfo.start);
+
+    // Find the matching backgroundEvent based on the slot's start and end times
     const matchingBackgroundEvent = teacher.scheduledWorkingPeriods?.find(
-      (bg) =>
-        new Date(bg.startDate).getTime() <=
+      (backgroundEvent) =>
+        new Date(backgroundEvent.startDate).getTime() <=
           new Date(slotInfo.start).getTime() &&
-        new Date(bg.endDate).getTime() >= new Date(slotInfo.end).getTime(),
+        new Date(backgroundEvent.endDate).getTime() >=
+          new Date(slotInfo.end).getTime(),
     );
+
+    const roomId = matchingBackgroundEvent?.roomId;
 
     return {
       id: slotId,
@@ -66,7 +100,7 @@ export class AvailableTeachersModal extends React.Component {
       teacherFullName: `${teacher.firstName} ${teacher.lastName}`,
       start: slotInfo.start,
       end: slotInfo.end,
-      roomId: matchingBackgroundEvent?.roomId,
+      roomId: roomId,
       description: this.generateSlotDescription(teacher, dayName, slotInfo),
     };
   };
@@ -76,190 +110,367 @@ export class AvailableTeachersModal extends React.Component {
     return `${teacher.firstName}: ${dayName}, ${timeString}`;
   };
 
+  createNewAttendance = (slotId, slotInfo) => ({
+    attendanceId: slotId,
+    title: "Окно",
+    startDate: slotInfo.start,
+    endDate: slotInfo.end,
+    isNew: true,
+  });
+
+  updateTeacherAttendances = (teachers, teacherId, newAttendance) => {
+    return teachers.map((teacher) => {
+      if (teacher.teacherId !== teacherId) return teacher;
+
+      const currentAttendances = teacher.attendances || [];
+      return {
+        ...teacher,
+        attendances: [...currentAttendances, newAttendance],
+      };
+    });
+  };
+
+  removeAttendanceFromTeacher = (teachers, teacherId, attendanceId) => {
+    return teachers.map((teacher) => {
+      if (teacher.teacherId !== teacherId) return teacher;
+
+      return {
+        ...teacher,
+        attendances:
+          teacher.attendances?.filter((a) => a.attendanceId !== attendanceId) ||
+          [],
+      };
+    });
+  };
+
+  // Event Handlers
+
+  handleError = (message, error) => {
+    console.error(message, error);
+    this.setState({ error: message });
+    this.props.onError?.(message, error);
+  };
+
   handleCopy = async () => {
     if (!this.state.selectedSlotsText.trim()) return;
+
     try {
       await navigator.clipboard.writeText(this.state.selectedSlotsText);
-      this.setState({ copySuccess: "Скопировано!" });
-      setTimeout(() => this.setState({ copySuccess: "" }), 3000);
+      this.setState({ copySuccess: "Текст скопирован в буфер обмена!" });
+
+      // Clear success message after 3 seconds
+      setTimeout(() => {
+        this.setState({ copySuccess: "" });
+      }, 3000);
     } catch (error) {
-      console.error("Copy failed", error);
+      this.handleError("Не удалось скопировать текст", error);
+    }
+  };
+
+  notifyParent = (slots) => {
+    // New prop pattern
+    if (this.props.onSlotsChange) {
+      this.props.onSlotsChange(slots);
     }
   };
 
   handleSelectSlot = (teacher, slotInfo) => {
     const { singleSelection } = this.props;
+
     if (singleSelection && this.state.availableSlots.length > 0) {
       this.clearAllSlots();
-      setTimeout(() => this.addSlot(teacher, slotInfo), 0);
+      // Wait for state to update before adding new slot
+      setTimeout(() => {
+        this.addSlot(teacher, slotInfo);
+      }, 0);
       return;
     }
+
     this.addSlot(teacher, slotInfo);
   };
 
   addSlot = (teacher, slotInfo) => {
     const slotId = uuidv4();
-    const newAttendance = {
-      attendanceId: slotId,
-      title: "Окно",
-      startDate: slotInfo.start,
-      endDate: slotInfo.end,
-      isNew: true,
-    };
 
-    const updatedTeachers = this.state.teachers.map((t) =>
-      t.teacherId === teacher.teacherId
-        ? { ...t, attendances: [...(t.attendances || []), newAttendance] }
-        : t,
+    // Add new attendance
+    const newAttendance = this.createNewAttendance(slotId, slotInfo);
+    const updatedTeachers = this.updateTeacherAttendances(
+      this.state.teachers,
+      teacher.teacherId,
+      newAttendance,
     );
 
+    // Add the selected slot to the availableSlots array
     const newSlot = this.createNewSlot(teacher, slotInfo, slotId);
     const updatedAvailableSlots = [...this.state.availableSlots, newSlot];
+    const availableSlotsTxt = this.generateSelectedSlotsText(
+      updatedAvailableSlots,
+    );
 
+    // Update the state with the modified array
     this.setState({
       teachers: updatedTeachers,
       availableSlots: updatedAvailableSlots,
-      selectedSlotsText: this.generateSelectedSlotsText(updatedAvailableSlots),
+      selectedSlotsText: availableSlotsTxt,
+      error: null, // Clear any previous errors
     });
-    this.props.onSlotsChange(updatedAvailableSlots);
+
+    // Notify parent components
+    this.notifyParent(updatedAvailableSlots);
+  };
+
+  clearAllSlots = () => {
+    // Remove all new attendances from teachers
+    const updatedTeachers = this.state.teachers.map((teacher) => ({
+      ...teacher,
+      attendances: teacher.attendances?.filter((a) => !a.isNew) || [],
+    }));
+
+    this.setState({
+      teachers: updatedTeachers,
+      availableSlots: [],
+      selectedSlotsText: "",
+      error: null,
+    });
+
+    // Notify parent components
+    this.notifyParent([]);
   };
 
   handleSelectEvent = (teacherId, slotInfo) => {
     if (!slotInfo.isNew) return;
+
+    // update available slots
     const updatedSlots = this.state.availableSlots.filter(
       (s) => s.id !== slotInfo.id,
     );
-    const updatedTeachers = this.state.teachers.map((t) =>
-      t.teacherId === teacherId
-        ? {
-            ...t,
-            attendances: t.attendances?.filter(
-              (a) => a.attendanceId !== slotInfo.id,
-            ),
-          }
-        : t,
+
+    // update teacher events
+    const updatedTeachers = this.removeAttendanceFromTeacher(
+      this.state.teachers,
+      teacherId,
+      slotInfo.id,
     );
+
+    const slotsTxt = this.generateSelectedSlotsText(updatedSlots);
 
     this.setState({
       availableSlots: updatedSlots,
       teachers: updatedTeachers,
-      selectedSlotsText: this.generateSelectedSlotsText(updatedSlots),
+      selectedSlotsText: slotsTxt,
     });
     this.props.onSlotsChange(updatedSlots);
   };
 
+  handleCloseModal = () => {
+    this.props.onClose();
+    this.notifyParent(this.state.availableSlots);
+  };
+
+  // Render Methods
+  renderWorkloadBadge = (teacher) => {
+    const toneByWorkload = {
+      danger: "danger",
+      warning: "warning",
+      success: "success",
+      secondary: "secondary",
+    };
+
+    return (
+      <ToneBadge
+        label={`Загруженность ${teacher.workload}%`}
+        tone={toneByWorkload[this.getWorkloadBadgeColor(teacher.workload)]}
+        className="text-[11px]"
+      />
+    );
+  };
+
+  renderTeacher = (teacher, index) => {
+    const backgroundEvents = this.mapWorkingPeriodsToBackgroundEvents(
+      teacher.scheduledWorkingPeriods,
+    );
+    const events = this.mapAttendancesToEvents(teacher.attendances);
+
+    return (
+      <div
+        className="mb-5 rounded-[24px] border border-white/10 bg-main-bg/35 p-4 sm:p-5"
+        key={teacher.teacherId}
+        id={`teacher-${teacher.teacherId}`}
+      >
+        <div className="mb-4 flex flex-wrap items-center gap-3">
+          <span className="text-[17px] font-semibold text-text-main">
+            {teacher.firstName} {teacher.lastName}
+          </span>
+          {typeof teacher.workload === "number" &&
+            this.renderWorkloadBadge(teacher)}
+        </div>
+        <div className="overflow-hidden rounded-[18px] bg-card-bg/80 p-2">
+          <CalendarWeek
+            backgroundEvents={backgroundEvents}
+            events={events}
+            onSelectSlot={(slotInfo) => this.handleSelectSlot(teacher, slotInfo)}
+            onSelectEvent={(slotInfo) =>
+              this.handleSelectEvent(teacher.teacherId, slotInfo)
+            }
+            step={this.props.step}
+            slotDuration={this.props.slotDuration}
+          />
+        </div>
+      </div>
+    );
+  };
+
+  mapWorkingPeriodsToBackgroundEvents = (scheduledWorkingPeriods) => {
+    if (!scheduledWorkingPeriods) return [];
+
+    return scheduledWorkingPeriods.map((period) => ({
+      id: period.scheduledWorkingPeriodId,
+      start: period.startDate,
+      end: period.endDate,
+      roomId: period.roomId,
+    }));
+  };
+
+  mapAttendancesToEvents = (attendances) => {
+    if (!attendances) return [];
+
+    return attendances.map((attendance) => ({
+      id: attendance.attendanceId,
+      title: attendance.isNew ? "Окно" : "Занято",
+      start: new Date(attendance.startDate),
+      end: new Date(attendance.endDate),
+      isNew: attendance.isNew,
+      roomId: attendance.roomId,
+    }));
+  };
+
+  renderTeachersList = () => {
+    const { teachers } = this.state;
+
+    if (!teachers || teachers.length === 0) {
+      return (
+        <div className="flex min-h-[240px] items-center justify-center rounded-[24px] border border-dashed border-white/10 bg-main-bg/25 px-6 text-center text-[15px] text-text-muted">
+          Нет доступных преподавателей
+        </div>
+      );
+    }
+
+    return teachers.map((teacher, index) => this.renderTeacher(teacher, index));
+  };
+
+  renderSidebar = () => {
+    const { selectedSlotsText, copySuccess, availableSlots, error } = this.state;
+
+    return (
+      <aside className="w-full rounded-[24px] border border-white/10 bg-main-bg/35 p-5 xl:w-[340px] xl:self-start">
+        <div className="mb-4 flex items-center justify-between gap-3">
+          <div>
+            <div className="text-[12px] uppercase tracking-[0.2em] text-text-muted">
+              Выбрано
+            </div>
+            <div className="mt-1 text-[18px] font-semibold text-text-main">
+              Свободные окна
+            </div>
+          </div>
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={this.handleCopy}
+            disabled={!selectedSlotsText.trim()}
+            id="copy-help-text"
+            aria-describedby="copy-button-help"
+            className="min-w-0 px-3"
+          >
+            <CopyIcon size="15px" />
+          </Button>
+        </div>
+
+        <label className="flex flex-col gap-3">
+          <FormLabel as="span">Список выбранных слотов</FormLabel>
+          <textarea
+            value={selectedSlotsText}
+            aria-describedby="copy-help-text"
+            readOnly
+            rows={14}
+            className="min-h-[320px] w-full rounded-[16px] border border-white/10 bg-input-bg px-4 py-3 text-[14px] text-text-main outline-none"
+          />
+        </label>
+
+        <div className="mt-4 flex flex-wrap items-center gap-2 text-[13px] text-text-muted">
+          <span>Выбрано слотов: {availableSlots.length}</span>
+          {copySuccess && (
+            <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-emerald-300">
+              {copySuccess}
+            </span>
+          )}
+        </div>
+
+        {error && (
+          <div className="mt-4 rounded-[16px] border border-danger/40 bg-danger/10 px-4 py-3 text-[14px] text-danger">
+            {error}
+          </div>
+        )}
+
+        {availableSlots.length > 0 && (
+          <div className="mt-4 space-y-2">
+            {availableSlots.map((slot) => (
+              <div
+                key={slot.id}
+                className="rounded-[16px] border border-white/10 bg-card-bg/80 px-4 py-3 text-[13px] leading-6 text-text-main"
+              >
+                {slot.description}
+              </div>
+            ))}
+          </div>
+        )}
+      </aside>
+    );
+  };
+
   render() {
-    const { show, onClose, step, slotDuration } = this.props;
-    const { teachers, selectedSlotsText, copySuccess } = this.state;
+    const { show } = this.props;
 
     if (!show) return null;
 
     return (
-      <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-main-bg/60 backdrop-blur-sm">
-        <div className="bg-card-bg w-full max-w-6xl max-h-[90vh] overflow-hidden rounded-[24px] border border-white/10 shadow-2xl flex flex-col">
-          <div className="flex items-center justify-between p-6 border-b border-white/5">
-            <h2 className="text-xl font-bold text-text-main">
-              Доступные преподаватели
-            </h2>
-            <button
-              onClick={onClose}
-              className="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors text-text-muted hover:text-text-main"
-            >
-              ✕
-            </button>
+      <div
+        className="fixed inset-0 z-[130] flex items-center justify-center bg-black/70 px-4 py-6 backdrop-blur-sm"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="available-teachers-modal-title"
+      >
+        <div className="relative flex max-h-[calc(100vh-3rem)] w-full max-w-[1440px] flex-col overflow-hidden rounded-[28px] border border-white/10 bg-card-bg shadow-2xl">
+          <div className="flex items-start justify-between gap-4 border-b border-white/10 px-6 py-5 sm:px-8">
+            
+              <h2 id="available-teachers-modal-title" className="mt-2 text-[24px] font-semibold text-text-main">
+                Доступные преподаватели
+              </h2>
+            
+
+            <CloseButton onClick={this.handleCloseModal} />
           </div>
 
-          <div className="flex flex-1 overflow-hidden p-6 gap-6">
-            <div className="flex-grow overflow-y-auto pr-2 space-y-8 scrollbar-thin scrollbar-thumb-white/10">
-              {teachers.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-64 text-text-muted">
-                  <p>Нет доступных преподавателей</p>
-                </div>
-              ) : (
-                teachers.map((teacher) => (
-                  <div
-                    key={teacher.teacherId}
-                    className="bg-inner-bg/50 p-4 rounded-2xl border border-white/5"
-                  >
-                    <div className="flex items-center gap-3 mb-4">
-                      <span className="text-lg font-bold text-text-main">
-                        {teacher.firstName} {teacher.lastName}
-                      </span>
-                      {typeof teacher.workload === "number" && (
-                        <span
-                          className={`px-2 py-0.5 rounded-full text-[12px] font-medium ${this.getWorkloadBadgeStyles(teacher.workload)}`}
-                        >
-                          Загруженность {teacher.workload}%
-                        </span>
-                      )}
-                    </div>
-                    <CalendarWeek
-                      backgroundEvents={
-                        teacher.scheduledWorkingPeriods?.map((p) => ({
-                          id: p.scheduledWorkingPeriodId,
-                          start: p.startDate,
-                          end: p.endDate,
-                          roomId: p.roomId,
-                        })) || []
-                      }
-                      events={
-                        teacher.attendances?.map((a) => ({
-                          id: a.attendanceId,
-                          title: a.isNew ? "Окно" : "Занято",
-                          start: new Date(a.startDate),
-                          end: new Date(a.endDate),
-                          isNew: a.isNew,
-                          roomId: a.roomId,
-                        })) || []
-                      }
-                      onSelectSlot={(slot) =>
-                        this.handleSelectSlot(teacher, slot)
-                      }
-                      onSelectEvent={(slot) =>
-                        this.handleSelectEvent(teacher.teacherId, slot)
-                      }
-                      step={step}
-                      slotDuration={slotDuration}
-                    />
-                  </div>
-                ))
-              )}
-            </div>
+          <div className="flex-1 overflow-y-auto px-6 py-5 sm:px-8">
 
-            <div className="w-[330px] flex flex-col gap-3">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-text-muted uppercase tracking-wider">
-                  Свободные окна
-                </span>
-                <button
-                  onClick={this.handleCopy}
-                  disabled={!selectedSlotsText.trim()}
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-secondary/10 text-text-main hover:bg-secondary/20 transition-all disabled:opacity-30"
-                >
-                  <CopyIcon size="14px" />
-                  <span className="text-xs">{copySuccess || "Копировать"}</span>
-                </button>
+            <div className="flex flex-col gap-6 xl:flex-row" role="main">
+              <div
+                className="min-h-[320px] flex-1 overflow-y-auto pr-0 xl:max-h-[640px] xl:pr-2"
+                role="region"
+                aria-label="Список преподавателей"
+              >
+                {this.renderTeachersList()}
               </div>
-              <textarea
-                readOnly
-                value={selectedSlotsText}
-                className="flex-1 bg-input-bg border border-white/5 rounded-xl p-4 text-text-main text-sm outline-none resize-none focus:border-accent/50 transition-all scrollbar-thin"
-                placeholder="Выберите слоты в календаре..."
-              />
+              {this.renderSidebar()}
             </div>
           </div>
 
-          {/* Footer */}
-          <div className="p-6 border-t border-white/5 flex justify-end">
-            <button
-              onClick={() => {
-                this.props.onClose();
-                this.props.onSlotsChange(this.state.availableSlots);
-              }}
-              className="px-8 py-3 rounded-xl bg-accent text-white font-bold hover:bg-accent/80 transition-all active:scale-95 shadow-lg shadow-accent/20"
-            >
+          <div className="flex flex-wrap justify-end gap-3 border-t border-white/10 px-6 py-5 sm:px-8">
+            <Button variant="secondary" onClick={this.handleCloseModal}>
+              Закрыть
+            </Button>
+            <Button onClick={this.handleCloseModal}>
               Продолжить
-            </button>
+            </Button>
           </div>
         </div>
       </div>

@@ -5,5 +5,6 @@ export { FormLabel } from './FormLabel';
 export { FormWrapper } from './FormWrapper';
 export { HoverCard } from './HoverCard';
 export { Input } from './Input';
+export { CloseButton } from './Modals/CloseButton';
 export { ToneBadge } from './ToneBadge';
 
