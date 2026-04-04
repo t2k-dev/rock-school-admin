@@ -11,6 +11,7 @@ class TeacherCard extends React.Component{
         return(
                 <ListItem
                     to={`/teacher/${this.props.item.teacherId}`}
+                    avatarType="teacher"
                     className="gap-4"
                     contentClassName="ml-3 grid items-start gap-4 md:grid-cols-[minmax(0,220px)_minmax(0,1fr)]"
                 >

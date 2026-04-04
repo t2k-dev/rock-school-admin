@@ -1,13 +1,25 @@
 import React from "react";
-import { Image } from 'react-bootstrap';
-//import noImage from '../../images/user.jpg';
-import noImage from '../images/user2.png';
+import { StudentIcon } from "./icons/SideBarIcons/StudentIcon";
+import { TeacherIcon } from "./icons/SideBarIcons/TeacherIcon";
 
-export class Avatar extends React.Component{
+export class Avatar extends React.Component {
+    render() {
+        const { style, type = "student" } = this.props;
+        const Icon = type === "teacher" ? TeacherIcon : StudentIcon;
 
-
-    render(){
-        const imgSrc = noImage;
-        return(<Image src={imgSrc} className="avatar" alt="Avatar" style={this.props.style}/>)
+        return (
+            <span
+                className="avatar"
+                style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    ...style,
+                }}
+                aria-hidden="true"
+            >
+                <Icon style={{ width: "100%", height: "100%" }} />
+            </span>
+        );
     }
 }

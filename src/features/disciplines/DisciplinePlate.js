@@ -2,77 +2,76 @@ import PropTypes from "prop-types";
 import { getDisciplineName } from "../../constants/disciplines";
 import { DisciplineIcon } from "./DisciplineIcon";
 
-export const DisciplinePlate = ({
+export const DisciplinePlate = ({ 
   disciplineId,
   label = "",
-  size = "medium",
+  size = "medium" // "small", "medium", "large"
 }) => {
+  
   const getSizeStyles = () => {
     switch (size) {
       case "small":
         return {
-          container: "w-[80px] h-[80px]",
-          iconSize: "32px",
-          fontSize: "text-[10px]",
+          width: '80px',
+          height: '80px',
+          iconSize: '32px',
+          fontSize: '10px'
         };
       case "large":
         return {
-          container: "w-[120px] h-[120px]",
-          iconSize: "48px",
-          fontSize: "text-[12px]",
+          width: '120px',
+          height: '120px',
+          iconSize: '48px',
+          fontSize: '12px'
         };
       case "fill":
         return {
-          container: "w-full h-[100px]",
-          iconSize: "48px",
-          fontSize: "text-[12px]",
-        };
+          width: '100%',
+          height: '100px',
+          iconSize: '48px',
+          fontSize: '12px'
+        };        
       default: // medium
         return {
-          container: "w-[100px] h-[100px]",
-          iconSize: "40px",
-          fontSize: "text-[11px]",
+          width: '100px',
+          height: '100px',
+          iconSize: '40px',
+          fontSize: '11px'
         };
     }
   };
 
-  const config = getSizeStyles();
-  const disciplineName = disciplineId
-    ? getDisciplineName(disciplineId)
-    : "Не выбрано";
+  const sizeStyles = getSizeStyles();
+  const disciplineName = disciplineId ? getDisciplineName(disciplineId) : 'Не выбрано';
 
   return (
-    <div className="mb-3" style={{ border: "none" }}>
-      {label && (
-        <label className="block mb-2 text-sm font-medium text-text-muted">
-          {label}
-        </label>
-      )}
-
-      <div className="flex justify-center">
+    <div>
+      {label && <label className="form-label mb-2">{label}</label>}
+      <div className="d-flex bg-inner-bg justify-content-center">
         <div
-          className={`
-            ${config.container}
-            flex flex-col items-center justify-center
-            p-2 rounded-xl border border-accent/30 
-            bg-inner-bg shadow-inner transition-all
-            opacity-90 hover:opacity-100 hover:border-accent
-          `}
-          style={{ border: "none" }}
+          className="p-2 border border-primary rounded text-center"
+          style={{
+            width: sizeStyles.width,
+            height: sizeStyles.height,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            opacity: 0.9
+          }}
         >
-          <DisciplineIcon
-            disciplineId={disciplineId}
-            size={config.iconSize}
-            color="var(--accent)"
-            style={{ border: "none" }}
+          <DisciplineIcon 
+            disciplineId={disciplineId} 
+            size={sizeStyles.iconSize}
+            color="#0d6efd"
           />
-
-          <small
-            className={`
-              ${config.fontSize}
-              mt-1.5 font-bold text-accent tracking-wide uppercase
-              leading-tight text-center line-clamp-2
-            `}
+          <small 
+            className="mt-1 text-primary fw-bold" 
+            style={{ 
+              fontSize: sizeStyles.fontSize, 
+              lineHeight: '1.2', 
+              textAlign: 'center' 
+            }}
           >
             {disciplineName}
           </small>
@@ -85,7 +84,7 @@ export const DisciplinePlate = ({
 DisciplinePlate.propTypes = {
   disciplineId: PropTypes.number,
   label: PropTypes.string,
-  size: PropTypes.oneOf(["small", "medium", "large", "fill"]),
+  size: PropTypes.oneOf(["small", "medium", "large"])
 };
 
 export default DisciplinePlate;

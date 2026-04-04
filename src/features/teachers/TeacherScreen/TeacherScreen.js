@@ -1,8 +1,8 @@
 import {
-  ArcElement,
-  Chart as ChartJS,
-  Legend,
-  Tooltip,
+    ArcElement,
+    Chart as ChartJS,
+    Legend,
+    Tooltip,
 } from "chart.js";
 import React from "react";
 import { Alert, Button, Col, Container, Row, Tab, Tabs } from "react-bootstrap";
@@ -324,7 +324,7 @@ class TeacherScreen extends React.Component {
         <SectionTitle>Преподаватель</SectionTitle>
           <ScreenHeader
             className="mb-4"
-            avatar={<Avatar style={{ width: "90px", height: "90px" }} />}
+            avatar={<Avatar type="teacher" style={{ width: "90px", height: "90px" }} />}
             title={
               <>
                 {teacher.firstName} {teacher.lastName}

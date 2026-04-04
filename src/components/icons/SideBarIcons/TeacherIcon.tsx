@@ -1,13 +1,16 @@
+import type { CSSProperties } from "react";
+
 interface IconProps {
   className?: string;
+  style?: CSSProperties;
 }
 
-export const TeacherIcon: React.FC<IconProps> = ({ className }) => {
+export const TeacherIcon: React.FC<IconProps> = ({ className, style }) => {
   return (
-    <span className={className}>
+    <span className={className} style={style}>
       <svg
-        width="21"
-        height="25"
+        width="100%"
+        height="100%"
         viewBox="0 0 21 25"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"

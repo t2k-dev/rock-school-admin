@@ -6,5 +6,6 @@ export { FormWrapper } from './FormWrapper';
 export { HoverCard } from './HoverCard';
 export { Input } from './Input';
 export { CloseButton } from './Modals/CloseButton';
+export { RemoveItemButton } from './RemoveItemButton';
 export { ToneBadge } from './ToneBadge';
 

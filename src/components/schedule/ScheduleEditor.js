@@ -1,9 +1,8 @@
 import React from "react";
 import { getDayName } from "../../constants/days";
 import { getRoomName } from "../../constants/rooms";
-import { CalendarIcon } from "../icons/Icons/CalendarIcon";
 import { NoRecords } from "../NoRecords";
-import { Button, FormLabel } from "../ui";
+import { Button, FormLabel, RemoveItemButton } from "../ui";
 
 const ROOM_OPTIONS = [
   { value: "", label: "выберите комнату..." },
@@ -125,13 +124,9 @@ export class ScheduleEditor extends React.Component {
             </div>
           </div>
           <div className="shrink-0">
-            <Button
-              variant="outlineDanger"
-              size="sm"
-              onClick={() => this.deletePeriod(index)}
-            >
+            <RemoveItemButton onClick={() => this.deletePeriod(index)} >
               X
-            </Button>
+            </RemoveItemButton>
           </div>
         </div>
       ));
@@ -145,20 +140,6 @@ export class ScheduleEditor extends React.Component {
 
     return (
       <div className="flex flex-col gap-5 rounded-[24px] p-5 sm:p-6">
-        <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-[14px] bg-accent/20 text-text-main">
-            <CalendarIcon />
-          </div>
-          <div>
-            <div className="text-[13px] font-medium uppercase tracking-[0.2em] text-text-muted opacity-70">
-              Рабочие слоты
-            </div>
-            <div className="text-[20px] font-semibold text-text-main">
-              Расписание
-            </div>
-          </div>
-        </div>
-
         <div className="grid gap-5">
           <div className="grid gap-4 rounded-[20px] bg-inner-bg p-4 sm:grid-cols-[160px_minmax(0,1fr)_auto] sm:items-end">
             <label className="flex flex-col gap-3 sm:col-span-3">

@@ -415,6 +415,7 @@ export class SubscriptionForm extends React.Component {
 
         <FormWrapper>
           <form onSubmit={this.handleSave} className="flex flex-col gap-8">
+            
             <div className="flex flex-col gap-3">
               <FormLabel>Направление</FormLabel>
               <button
@@ -425,7 +426,7 @@ export class SubscriptionForm extends React.Component {
                     : undefined
                 }
                 disabled={basedOnSubscriptionId !== null}
-                className={`text-left transition ${basedOnSubscriptionId === null ? "cursor-pointer" : "cursor-default"}`}
+                className={`text-left transition p-0 ${basedOnSubscriptionId === null ? "cursor-pointer" : "cursor-default"}`}
                 style={{ background: "none", border: "none" }}
               >
                 <DisciplinePlate disciplineId={disciplineId} size="fill" />

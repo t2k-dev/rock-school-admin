@@ -6,6 +6,7 @@ import { HoverCard } from "../ui";
 export const ListItem = ({
 	to,
 	children,
+	avatarType = "student",
 	className = "",
 	contentClassName = "",
 }) => {
@@ -20,7 +21,7 @@ export const ListItem = ({
 	return (
 		<HoverCard as={Link} to={to} className={cardClassName}>
 			<div>
-				<Avatar style={{ width: "70px", height: "70px" }} />
+				<Avatar type={avatarType} style={{ width: "70px", height: "70px" }} />
 			</div>
 			<div className={contentClassName}>{children}</div>
 		</HoverCard>
@@ -30,6 +31,7 @@ export const ListItem = ({
 ListItem.propTypes = {
 	to: PropTypes.string.isRequired,
 	children: PropTypes.node.isRequired,
+	avatarType: PropTypes.oneOf(["student", "teacher"]),
 	className: PropTypes.string,
 	contentClassName: PropTypes.string,
 };

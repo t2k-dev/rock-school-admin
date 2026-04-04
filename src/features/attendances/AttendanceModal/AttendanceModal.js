@@ -1,4 +1,5 @@
 import React from "react";
+import { withRouter } from "react-router-dom";
 
 import { Button, CloseButton, FormLabel } from "../../../components/ui";
 import AttendanceType, { getAttendanceTypeName } from "../../../constants/AttendanceType";
@@ -10,7 +11,7 @@ import { AttendeesList } from "./AttendeesList";
 
 
 
-export class AttendanceModal extends React.Component {
+class AttendanceModalBase extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -112,8 +113,23 @@ export class AttendanceModal extends React.Component {
 
   handleAcceptTrial = async () => {
     try {
-      await acceptTrial(this.props.attendance.attendanceId, {});
-      this.handleClose();
+      const baseSubscription = this.props.attendance.attendees[0].subscription;
+      baseSubscription.teacher = this.props.attendance.teacher;
+
+      console.log("Accepting trial for subscription:", baseSubscription);
+
+      const request = {
+        subscriptionId : this.props.attendance.attendees[0].subscriptionId,
+      };
+
+      await acceptTrial(this.props.attendance.attendanceId, request);
+
+      this.props.history.push({
+        pathname: `/student/${baseSubscription.studentId}/subscriptionForm`,
+        state: {
+          baseSubscription,
+        },
+      });
     } catch (error) {
       console.error('Error accepting trial:', error);
     }
@@ -281,3 +297,8 @@ export class AttendanceModal extends React.Component {
     );
   }
 }
+
+const AttendanceModal = withRouter(AttendanceModalBase);
+
+export { AttendanceModal };
+export default AttendanceModal;

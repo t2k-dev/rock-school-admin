@@ -1,7 +1,8 @@
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { Avatar } from '../../components/Avatar';
-import { Button, FormLabel } from '../../components/ui';
+import { StudentIcon } from '../../components/icons/SideBarIcons/StudentIcon';
+import { NoRecords } from '../../components/NoRecords';
+import { Button, FormLabel, RemoveItemButton } from '../../components/ui';
 import { calculateAge } from '../../utils/dateTime';
 
 export const SubscriptionStudents = ({ 
@@ -14,12 +15,6 @@ export const SubscriptionStudents = ({
   onRemoveStudent,
   onAddStudent
 }) => {
-  const renderEmptyState = () => (
-    <div className="rounded-[20px] border border-white/10 bg-inner-bg px-4 py-6 text-center text-[14px] text-text-muted">
-      Нет записей
-    </div>
-  );
-
   const renderStudentCard = (student, index) => {
     const age = student.birthDate ? calculateAge(student.birthDate) : null;
     
@@ -29,7 +24,7 @@ export const SubscriptionStudents = ({
         className="flex items-center justify-between gap-4 rounded-[20px] border border-white/10 bg-inner-bg px-4 py-3"
       >
         <div className="flex min-w-0 items-center gap-3">
-          <Avatar style={{ width: '32px', height: '32px' }} />
+          <StudentIcon style={{ width: '32px', height: '32px' }} />
           <div className="min-w-0">
             <Link
               to={`/student/${student.studentId}`}
@@ -46,14 +41,11 @@ export const SubscriptionStudents = ({
         </div>
 
         {allowRemove && students.length > 1 && (
-          <Button
-            variant="outlineDanger"
-            size="sm"
-            type="button"
+          <RemoveItemButton
             onClick={() => onRemoveStudent && onRemoveStudent(index)}
           >
             X
-          </Button>
+          </RemoveItemButton>
         )}
       </div>
     );
@@ -73,7 +65,7 @@ export const SubscriptionStudents = ({
       <div className="flex flex-col gap-3">
         {students.length > 0 
           ? students.map(renderStudentCard)
-          : renderEmptyState()
+          : <NoRecords />
         }
       </div>
       {allowAdd && (
