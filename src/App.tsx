@@ -31,7 +31,7 @@ import "./index.css";
 import Footer from "./layout/Footer";
 import Sidebar from "./layout/Navbar/ui/SideBar";
 import { NotFound } from "./features/errorsPages";
-import { UpsError } from "./features/errorsPages";
+import { OpsError } from "./features/errorsPages";
 
 function App() {
   const location = useLocation();
@@ -213,7 +213,7 @@ function App() {
               path="/admin/registerBand"
               component={(props) => <BandForm type="New" {...props} />}
             />
-            <Route path="/error" component={UpsError} />
+            <Route path="/error" component={OpsError} />
             <Route component={NotFound} />
 
             <Route exact path="/bigCalendarTest">

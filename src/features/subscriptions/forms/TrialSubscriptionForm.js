@@ -195,95 +195,110 @@ export class TrialSubscriptionForm extends React.Component {
     }
 
     return (
-      <Container style={{ marginTop: "40px" }}>
-        <Row>
-          <Col md="4"></Col>
-          <Col md="4">
-            <h2 className="text-center mb-4">Пробный урок</h2>
-            <Form>
-              {/* Discipline Selection */}
-              <div className="mb-3">
-                <div
-                  onClick={this.showDisciplineModal}
-                  style={{ cursor: "pointer" }}
-                >
-                  <DisciplinePlate disciplineId={disciplineId} size="fill" />
+      <div className="min-h-screen bg-main-bg py-10 font-['Geologica'] antialiased text-text-main">
+        <div className="container mx-auto px-4 max-w-6xl">
+          <div className="flex flex-col md:flex-row gap-8 justify-center items-start">
+            <div className="hidden md:block md:w-1/4"></div>
+
+            <div className="w-full md:w-1/2 bg-card-bg p-6 rounded-xl shadow-lg border border-secondary/20">
+              <h2 className="text-center text-2xl font-bold mb-6 text-text-main">
+                Пробный урок
+              </h2>
+
+              <form onSubmit={(e) => e.preventDefault()}>
+                <div className="mb-6" style={{ background: "none" }}>
+                  <div
+                    className="cursor-pointer transition-transform hover:scale-[1.02] active:scale-[0.98] bg-main-bg"
+                    onClick={this.showDisciplineModal}
+                  >
+                    <DisciplinePlate disciplineId={disciplineId} size="fill" />
+                  </div>
                 </div>
-              </div>
 
-              {/*Student*/}
-              <Form.Group className="mb-3" controlId="students">
-                <SubscriptionStudents
-                  students={students}
-                  allowRemove={false}
-                  allowAdd={false}
+                <div className="mb-6 bg-inner-bg p-4 rounded-lg border border-secondary/20">
+                  <SubscriptionStudents
+                    students={students}
+                    allowRemove={false}
+                    allowAdd={false}
+                  />
+                </div>
+
+                <div className="mb-6">
+                  <label
+                    htmlFor="GenerteSchedule"
+                    className="flex items-center gap-2 mb-2 text-text-muted"
+                  >
+                    <CalendarIcon color="var(--text-muted)" />
+                    <span className="font-medium">Расписание</span>
+                  </label>
+
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    <select
+                      id="GenerteSchedule"
+                      className="flex-1 bg-input-bg border border-secondary/20 rounded-lg px-3 py-2 text-text-main outline-none focus:border-accent transition-colors disabled:opacity-50"
+                      value={selectedSlotId}
+                      onChange={(e) =>
+                        this.setState({ selectedSlotId: e.target.value })
+                      }
+                      disabled={availableSlots.length === 0}
+                    >
+                      <option value="">выберите...</option>
+                      {availableSlotsList}
+                    </select>
+
+                    <button
+                      type="button"
+                      className="bg-accent/70 hover:bg-accent text-white px-4 py-2 rounded-lg transition-colors border border-accent/40 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
+                      onClick={(e) => this.generateAvailablePeriods(e)}
+                      disabled={!disciplineId}
+                    >
+                      Доступные окна
+                    </button>
+                  </div>
+                </div>
+
+                <hr className="border-secondary/20 my-6" />
+
+                <div className="text-center">
+                  <button
+                    type="button"
+                    className="bg-success text-white px-10 py-3 rounded-full font-bold hover:bg-success/70 transition-all shadow-md active:scale-95"
+                    onClick={this.handleSave}
+                  >
+                    Записать
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <div className="w-full md:w-1/4">
+              <div className="bg-card-bg rounded-xl p-1 border border-accent/40 shadow-xl overflow-hidden">
+                <TariffCard
+                  title="Тариф"
+                  description="Пробный урок"
+                  amount={trialTariffAmount}
+                  className="bg-transparent"
+                  showIcon={false}
                 />
-              </Form.Group>
-
-              <label htmlFor="GenerteSchedule">
-                <CalendarIcon /> <strong>Расписание</strong>
-              </label>
-              <InputGroup
-                className="mb-3 mt-2 text-center"
-                controlId="GenerteSchedule"
-              >
-                <Form.Select
-                  aria-label="Веберите..."
-                  value={selectedSlotId}
-                  onChange={(e) =>
-                    this.setState({ selectedSlotId: e.target.value })
-                  }
-                  style={{ width: "200px" }}
-                  disabled={availableSlots.length === 0}
-                >
-                  <option>выберите...</option>
-                  {availableSlotsList}
-                </Form.Select>
-
-                <Button
-                  variant="outline-secondary"
-                  type="null"
-                  onClick={(e) => this.generateAvailablePeriods(e)}
-                  disabled={!disciplineId}
-                >
-                  Доступные окна...
-                </Button>
-
-                <AvailableTeachersModal
-                  show={showAvailableTeacherModal}
-                  teachers={availableTeachers}
-                  onSlotsChange={this.handleSlotsChange}
-                  onClose={this.handleCloseAvailableTeachersModal}
-                />
-              </InputGroup>
-
-              <DisciplineSelectionModal
-                show={showDisciplineModal}
-                onHide={this.handleCloseDisciplineModal}
-                selectedDisciplineId={disciplineId}
-                onDisciplineChange={this.handleDisciplineChange}
-              />
-
-              <hr></hr>
-              <div className="text-center">
-                <Button variant="success" type="null" onClick={this.handleSave}>
-                  Записать
-                </Button>
               </div>
-            </Form>
-          </Col>
-          <Col md="4">
-            {/* Tariff section */}
-            <TariffCard
-              title="Тариф"
-              description="Пробный урок"
-              amount={trialTariffAmount}
-              style={{ marginTop: "50px" }}
-              showIcon={false}
-            />
-          </Col>
-        </Row>
-      </Container>
+            </div>
+          </div>
+
+          <AvailableTeachersModal
+            show={showAvailableTeacherModal}
+            teachers={availableTeachers}
+            onSlotsChange={this.handleSlotsChange}
+            onClose={this.handleCloseAvailableTeachersModal}
+          />
+
+          <DisciplineSelectionModal
+            show={showDisciplineModal}
+            onHide={this.handleCloseDisciplineModal}
+            selectedDisciplineId={disciplineId}
+            onDisciplineChange={this.handleDisciplineChange}
+          />
+        </div>
+      </div>
     );
   }
 }

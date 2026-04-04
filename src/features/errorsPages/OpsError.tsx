@@ -1,7 +1,7 @@
 import { Home } from "lucide-react";
 import { Link } from "react-router-dom";
 
-export const UpsError = () => {
+export const OpsError = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-full text-text-main px-4">
       <div className="relative flex flex-col items-center mb-4">

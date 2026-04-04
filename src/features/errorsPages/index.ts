@@ -1,2 +1,2 @@
 export { NotFound } from "./NotFound";
-export { UpsError } from "./UpsError";
+export { OpsError } from "./OpsError";

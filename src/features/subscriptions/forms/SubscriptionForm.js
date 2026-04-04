@@ -11,7 +11,10 @@ import { SectionTitle, SectionWrapper } from "../../../layout";
 import { getStudent } from "../../../services/apiStudentService";
 import { addSubscription } from "../../../services/apiSubscriptionService";
 import { getCurrentTariffs } from "../../../services/apiTariffService";
-import { getAvailableTeachers, getWorkingPeriods } from "../../../services/apiTeacherService";
+import {
+  getAvailableTeachers,
+  getWorkingPeriods,
+} from "../../../services/apiTeacherService";
 import { calculateAge } from "../../../utils/dateTime";
 import { toMoneyString } from "../../../utils/moneyUtils";
 import { convertSlotsToSchedules } from "../../../utils/scheduleUtils";
@@ -41,12 +44,12 @@ export class SubscriptionForm extends React.Component {
       startDate: format(new Date(), "yyyy-MM-dd"),
       attendanceCount: "",
       attendanceLength: 0,
-      
+
       tariffs: [],
       selectedTariff: null,
 
       schedules: [],
-      
+
       isLoading: false,
       showAvailableTeacherModal: false,
       showAddStudentModal: false,
@@ -54,14 +57,17 @@ export class SubscriptionForm extends React.Component {
     };
 
     // AvailableTeachersModal
-    this.showAvailableTeachersModal = this.showAvailableTeachersModal.bind(this);
-    this.handleCloseAvailableTeachersModal = this.handleCloseAvailableTeachersModal.bind(this);
+    this.showAvailableTeachersModal =
+      this.showAvailableTeachersModal.bind(this);
+    this.handleCloseAvailableTeachersModal =
+      this.handleCloseAvailableTeachersModal.bind(this);
 
     this.handleSave = this.handleSave.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.onChange = this.onChange.bind(this);
     this.showDisciplineModal = this.showDisciplineModal.bind(this);
-    this.handleCloseDisciplineModal = this.handleCloseDisciplineModal.bind(this);
+    this.handleCloseDisciplineModal =
+      this.handleCloseDisciplineModal.bind(this);
   }
 
   componentDidMount() {
@@ -69,14 +75,15 @@ export class SubscriptionForm extends React.Component {
   }
 
   async onFormLoad() {
-
     this.setState({ isLoading: true });
 
     // New
     if (this.state.isNew) {
-    
       // Based on prev subscription
-      if (this.props.location.state && this.props.location.state.baseSubscription) {
+      if (
+        this.props.location.state &&
+        this.props.location.state.baseSubscription
+      ) {
         const baseSubscription = this.props.location.state.baseSubscription;
 
         const student = await getStudent(this.state.studentId);
@@ -85,7 +92,10 @@ export class SubscriptionForm extends React.Component {
         this.setState({
           students: students || [],
           disciplineId: baseSubscription.disciplineId || null,
-          attendanceCount: baseSubscription.attendanceType === AttendanceType.TRIAL_LESSON ? null : baseSubscription.attendanceCount,
+          attendanceCount:
+            baseSubscription.attendanceType === AttendanceType.TRIAL_LESSON
+              ? null
+              : baseSubscription.attendanceCount,
           attendanceLength: baseSubscription.attendanceLength || 0,
           selectedTeachers: [baseSubscription.teacher] || [],
           teacher: baseSubscription.teacher || null,
@@ -94,21 +104,19 @@ export class SubscriptionForm extends React.Component {
           basedOnSubscriptionId: baseSubscription.subscriptionId || null,
           isLoading: false,
         });
-        
+
         // Load tariffs for discipline
         this.loadTariffs();
-        
-      }
-      else{
+      } else {
         const student = await getStudent(this.state.studentId);
         const students = student ? [student] : [];
 
         this.setState({
-            students: students,
-            disciplineId: this.props.location.state.disciplineId,
-            isLoading: false,
+          students: students,
+          disciplineId: this.props.location.state.disciplineId,
+          isLoading: false,
         });
-        
+
         // Load tariffs for discipline
         this.loadTariffs();
       }
@@ -125,7 +133,7 @@ export class SubscriptionForm extends React.Component {
       const tariffs = await getCurrentTariffs();
       this.setState({ tariffs: tariffs || [] });
     } catch (error) {
-      console.error('Error loading tariffs:', error);
+      console.error("Error loading tariffs:", error);
     }
   };
 
@@ -164,7 +172,11 @@ export class SubscriptionForm extends React.Component {
       const sortedStudents = this.sortStudentsByBirthDate(this.state.students);
       const age = calculateAge(sortedStudents[0].birthDate);
 
-      const response = await getAvailableTeachers(this.state.disciplineId, age, 1);
+      const response = await getAvailableTeachers(
+        this.state.disciplineId,
+        age,
+        1,
+      );
       teachers = response.data.availableTeachers;
     }
 
@@ -176,29 +188,46 @@ export class SubscriptionForm extends React.Component {
 
   handleCloseAvailableTeachersModal = () => {
     if (!this.state.availableSlots || this.state.availableSlots.length === 0) {
-      this.setState({ showAvailableTeacherModal: false, teacherId: "" , selectedTeachers: [] });
+      this.setState({
+        showAvailableTeacherModal: false,
+        teacherId: "",
+        selectedTeachers: [],
+      });
       return;
     }
 
-    const selectedTeacherIds = Array.from(new Set(this.state.availableSlots.map(slot => slot.teacherId)));
-    const selectedTeachers = this.state.availableTeachers.filter(teacher => selectedTeacherIds.includes(teacher.teacherId)); 
-    const newSelectedTeacherId = selectedTeachers.length > 0 && selectedTeachers[0].teacherId;
+    const selectedTeacherIds = Array.from(
+      new Set(this.state.availableSlots.map((slot) => slot.teacherId)),
+    );
+    const selectedTeachers = this.state.availableTeachers.filter((teacher) =>
+      selectedTeacherIds.includes(teacher.teacherId),
+    );
+    const newSelectedTeacherId =
+      selectedTeachers.length > 0 && selectedTeachers[0].teacherId;
 
-    this.setState({ showAvailableTeacherModal: false, teacherId: newSelectedTeacherId , selectedTeachers: selectedTeachers });
+    this.setState({
+      showAvailableTeacherModal: false,
+      teacherId: newSelectedTeacherId,
+      selectedTeachers: selectedTeachers,
+    });
   };
 
   handleSlotsChange = (slots) => {
-    const schedules = convertSlotsToSchedules(slots, { includeTeacherId: true });
+    const schedules = convertSlotsToSchedules(slots, {
+      includeTeacherId: true,
+    });
     this.setState({ availableSlots: slots, schedules: schedules });
   };
 
   handleTariffChange = (tariffId) => {
-    const selectedTariff = this.state.tariffs.find(tariff => tariff.tariffId === tariffId);
+    const selectedTariff = this.state.tariffs.find(
+      (tariff) => tariff.tariffId === tariffId,
+    );
     if (selectedTariff) {
       this.setState({
         selectedTariff: selectedTariff,
         attendanceCount: selectedTariff.attendanceCount,
-        attendanceLength: selectedTariff.attendanceLength
+        attendanceLength: selectedTariff.attendanceLength,
       });
     }
   };
@@ -209,7 +238,7 @@ export class SubscriptionForm extends React.Component {
   };
 
   handleDisciplineChange = (disciplineId) => {
-    this.setState({ 
+    this.setState({
       disciplineId: disciplineId,
       availableSlots: [],
       selectedSlotId: 0,
@@ -221,12 +250,14 @@ export class SubscriptionForm extends React.Component {
   };
 
   handleTariffChange = (tariffId) => {
-    const selectedTariff = this.state.tariffs.find(tariff => tariff.tariffId === tariffId);
+    const selectedTariff = this.state.tariffs.find(
+      (tariff) => tariff.tariffId === tariffId,
+    );
     if (selectedTariff) {
       this.setState({
         selectedTariff: selectedTariff,
         attendanceCount: selectedTariff.attendanceCount,
-        attendanceLength: selectedTariff.attendanceLength
+        attendanceLength: selectedTariff.attendanceLength,
       });
     }
   };
@@ -255,7 +286,7 @@ export class SubscriptionForm extends React.Component {
     const updatedStudents = [...this.state.students];
     updatedStudents.splice(index, 1);
     this.setState({ students: updatedStudents });
-  }
+  };
 
   handleSave = async (e) => {
     e.preventDefault();
@@ -294,28 +325,41 @@ export class SubscriptionForm extends React.Component {
   getFilteredTariffs = () => {
     const { tariffs, disciplineId, students } = this.state;
     if (!disciplineId) return tariffs;
-    
+
     let availableTariffs = [];
-    if (students.length > 1){
+    if (students.length > 1) {
       //console.log("Filtering for group lesson, subscriptionType:", tariff.subscriptionType);
       console.log("Filtering for group lesson, disciplineId: ", disciplineId);
       // Group Lessons
-      const disciplineTariffs = tariffs.filter(tariff => tariff.disciplineId === parseInt(disciplineId) && tariff.subscriptionType === SubscriptionType.GROUP_LESSON);
+      const disciplineTariffs = tariffs.filter(
+        (tariff) =>
+          tariff.disciplineId === parseInt(disciplineId) &&
+          tariff.subscriptionType === SubscriptionType.GROUP_LESSON,
+      );
       console.log("Discipline tariffs: ", disciplineTariffs);
-      if (disciplineTariffs.length > 0){
+      if (disciplineTariffs.length > 0) {
         availableTariffs = disciplineTariffs;
-      } else{
-        availableTariffs = tariffs.filter(tariff => tariff.subscriptionType === SubscriptionType.GROUP_LESSON)
+      } else {
+        availableTariffs = tariffs.filter(
+          (tariff) => tariff.subscriptionType === SubscriptionType.GROUP_LESSON,
+        );
       }
-
-    } else{
+    } else {
       // Single Lessons
-      const disciplineTariffs = tariffs.filter(tariff => tariff.disciplineId === parseInt(disciplineId) && tariff.subscriptionType === SubscriptionType.LESSON);
-      
-      if (disciplineTariffs.length > 0){
+      const disciplineTariffs = tariffs.filter(
+        (tariff) =>
+          tariff.disciplineId === parseInt(disciplineId) &&
+          tariff.subscriptionType === SubscriptionType.LESSON,
+      );
+
+      if (disciplineTariffs.length > 0) {
         availableTariffs = disciplineTariffs;
-      } else{
-          availableTariffs = tariffs.filter(tariff => tariff.subscriptionType === SubscriptionType.LESSON && tariff.disciplineId === null);
+      } else {
+        availableTariffs = tariffs.filter(
+          (tariff) =>
+            tariff.subscriptionType === SubscriptionType.LESSON &&
+            tariff.disciplineId === null,
+        );
       }
     }
     console.log("all: ", tariffs);
@@ -344,23 +388,24 @@ export class SubscriptionForm extends React.Component {
     } = this.state;
 
     const filteredTariffs = this.getFilteredTariffs();
-    
+
     if (isLoading) {
-      return <Loading
-        message="Загрузка данных..."
-      />
+      return <Loading message="Загрузка данных..." />;
     }
 
     let filteredSchedules;
-    if (schedules && schedules.length > 0){
-      if (basedOnSubscriptionId != null){
+    if (schedules && schedules.length > 0) {
+      if (basedOnSubscriptionId != null) {
         filteredSchedules = schedules;
-      } else{
-        filteredSchedules = schedules.filter(schedule => schedule.teacherId === teacherId) ;
+      } else {
+        filteredSchedules = schedules.filter(
+          (schedule) => schedule.teacherId === teacherId,
+        );
       }
     }
 
-    const selectClassName = "w-full rounded-[14px] border border-white/10 bg-input-bg px-4 py-3 text-[16px] text-text-main outline-none transition focus:border-white/20 focus:ring-2 focus:ring-accent disabled:cursor-not-allowed disabled:opacity-60";
+    const selectClassName =
+      "w-full rounded-[14px] border border-white/10 bg-input-bg px-4 py-3 text-[16px] text-text-main outline-none transition focus:border-white/20 focus:ring-2 focus:ring-accent disabled:cursor-not-allowed disabled:opacity-60";
 
     return (
       <SectionWrapper>
@@ -374,14 +419,16 @@ export class SubscriptionForm extends React.Component {
               <FormLabel>Направление</FormLabel>
               <button
                 type="button"
-                onClick={basedOnSubscriptionId === null ? this.showDisciplineModal : undefined}
+                onClick={
+                  basedOnSubscriptionId === null
+                    ? this.showDisciplineModal
+                    : undefined
+                }
                 disabled={basedOnSubscriptionId !== null}
                 className={`text-left transition ${basedOnSubscriptionId === null ? "cursor-pointer" : "cursor-default"}`}
+                style={{ background: "none", border: "none" }}
               >
-                <DisciplinePlate
-                  disciplineId={disciplineId}
-                  size="fill"
-                />
+                <DisciplinePlate disciplineId={disciplineId} size="fill" />
               </button>
             </div>
 
@@ -411,7 +458,9 @@ export class SubscriptionForm extends React.Component {
                     type="date"
                     id="startDate"
                     value={startDate || ""}
-                    onChange={(e) => this.setState({ startDate: e.target.value })}
+                    onChange={(e) =>
+                      this.setState({ startDate: e.target.value })
+                    }
                   />
                 </label>
 
@@ -427,7 +476,9 @@ export class SubscriptionForm extends React.Component {
                     <option value="">выберите тариф...</option>
                     {filteredTariffs.map((tariff) => (
                       <option key={tariff.tariffId} value={tariff.tariffId}>
-                        {tariff.attendanceCount} уроков, {getAttendanceLengthName(tariff.attendanceLength)} - {toMoneyString(tariff.amount)}
+                        {tariff.attendanceCount} уроков,{" "}
+                        {getAttendanceLengthName(tariff.attendanceLength)} -{" "}
+                        {toMoneyString(tariff.amount)}
                       </option>
                     ))}
                   </select>
@@ -436,7 +487,11 @@ export class SubscriptionForm extends React.Component {
 
               <TariffCard
                 title="Тариф"
-                description={selectedTariff ? `${selectedTariff.attendanceCount} уроков, ${getAttendanceLengthName(selectedTariff.attendanceLength)}` : "Урок"}
+                description={
+                  selectedTariff
+                    ? `${selectedTariff.attendanceCount} уроков, ${getAttendanceLengthName(selectedTariff.attendanceLength)}`
+                    : "Урок"
+                }
                 amount={selectedTariff ? selectedTariff.amount : 0}
                 showIcon={false}
               />

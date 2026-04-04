@@ -54,7 +54,7 @@ class StudentScreen extends React.Component {
   }
 
   async loadStudentData() {
-    try{
+    try {
       this.setState({ isLoading: true });
 
       const details = await getStudentScreenDetails(this.props.match.params.id);
@@ -66,7 +66,6 @@ class StudentScreen extends React.Component {
         bands: details.bands,
         isLoading: false,
       });
-
     } catch (error) {
       console.error("Failed to load student data:", error);
       this.setState({ isLoading: false });
@@ -88,29 +87,38 @@ class StudentScreen extends React.Component {
   };
 
   handleSelectEvent = (slotInfo) => {
-    const newSelectedAttendance = this.state.attendances.filter((a) => a.attendanceId === slotInfo.id)[0];
-    this.setState({ showAttendanceModal: true, selectedAttendance: newSelectedAttendance });
+    const newSelectedAttendance = this.state.attendances.filter(
+      (a) => a.attendanceId === slotInfo.id,
+    )[0];
+    this.setState({
+      showAttendanceModal: true,
+      selectedAttendance: newSelectedAttendance,
+    });
   };
 
   handleCloseModal = () => {
-    this.setState({ 
+    this.setState({
       showAttendanceModal: false,
-      selectedAttendance: null
+      selectedAttendance: null,
     });
   };
 
   handleEditSubscriptionClick = (subscription) => {
-    this.props.history.push(`/subscription/${subscription.subscriptionId}/schedule`);
+    this.props.history.push(
+      `/subscription/${subscription.subscriptionId}/schedule`,
+    );
   };
 
   handleTrialSubscriptionClick = (subscription) => {
-    const selectedAttendance = this.state.attendances.find(a => a.subscriptionId === subscription.subscriptionId);
+    const selectedAttendance = this.state.attendances.find(
+      (a) => a.subscriptionId === subscription.subscriptionId,
+    );
 
     this.setState({
       selectedAttendance: selectedAttendance,
-      showAttendanceModal: true
+      showAttendanceModal: true,
     });
-  }
+  };
 
   handleViewSubscriptionAttendances = async (subscription) => {
     // Navigate to the subscription attendances page
@@ -118,10 +126,12 @@ class StudentScreen extends React.Component {
       pathname: `/subscription/${subscription.subscriptionId}/attendances`,
       state: {
         subscription: subscription,
-        attendances: this.state.attendances?.filter(
-          attendance => attendance.subscriptionId === subscription.subscriptionId
-        ) || []
-      }
+        attendances:
+          this.state.attendances?.filter(
+            (attendance) =>
+              attendance.subscriptionId === subscription.subscriptionId,
+          ) || [],
+      },
     });
   };
 
@@ -129,39 +139,41 @@ class StudentScreen extends React.Component {
     // Open the attendance modal when clicking on an attendance in the list
     this.setState({
       selectedAttendance: attendance,
-      showAttendanceModal: true
+      showAttendanceModal: true,
     });
   };
 
   handleAttendanceUpdate = (updatedData) => {
     const attendanceId = updatedData.attendanceId;
-    
+
     // Update the main attendances array
-    this.setState(prevState => ({
-      attendances: prevState.attendances?.map(attendance => 
-        attendance.attendanceId === attendanceId 
-          ? { ...attendance, ...updatedData }
-          : attendance
-      ) || [],
-      
+    this.setState((prevState) => ({
+      attendances:
+        prevState.attendances?.map((attendance) =>
+          attendance.attendanceId === attendanceId
+            ? { ...attendance, ...updatedData }
+            : attendance,
+        ) || [],
+
       // Update selected attendance if it matches
-      selectedAttendance: prevState.selectedAttendance?.attendanceId === attendanceId
-        ? { ...prevState.selectedAttendance, ...updatedData }
-        : prevState.selectedAttendance
+      selectedAttendance:
+        prevState.selectedAttendance?.attendanceId === attendanceId
+          ? { ...prevState.selectedAttendance, ...updatedData }
+          : prevState.selectedAttendance,
     }));
   };
 
   handlePayClick = (subscription) => {
     this.setState({
       showPaymentModal: true,
-      selectedSubscriptionForPayment: subscription
+      selectedSubscriptionForPayment: subscription,
     });
   };
 
   handleClosePaymentModal = () => {
     this.setState({
       showPaymentModal: false,
-      selectedSubscriptionForPayment: null
+      selectedSubscriptionForPayment: null,
     });
   };
 
@@ -172,28 +184,28 @@ class StudentScreen extends React.Component {
       state: {
         isRefresh: true,
         baseSubscription: subscription,
-      }
+      },
     });
   };
 
   handlePaymentSubmit = async (paymentData) => {
     this.setState({ isLoadingPayment: true });
-    
+
     try {
-      console.log('Payment data:', paymentData);
-      
+      console.log("Payment data:", paymentData);
+
       // If payment was successful, update the subscription status to Active
       if (paymentData.success && paymentData.subscriptionId) {
-        this.setState(prevState => ({
-          subscriptions: prevState.subscriptions.map(subscription => 
+        this.setState((prevState) => ({
+          subscriptions: prevState.subscriptions.map((subscription) =>
             subscription.subscriptionId === paymentData.subscriptionId
               ? { ...subscription, status: SubscriptionStatus.ACTIVE }
-              : subscription
-          )
+              : subscription,
+          ),
         }));
       }
     } catch (error) {
-      console.error('Payment submission error:', error);
+      console.error("Payment submission error:", error);
       throw error;
     } finally {
       this.setState({ isLoadingPayment: false });
@@ -270,11 +282,9 @@ class StudentScreen extends React.Component {
       selectedAttendance,
       showAttendanceModal,
     } = this.state;
-    
+
     if (isLoading) {
-      return <Loading
-        message="Загрузка данных ученика..."
-      />
+      return <Loading message="Загрузка данных ученика..." />;
     }
 
     const sortedSubscriptions = [...subscriptions].sort((a, b) => {
@@ -284,26 +294,43 @@ class StudentScreen extends React.Component {
     });
 
     // Subscriptions
-    let nonTrialSubscriptions = sortedSubscriptions.filter((s) => s.subscriptionType === SubscriptionType.LESSON || s.subscriptionType === SubscriptionType.GROUP_LESSON);
+    let nonTrialSubscriptions = sortedSubscriptions.filter(
+      (s) =>
+        s.subscriptionType === SubscriptionType.LESSON ||
+        s.subscriptionType === SubscriptionType.GROUP_LESSON,
+    );
     nonTrialSubscriptions = showAll
       ? nonTrialSubscriptions
-      : nonTrialSubscriptions.filter((s) => s.status === SubscriptionStatus.ACTIVE || s.status === SubscriptionStatus.DRAFT);
+      : nonTrialSubscriptions.filter(
+          (s) =>
+            s.status === SubscriptionStatus.ACTIVE ||
+            s.status === SubscriptionStatus.DRAFT,
+        );
 
     // Trials
-    const trialSubscriptions = sortedSubscriptions.filter((s) => s.subscriptionType === SubscriptionType.TRIAL_LESSON);
+    const trialSubscriptions = sortedSubscriptions.filter(
+      (s) => s.subscriptionType === SubscriptionType.TRIAL_LESSON,
+    );
 
     // Rents
-    const rentSubscriptions = sortedSubscriptions.filter((s) => s.subscriptionType === SubscriptionType.RENT);
+    const rentSubscriptions = sortedSubscriptions.filter(
+      (s) => s.subscriptionType === SubscriptionType.RENT,
+    );
 
     // Rehearsals
-    const rehearsalSubscriptions = sortedSubscriptions.filter((s) => s.subscriptionType === SubscriptionType.REHEARSAL);
+    const rehearsalSubscriptions = sortedSubscriptions.filter(
+      (s) => s.subscriptionType === SubscriptionType.REHEARSAL,
+    );
 
     // Events
     let events;
     if (attendances) {
       events = attendances.map((attendance) => ({
         id: attendance.attendanceId,
-        title: attendance.attendanceType === AttendanceType.TRIAL_LESSON ? "Пробный" : "Урок",
+        title:
+          attendance.attendanceType === AttendanceType.TRIAL_LESSON
+            ? "Пробный"
+            : "Урок",
         start: new Date(attendance.startDate),
         end: new Date(attendance.endDate),
         resourceId: attendance.roomId,
@@ -324,116 +351,119 @@ class StudentScreen extends React.Component {
           onEdit={this.handleEditClick}
           meta={<InstagramIcon size="20px" title="Instagram" />}
           aside={<BandList bands={bands} />}
-          />
+        />
 
         <div>
-            <Tabs
-              activeKey={activeTab}
-              onSelect={(key) => {
-                if (key) {
-                  this.handleTabChange(key);
-                }
-              }}
-              id="student-screen-tabs"
-            >
-              
-              <Tab eventKey="products" title="Уроки">
-                <div className="flex justify-end mb-4">
-                  <Button
-                    as={Link}
-                    to={{
-                      pathname: `/student/${student.studentId}/subscriptionForm`,
-                      state: { student },
-                    }}
-                    variant="primary"
-                  >
-                    + Добавить
-                  </Button>
-                </div>
-                <div className="">{this.renderSubscriptionsTable(nonTrialSubscriptions)}</div>
-              </Tab>
+          <Tabs
+            activeKey={activeTab}
+            onSelect={(key) => {
+              if (key) {
+                this.handleTabChange(key);
+              }
+            }}
+            id="student-screen-tabs"
+          >
+            <Tab eventKey="products" title="Уроки">
+              <div className="flex justify-end mb-4">
+                <Button
+                  as={Link}
+                  to={{
+                    pathname: `/student/${student.studentId}/subscriptionForm`,
+                    state: { student },
+                  }}
+                  variant="primary"
+                >
+                  + Добавить
+                </Button>
+              </div>
+              <div className="">
+                {this.renderSubscriptionsTable(nonTrialSubscriptions)}
+              </div>
+            </Tab>
 
-              <Tab eventKey="trials" title="Пробные">
-                <div className="mt-4 flex justify-end">
-                  <Button
-                    as={Link}
-                    to={{
-                      pathname: `/student/${student.studentId}/addTrial`,
-                      state: { student },
-                    }}
-                    variant="primary"
-                    size="sm"
-                  >
-                    + Добавить
-                  </Button>
-                </div>
-                <div className="mt-4">{this.renderTrialsTable(trialSubscriptions)}</div>
-              </Tab>
+            <Tab eventKey="trials" title="Пробные">
+              <div className="mt-4 flex justify-end">
+                <Button
+                  as={Link}
+                  to={{
+                    pathname: `/student/${student.studentId}/addTrial`,
+                    state: { student },
+                  }}
+                  variant="primary"
+                  size="sm"
+                >
+                  + Добавить
+                </Button>
+              </div>
+              <div className="mt-4">
+                {this.renderTrialsTable(trialSubscriptions)}
+              </div>
+            </Tab>
 
-              <Tab eventKey="rents" title="Аренда комнаты">
-                <div className="mt-4 flex justify-end">
-                  <Button
-                    as={Link}
-                    to={{
-                      pathname: `/student/${student.studentId}/roomRental`,
-                      state: { student },
-                    }}
-                    variant="primary"
-                    size="sm"
-                  >
-                    + Добавить
-                  </Button>
-                </div>
-                <div className="mt-4">{this.renderRentTable(rentSubscriptions)}</div>
-              </Tab>
+            <Tab eventKey="rents" title="Аренда комнаты">
+              <div className="mt-4 flex justify-end">
+                <Button
+                  as={Link}
+                  to={{
+                    pathname: `/student/${student.studentId}/roomRental`,
+                    state: { student },
+                  }}
+                  variant="primary"
+                  size="sm"
+                >
+                  + Добавить
+                </Button>
+              </div>
+              <div className="mt-4">
+                {this.renderRentTable(rentSubscriptions)}
+              </div>
+            </Tab>
 
-              <Tab eventKey="rehearsals" title="Репетиции">
-                <div className="mt-4 flex justify-end">
-                  <Button
-                    as={Link}
-                    to={{
-                      pathname: `/student/${student.studentId}/rehearsal`,
-                      state: { student },
-                    }}
-                    variant="primary"
-                    size="sm"
-                  >
-                    + Добавить
-                  </Button>
-                </div>
-                <div className="mt-4">{this.renderRerehearsalTable(rehearsalSubscriptions)}</div>
-              </Tab>
+            <Tab eventKey="rehearsals" title="Репетиции">
+              <div className="mt-4 flex justify-end">
+                <Button
+                  as={Link}
+                  to={{
+                    pathname: `/student/${student.studentId}/rehearsal`,
+                    state: { student },
+                  }}
+                  variant="primary"
+                  size="sm"
+                >
+                  + Добавить
+                </Button>
+              </div>
+              <div className="mt-4">
+                {this.renderRerehearsalTable(rehearsalSubscriptions)}
+              </div>
+            </Tab>
 
-              <Tab eventKey="calendar" title="Календарь">
-                <div className="mt-4 flex flex-col gap-4">
-                  <div className="flex items-center gap-3 text-[18px] font-semibold text-text-main">
-                    <CalendarIcon />
-                    <span>Календарь</span>
-                  </div>
-                  <div className="rounded-[20px] bg-inner-bg p-5">
-                    <CalendarWeek
-                      events={events}
-                      onSelectEvent={(slotInfo) => {
-                        this.handleSelectEvent(slotInfo);
-                      }}
-                    />
-                  </div>
-                  <AttendanceModal
-                    attendance={selectedAttendance}
-                    show={showAttendanceModal}
-                    handleClose={this.handleCloseModal}
-                    onAttendanceUpdate={this.handleAttendanceUpdate}
-                    history={this.props.history}
+            <Tab eventKey="calendar" title="Календарь">
+              <div className="mt-4 flex flex-col gap-4">
+                <div className="flex items-center gap-3 text-[18px] font-semibold text-text-main">
+                  <CalendarIcon />
+                  <span>Календарь</span>
+                </div>
+                <div className="rounded-[20px] bg-inner-bg p-5">
+                  <CalendarWeek
+                    events={events}
+                    onSelectEvent={(slotInfo) => {
+                      this.handleSelectEvent(slotInfo);
+                    }}
                   />
                 </div>
-              </Tab>
-            </Tabs>
-          </div>
+                <AttendanceModal
+                  attendance={selectedAttendance}
+                  show={showAttendanceModal}
+                  handleClose={this.handleCloseModal}
+                  onAttendanceUpdate={this.handleAttendanceUpdate}
+                  history={this.props.history}
+                />
+              </div>
+            </Tab>
+          </Tabs>
+        </div>
         <div className="mx-auto flex max-w-6xl flex-col gap-6">
-
-          
-
-
           <PaymentModal
             show={this.state.showPaymentModal}
             onHide={this.handleClosePaymentModal}
