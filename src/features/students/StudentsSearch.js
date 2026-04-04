@@ -39,36 +39,43 @@ export class StudentsSearch extends React.Component {
     const { searchText, students } = this.state;
 
     let studentsList;
-    if (students) {
+    if (students && students.length > 0) {
       const filteredStudents = students.filter(
         (s) =>
           s.firstName.toLowerCase().includes(searchText.toLowerCase()) ||
           s.lastName.toLowerCase().includes(searchText.toLowerCase()),
       );
+
       studentsList = filteredStudents.map((item, index) => (
-        <StudentCardMin
-          key={index}
-          item={item}
-          handleClick={() => this.handleStudentClick(item)}
-        />
+        <div key={index} style={{ background: "none" }}>
+          <StudentCardMin
+            item={item}
+            handleClick={() => this.handleStudentClick(item)}
+            style={{ background: "none" }}
+          />
+        </div>
       ));
     } else {
-      studentsList = <Col>Нет записей</Col>;
+      studentsList = <Col style={{ background: "none" }}>Нет записей</Col>;
     }
 
     return (
-      <Form>
-        <div>
+      <Form style={{ background: "none" }}>
+        <div style={{ background: "none" }}>
           <Form.Control
-            className="mb-4"
+            className="mb-4 border-secondary/20 text-text-main focus:bg-transparent focus:text-text-main"
             placeholder="Поиск..."
             value={searchText}
             onChange={(e) => this.handleSearchChange(e)}
             autoComplete="off"
-            style={{ background: "none" }}
+            style={{
+              background: "none",
+              backgroundColor: "transparent",
+              color: "inherit",
+            }}
           ></Form.Control>
         </div>
-        <div>{studentsList}</div>
+        <div style={{ background: "none" }}>{studentsList}</div>
       </Form>
     );
   }

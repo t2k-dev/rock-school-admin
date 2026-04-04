@@ -1,33 +1,35 @@
 import { useState } from "react";
 
-export function CalendarIcon({ onIconClick, color = "currentColor" }) {
-  const [setColor] = useState("#000000"); // Default color
+export function CalendarIcon({
+  onIconClick,
+  color: initialColor = "#94a3b8",
+  title = "Календарь",
+  size = "20px",
+  isClickable = false,
+}) {
+  const [isHovered, setIsHovered] = useState(false);
 
-  const handleClick = (e) => {
-    if (onIconClick) {
-      onIconClick(e);
-    }
-  };
+  const currentColor = isClickable && isHovered ? "#e2e7f6" : initialColor;
 
   return (
-    <span>
+    <span title={title}>
       <svg
-        xmlns="http://www.w3.org/2000/svg"
-        enableBackground="new 0 0 16 16"
-        id="calendar"
-        onClick={handleClick}
-        width="20"
-        height="20"
+        style={{
+          cursor: isClickable ? "pointer" : "default",
+          marginBottom: "2px",
+        }}
+        onClick={(e) => isClickable && onIconClick && onIconClick(e)}
+        onMouseEnter={() => isClickable && setIsHovered(true)}
+        onMouseLeave={() => isClickable && setIsHovered(false)}
+        width={size}
+        height={size}
         viewBox="0 0 30 30"
+        xmlns="http://www.w3.org/2000/svg"
       >
         <path
-          fill={color}
-          d="M19,4h-1V3c0-0.6-0.4-1-1-1s-1,0.4-1,1v1H8V3c0-0.6-0.4-1-1-1S6,2.4,6,3v1H5C3.3,4,2,5.3,2,7v1h20V7C22,5.3,20.7,4,19,4z
-       M2,19c0,1.7,1.3,3,3,3h14c1.7,0,3-1.3,3-3v-9H2V19z M17,12c0.6,0,1,0.4,1,1s-0.4,1-1,1s-1-0.4-1-1S16.4,12,17,12z M17,16
-      c0.6,0,1,0.4,1,1s-0.4,1-1,1s-1-0.4-1-1S16.4,16,17,16z M12,12c0.6,0,1,0.4,1,1s-0.4,1-1,1s-1-0.4-1-1S11.4,12,12,12z M12,16
-      c0.6,0,1,0.4,1,1s-0.4,1-1,1s-1-0.4-1-1S11.4,16,12,16z M7,12c0.6,0,1,0.4,1,1s-0.4,1-1,1s-1-0.4-1-1S6.4,12,7,12z M7,16
-      c0.6,0,1,0.4,1,1s-0.4,1-1,1s-1-0.4-1-1S6.4,16,7,16z"
-        ></path>
+          fill={currentColor}
+          d="M19,4h-1V3c0-0.6-0.4-1-1-1s-1,0.4-1,1v1H8V3c0-0.6-0.4-1-1-1S6,2.4,6,3v1H5C3.3,4,2,5.3,2,7v1h20V7C22,5.3,20.7,4,19,4z M2,19c0,1.7,1.3,3,3,3h14c1.7,0,3-1.3,3-3v-9H2V19z M17,12c0.6,0,1,0.4,1,1s-0.4,1-1,1s-1-0.4-1-1S16.4,12,17,12z M17,16 c0.6,0,1,0.4,1,1s-0.4,1-1,1s-1-0.4-1-1S16.4,16,17,16z M12,12c0.6,0,1,0.4,1,1s-0.4,1-1,1s-1-0.4-1-1S11.4,12,12,12z M12,16 c0.6,0,1,0.4,1,1s-0.4,1-1,1s-1-0.4-1-1S11.4,16,12,16z M7,12c0.6,0,1,0.4,1,1s-0.4,1-1,1s-1-0.4-1-1S6.4,12,7,12z M7,16 c0.6,0,1,0.4,1,1s-0.4,1-1,1s-1-0.4-1-1S6.4,16,7,16z"
+        />
       </svg>
     </span>
   );

@@ -1,6 +1,6 @@
 import React from "react";
 import { sub } from "date-fns";
-import { X } from "lucide-react"; // Импортируем иконку
+import { X } from "lucide-react";
 
 import { addStudent } from "../../services/apiStudentService";
 import { StudentFormFields } from "./StudentFormFields";
@@ -18,11 +18,10 @@ export class AddStudentModal extends React.Component {
       level: 0,
       sex: 1,
       age: "",
-      activeTab: "new", // Добавляем состояние для вкладок
+      activeTab: "new",
     };
   }
 
-  // Метод для переключения вкладок
   setActiveTab = (tab) => {
     this.setState({ activeTab: tab });
   };
@@ -113,14 +112,14 @@ export class AddStudentModal extends React.Component {
       activeTab,
     } = this.state;
 
-    // Если модалка не должна отображаться, возвращаем null
     if (!show) return null;
 
     return (
-      <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-main-bg/80 backdrop-blur-sm">
-        {/* Контейнер модального окна */}
+      <div
+        className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-main-bg/80 backdrop-blur-sm"
+        style={{ background: "none" }}
+      >
         <div className="w-full max-w-[600px] max-h-[90vh] bg-card-bg rounded-[32px] shadow-2xl flex flex-col overflow-hidden border border-secondary/10 font-geologica text-text-main">
-          {/* Header */}
           <div className="p-8 flex items-center justify-between border-b border-secondary/10">
             <h2 className="text-[24px] font-semibold tracking-tight m-0">
               Добавить ученика
@@ -128,26 +127,31 @@ export class AddStudentModal extends React.Component {
             <button
               onClick={handleClose}
               className="p-2 rounded-full hover:bg-inner-bg text-text-muted hover:text-text-main transition-colors"
+              style={{ background: "none" }}
             >
               <X size={24} />
             </button>
           </div>
 
-          {/* Body */}
           <div
-            className="p-8 overflow-y-auto custom-scrollbar flex-1"
-            style={{ maxHeight: "70vh" }}
+            className="p-8 overflow-y-auto custom-scrollbar flex-1 bg-transparent"
+            style={{ maxHeight: "70vh", background: "none" }}
           >
             {onlyExistingStudents ? (
-              <div className="flex flex-col gap-4">
+              <div
+                className="flex flex-col gap-4 bg-transparent"
+                style={{ background: "none" }}
+              >
                 <span className="text-[14px] font-medium uppercase tracking-[0.2em] opacity-40 ml-2">
                   Поиск студента
                 </span>
                 <StudentsSearch handleOnSelect={this.handleAddExisting} />
               </div>
             ) : (
-              <div className="flex flex-col gap-8">
-                {/* Custom Tabs */}
+              <div
+                className="flex flex-col gap-8 bg-transparent"
+                style={{ background: "none" }}
+              >
                 <div className="flex p-1 bg-inner-bg rounded-[18px] w-full">
                   <button
                     onClick={() => this.setActiveTab("new")}
@@ -156,6 +160,7 @@ export class AddStudentModal extends React.Component {
                         ? "bg-accent text-text-main shadow-lg"
                         : "text-text-muted hover:text-text-main"
                     }`}
+                    style={activeTab !== "new" ? { background: "none" } : {}}
                   >
                     Новый
                   </button>
@@ -166,15 +171,23 @@ export class AddStudentModal extends React.Component {
                         ? "bg-accent text-text-main shadow-lg"
                         : "text-text-muted hover:text-text-main"
                     }`}
+                    style={
+                      activeTab !== "existing" ? { background: "none" } : {}
+                    }
                   >
                     Существующий
                   </button>
                 </div>
 
-                {/* Tab Content */}
-                <div className="transition-all duration-300">
+                <div
+                  className="transition-all duration-300 bg-transparent"
+                  style={{ background: "none" }}
+                >
                   {activeTab === "new" ? (
-                    <div className="flex flex-col gap-6">
+                    <div
+                      className="flex flex-col gap-6 bg-transparent"
+                      style={{ background: "none" }}
+                    >
                       <StudentFormFields
                         isNew={true}
                         email={email}
@@ -198,7 +211,10 @@ export class AddStudentModal extends React.Component {
                       </button>
                     </div>
                   ) : (
-                    <div className="flex flex-col gap-4 pt-2">
+                    <div
+                      className="flex flex-col gap-4 pt-2 bg-transparent"
+                      style={{ background: "none" }}
+                    >
                       <span className="text-[14px] font-medium uppercase tracking-[0.2em] opacity-40 ml-2">
                         Найти в базе
                       </span>

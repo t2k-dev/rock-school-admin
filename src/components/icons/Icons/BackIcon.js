@@ -2,27 +2,26 @@ import { useState } from "react";
 
 export function BackIcon({
   onIconClick,
-  title,
+  color: initialColor = "#94a3b8",
+  title = "Назад",
   size = "20px",
-  color: propColor,
+  isClickable = false,
 }) {
   const [isHovered, setIsHovered] = useState(false);
 
-  const handleClick = (e) => {
-    if (onIconClick) {
-      onIconClick(e);
-    }
-  };
-
-  const currentColor = isHovered ? "#ff6100" : propColor || "#000000";
+  const currentColor = isClickable && isHovered ? "#e2e7f6" : initialColor;
 
   return (
-    <span title={title || "Назад"}>
+    <span title={title}>
       <svg
-        style={{ cursor: onIconClick ? "pointer" : "default" }}
-        onClick={handleClick}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
+        style={{
+          cursor: isClickable ? "pointer" : "default",
+          marginBottom: "2px",
+          transition: "fill 0.2s ease",
+        }}
+        onClick={(e) => isClickable && onIconClick && onIconClick(e)}
+        onMouseEnter={() => isClickable && setIsHovered(true)}
+        onMouseLeave={() => isClickable && setIsHovered(false)}
         width={size}
         height={size}
         viewBox="0 0 24 24"

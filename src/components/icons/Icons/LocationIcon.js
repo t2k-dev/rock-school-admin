@@ -1,34 +1,35 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
-export function LocationIcon({ onIconClick }) {
-  const [color, setColor] = useState("#000000"); // Default color
+export function LocationIcon({
+  onIconClick,
+  color: initialColor = "#94a3b8",
+  title = "Местоположение",
+  size = "18px",
+  isClickable = false,
+}) {
+  const [isHovered, setIsHovered] = useState(false);
 
-  const handleClick = (e) => {
-    if (onIconClick) {
-      onIconClick(e);
-    }
-  };
+  const currentColor = isClickable && isHovered ? "#e2e7f6" : initialColor;
 
   return (
-    <span>
+    <span title={title}>
       <svg
-        width="18px"
-        height="18px"
+        style={{
+          cursor: isClickable ? "pointer" : "default",
+          marginBottom: "2px",
+        }}
+        onClick={(e) => isClickable && onIconClick && onIconClick(e)}
+        onMouseEnter={() => isClickable && setIsHovered(true)}
+        onMouseLeave={() => isClickable && setIsHovered(false)}
+        width={size}
+        height={size}
         viewBox="-4 0 32 32"
-        version="1.1"
+        xmlns="http://www.w3.org/2000/svg"
       >
-        <title>location</title>
-        <desc>Created with Sketch Beta.</desc>
-        <defs></defs>
-        <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-          <g id="Icon-Set-Filled" transform="translate(-106.000000, -413.000000)" fill="#000000">
-            <path
-              d="M118,422 C116.343,422 115,423.343 115,425 C115,426.657 116.343,428 118,428 C119.657,428 121,426.657 121,425 C121,423.343 119.657,422 118,422 L118,422 Z M118,430 C115.239,430 113,427.762 113,425 C113,422.238 115.239,420 118,420 C120.761,420 123,422.238 123,425 C123,427.762 120.761,430 118,430 L118,430 Z M118,413 C111.373,413 106,418.373 106,425 C106,430.018 116.005,445.011 118,445 C119.964,445.011 130,429.95 130,425 C130,418.373 124.627,413 118,413 L118,413 Z"
-              id="location"
-              
-            ></path>
-          </g>
-        </g>
+        <path
+          fill={currentColor}
+          d="M12,9 C10.343,9 9,10.343 9,12 C9,13.657 10.343,15 12,15 C13.657,15 15,13.657 15,12 C15,10.343 13.657,9 12,9 L12,9 Z M12,17 C9.239,17 7,14.762 7,12 C7,9.238 9.239,7 12,7 C14.761,7 17,9.238 17,12 C17,14.762 14.761,17 12,17 L12,17 Z M12,0 C5.373,0 0,5.373 0,12 C0,17.018 10.005,32.011 12,32 C13.964,32.011 24,16.95 24,12 C24,5.373 18.627,0 12,0 L12,0 Z"
+        />
       </svg>
     </span>
   );
