@@ -42,16 +42,16 @@ const Sidebar = () => {
             <Link
               key={link.path}
               to={link.path === "/branchScreen" ? "/branchScreen/1" : link.path}
-              className={`flex items-center justify-between px-4 py-3 rounded-xl transition-all ${
+              className={`flex items-center gap-5 px-4 py-3 rounded-xl transition-all ${
                 active
                   ? "bg-accent text-text-main shadow-lg"
                   : "hover:bg-white/5 text-text-muted"
               }`}
             >
-              <span className="text-[15px] font-medium">{link.name}</span>
               <div className="w-5 h-5 flex items-center justify-center opacity-60">
                 <Icon />
               </div>
+              <span className="text-[15px] font-medium">{link.name}</span>
             </Link>
           );
         })}
@@ -60,10 +60,10 @@ const Sidebar = () => {
       <div className="mt-auto space-y-3 relative">
         <Link
           to="/support"
-          className="flex items-center justify-between px-4 py-3 rounded-xl bg-accent/15 text-accent hover:bg-accent/25 transition-colors"
+          className="flex items-center gap-5 px-4 py-3 rounded-xl bg-accent/15 text-accent hover:bg-accent/25 transition-colors"
         >
-          <span className="font-medium text-[15px]">Поддержка</span>
           <div className="text-lg font-bold">?</div>
+          <span className="font-medium text-[15px]">Поддержка</span>
         </Link>
 
         <div className="relative">
@@ -101,7 +101,10 @@ const Sidebar = () => {
                 Профиль
               </Link>
               <div className="h-[1px] bg-white/5 my-1" />
-              <button className="w-full text-left px-4 py-2 text-sm text-danger hover:bg-danger/10">
+              <button
+                className="w-full text-left px-4 py-2 text-sm text-danger hover:bg-danger/10 bg-transparent"
+                style={{ border: "none" }}
+              >
                 Выйти
               </button>
             </div>

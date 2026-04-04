@@ -5,7 +5,11 @@ import { Button, FormLabel, FormWrapper, Input } from "../../components/ui";
 import { SectionTitle, SectionWrapper } from "../../layout";
 import { DisciplineGridSelector } from "../disciplines/DisciplineGridSelector";
 
-import { addTeacher, getTeacher, saveTeacher } from "../../services/apiTeacherService";
+import {
+  addTeacher,
+  getTeacher,
+  saveTeacher,
+} from "../../services/apiTeacherService";
 
 import { ru } from "date-fns/locale";
 import DatePicker from "react-datepicker";
@@ -84,32 +88,32 @@ class TeacherForm extends React.Component {
   };
 
   formatPhoneNumber = (phoneDigits) => {
-    if (!phoneDigits) return '';
-    
+    if (!phoneDigits) return "";
+
     // Remove all non-digits and ensure it starts with 7
-    let value = phoneDigits.replace(/\D/g, '');
-    if (value.length > 0 && !value.startsWith('7')) {
-      value = '7' + value;
+    let value = phoneDigits.replace(/\D/g, "");
+    if (value.length > 0 && !value.startsWith("7")) {
+      value = "7" + value;
     }
-    
+
     // Format the phone number
-    let formattedPhone = '';
+    let formattedPhone = "";
     if (value.length >= 1) {
-      formattedPhone = '+7';
+      formattedPhone = "+7";
       if (value.length > 1) {
-        formattedPhone += ' ' + value.substring(1, 4);
+        formattedPhone += " " + value.substring(1, 4);
       }
       if (value.length > 4) {
-        formattedPhone += ' ' + value.substring(4, 7);
+        formattedPhone += " " + value.substring(4, 7);
       }
       if (value.length > 7) {
-        formattedPhone += ' ' + value.substring(7, 9);
+        formattedPhone += " " + value.substring(7, 9);
       }
       if (value.length > 9) {
-        formattedPhone += ' ' + value.substring(9, 11);
+        formattedPhone += " " + value.substring(9, 11);
       }
     }
-    
+
     return formattedPhone;
   };
 
@@ -128,10 +132,10 @@ class TeacherForm extends React.Component {
   };
 
   handleUpdateBirthDate = (date) => {
-      const teacher = { ...this.state.teacher };
-      teacher.birthDate = date;
-      this.setState({ teacher });
-  }
+    const teacher = { ...this.state.teacher };
+    teacher.birthDate = date;
+    this.setState({ teacher });
+  };
 
   handleSexChange = (isChecked) => {
     const teacher = { ...this.state.teacher };
@@ -191,7 +195,10 @@ class TeacherForm extends React.Component {
       const response = await addTeacher(requestBody);
       teacherId = response.data;
     } else {
-      const response = await saveTeacher(this.state.teacher.teacherId, requestBody);
+      const response = await saveTeacher(
+        this.state.teacher.teacherId,
+        requestBody,
+      );
       teacherId = this.state.teacher.teacherId;
     }
 
@@ -199,18 +206,29 @@ class TeacherForm extends React.Component {
   };
 
   render() {
-    const { email, firstName, lastName, birthDate, phone, sex, ageLimit, allowGroupLessons, allowBands, disciplines, branchId } = this.state.teacher;
+    const {
+      email,
+      firstName,
+      lastName,
+      birthDate,
+      phone,
+      sex,
+      ageLimit,
+      allowGroupLessons,
+      allowBands,
+      disciplines,
+      branchId,
+    } = this.state.teacher;
     const { isNew } = this.state;
-    
+
     return (
       <SectionWrapper>
         <SectionTitle className="text-center">
           {isNew ? "Новый преподаватель" : "Редактировать преподавателя"}
         </SectionTitle>
-        
+
         <FormWrapper>
           <form onSubmit={this.handleSave} className="flex flex-col gap-8">
-
             <div className="grid gap-5 sm:grid-cols-2">
               <label className="flex flex-col gap-3">
                 <FormLabel>Имя</FormLabel>
@@ -250,7 +268,11 @@ class TeacherForm extends React.Component {
                   onChangeRaw={(e) => {
                     const rawValue = e.target.value;
                     try {
-                      const parsedDate = parse(rawValue, "dd.MM.yyyy", new Date());
+                      const parsedDate = parse(
+                        rawValue,
+                        "dd.MM.yyyy",
+                        new Date(),
+                      );
                       if (!isNaN(parsedDate)) {
                         this.handleUpdateBirthDate(parsedDate);
                       }
@@ -267,7 +289,10 @@ class TeacherForm extends React.Component {
                 />
               </label>
 
-              <SexControl value={sex} onChange={this.handleSexChange}></SexControl>
+              <SexControl
+                value={sex}
+                onChange={this.handleSexChange}
+              ></SexControl>
             </div>
 
             <div className="grid gap-5 sm:grid-cols-2">
@@ -297,7 +322,7 @@ class TeacherForm extends React.Component {
 
             <div className="h-px bg-white/10" />
 
-            <DisciplineGridSelector 
+            <DisciplineGridSelector
               multiSelect={true}
               selectedDisciplineIds={disciplines}
               onMultiDisciplineChange={this.handleDisciplineSelect}

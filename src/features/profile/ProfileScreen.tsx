@@ -34,8 +34,8 @@ export const ProfileScreen = () => {
                   <TeacherIcon className="text-text-main" />
                 </div>
                 <button
-                  className="px-4 py-2 rounded-[10px] text-[13px] border-none cursor-pointer transition-colors duration-200 bg-accent/20 
-                text-text-muted group-hover:bg-accent group-hover:text-text-main 
+                  className="px-4 py-2 rounded-[10px] text-[13px] border-none cursor-pointer transition-colors duration-200 bg-accent/40 
+                text-text-muted group-hover:bg-accent/70 group-hover:text-text-main 
                 font-medium"
                 >
                   + Добавить фото
@@ -80,7 +80,7 @@ export const ProfileScreen = () => {
             </span>
             <div className="p-8 rounded-[24px] flex items-center gap-6 bg-inner-bg">
               <Link to="/change-password">
-                <button className="flex items-center gap-3 px-6 py-3.5 rounded-[14px] text-[16px] font-medium border-none transition-all duration-200 cursor-pointer bg-accent/20 text-text-muted hover:bg-accent hover:text-text-main">
+                <button className="flex items-center gap-3 px-6 py-3.5 rounded-[14px] text-[16px] font-medium border-none transition-all duration-200 cursor-pointer bg-accent/40 text-text-muted hover:bg-accent/70 hover:text-text-main">
                   <Lock size={18} />
                   <span className="font-medium">Изменить пароль</span>
                 </button>

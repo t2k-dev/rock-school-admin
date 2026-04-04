@@ -308,8 +308,8 @@ class HomeScreen extends React.Component {
             }}
           />
 
-          <div className="d-flex mt-2">
-            <div className="flex-grow-1"></div>
+          <div className="flex justify-between mt-4">
+            <ColorLegend />
             <Form.Check
               type="switch"
               id="custom-switch"
@@ -330,8 +330,7 @@ class HomeScreen extends React.Component {
             }}
           />
         </Row>
-        <div className="w-full flex justify-between">
-          <ColorLegend />
+        <div className="w-full flex justify-end">
           <div>
             <Button
               as={Link}

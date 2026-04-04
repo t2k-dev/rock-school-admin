@@ -33,11 +33,11 @@ export class BandStudents extends React.Component {
   handleRoleSelect = (disciplineId) => {
     const { selectedStudentIndex } = this.state;
     const { onRoleChange } = this.props;
-    
+
     if (onRoleChange && selectedStudentIndex !== null) {
       onRoleChange(selectedStudentIndex, disciplineId);
     }
-    
+
     this.handleCloseRoleModal();
   };
 
@@ -49,11 +49,11 @@ export class BandStudents extends React.Component {
     const age = calculateAge(bandMember.birthDate);
     const { onDeleteStudent } = this.props;
     const roleId = this.getRoleId(bandMember);
-    
+
     return (
       <div
         key={index}
-        className="grid grid-cols-[48px_minmax(0,1fr)_auto] items-center gap-4 rounded-[20px] border border-white/10 bg-inner-bg px-4 py-3"
+        className="grid grid-cols-[48px_minmax(0,1fr)_auto] items-center gap-4 rounded-[20px] border border-white/10 bg-inner-bg px-4 py-3 "
       >
         <div className="flex justify-center">
           <Avatar style={{ width: "36px", height: "36px" }} />
@@ -101,18 +101,19 @@ export class BandStudents extends React.Component {
   render() {
     const { bandMembers, onAddStudent, showLabel = false } = this.props;
     const { showRoleModal, selectedStudentIndex } = this.state;
-    const selectedBandMember = selectedStudentIndex !== null ? bandMembers[selectedStudentIndex] : null;
+    const selectedBandMember =
+      selectedStudentIndex !== null ? bandMembers[selectedStudentIndex] : null;
 
     return (
       <>
         <div className="flex flex-col gap-4">
-          {showLabel && (
-            <FormLabel as="div">Участники</FormLabel>
-          )}
+          {showLabel && <FormLabel as="div">Участники</FormLabel>}
 
           {bandMembers.length > 0 ? (
             <div className="flex flex-col gap-3">
-              {bandMembers.map((bandMember, index) => this.renderStudent(bandMember, index))}
+              {bandMembers.map((bandMember, index) =>
+                this.renderStudent(bandMember, index),
+              )}
             </div>
           ) : (
             <div className="rounded-[20px] border border-white/10 bg-inner-bg px-4 py-6 text-center text-[14px] text-text-muted">
@@ -132,10 +133,13 @@ export class BandStudents extends React.Component {
             <div className="w-full max-w-4xl rounded-[28px] border border-white/10 bg-card-bg p-6 shadow-2xl sm:p-8">
               <div className="mb-6 flex items-start justify-between gap-4">
                 <div>
-                  <div className="text-[24px] font-semibold text-text-main">Выберите роль ученика</div>
+                  <div className="text-[24px] font-semibold text-text-main">
+                    Выберите роль ученика
+                  </div>
                   {selectedBandMember ? (
                     <div className="mt-2 text-[14px] text-text-muted">
-                      {selectedBandMember.firstName} {selectedBandMember.lastName}
+                      {selectedBandMember.firstName}{" "}
+                      {selectedBandMember.lastName}
                     </div>
                   ) : null}
                 </div>
@@ -150,7 +154,9 @@ export class BandStudents extends React.Component {
               </div>
 
               <DisciplineGridSelector
-                selectedDisciplineId={selectedBandMember ? this.getRoleId(selectedBandMember) : null}
+                selectedDisciplineId={
+                  selectedBandMember ? this.getRoleId(selectedBandMember) : null
+                }
                 onDisciplineChange={this.handleRoleSelect}
                 multiSelect={false}
               />

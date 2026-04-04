@@ -4,66 +4,72 @@ import "react-datepicker/dist/react-datepicker.css";
 import { getStudents } from "../../services/apiStudentService";
 import { StudentCardMin } from "./StudentCardMin";
 
-export class StudentsSearch extends React.Component{
-    constructor(props) {
-        super(props);
-        this.state = {
+export class StudentsSearch extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
       searchText: "",
       students: [],
     };
 
-        this.handleSearchChange = this.handleSearchChange.bind(this);
-        this.handleStudentClick = this.handleStudentClick.bind(this);
-    }
+    this.handleSearchChange = this.handleSearchChange.bind(this);
+    this.handleStudentClick = this.handleStudentClick.bind(this);
+  }
 
-      componentDidMount() {
-        this.onFormLoad();
-      }
-    
-      async onFormLoad() {
-        const returnedStudents = await getStudents();
-        this.setState({ students: returnedStudents });
-      }
+  componentDidMount() {
+    this.onFormLoad();
+  }
 
-    handleSearchChange(e) {
-        this.setState({ searchText: e.target.value });
-    }
+  async onFormLoad() {
+    const returnedStudents = await getStudents();
+    this.setState({ students: returnedStudents });
+  }
 
-    handleStudentClick(item) {
-        if (this.props.handleOnSelect) {
-            this.props.handleOnSelect(item);
-        }
+  handleSearchChange(e) {
+    this.setState({ searchText: e.target.value });
+  }
+
+  handleStudentClick(item) {
+    if (this.props.handleOnSelect) {
+      this.props.handleOnSelect(item);
     }
+  }
 
   render() {
-        const { searchText, students } = this.state;
+    const { searchText, students } = this.state;
 
     let studentsList;
     if (students) {
-      const filteredStudents = students.filter((s) => 
-        s.firstName.toLowerCase().includes(searchText.toLowerCase()) || 
-        s.lastName.toLowerCase().includes(searchText.toLowerCase())
+      const filteredStudents = students.filter(
+        (s) =>
+          s.firstName.toLowerCase().includes(searchText.toLowerCase()) ||
+          s.lastName.toLowerCase().includes(searchText.toLowerCase()),
       );
-      studentsList = filteredStudents.map((item, index) => 
-      <StudentCardMin 
-        key={index} 
-        item={item} 
-        handleClick={() => this.handleStudentClick(item)}
-      />
-    
-    );
+      studentsList = filteredStudents.map((item, index) => (
+        <StudentCardMin
+          key={index}
+          item={item}
+          handleClick={() => this.handleStudentClick(item)}
+        />
+      ));
     } else {
       studentsList = <Col>Нет записей</Col>;
     }
 
     return (
-    
-    <Form>
+      <Form>
         <div>
-            <Form.Control className="mb-4" placeholder="Поиск..." value={searchText} onChange={(e) => this.handleSearchChange(e)} autoComplete="off"></Form.Control>
+          <Form.Control
+            className="mb-4"
+            placeholder="Поиск..."
+            value={searchText}
+            onChange={(e) => this.handleSearchChange(e)}
+            autoComplete="off"
+            style={{ background: "none" }}
+          ></Form.Control>
         </div>
         <div>{studentsList}</div>
-    </Form>
+      </Form>
     );
-    }
+  }
 }

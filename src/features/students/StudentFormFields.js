@@ -22,7 +22,7 @@ export const StudentFormFields = ({
   handleSave,
 }) => {
   return (
-    <Form>
+    <Form style={{ background: "none" }}>
       <Form.Group className="mb-3" controlId="firstName">
         <Form.Label>Имя</Form.Label>
         <Form.Control
@@ -61,7 +61,9 @@ export const StudentFormFields = ({
                 try {
                   const parsedDate = parse(rawValue, "dd.MM.yyyy", new Date());
                   if (!isNaN(parsedDate)) {
-                    handleChange({ target: { id: "birthDate", value: parsedDate } });
+                    handleChange({
+                      target: { id: "birthDate", value: parsedDate },
+                    });
                   }
                 } catch (error) {
                   console.error("Invalid date format");
@@ -116,7 +118,9 @@ export const StudentFormFields = ({
         <Form.Select
           name="level"
           value={level}
-          onChange={(e) => handleChange({ target: { id: "level", value: e.target.value } })}
+          onChange={(e) =>
+            handleChange({ target: { id: "level", value: e.target.value } })
+          }
         >
           <option>выберите...</option>
           <option value="0">0 - Начинающий</option>
