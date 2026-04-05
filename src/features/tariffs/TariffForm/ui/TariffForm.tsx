@@ -5,10 +5,10 @@ import {
   attendanceCounts,
   Instruments,
 } from "../model/constants";
-import { TariffSelect } from "./TariffSelect";
-import { TariffInput } from "./TarifInput";
+import { TariffSelect } from "../../../../components/ui/TariffSelect";
+import { TariffInput } from "../../../../components/ui/TarifInput";
 import { TariffDates } from "./TariffDates";
-import { TariffInstrumentSelect } from "./TariffInstrumentSelect";
+import { TariffInstrumentSelect } from "../../../../components/ui/TariffInstrumentSelect";
 import { useTariffForm } from "../model/useTariffFrom";
 
 const TariffForm = ({ history, type = "New" }) => {

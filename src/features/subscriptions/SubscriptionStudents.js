@@ -1,18 +1,18 @@
-import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
-import { Avatar } from '../../components/Avatar';
-import { Button, FormLabel } from '../../components/ui';
-import { calculateAge } from '../../utils/dateTime';
+import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
+import { Avatar } from "../../components/Avatar";
+import { Button, FormLabel } from "../../components/ui";
+import { calculateAge } from "../../utils/dateTime";
 
-export const SubscriptionStudents = ({ 
-  students = [], 
+export const SubscriptionStudents = ({
+  students = [],
   showLabel = true,
   allowAdd = true,
   allowRemove = true,
-  variant = 'striped',
-  className = '',
+  variant = "striped",
+  className = "",
   onRemoveStudent,
-  onAddStudent
+  onAddStudent,
 }) => {
   const renderEmptyState = () => (
     <div className="rounded-[20px] border border-white/10 bg-inner-bg px-4 py-6 text-center text-[14px] text-text-muted">
@@ -22,14 +22,14 @@ export const SubscriptionStudents = ({
 
   const renderStudentCard = (student, index) => {
     const age = student.birthDate ? calculateAge(student.birthDate) : null;
-    
+
     return (
       <div
         key={student.studentId || index}
         className="flex items-center justify-between gap-4 rounded-[20px] border border-white/10 bg-inner-bg px-4 py-3"
       >
         <div className="flex min-w-0 items-center gap-3">
-          <Avatar style={{ width: '32px', height: '32px' }} />
+          <Avatar style={{ width: "32px", height: "32px" }} />
           <div className="min-w-0">
             <Link
               to={`/student/${student.studentId}`}
@@ -38,9 +38,7 @@ export const SubscriptionStudents = ({
               {student.firstName} {student.lastName}
             </Link>
             {age > 0 && (
-              <div className="text-[13px] text-text-muted">
-                {age} лет
-              </div>
+              <div className="text-[13px] text-text-muted">{age} лет</div>
             )}
           </div>
         </div>
@@ -61,24 +59,26 @@ export const SubscriptionStudents = ({
 
   const getLabel = () => {
     if (!showLabel) return null;
-    
-    return (
-      <FormLabel>{students.length > 1 ? 'Ученики' : 'Ученик'}</FormLabel>
-    );
+
+    return <FormLabel>{students.length > 1 ? "Ученики" : "Ученик"}</FormLabel>;
   };
 
   return (
     <div className={`flex flex-col gap-4 ${className}`.trim()}>
       {getLabel()}
       <div className="flex flex-col gap-3">
-        {students.length > 0 
+        {students.length > 0
           ? students.map(renderStudentCard)
-          : renderEmptyState()
-        }
+          : renderEmptyState()}
       </div>
       {allowAdd && (
         <div className="text-center">
-          <Button size="sm" variant="outlineSuccess" type="button" onClick={onAddStudent}>
+          <Button
+            size="sm"
+            variant="outlineSuccess"
+            type="button"
+            onClick={onAddStudent}
+          >
             + Добавить
           </Button>
         </div>
@@ -90,15 +90,19 @@ export const SubscriptionStudents = ({
 SubscriptionStudents.propTypes = {
   students: PropTypes.arrayOf(
     PropTypes.shape({
-      studentId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+      studentId: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+        .isRequired,
       firstName: PropTypes.string.isRequired,
       lastName: PropTypes.string.isRequired,
-      birthDate: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)]),
+      birthDate: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.instanceOf(Date),
+      ]),
       email: PropTypes.string,
-    })
+    }),
   ),
   showLabel: PropTypes.bool,
-  variant: PropTypes.oneOf(['striped', 'hover', 'bordered', 'none']),
+  variant: PropTypes.oneOf(["striped", "hover", "bordered", "none"]),
   onStudentClick: PropTypes.func,
   onRemoveStudent: PropTypes.func,
   className: PropTypes.string,

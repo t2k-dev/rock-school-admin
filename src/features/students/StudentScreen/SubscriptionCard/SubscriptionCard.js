@@ -1,18 +1,25 @@
 import { format } from "date-fns";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
-
-
-import { CalendarIcon, CoinsIcon, NextIcon } from "../../../../components/icons";
+import {
+  CalendarIcon,
+  CoinsIcon,
+  NextIcon,
+} from "../../../../components/icons";
 import { HoverCard, ToneBadge } from "../../../../components/ui";
 import { Colors } from "../../../../constants/Colors";
 import { getDisciplineName } from "../../../../constants/disciplines";
 import MyDateFormat from "../../../../constants/formats";
-import SubscriptionStatus, { getSubscriptionStatusColor, getSubscriptionStatusName } from "../../../../constants/SubscriptionStatus";
+import SubscriptionStatus, {
+  getSubscriptionStatusColor,
+  getSubscriptionStatusName,
+} from "../../../../constants/SubscriptionStatus";
 import SubscriptionType from "../../../../constants/SubscriptionType";
-import TrialDecision, { getTrialDecisionColor, getTrialDecisionName } from "../../../../constants/TrialDecision";
+import TrialDecision, {
+  getTrialDecisionColor,
+  getTrialDecisionName,
+} from "../../../../constants/TrialDecision";
 import { DisciplineIcon } from "../../../disciplines/DisciplineIcon";
-
 
 export const SubscriptionCard = ({
   subscription,
@@ -20,13 +27,9 @@ export const SubscriptionCard = ({
   onPayClick,
   onResubscribeClick,
 }) => {
-
   const renderMeta = (label, value, className = "") => (
     <div className={className}>
-      <div
-        className="mb-1 text-sm"
-        style={{ color: Colors.textMuted }}
-      >
+      <div className="mb-1 text-sm" style={{ color: Colors.textMuted }}>
         {label}
       </div>
       <div className="font-semibold leading-5">{value}</div>
@@ -54,28 +57,28 @@ export const SubscriptionCard = ({
   );
 
   const renderDisciplineColumn = () => (
-      <div className="flex items-center gap-3 md:col-span-3">
-        <DisciplineIcon disciplineId={subscription.disciplineId} />
-        <span className="font-semibold leading-5">
-          {getDisciplineName(subscription.disciplineId)}
-        </span>
-      </div>
+    <div className="flex items-center gap-3 md:col-span-3">
+      <DisciplineIcon disciplineId={subscription.disciplineId} />
+      <span className="font-semibold leading-5">
+        {getDisciplineName(subscription.disciplineId)}
+      </span>
+    </div>
   );
 
   const renderColumns = () => {
-    const { subscriptionType, teacherFullName } = subscription;
+    const { subscriptionType, teacherFullName, status, trialStatus } =
+      subscription;
 
     if (subscriptionType === SubscriptionType.TRIAL_LESSON) {
       return (
         <>
-
           <div className="md:col-span-2">
             {renderMeta(
               <span className="inline-flex items-center gap-1">
-                <CalendarIcon/>
+                <CalendarIcon />
                 Дата
               </span>,
-              format(subscription.startDate, MyDateFormat)
+              format(new Date(subscription.startDate), MyDateFormat),
             )}
           </div>
           {renderDisciplineColumn()}
@@ -88,7 +91,7 @@ export const SubscriptionCard = ({
               <ToneBadge
                 label={getTrialDecisionName(subscription.trialDecision)}
                 tone={getTrialDecisionColor(subscription.trialDecision)}
-              />
+              />,
             )}
           </div>
           <div className="md:col-span-1">
@@ -96,168 +99,102 @@ export const SubscriptionCard = ({
           </div>
           <div className="md:col-span-1">
             <ToneBadge
-              label={getSubscriptionStatusName(subscription.status)}
-              tone={getSubscriptionStatusColor(subscription.status)}
+              label={getSubscriptionStatusName(status)}
+              tone={getSubscriptionStatusColor(status)}
             />
           </div>
           <div className="md:col-span-1">
             {renderActions(
               <>
-                {subscription.trialStatus === TrialDecision.POSITIVE && (
+                {trialStatus === TrialDecision.POSITIVE && (
                   <NextIcon
                     size="20px"
                     title="Продлить"
-                    onIconClick={() => onResubscribeClick(subscription)}
+                    onClick={() => onResubscribeClick(subscription)}
                   />
                 )}
-                {subscription.status === SubscriptionStatus.DRAFT && (
+                {status === SubscriptionStatus.DRAFT && (
                   <CoinsIcon
                     size="20px"
                     title="Оплатить"
-                    onIconClick={() => onPayClick(subscription)}
+                    onClick={() => onPayClick(subscription)}
                   />
                 )}
-              </>
-            )}
-          </div>
-        </>
-      );
-    } else if (subscriptionType === SubscriptionType.RENT) {
-      return (
-        <>
-
-          <div className="md:col-span-2">
-            {renderMeta(
-              <span className="inline-flex items-center gap-1">
-                <CalendarIcon color={Colors.textMuted} />
-                Начало
-              </span>,
-              format(subscription.startDate, MyDateFormat)
-            )}
-          </div>
-          <div className="md:col-span-6">
-            <div className="flex items-center gap-3 text-sm font-semibold leading-5">
-              <span>Аренда комнаты</span>
-            </div>
-          </div>
-          <div className="md:col-span-2">
-            {renderMeta(
-              "Осталось уроков",
-              `${subscription.attendancesLeft} из ${subscription.attendanceCount}`
-            )}
-          </div>
-          <div className="md:col-span-1">
-            <ToneBadge
-              label={getSubscriptionStatusName(subscription.status)}
-              tone={getSubscriptionStatusColor(subscription.status)}
-            />
-          </div>
-          <div className="md:col-span-1">
-            {renderActions(
-              <>
-                {subscription.status === SubscriptionStatus.DRAFT && (
-                  <CoinsIcon
-                    size="20px"
-                    title="Оплатить"
-                    onIconClick={() => onPayClick(subscription)}
-                  />
-                )}
-                <NextIcon
-                  size="20px"
-                  title="Продлить"
-                  onIconClick={() => onResubscribeClick(subscription)}
-                />
-
-              </>
-            )}
-          </div>
-        </>
-      );
-    } else {
-      return (
-        <>
-
-          <div className="md:col-span-2">
-            {renderMeta(
-              <span className="inline-flex items-center gap-1">
-                <CalendarIcon color={Colors.textMuted} />
-                Начало
-              </span>,
-              format(subscription.startDate, MyDateFormat)
-            )}
-          </div>
-          {renderDisciplineColumn()}
-          <div className="md:col-span-3">
-            {renderMeta("Преподаватель", renderTeacherLink(subscription.teacherFullName))}
-          </div>
-          <div className="md:col-span-2">
-            {renderMeta(
-              "Осталось уроков",
-              `${subscription.attendancesLeft} из ${subscription.attendanceCount}`
-            )}
-          </div>
-          <div className="md:col-span-1">
-            <ToneBadge
-              label={getSubscriptionStatusName(subscription.status)}
-              tone={getSubscriptionStatusColor(subscription.status)}
-            />
-          </div>
-          <div className="md:col-span-1">
-            {renderActions(
-              <>
-                {subscription.status === SubscriptionStatus.DRAFT && (
-                  <CoinsIcon
-                    size="20px"
-                    title="Оплатить"
-                    onIconClick={() => onPayClick(subscription)}
-                  />
-                )}
-                {(subscription.status === SubscriptionStatus.COMPLETED ||
-                  subscription.status === SubscriptionStatus.ACTIVE) && (
-                  <NextIcon
-                    size="20px"
-                    title="Продлить"
-                    onIconClick={() => onResubscribeClick(subscription)}
-                  />
-                )}
-              </>
+              </>,
             )}
           </div>
         </>
       );
     }
+
+    // Рендер для обычных абонементов и аренды
+    const isRent = subscriptionType === SubscriptionType.RENT;
+
+    return (
+      <>
+        <div className="md:col-span-2">
+          {renderMeta(
+            <span className="inline-flex items-center gap-1">
+              <CalendarIcon color={Colors.textMuted} />
+              Начало
+            </span>,
+            format(new Date(subscription.startDate), MyDateFormat),
+          )}
+        </div>
+        {isRent ? (
+          <div className="md:col-span-6 font-semibold">Аренда комнаты</div>
+        ) : (
+          <>
+            {renderDisciplineColumn()}
+            <div className="md:col-span-3">
+              {renderMeta("Преподаватель", renderTeacherLink(teacherFullName))}
+            </div>
+          </>
+        )}
+        <div className="md:col-span-2">
+          {renderMeta(
+            "Осталось уроков",
+            `${subscription.attendancesLeft} из ${subscription.attendanceCount}`,
+          )}
+        </div>
+        <div className="md:col-span-1">
+          <ToneBadge
+            label={getSubscriptionStatusName(status)}
+            tone={getSubscriptionStatusColor(status)}
+          />
+        </div>
+        <div className="md:col-span-1">
+          {renderActions(
+            <>
+              {status === SubscriptionStatus.DRAFT && (
+                <CoinsIcon
+                  size="20px"
+                  title="Оплатить"
+                  onIconClick={() => onPayClick(subscription)}
+                  isClickable={true}
+                />
+              )}
+              {(status === SubscriptionStatus.COMPLETED ||
+                status === SubscriptionStatus.ACTIVE ||
+                isRent) && (
+                <NextIcon
+                  size="20px"
+                  title="Продлить"
+                  onClick={() => onResubscribeClick(subscription)}
+                />
+              )}
+            </>,
+          )}
+        </div>
+      </>
+    );
   };
 
   return (
-
-    <HoverCard 
-      className="mb-3"
-      onClick={() => onClick(subscription)}
-    >
+    <HoverCard className="mb-3" onClick={() => onClick(subscription)}>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-12 md:items-center">
         {renderColumns()}
       </div>
     </HoverCard>
   );
-};
-
-SubscriptionCard.propTypes = {
-  subscription: PropTypes.shape({
-    subscriptionId: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
-      .isRequired,
-    subscriptionType: PropTypes.number.isRequired,
-    startDate: PropTypes.string.isRequired,
-    disciplineId: PropTypes.number,
-    attendancesLeft: PropTypes.number,
-    attendanceCount: PropTypes.number,
-    status: PropTypes.number,
-    trialStatus: PropTypes.string,
-  }).isRequired,
-  onClick: PropTypes.func.isRequired,
-  onPayClick: PropTypes.func,
-  onResubscribeClick: PropTypes.func.isRequired,
-};
-
-SubscriptionCard.defaultProps = {
-  onPayClick: () => {},
 };

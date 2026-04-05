@@ -2,11 +2,11 @@ import PropTypes from "prop-types";
 import { NoRecords } from "../../../components/NoRecords";
 import { SubscriptionCard } from "./SubscriptionCard/SubscriptionCard";
 
-export const SubscriptionList = ({ 
-  subscriptions, 
-  onSubscriptionClick, 
-  onPayClick, 
-  onResubscribeClick 
+export const SubscriptionList = ({
+  subscriptions,
+  onSubscriptionClick,
+  onPayClick,
+  onResubscribeClick,
 }) => {
   if (!subscriptions || subscriptions.length === 0) {
     return <NoRecords />;
