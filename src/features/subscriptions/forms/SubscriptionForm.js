@@ -22,7 +22,6 @@ import { AvailableTeachersModal } from "../../attendances/AvailableTeachersModal
 import { DisciplinePlate } from "../../disciplines/DisciplinePlate";
 import { DisciplineSelectionModal } from "../../disciplines/DisciplineSelectionModal";
 import { AddStudentModal } from "../../students/AddStudentModal";
-import TariffCard from "../../tariffs/TariffCard";
 import { SubscriptionStudents } from "../SubscriptionStudents";
 
 export class SubscriptionForm extends React.Component {
@@ -485,17 +484,6 @@ export class SubscriptionForm extends React.Component {
                   </select>
                 </label>
               </div>
-
-              <TariffCard
-                title="Тариф"
-                description={
-                  selectedTariff
-                    ? `${selectedTariff.attendanceCount} уроков, ${getAttendanceLengthName(selectedTariff.attendanceLength)}`
-                    : "Урок"
-                }
-                amount={selectedTariff ? selectedTariff.amount : 0}
-                showIcon={false}
-              />
             </div>
 
             <div className="h-px bg-white/10" />
@@ -520,7 +508,6 @@ export class SubscriptionForm extends React.Component {
               </label>
 
               <Button
-                variant="ghost"
                 type="button"
                 onClick={this.showAvailableTeachersModal}
                 disabled={!disciplineId}

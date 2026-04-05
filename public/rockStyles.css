@@ -15,8 +15,6 @@ h5 {
 .avatar {
   width: 120px;
   height: 120px;
-  border: 1px solid black;
-  border-radius: 50%;
   object-fit: cover;
 }
 
@@ -83,7 +81,7 @@ h5 {
 }
 
 .rbc-allday-cell {
-  height: 5px !important;
+  /*height: 5px !important;*/
 }
 
 .rbc-btn-group {
@@ -117,6 +115,7 @@ h5 {
   align-items: center;
 }
 
+/*Other*/
 .nav-link {
   color: #8c8c8c !important;
 }
@@ -143,4 +142,9 @@ h5 {
   background-color: #22272e;
   font-family: inherit;
   border: none;
+}
+
+.mpdal-content {
+  background-color: #22272e;
+  color: #e1e6f5;
 }

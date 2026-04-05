@@ -1,6 +1,5 @@
 import { format } from "date-fns";
 import React from "react";
-import { Button, Col, Container, Form, Row } from "react-bootstrap";
 
 import { Loading } from "../../../components/Loading";
 import { ScheduleEditorWithDelete } from "../../../components/schedule/ScheduleEditorWithDelete";
@@ -12,7 +11,6 @@ import { getTariffsByType } from "../../../services/apiTariffService";
 import { toMoneyString } from "../../../utils/moneyUtils";
 import { convertSlotsToSchedules } from "../../../utils/scheduleUtils";
 import { AvailableSlotsModal } from "../../attendances/AvailableSlotsModal";
-import TariffCard from "../../tariffs/TariffCard";
 import { SubscriptionStudents } from "../SubscriptionStudents";
 
 export class RentalSubscriptionForm extends React.Component {
@@ -303,21 +301,6 @@ export class RentalSubscriptionForm extends React.Component {
                   </button>
                 </div>
               </form>
-            </div>
-
-            <div className="w-full md:w-1/4" style={{ border: "none" }}>
-              <div className="md:mt-[60px]" style={{ border: "none" }}>
-                <TariffCard
-                  title="Тариф"
-                  description="Аренда комнаты"
-                  amount={
-                    selectedTariff
-                      ? toMoneyString(selectedTariff.amount)
-                      : toMoneyString(0)
-                  }
-                  showIcon={false}
-                />
-              </div>
             </div>
           </div>
 
