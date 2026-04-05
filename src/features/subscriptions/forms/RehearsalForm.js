@@ -1,8 +1,9 @@
 import React from "react";
-import { Button, Col, Container, Form, InputGroup, Row } from "react-bootstrap";
 
 import { Loading } from "../../../components/Loading";
+import { FormLabel } from "../../../components/ui";
 import SubscriptionType from "../../../constants/SubscriptionType";
+import { SectionTitle, SectionWrapper } from "../../../layout";
 import { getActiveBands } from "../../../services/apiBranchService";
 import { getStudent } from "../../../services/apiStudentService";
 import { addRehearsalSubscription } from "../../../services/apiSubscriptionService";
@@ -139,15 +140,16 @@ export class RehearsalForm extends React.Component {
     }
 
     return (
-      <div className="min-h-screen bg-main-bg py-10 font-['Geologica'] antialiased text-text-main">
+            <SectionWrapper>
+              <SectionTitle className="text-center">
+                Репетиции
+              </SectionTitle>
+      
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="flex flex-col md:flex-row gap-8 justify-center items-start">
             <div className="hidden md:block md:w-1/4"></div>
 
             <div className="w-full md:w-1/2 bg-card-bg p-6 rounded-2xl shadow-xl border border-secondary/20">
-              <h2 className="text-center text-2xl font-bold mb-6 text-text-main">
-                Репетиции
-              </h2>
 
               <form onSubmit={(e) => e.preventDefault()}>
                 {error && (
@@ -156,7 +158,7 @@ export class RehearsalForm extends React.Component {
                   </div>
                 )}
 
-                <div className="mb-6 bg-inner-bg p-4 rounded-xl border border-secondary/10">
+                <div className="mb-6">
                   <SubscriptionStudents
                     students={students}
                     allowRemove={false}
@@ -165,12 +167,12 @@ export class RehearsalForm extends React.Component {
                 </div>
 
                 <div className="mb-6">
-                  <label
+                  <FormLabel
+                    as ="div"
                     htmlFor="BandSelect"
-                    className="block mb-2 text-sm font-medium text-text-muted"
                   >
                     <strong>Группа</strong>
-                  </label>
+                  </FormLabel>
                   <div className="relative">
                     <select
                       id="selectedBandId"
@@ -220,10 +222,10 @@ export class RehearsalForm extends React.Component {
 
             <div className="w-full md:w-1/4">
               {tariff && (
-                <div className="mt-12">
+                <div className="">
                   <TariffCard
                     title="Тариф"
-                    description="Участие в репетициях"
+                    description="4 Репетиции"
                     amount={rehearsalTariffAmount}
                     style={{ marginTop: "0px" }}
                     showIcon={false}
@@ -233,7 +235,7 @@ export class RehearsalForm extends React.Component {
             </div>
           </div>
         </div>
-      </div>
+      </SectionWrapper>
     );
   }
 }

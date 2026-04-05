@@ -6,7 +6,6 @@ import {
   Form,
   Row,
   Tab,
-  Table,
   Tabs,
 } from "react-bootstrap";
 import { Link } from "react-router-dom";
@@ -180,105 +179,95 @@ class HomeScreen extends React.Component {
     const activeNotes = sortedNotes?.filter((n) => n.status === 1);
     const completedNotes = sortedNotes?.filter((n) => n.status === 2);
 
-    let activeNotesTable;
-    if (activeNotes && activeNotes?.length > 0) {
-      activeNotesTable = (
-        <Table striped bordered hover>
-          <tbody>
-            {activeNotes.map((item, index) => (
-              <tr key={index}>
-                <td style={{ width: "100px" }}>
-                  {format(item.completeDate, "HH:mm")}
-                </td>
-                <td>
-                  <Container className="d-flex p-0">
-                    <div className="flex-grow-1">
-                      <Link
-                        to={{
-                          pathname: `/notes/${item.noteId}/edit`,
-                          state: { note: item },
-                        }}
-                      >
-                        {item.description}
-                      </Link>
-                    </div>
-                    <div className="flex-shrink-1">
-                      <Button
-                        variant="outline-primary"
-                        size="sm"
-                        onClick={(e) =>
-                          this.handleChangeNoteStatus(item.noteId, 2)
-                        }
-                        style={{ marginLeft: "10px" }}
-                      >
-                        Выполнено
-                      </Button>
-                      <Button
-                        variant="outline-danger"
-                        size="sm"
-                        onClick={(e) =>
-                          this.handleChangeNoteStatus(item.noteId, 3)
-                        }
-                        style={{ marginLeft: "10px", marginRight: "10px" }}
-                      >
-                        Отменено
-                      </Button>
-                    </div>
-                  </Container>
-                </td>
+    const renderNotesTable = (items, { completed = false } = {}) => {
+      if (!items || items.length === 0) {
+        return <NoRecords />;
+      }
+
+      return (
+        <div className="overflow-x-auto rounded-[10px] border border-white/10 bg-[var(--notes-table-bg)]"
+          style={{ "--notes-table-bg": Colors.cardBg }}
+        >
+          <table className="min-w-full border-collapse text-sm">
+            <thead
+              className="text-left text-[11px] uppercase tracking-[0.08em] text-[var(--notes-table-header)]"
+              style={{ "--notes-table-header": Colors.textMuted }}
+            >
+              <tr>
+                <th className="whitespace-nowrap px-4 py-3">Время</th>
+                <th className="px-4 py-3">Активность</th>
+                <th className="whitespace-nowrap px-4 py-3 text-right">Действия</th>
               </tr>
-            ))}
-          </tbody>
-        </Table>
+            </thead>
+            <tbody>
+              {items.map((item) => (
+                <tr
+                  key={item.noteId}
+                  className="border-t border-slate-700/60 transition-colors hover:bg-slate-800/30"
+                >
+                  <td className="whitespace-nowrap px-4 py-3 align-top font-medium text-slate-200">
+                    {format(item.completeDate, "HH:mm")}
+                  </td>
+                  <td className="px-4 py-3 align-top">
+                    <Link
+                      to={{
+                        pathname: `/notes/${item.noteId}/edit`,
+                        state: { note: item },
+                      }}
+                      className={`no-underline transition ${
+                        completed
+                          ? "text-slate-400 line-through hover:text-slate-300"
+                          : "text-slate-100 hover:text-blue-300"
+                      }`}
+                    >
+                      {item.description}
+                    </Link>
+                  </td>
+                  <td className="px-4 py-3 align-top">
+                    <div className="flex flex-wrap justify-end gap-2">
+                      {completed ? (
+                        <button
+                          type="button"
+                          onClick={() => this.handleChangeNoteStatus(item.noteId, 1)}
+                          className="rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-medium text-slate-200 transition hover:border-white/25 hover:bg-white/10"
+                        >
+                          Не выполнено
+                        </button>
+                      ) : (
+                        <>
+                          <button
+                            type="button"
+                            onClick={() => this.handleChangeNoteStatus(item.noteId, 2)}
+                            className="rounded-full border border-emerald-400/30 bg-emerald-500/10 px-3 py-1.5 text-xs font-medium text-emerald-200 transition hover:border-emerald-300/40 hover:bg-emerald-500/20"
+                          >
+                            Выполнено
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => this.handleChangeNoteStatus(item.noteId, 3)}
+                            className="rounded-full border border-rose-400/30 bg-rose-500/10 px-3 py-1.5 text-xs font-medium text-rose-200 transition hover:border-rose-300/40 hover:bg-rose-500/20"
+                          >
+                            Отменено
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       );
-    } else {
-      activeNotesTable = <NoRecords />;
-    }
+    };
+
+    let activeNotesTable;
+    activeNotesTable = renderNotesTable(activeNotes);
 
     let completedNotesTable;
-    if (completedNotes && completedNotes?.length > 0) {
-      completedNotesTable = (
-        <Table striped bordered hover>
-          <tbody>
-            {completedNotes.map((item, index) => (
-              <tr key={index}>
-                <td style={{ width: "100px" }}>
-                  {format(item.completeDate, "HH:mm")}
-                </td>
-                <td>
-                  <Container className="d-flex p-0">
-                    <div className="flex-grow-1 text-decoration-line-through">
-                      <Link
-                        to={{
-                          pathname: `/notes/${item.noteId}/edit`,
-                          state: { note: item },
-                        }}
-                      >
-                        {item.description}
-                      </Link>
-                    </div>
-                    <div className="flex-shrink-1">
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        onClick={(e) =>
-                          this.handleChangeNoteStatus(item.noteId, 1)
-                        }
-                        style={{ marginRight: "10px" }}
-                      >
-                        Не выполнено
-                      </Button>
-                    </div>
-                  </Container>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
-      );
-    } else {
-      completedNotesTable = <NoRecords />;
-    }
+    completedNotesTable = renderNotesTable(completedNotes, {
+      completed: true,
+    });
 
     return (
       <Container style={{ marginTop: "40px" }}>
@@ -330,7 +319,18 @@ class HomeScreen extends React.Component {
             }}
           />
         </Row>
-        <div className="w-full flex justify-end">
+        
+
+        <div className="h-10" />
+
+        <Row>
+          <div className="d-flex mb-2">
+            <div className="flex-grow-1">
+              <div className="mb-3 font-bold text-xl">
+                Активности
+              </div>
+            </div>
+            <div className="w-full flex justify-end">
           <div>
             <Button
               as={Link}
@@ -342,21 +342,10 @@ class HomeScreen extends React.Component {
             </Button>
           </div>
         </div>
-
-        <div className="h-10" />
-
-        <Row>
-          <div className="d-flex mb-2">
-            <div className="flex-grow-1">
-              <div style={{ fontWeight: "bold", fontSize: "20px" }}>
-                Активности
-              </div>
-            </div>
           </div>
           <Tabs
             defaultActiveKey="active"
             id="uncontrolled-tab-example"
-            className="mb-3"
           >
             <Tab eventKey="active" title="На сегодня">
               {activeNotesTable}

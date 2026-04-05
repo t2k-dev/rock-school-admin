@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 
 
 import { CalendarIcon, CoinsIcon, NextIcon } from "../../../../components/icons";
+import { RentalIcon } from "../../../../components/icons/Disciplines/RentIcon";
 import { HoverCard, ToneBadge } from "../../../../components/ui";
 import { Colors } from "../../../../constants/Colors";
 import { getDisciplineName } from "../../../../constants/disciplines";
@@ -136,7 +137,8 @@ export const SubscriptionCard = ({
             )}
           </div>
           <div className="md:col-span-6">
-            <div className="flex items-center gap-3 text-sm font-semibold leading-5">
+            <div className="flex items-center gap-3 font-semibold leading-5">
+              <RentalIcon />
               <span>Аренда комнаты</span>
             </div>
           </div>

@@ -60,7 +60,7 @@ export const SubscriptionStudents = ({
   };
 
   return (
-    <div className={`flex flex-col gap-4 ${className}`.trim()}>
+    <div className={`flex flex-col ${className}`.trim()}>
       {getLabel()}
       <div className="flex flex-col gap-3">
         {students.length > 0 

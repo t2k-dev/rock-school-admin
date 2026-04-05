@@ -3,7 +3,9 @@ import React from "react";
 
 import { Loading } from "../../../components/Loading";
 import { ScheduleEditorWithDelete } from "../../../components/schedule/ScheduleEditorWithDelete";
+import { Button, FormLabel } from "../../../components/ui";
 import AttendanceType from "../../../constants/AttendanceType";
+import { SectionTitle, SectionWrapper } from "../../../layout";
 import { getBusySlots } from "../../../services/apiBranchService";
 import { addRentalSubscription } from "../../../services/apiRentalSubscriptionService";
 import { getStudent } from "../../../services/apiStudentService";
@@ -178,22 +180,20 @@ export class RentalSubscriptionForm extends React.Component {
     }
 
     return (
-      <div className="min-h-screen bg-main-bg py-10 font-['Geologica'] antialiased text-text-main">
+      <SectionWrapper>
+        <SectionTitle className="text-center">
+          {isNew ? "Аренда комнаты" : "Редактировать аренду"}
+        </SectionTitle>
+        
         <div className="container mx-auto px-4 pb-12 max-w-6xl">
           <div className="flex flex-col md:flex-row gap-8 justify-center items-start">
-            <div className="hidden md:block md:w-1/4"></div>
-
             <div
               className="w-full md:w-1/2 bg-card-bg p-6 rounded-2xl shadow-xl "
               style={{ border: "none" }}
             >
-              <h2 className="text-center text-2xl font-bold mb-6 text-text-main">
-                {isNew ? "Аренда комнаты" : "Редактировать аренду"}
-              </h2>
-
               <form onSubmit={(e) => e.preventDefault()}>
                 <div
-                  className="mb-6 bg-inner-bg p-4 rounded-xl "
+                  className="mb-6"
                   style={{ border: "none" }}
                 >
                   <SubscriptionStudents
@@ -204,25 +204,25 @@ export class RentalSubscriptionForm extends React.Component {
                 </div>
 
                 <div className="mb-4">
-                  <label className="block mb-2 text-sm font-bold text-text-muted">
+                  <FormLabel as="div">
                     Дата начала
-                  </label>
-                  <input
-                    type="date"
-                    className="w-full bg-input-bg  rounded-xl px-4 py-2 text-text-main outline-none focus:border-accent transition-all [color-scheme:dark]"
-                    style={{ border: "none", outline: "none" }}
-                    value={startDate || ""}
-                    onChange={(e) =>
-                      this.setState({ startDate: e.target.value })
-                    }
-                  />
+                  </FormLabel>
+                    <input
+                      type="date"
+                      className="w-full bg-input-bg  rounded-xl px-4 py-2 text-text-main outline-none focus:border-accent transition-all [color-scheme:dark]"
+                      style={{ border: "none", outline: "none" }}
+                      value={startDate || ""}
+                      onChange={(e) =>
+                        this.setState({ startDate: e.target.value })
+                      }
+                    />
                 </div>
 
                 <div className="mb-6">
-                  <label className="block mb-2 text-sm font-bold text-text-muted">
+                  <FormLabel as="div">
                     Тариф
-                  </label>
-                  <div className="relative">
+                  </FormLabel>
+                  <div>
                     <select
                       className="w-full bg-input-bg rounded-xl px-4 py-3 text-text-main outline-none focus:border-accent transition-all appearance-none disabled:opacity-40"
                       style={{ border: "none", outline: "none" }}
@@ -265,16 +265,21 @@ export class RentalSubscriptionForm extends React.Component {
                   }}
                 />
 
-                <button
-                  type="button"
-                  className="w-full sm:w-auto bg-secondary/10 hover:bg-secondary/40 text-secondary  px-6 py-2 rounded-xl transition-all mb-6 text-sm font-medium"
-                  onClick={this.showAvailableSlotsModal}
-                  style={{ border: "none" }}
-                >
-                  Доступные окна...
-                </button>
+                <div className="text-center">
+                  <Button
+                    type="button"
+                    className="w-full sm:w-auto bg-secondary/10 hover:bg-secondary/40 text-secondary  px-6 py-2 rounded-xl transition-all mb-6 font-medium"
+                    onClick={this.showAvailableSlotsModal}
+                    style={{ border: "none" }}
+                  >
+                    Доступные окна...
+                  </Button>
 
-                <div className="mb-6 bg-inner-bg/50 p-2 rounded-xl border border-secondary/5">
+
+                </div>
+
+
+                <div className="bg-inner-bg/50 p-2">
                   <ScheduleEditorWithDelete
                     schedules={schedules}
                     onChange={this.onChange}
@@ -283,7 +288,7 @@ export class RentalSubscriptionForm extends React.Component {
                 </div>
 
                 <hr
-                  className="border-secondary/10 my-6"
+                  className="border-secondary/10"
                   style={{
                     border: "none",
                     borderTop: "1px solid rgba(149, 158, 183, 0.1)",
@@ -312,7 +317,7 @@ export class RentalSubscriptionForm extends React.Component {
             singleSelection={false}
           />
         </div>
-      </div>
+      </SectionWrapper>
     );
   }
 }

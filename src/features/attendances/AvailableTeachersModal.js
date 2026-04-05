@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 
 import { CalendarWeek } from "../../components/calendar/CalendarWeek";
 import { CopyIcon } from "../../components/icons";
-import { Button, CloseButton, FormLabel, ToneBadge } from "../../components/ui";
+import { Button, CloseButton, ToneBadge } from "../../components/ui";
 import { formatDate, formatTime } from "../../utils/dateTime";
 
 export class AvailableTeachersModal extends React.Component {
@@ -362,14 +362,11 @@ export class AvailableTeachersModal extends React.Component {
     const { selectedSlotsText, copySuccess, availableSlots, error } = this.state;
 
     return (
-      <aside className="w-full rounded-[24px] border border-white/10 bg-main-bg/35 p-5 xl:w-[340px] xl:self-start">
+      <aside className="w-full bg-main-bg/35 p-5 pt-0 xl:w-[340px] xl:self-start">
         <div className="mb-4 flex items-center justify-between gap-3">
           <div>
-            <div className="text-[12px] uppercase tracking-[0.2em] text-text-muted">
-              Выбрано
-            </div>
             <div className="mt-1 text-[18px] font-semibold text-text-main">
-              Свободные окна
+              Выбранные окна
             </div>
           </div>
           <Button
@@ -386,7 +383,6 @@ export class AvailableTeachersModal extends React.Component {
         </div>
 
         <label className="flex flex-col gap-3">
-          <FormLabel as="span">Список выбранных слотов</FormLabel>
           <textarea
             value={selectedSlotsText}
             aria-describedby="copy-help-text"
@@ -397,7 +393,6 @@ export class AvailableTeachersModal extends React.Component {
         </label>
 
         <div className="mt-4 flex flex-wrap items-center gap-2 text-[13px] text-text-muted">
-          <span>Выбрано слотов: {availableSlots.length}</span>
           {copySuccess && (
             <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-emerald-300">
               {copySuccess}
@@ -408,19 +403,6 @@ export class AvailableTeachersModal extends React.Component {
         {error && (
           <div className="mt-4 rounded-[16px] border border-danger/40 bg-danger/10 px-4 py-3 text-[14px] text-danger">
             {error}
-          </div>
-        )}
-
-        {availableSlots.length > 0 && (
-          <div className="mt-4 space-y-2">
-            {availableSlots.map((slot) => (
-              <div
-                key={slot.id}
-                className="rounded-[16px] border border-white/10 bg-card-bg/80 px-4 py-3 text-[13px] leading-6 text-text-main"
-              >
-                {slot.description}
-              </div>
-            ))}
           </div>
         )}
       </aside>
@@ -445,8 +427,6 @@ export class AvailableTeachersModal extends React.Component {
               <h2 id="available-teachers-modal-title" className="mt-2 text-[24px] font-semibold text-text-main">
                 Доступные преподаватели
               </h2>
-            
-
             <CloseButton onClick={this.handleCloseModal} />
           </div>
 
