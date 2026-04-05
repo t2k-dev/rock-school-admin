@@ -1,6 +1,5 @@
 import { parse } from "date-fns";
 import { ru } from "date-fns/locale";
-import { Button, Container, Form } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import InputMask from "react-input-mask";
@@ -19,125 +18,150 @@ export const StudentFormFields = ({
   handleChange,
   handleAgeChange,
   handleSexChange,
-  handleSave,
 }) => {
+  const inputBaseClasses = `
+    w-full bg-transparent border border-secondary/20 rounded-2xl py-3 px-4 
+    text-text-main placeholder:text-text-muted/30 outline-none
+    transition-all duration-200 
+    focus:border-accent focus:ring-1 focus:ring-accent/20
+  `;
+
+  const labelClasses =
+    "block text-[13px] font-medium text-text-muted mb-1.5 ml-1 uppercase tracking-wider opacity-70";
+
   return (
-    <Form style={{ background: "none" }}>
-      <Form.Group className="mb-3" controlId="firstName">
-        <Form.Label>Имя</Form.Label>
-        <Form.Control
-          onChange={handleChange}
-          value={firstName}
-          placeholder="введите имя..."
-          autoComplete="off"
-        />
-      </Form.Group>
-
-      <Form.Group className="mb-3" controlId="lastName">
-        <Form.Label>Фамилия</Form.Label>
-        <Form.Control
-          onChange={handleChange}
-          value={lastName}
-          placeholder="введите фамилию..."
-          autoComplete="off"
-        />
-      </Form.Group>
-
-      {!isNew && (
-        <Form.Group className="mb-3" controlId="birthDate">
-          <Form.Label>Дата рождения</Form.Label>
-          <div>
-            <Form.Control
-              as={DatePicker}
-              locale={ru}
-              selected={birthDate}
-              onChange={(date) => {
-                if (date) {
-                  handleChange({ target: { id: "birthDate", value: date } });
-                }
-              }}
-              onChangeRaw={(e) => {
-                const rawValue = e.target.value;
-                try {
-                  const parsedDate = parse(rawValue, "dd.MM.yyyy", new Date());
-                  if (!isNaN(parsedDate)) {
-                    handleChange({
-                      target: { id: "birthDate", value: parsedDate },
-                    });
-                  }
-                } catch (error) {
-                  console.error("Invalid date format");
-                }
-              }}
-              dateFormat="dd.MM.yyyy"
-              placeholderText="дд.мм.гггг"
-              shouldCloseOnSelect={true}
-            />
-          </div>
-        </Form.Group>
-      )}
-
-      {isNew && (
-        <Form.Group className="mb-3" controlId="age">
-          <Form.Label>Возраст</Form.Label>
-          <Form.Control
-            onChange={handleAgeChange}
-            value={age}
-            placeholder="введите возраст..."
+    <div
+      className="flex flex-col gap-5 bg-transparent"
+      style={{ background: "none" }}
+    >
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="flex flex-col">
+          <label className={labelClasses}>Имя</label>
+          <input
+            id="firstName"
+            type="text"
+            className={inputBaseClasses}
+            onChange={handleChange}
+            value={firstName}
+            placeholder="Имя"
             autoComplete="off"
           />
-        </Form.Group>
-      )}
+        </div>
+        <div className="flex flex-col">
+          <label className={labelClasses}>Фамилия</label>
+          <input
+            id="lastName"
+            type="text"
+            className={inputBaseClasses}
+            onChange={handleChange}
+            value={lastName}
+            placeholder="Фамилия"
+            autoComplete="off"
+          />
+        </div>
+      </div>
 
-      <SexControl value={sex} onChange={handleSexChange} />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="flex flex-col">
+          <label className={labelClasses}>
+            {isNew ? "Возраст" : "Дата рождения"}
+          </label>
+          {!isNew ? (
+            <div className="relative">
+              <DatePicker
+                locale={ru}
+                selected={birthDate}
+                onChange={(date) =>
+                  handleChange({ target: { id: "birthDate", value: date } })
+                }
+                dateFormat="dd.MM.yyyy"
+                placeholderText="дд.мм.гггг"
+                className={inputBaseClasses}
+                shouldCloseOnSelect={true}
+              />
+            </div>
+          ) : (
+            <input
+              id="age"
+              type="number"
+              className={inputBaseClasses}
+              onChange={handleAgeChange}
+              value={age}
+              placeholder="лет"
+            />
+          )}
+        </div>
 
-      <Form.Group className="mb-3" controlId="email">
-        <Form.Label>Email</Form.Label>
-        <Form.Control
-          onChange={handleChange}
-          value={email}
-          placeholder="введите email..."
-          autoComplete="off"
-        />
-      </Form.Group>
+        <div className="flex flex-col">
+          <label className={labelClasses}>Уровень</label>
+          <select
+            id="level"
+            className={`${inputBaseClasses} cursor-pointer appearance-none bg-no-repeat bg-[right_1rem_center]`}
+            style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
+              backgroundSize: "1.5em",
+            }}
+            value={level}
+            onChange={(e) =>
+              handleChange({ target: { id: "level", value: e.target.value } })
+            }
+          >
+            <option value="0" className="bg-card-bg">
+              0 - Начинающий
+            </option>
+            <option value="1" className="bg-card-bg">
+              1 - Начинающий
+            </option>
+            <option value="2" className="bg-card-bg">
+              2 - Начинающий
+            </option>
+            <option value="3" className="bg-card-bg">
+              3 - Продолжающий
+            </option>
+            <option value="10" className="bg-card-bg">
+              10 - Бог
+            </option>
+          </select>
+        </div>
+      </div>
 
-      <Form.Group className="mb-3" controlId="phone">
-        <Form.Label>Телефон</Form.Label>
-        <Form.Control
-          as={InputMask}
-          mask="+7 999 999 99 99"
-          maskChar=" "
-          onChange={handleChange}
-          value={phone}
-          placeholder="введите телефон..."
-        />
-      </Form.Group>
+      <div className="p-4 bg-inner-bg/40 rounded-[24px] border border-secondary/20 group hover:border-secondary/20 transition-colors">
+        <label className={labelClasses}>Пол ученика</label>
+        <SexControl value={sex} onChange={handleSexChange} />
+      </div>
 
-      <Form.Group className="mb-3" controlId="level">
-        <Form.Label>Уровень</Form.Label>
-        <Form.Select
-          name="level"
-          value={level}
-          onChange={(e) =>
-            handleChange({ target: { id: "level", value: e.target.value } })
-          }
-        >
-          <option>выберите...</option>
-          <option value="0">0 - Начинающий</option>
-          <option value="1">1 - Начинающий</option>
-          <option value="2">2 - Начинающий</option>
-          <option value="3">3 - Продолжающий</option>
-          <option value="4">4 - Продолжающий</option>
-          <option value="5">5 - Продолжающий</option>
-          <option value="10">10 - Бог</option>
-        </Form.Select>
-      </Form.Group>
-      <hr />
-      <Container className="text-center">
-        <Button variant="primary" onClick={handleSave} type="button">
-          Сохранить
-        </Button>
-      </Container>
-    </Form>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="flex flex-col">
+          <label className={labelClasses}>Email</label>
+          <input
+            id="email"
+            type="email"
+            className={inputBaseClasses}
+            onChange={handleChange}
+            value={email}
+            placeholder="mail@example.com"
+          />
+        </div>
+        <div className="flex flex-col">
+          <label className={labelClasses}>Телефон</label>
+          <InputMask
+            mask="+7 999 999 99 99"
+            maskChar=" "
+            value={phone}
+            onChange={handleChange}
+          >
+            {(inputProps) => (
+              <input
+                {...inputProps}
+                id="phone"
+                type="text"
+                className={inputBaseClasses}
+                placeholder="+7 ___ ___ __ __"
+              />
+            )}
+          </InputMask>
+        </div>
+      </div>
+    </div>
   );
 };

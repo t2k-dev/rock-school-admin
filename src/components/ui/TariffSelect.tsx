@@ -1,5 +1,5 @@
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { useTariffSelect } from "../model/useTariffSelect";
+import { useTariffSelect } from "../../features/tariffs/TariffForm/model/useTariffSelect";
 
 interface Option {
   value: string | number;

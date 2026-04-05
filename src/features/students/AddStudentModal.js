@@ -1,6 +1,6 @@
 import React from "react";
 import { sub } from "date-fns";
-import { X } from "lucide-react";
+import { X, UserPlus } from "lucide-react";
 
 import { addStudent } from "../../services/apiStudentService";
 import { StudentFormFields } from "./StudentFormFields";
@@ -22,9 +22,7 @@ export class AddStudentModal extends React.Component {
     };
   }
 
-  setActiveTab = (tab) => {
-    this.setState({ activeTab: tab });
-  };
+  setActiveTab = (tab) => this.setState({ activeTab: tab });
 
   handleChange = (e) => {
     const { id, value } = e.target;
@@ -33,58 +31,44 @@ export class AddStudentModal extends React.Component {
 
   handleAgeChange = (e) => {
     const age = parseInt(e.target.value, 10);
-
     if (!isNaN(age) && age > 0) {
       const birthDate = sub(new Date(), { years: age });
-      this.setState({
-        age: age,
-        birthDate: birthDate,
-      });
+      this.setState({ age: age, birthDate: birthDate });
     } else {
-      this.setState({
-        age: e.target.value,
-        birthDate: "",
-      });
+      this.setState({ age: e.target.value, birthDate: "" });
     }
   };
 
-  handleSexChange = (value) => {
-    this.setState({ sex: value });
-  };
+  handleSexChange = (value) => this.setState({ sex: value });
 
   handleSave = async () => {
     const { email, firstName, lastName, birthDate, phone, level, sex } =
       this.state;
-
     const requestBody = {
-      firstName: firstName,
-      lastName: lastName,
-      birthDate: birthDate,
-      sex: sex,
+      firstName,
+      lastName,
+      birthDate,
+      sex,
       phone: phone.replace("+7 ", "").replace(/\s/g, ""),
-      level: level,
+      level,
       branchId: 1,
     };
 
     try {
       const response = await addStudent(requestBody);
       const studentId = response.data;
-
-      const newStudent = {
-        studentId,
-        email,
-        firstName,
-        lastName,
-        birthDate,
-        phone,
-        level,
-        sex,
-      };
-
       if (this.props.onAddStudent) {
-        this.props.onAddStudent(newStudent);
+        this.props.onAddStudent({
+          studentId,
+          email,
+          firstName,
+          lastName,
+          birthDate,
+          phone,
+          level,
+          sex,
+        });
       }
-
       this.props.handleClose();
     } catch (error) {
       console.error("Ошибка при добавлении студента:", error);
@@ -92,9 +76,7 @@ export class AddStudentModal extends React.Component {
   };
 
   handleAddExisting = (student) => {
-    if (this.props.onAddStudent) {
-      this.props.onAddStudent(student);
-    }
+    if (this.props.onAddStudent) this.props.onAddStudent(student);
     this.props.handleClose();
   };
 
@@ -114,80 +96,73 @@ export class AddStudentModal extends React.Component {
 
     if (!show) return null;
 
+    // Стили для инпутов, чтобы убрать системные фоны
+    const inputResetStyle = {
+      background: "none",
+      backgroundColor: "transparent",
+      outline: "none",
+    };
+
     return (
-      <div
-        className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-main-bg/80 backdrop-blur-sm"
-        style={{ background: "none" }}
-      >
-        <div className="w-full max-w-[600px] max-h-[90vh] bg-card-bg rounded-[32px] shadow-2xl flex flex-col overflow-hidden border border-secondary/10 font-geologica text-text-main">
-          <div className="p-8 flex items-center justify-between border-b border-secondary/10">
-            <h2 className="text-[24px] font-semibold tracking-tight m-0">
-              Добавить ученика
-            </h2>
+      <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-main-bg/60 backdrop-blur-sm">
+        <div className="w-full max-w-[580px] max-h-[90vh] bg-card-bg rounded-[32px] shadow-2xl flex flex-col overflow-hidden border border-secondary/20 font-geologica text-text-main">
+          {/* Header */}
+          <div className="px-8 py-6 flex items-center justify-between border-b border-secondary/10 bg-inner-bg/50">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 bg-accent/10 rounded-xl">
+                <UserPlus size={22} className="text-accent" />
+              </div>
+              <h2 className="text-[22px] font-bold tracking-tight">
+                Добавить ученика
+              </h2>
+            </div>
             <button
               onClick={handleClose}
-              className="p-2 rounded-full hover:bg-inner-bg text-text-muted hover:text-text-main transition-colors"
-              style={{ background: "none" }}
+              className="p-2 rounded-full hover:bg-inner-bg text-text-muted hover:text-text-main transition-all"
+              style={inputResetStyle}
             >
               <X size={24} />
             </button>
           </div>
 
-          <div
-            className="p-8 overflow-y-auto custom-scrollbar flex-1 bg-transparent"
-            style={{ maxHeight: "70vh", background: "none" }}
-          >
+          <div className="p-8 overflow-y-auto custom-scrollbar flex-1 bg-transparent">
             {onlyExistingStudents ? (
-              <div
-                className="flex flex-col gap-4 bg-transparent"
-                style={{ background: "none" }}
-              >
-                <span className="text-[14px] font-medium uppercase tracking-[0.2em] opacity-40 ml-2">
+              <div className="flex flex-col gap-4">
+                <span className="text-[12px] font-bold uppercase tracking-[0.15em] text-text-muted/60 ml-1">
                   Поиск студента
                 </span>
                 <StudentsSearch handleOnSelect={this.handleAddExisting} />
               </div>
             ) : (
-              <div
-                className="flex flex-col gap-8 bg-transparent"
-                style={{ background: "none" }}
-              >
-                <div className="flex p-1 bg-inner-bg rounded-[18px] w-full">
+              <div className="flex flex-col gap-8">
+                <div className="flex p-1 rounded-[20px] border border-secondary/20">
                   <button
                     onClick={() => this.setActiveTab("new")}
-                    className={`flex-1 py-3 rounded-[14px] text-[15px] font-medium transition-all duration-200 ${
+                    className={`flex-1 py-3 rounded-[16px] text-[14px] font-semibold transition-all ${
                       activeTab === "new"
-                        ? "bg-accent text-text-main shadow-lg"
+                        ? "bg-accent text-text-main"
                         : "text-text-muted hover:text-text-main"
                     }`}
-                    style={activeTab !== "new" ? { background: "none" } : {}}
+                    style={activeTab !== "new" ? inputResetStyle : {}}
                   >
-                    Новый
+                    Новый профиль
                   </button>
                   <button
                     onClick={() => this.setActiveTab("existing")}
-                    className={`flex-1 py-3 rounded-[14px] text-[15px] font-medium transition-all duration-200 ${
+                    className={`flex-1 py-3 rounded-[16px] text-[14px] font-semibold transition-all ${
                       activeTab === "existing"
-                        ? "bg-accent text-text-main shadow-lg"
+                        ? "bg-accent text-text-main"
                         : "text-text-muted hover:text-text-main"
                     }`}
-                    style={
-                      activeTab !== "existing" ? { background: "none" } : {}
-                    }
+                    style={activeTab !== "existing" ? inputResetStyle : {}}
                   >
                     Существующий
                   </button>
                 </div>
 
-                <div
-                  className="transition-all duration-300 bg-transparent"
-                  style={{ background: "none" }}
-                >
+                <div className="transition-all duration-300">
                   {activeTab === "new" ? (
-                    <div
-                      className="flex flex-col gap-6 bg-transparent"
-                      style={{ background: "none" }}
-                    >
+                    <div className="flex flex-col gap-6">
                       <StudentFormFields
                         isNew={true}
                         email={email}
@@ -201,21 +176,20 @@ export class AddStudentModal extends React.Component {
                         handleChange={this.handleChange}
                         handleAgeChange={this.handleAgeChange}
                         handleSexChange={this.handleSexChange}
+                        customInputStyle={inputResetStyle}
                       />
 
                       <button
                         onClick={this.handleSave}
-                        className="w-full mt-4 py-4 rounded-[18px] bg-accent text-text-main font-semibold text-[17px] shadow-lg shadow-accent/20 hover:bg-accent/70 transition-all duration-300 transform active:scale-[0.98]"
+                        className="w-full mt-4 py-4 rounded-[20px] bg-accent/40 text-text-main font-bold text-[16px] hover:bg-accent/70 transition-all transform active:scale-[0.98]"
+                        style={{ border: "none" }}
                       >
                         Создать и сохранить
                       </button>
                     </div>
                   ) : (
-                    <div
-                      className="flex flex-col gap-4 pt-2 bg-transparent"
-                      style={{ background: "none" }}
-                    >
-                      <span className="text-[14px] font-medium uppercase tracking-[0.2em] opacity-40 ml-2">
+                    <div className="flex flex-col gap-4 pt-2">
+                      <span className="text-[12px] font-bold uppercase tracking-[0.15em] text-text-muted/60 ml-1">
                         Найти в базе
                       </span>
                       <StudentsSearch handleOnSelect={this.handleAddExisting} />

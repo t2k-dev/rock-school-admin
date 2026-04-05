@@ -1,5 +1,5 @@
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { useTariffInstrumentSelect } from "../model/useTariffInstrumentSelect";
+import { useTariffInstrumentSelect } from "../../features/tariffs/TariffForm/model/useTariffInstrumentSelect";
 import { useState } from "react";
 
 interface InstrumentIcon {

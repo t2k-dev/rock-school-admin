@@ -5,19 +5,19 @@ import { NoRecords } from '../../components/NoRecords';
 import { Button, FormLabel, RemoveItemButton } from '../../components/ui';
 import { calculateAge } from '../../utils/dateTime';
 
-export const SubscriptionStudents = ({ 
-  students = [], 
+export const SubscriptionStudents = ({
+  students = [],
   showLabel = true,
   allowAdd = true,
   allowRemove = true,
-  variant = 'striped',
-  className = '',
+  variant = "striped",
+  className = "",
   onRemoveStudent,
-  onAddStudent
+  onAddStudent,
 }) => {
   const renderStudentCard = (student, index) => {
     const age = student.birthDate ? calculateAge(student.birthDate) : null;
-    
+
     return (
       <div
         key={student.studentId || index}
@@ -33,9 +33,7 @@ export const SubscriptionStudents = ({
               {student.firstName} {student.lastName}
             </Link>
             {age > 0 && (
-              <div className="text-[13px] text-text-muted">
-                {age} лет
-              </div>
+              <div className="text-[13px] text-text-muted">{age} лет</div>
             )}
           </div>
         </div>
@@ -53,24 +51,27 @@ export const SubscriptionStudents = ({
 
   const getLabel = () => {
     if (!showLabel) return null;
-    
-    return (
-      <FormLabel>{students.length > 1 ? 'Ученики' : 'Ученик'}</FormLabel>
-    );
+
+    return <FormLabel>{students.length > 1 ? "Ученики" : "Ученик"}</FormLabel>;
   };
 
   return (
     <div className={`flex flex-col ${className}`.trim()}>
       {getLabel()}
       <div className="flex flex-col gap-3">
-        {students.length > 0 
+        {students.length > 0
           ? students.map(renderStudentCard)
           : <NoRecords />
         }
       </div>
       {allowAdd && (
         <div className="text-center">
-          <Button size="sm" variant="outlineSuccess" type="button" onClick={onAddStudent}>
+          <Button
+            size="sm"
+            variant="outlineSuccess"
+            type="button"
+            onClick={onAddStudent}
+          >
             + Добавить
           </Button>
         </div>
@@ -82,15 +83,19 @@ export const SubscriptionStudents = ({
 SubscriptionStudents.propTypes = {
   students: PropTypes.arrayOf(
     PropTypes.shape({
-      studentId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+      studentId: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+        .isRequired,
       firstName: PropTypes.string.isRequired,
       lastName: PropTypes.string.isRequired,
-      birthDate: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)]),
+      birthDate: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.instanceOf(Date),
+      ]),
       email: PropTypes.string,
-    })
+    }),
   ),
   showLabel: PropTypes.bool,
-  variant: PropTypes.oneOf(['striped', 'hover', 'bordered', 'none']),
+  variant: PropTypes.oneOf(["striped", "hover", "bordered", "none"]),
   onStudentClick: PropTypes.func,
   onRemoveStudent: PropTypes.func,
   className: PropTypes.string,
