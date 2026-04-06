@@ -1,11 +1,13 @@
 import axios from 'axios';
 
 const apiClient = axios.create({
-    baseURL: 'https://localhost:44358/api',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
+  baseURL: process.env.REACT_APP_API_BASE_URL || 'https://localhost:44358/api',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+export default apiClient;
 
 // Request interceptor to add auth token
 apiClient.interceptors.request.use(
