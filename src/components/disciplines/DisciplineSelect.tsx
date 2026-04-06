@@ -17,7 +17,7 @@ interface Props {
   error?: string;
 }
 
-export const TariffInstrumentSelect = ({
+export const DisciplineSelect = ({
   label,
   name,
   value,

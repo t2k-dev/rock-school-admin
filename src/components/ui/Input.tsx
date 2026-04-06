@@ -1,25 +1,51 @@
-import { forwardRef, type InputHTMLAttributes } from "react";
-
-interface Props extends InputHTMLAttributes<HTMLInputElement> {
-  inputSize?: "md" | "sm";
+interface InputProps {
+  label: string;
+  name: string;
+  type?: "text" | "number" | "date";
+  value: string | number;
+  placeholder?: string;
+  error?: string;
+  step?: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const SIZE_CLASSES = {
-  md: "px-4 py-3 text-[16px]",
-  sm: "px-3 py-2 text-[14px]",
-} as const;
-
-export const Input = forwardRef<HTMLInputElement, Props>(function Input(
-  { className = "", inputSize = "md", ...props },
-  ref
-) {
+export const Input = ({
+  label,
+  name,
+  type = "text",
+  value,
+  placeholder,
+  error,
+  step,
+  onChange,
+}: InputProps) => {
   return (
-    <input
-      ref={ref}
-      className={`w-full rounded-[14px] border border-white/10 bg-input-bg text-text-main outline-none transition placeholder:text-text-muted/30 focus:border-white/20 focus:ring-2 focus:ring-accent ${SIZE_CLASSES[inputSize]} ${className}`.trim()}
-      {...props}
-    />
-  );
-});
+    <div className="w-full text-text-main">
+      <label className="block text-lg font-medium mb-3 text-text-muted">
+        {label}
+      </label>
 
-export default Input;
+      <div className="relative">
+        <input
+          type={type}
+          name={name}
+          value={value}
+          step={step}
+          onChange={onChange}
+          placeholder={`${placeholder}...`}
+          className="w-full bg-[#363B42] text-text-main px-4 py-3 rounded-2xl outline-none appearance-none transition-all text-xl
+          placeholder:text-text-main
+          "
+          style={{
+            boxShadow: "none",
+            border: "none",
+          }}
+        />
+      </div>
+
+      {error && (
+        <p className="mt-2 text-danger text-sm font-medium ml-2">{error}</p>
+      )}
+    </div>
+  );
+};

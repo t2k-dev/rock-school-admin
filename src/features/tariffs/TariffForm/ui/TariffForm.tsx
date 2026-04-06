@@ -5,10 +5,10 @@ import {
   attendanceCounts,
   Instruments,
 } from "../model/constants";
-import { TariffSelect } from "../../../../components/ui/TariffSelect";
-import { TariffInput } from "../../../../components/ui/TarifInput";
+import { TariffSelect } from "../../../../components/ui/Select";
+import { Input } from "../../../../components/ui/Input";
 import { TariffDates } from "./TariffDates";
-import { TariffInstrumentSelect } from "../../../../components/ui/TariffInstrumentSelect";
+import { DisciplineSelect } from "../../../../components/disciplines/DisciplineSelect";
 import { useTariffForm } from "../model/useTariffFrom";
 
 const TariffForm = ({ history, type = "New" }) => {
@@ -68,7 +68,7 @@ const TariffForm = ({ history, type = "New" }) => {
             error={errors.attendanceLength}
           />
 
-          <TariffInstrumentSelect
+          <DisciplineSelect
             label="Дисциплина"
             name="disciplineId"
             value={formData.disciplineId}
@@ -99,7 +99,7 @@ const TariffForm = ({ history, type = "New" }) => {
             />
           </div>
 
-          <TariffInput
+          <Input
             label="Сумма"
             type="number"
             name="amount"
