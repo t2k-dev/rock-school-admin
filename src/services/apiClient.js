@@ -7,8 +7,6 @@ const apiClient = axios.create({
   },
 });
 
-export default apiClient;
-
 // Request interceptor to add auth token
 apiClient.interceptors.request.use(
   (config) => {
@@ -30,7 +28,6 @@ apiClient.interceptors.response.use(
   },
   (error) => {
     if (error.response?.status === 401) {
-      // Token expired or invalid
       localStorage.removeItem('authToken');
       localStorage.removeItem('user');
       window.location.href = '/login';
