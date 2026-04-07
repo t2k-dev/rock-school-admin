@@ -1,10 +1,12 @@
 import type { ComponentPropsWithoutRef, ElementType, ReactNode } from "react";
 
 const VARIANT_CLASSES = {
-  accent: "bg-accent text-text-main hover:opacity-90",
-  primary: "bg-accent text-text-main hover:opacity-90",
-  danger: "bg-danger text-text-main hover:opacity-90",
-  secondary: "bg-secondary text-text-main hover:opacity-90",
+  accent: "bg-accent/40 text-text-main hover:bg-accent/70 active:bg-accent",
+  primary: "bg-accent/40 text-text-main hover:bg-accent/70 active:bg-accent",
+  danger: "bg-danger/40 text-text-main hover:bg-danger/70 active:bg-danger",
+  secondary:
+    "bg-secondary/40 text-text-main hover:bg-secondary/70 active:bg-secondary",
+  success: "bg-success/40 text-text-main hover:bg-success/70 active:bg-success",
 
   outlineDanger:
     "border border-[var(--danger)] text-danger bg-[rgba(200,69,69,0.12)] hover:bg-[rgba(200,69,69,0.2)]",
@@ -56,7 +58,7 @@ export const Button = <C extends ElementType = "button">({
 
   return (
     <Component
-      className={`rounded-[14px] font-medium transition no-underline flex items-center justify-center ${sizeClass} ${variantClass} ${className}`.trim()}
+      className={`rounded-[12px] font-medium transition no-underline flex items-center justify-center ${sizeClass} ${variantClass} ${className}`.trim()}
       {...(isNativeButton ? { type, disabled } : {})}
       {...(!isNativeButton && disabled
         ? { "aria-disabled": true, tabIndex: -1 }

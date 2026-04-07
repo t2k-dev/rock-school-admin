@@ -7,7 +7,7 @@ import { BandScheduleForm } from "./features/bands/BandScheduleForm";
 import { BandScreen } from "./features/bands/BandScreen";
 import Bands from "./features/bands/BandsList/Bands";
 import { BranchScreen } from "./features/branches/BranchScreen";
-import HomeScreen from "./features/home/HomeScreen";
+import HomeScreen from "./features/home/ui/HomeScreen";
 import NoteForm from "./features/notes/NoteForm";
 import { ChangePasswordScreen } from "./features/profile/ChangePasswordScreen";
 import { ProfileScreen } from "./features/profile/ProfileScreen";

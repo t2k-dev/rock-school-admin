@@ -15,7 +15,7 @@ interface SelectProps {
   onChange: (name: string, value: string | number) => void;
 }
 
-export const TariffSelect = ({
+export const Select = ({
   label,
   name,
   options,

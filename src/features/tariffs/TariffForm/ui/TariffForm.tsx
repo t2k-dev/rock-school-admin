@@ -5,7 +5,7 @@ import {
   attendanceCounts,
   Instruments,
 } from "../model/constants";
-import { TariffSelect } from "../../../../components/ui/Select";
+import { Select } from "../../../../components/ui/Select";
 import { Input } from "../../../../components/ui/Input";
 import { TariffDates } from "./TariffDates";
 import { DisciplineSelect } from "../../../../components/disciplines/DisciplineSelect";
@@ -41,7 +41,7 @@ const TariffForm = ({ history, type = "New" }) => {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6 w-full">
-          <TariffSelect
+          <Select
             label="Тип подписки"
             name="subscriptionType"
             value={formData.subscriptionType}
@@ -50,7 +50,7 @@ const TariffForm = ({ history, type = "New" }) => {
             error={errors.subscriptionType}
           />
 
-          <TariffSelect
+          <Select
             label="Количество уроков"
             name="attendanceCount"
             value={formData.attendanceCount}
@@ -59,7 +59,7 @@ const TariffForm = ({ history, type = "New" }) => {
             error={errors.attendanceCount}
           />
 
-          <TariffSelect
+          <Select
             label="Длительность урока"
             name="attendanceLength"
             value={formData.attendanceLength}
