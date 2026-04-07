@@ -11,6 +11,7 @@ import { getDisciplineName } from '../../../constants/disciplines';
 import SubscriptionStatus from '../../../constants/SubscriptionStatus';
 import SubscriptionType from '../../../constants/SubscriptionType';
 import { SectionWrapper } from '../../../layout';
+import { SectionTitle } from '../../../layout/SectionTitle';
 import { getSubscriptionScreenData } from '../../../services/apiSubscriptionService';
 import { formatDateWithLetters } from '../../../utils/dateTime';
 import { toMoneyString } from '../../../utils/moneyUtils';
@@ -18,7 +19,6 @@ import { DisciplineIcon } from '../../disciplines/DisciplineIcon';
 import { AttendanceList } from '../AttendanceList';
 import { SubscriptionStatusBadge } from '../SubscriptionStatusBadge';
 import { PaymentsList } from './payments/PaymentsList';
-
 
 const SubscriptionScreen = ({
   onAttendanceClick,
@@ -150,7 +150,7 @@ const SubscriptionScreen = ({
   return (
 
     <SectionWrapper>
-      {/* Subscription Info Card */}
+      <SectionTitle>Абонемент</SectionTitle>
       <ScreenHeader
         className="mb-4"
         avatar={headerConfig.avatar}

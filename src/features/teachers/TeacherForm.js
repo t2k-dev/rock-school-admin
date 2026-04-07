@@ -230,7 +230,7 @@ class TeacherForm extends React.Component {
         <FormWrapper>
           <form onSubmit={this.handleSave} className="flex flex-col gap-8">
             <div className="grid gap-5 sm:grid-cols-2">
-              <label className="flex flex-col gap-3">
+              <label className="flex flex-col">
                 <FormLabel>Имя</FormLabel>
                 <Input
                   id="firstName"
@@ -241,7 +241,7 @@ class TeacherForm extends React.Component {
                 />
               </label>
 
-              <label className="flex flex-col gap-3">
+              <label className="flex flex-col">
                 <FormLabel>Фамилия</FormLabel>
                 <Input
                   id="lastName"
@@ -254,7 +254,7 @@ class TeacherForm extends React.Component {
             </div>
 
             <div className="grid gap-5 sm:grid-cols-[minmax(0,1fr)_220px]">
-              <label className="flex flex-col gap-3">
+              <label className="flex flex-col">
                 <FormLabel>Дата рождения</FormLabel>
                 <DatePicker
                   id="birthDate"
@@ -296,7 +296,7 @@ class TeacherForm extends React.Component {
             </div>
 
             <div className="grid gap-5 sm:grid-cols-2">
-              <label className="flex flex-col gap-3">
+              <label className="flex flex-col">
                 <FormLabel>Телефон</FormLabel>
                 <Input
                   id="phone"
@@ -308,7 +308,7 @@ class TeacherForm extends React.Component {
                 />
               </label>
 
-              <label className="flex flex-col gap-3">
+              <label className="flex flex-col">
                 <FormLabel>Email</FormLabel>
                 <Input
                   id="email"
@@ -332,7 +332,7 @@ class TeacherForm extends React.Component {
             <div className="h-px bg-white/10" />
 
             <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
-              <label className="flex flex-col gap-3">
+              <label className="flex flex-col">
                 <FormLabel>Ученики от</FormLabel>
                 <Input
                   id="ageLimit"
@@ -344,7 +344,7 @@ class TeacherForm extends React.Component {
               </label>
 
               <div className="grid gap-3 rounded-[20px] bg-inner-bg p-4">
-                <label className="flex cursor-pointer items-center gap-3 rounded-[14px] px-1 py-2 text-[15px] text-text-main">
+                <label className="flex cursor-pointer gap-3 items-center rounded-[14px] px-1 py-2 text-[15px] text-text-main">
                   <input
                     id="supportGroups"
                     type="checkbox"
@@ -370,7 +370,7 @@ class TeacherForm extends React.Component {
 
             <div className="h-px bg-white/10" />
 
-            <label className="flex flex-col gap-3">
+            <label className="flex flex-col">
               <FormLabel>Филиал</FormLabel>
               <select
                 id="branchId"

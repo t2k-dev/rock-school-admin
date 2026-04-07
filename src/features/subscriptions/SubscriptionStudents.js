@@ -65,7 +65,7 @@ export const SubscriptionStudents = ({
         }
       </div>
       {allowAdd && (
-        <div className="text-center">
+        <div className="text-center mt-4">
           <Button
             size="sm"
             variant="outlineSuccess"

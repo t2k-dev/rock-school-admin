@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from "react";
-import PropTypes from "prop-types";
-import { X, CreditCard, User, BookOpen, Banknote } from "lucide-react";
-import { getDisciplineName } from "../../constants/disciplines";
+import { Banknote, CreditCard } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Button } from "../../components/ui/Button";
+import { FormLabel } from "../../components/ui/FormLabel";
+import { Input } from "../../components/ui/Input";
+import { CloseButton } from "../../components/ui/Modals/CloseButton";
 import { pay } from "../../services/apiSubscriptionService";
 import DateTimeHelper from "../../utils/DateTimeHelper";
 import { toMoneyString } from "../../utils/moneyUtils";
@@ -70,41 +72,47 @@ const PaymentModal = ({
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-main-bg/60 backdrop-blur-sm">
       <div className="w-full max-w-[500px] bg-card-bg rounded-[32px] shadow-2xl border border-secondary/20 flex flex-col overflow-hidden text-text-main">
         {/* Header */}
-        <div className="px-8 py-6 flex items-center justify-between border-b border-secondary/10 bg-inner-bg/30">
-          <div className="flex items-center gap-3">
-            <CreditCard size={22} className="text-success" />
-            <h2 className="text-[20px] font-bold">Оплата абонемента</h2>
-          </div>
-          <button
-            onClick={onHide}
-            className="p-2 hover:bg-inner-bg rounded-full transition-colors"
-          >
-            <X size={24} />
-          </button>
+        <div className="flex items-start justify-between gap-4 border-b border-white/10 px-6 py-5 sm:px-8">
+            <CreditCard size={30} className="text-success mt-2" />
+            <h2 id="payment-modal-title" className="mt-2 text-[24px] font-semibold text-text-main">
+              Оплата абонемента
+            </h2>
+          <CloseButton onClick={onHide} />
         </div>
 
         <div className="p-8">
-          <div className="mb-6 p-5 bg-inner-bg/50 rounded-[24px] border border-secondary/10">
+          <div className="mb-4 p-5">
             <div className="flex justify-between items-center mb-2">
-              <span className="text-text-muted text-sm">К оплате:</span>
+              <span className="text-text-muted">К оплате</span>
               <span className="text-xl font-bold text-success">
                 {toMoneyString(subscription.amountOutstanding)}
               </span>
-            </div>
-            <div className="text-sm text-text-muted">
-              {getDisciplineName(subscription.disciplineId)}
             </div>
           </div>
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-5">
             <div>
-              <label className="block text-[12px] font-bold uppercase mb-2 ml-1 opacity-60">
-                Сумма
-              </label>
+              <FormLabel className="block">
+                Способ оплаты
+              </FormLabel>
+              <select
+                name="paymentType"
+                className="w-full rounded-[14px] border border-white/10 bg-input-bg px-4 py-3 text-[16px] text-text-main outline-none transition focus:border-white/20 focus:ring-2 focus:ring-accent disabled:cursor-not-allowed disabled:opacity-60"
+                value={formData.paymentType}
+                onChange={handleInputChange}
+              >
+                <option value={1}>Наличные</option>
+                <option value={2}>Карта / Удаленно</option>
+              </select>
+            </div>
+
+            <div>
+              <FormLabel className="block">
+                Вносимая сумма
+              </FormLabel>
               <div className="relative">
-                <input
+                <Input
                   name="amount"
-                  type="number"
                   className="w-full bg-inner-bg border border-secondary/20 rounded-2xl py-3 px-4 outline-none focus:border-accent"
                   value={formData.amount}
                   onChange={handleInputChange}
@@ -121,28 +129,13 @@ const PaymentModal = ({
               )}
             </div>
 
-            <div>
-              <label className="block text-[12px] font-bold uppercase mb-2 ml-1 opacity-60">
-                Способ оплаты
-              </label>
-              <select
-                name="paymentType"
-                className="w-full bg-inner-bg border border-secondary/20 rounded-2xl py-3 px-4 outline-none appearance-none"
-                value={formData.paymentType}
-                onChange={handleInputChange}
-              >
-                <option value={1}>Наличные</option>
-                <option value={2}>Карта / Удаленно</option>
-              </select>
-            </div>
-
-            <button
+            <Button
               type="submit"
               disabled={isLoading}
               className="mt-4 w-full bg-accent text-white py-4 rounded-2xl font-bold hover:opacity-90 disabled:opacity-50 transition-all"
             >
               {isLoading ? "Обработка..." : "Подтвердить оплату"}
-            </button>
+            </Button>
           </form>
         </div>
       </div>
