@@ -19,6 +19,9 @@ const SIZE_CLASSES = {
   lg: "px-6 py-3.5 text-[16px]",
 } as const;
 
+const DISABLED_CLASSES =
+  "bg-gray-600 text-text-muted border-gray-600 cursor-not-allowed";
+
 type ButtonVariant = keyof typeof VARIANT_CLASSES;
 type ButtonSize = keyof typeof SIZE_CLASSES;
 
@@ -46,16 +49,18 @@ export const Button = <C extends ElementType = "button">({
   ...props
 }: Props<C>) => {
   const Component = as || "button";
-  const variantClass = VARIANT_CLASSES[variant];
+
+  const variantClass = disabled ? DISABLED_CLASSES : VARIANT_CLASSES[variant];
   const sizeClass = SIZE_CLASSES[size];
-  const disabledClass = disabled ? "cursor-not-allowed opacity-60" : "";
   const isNativeButton = Component === "button";
 
   return (
     <Component
-      className={`rounded-[14px] font-medium transition no-underline ${sizeClass} ${variantClass} ${disabledClass} ${className}`.trim()}
+      className={`rounded-[14px] font-medium transition no-underline flex items-center justify-center ${sizeClass} ${variantClass} ${className}`.trim()}
       {...(isNativeButton ? { type, disabled } : {})}
-      {...(!isNativeButton && disabled ? { "aria-disabled": true } : {})}
+      {...(!isNativeButton && disabled
+        ? { "aria-disabled": true, tabIndex: -1 }
+        : {})}
       {...props}
     >
       {children}
