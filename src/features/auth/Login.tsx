@@ -1,8 +1,8 @@
-import React, { useState, ChangeEvent, FormEvent } from "react";
+import { LogIn } from "lucide-react";
+import React, { ChangeEvent, FormEvent, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { login as loginAPI } from "../../services/apiAuthService";
-import { LogIn } from "lucide-react";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -31,9 +31,11 @@ export const Login: React.FC = () => {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     setError("");
     setTriedSubmit(true);
 
+    // Validation
     if (!formData.login.trim() || !formData.password.trim()) {
       setError("Пожалуйста, заполните все поля");
       return;
@@ -44,6 +46,7 @@ export const Login: React.FC = () => {
       return;
     }
 
+    // Login Request
     setIsLoading(true);
     try {
       const response = await loginAPI(formData);
