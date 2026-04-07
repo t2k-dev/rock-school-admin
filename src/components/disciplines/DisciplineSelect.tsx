@@ -1,6 +1,5 @@
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { useTariffInstrumentSelect } from "../../features/tariffs/TariffForm/model/useTariffInstrumentSelect";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 interface InstrumentIcon {
   id: number;
@@ -25,10 +24,41 @@ export const DisciplineSelect = ({
   onChange,
   error,
 }: Props) => {
-  const [isHoverCard, setIsHoverCard] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  const { isOpen, containerRef, toggleOpen, toggleInstrument, deleteAll } =
-    useTariffInstrumentSelect({ value, name, onChange });
+  const toggleOpen = () => setIsOpen((prev) => !prev);
+
+  const toggleInstrument = (id: number) => {
+    const newValue = value.includes(id)
+      ? value.filter((item) => item !== id)
+      : [...value, id];
+    onChange(name, newValue);
+  };
+
+  const deleteAll = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onChange(name, []);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen]);
 
   const selectedInstruments = instruments.filter((inst) =>
     value.includes(inst.id),

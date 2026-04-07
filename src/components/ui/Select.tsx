@@ -1,5 +1,5 @@
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { useTariffSelect } from "../../features/tariffs/TariffForm/model/useTariffSelect";
+import { useState, useEffect, useRef } from "react";
 
 interface Option {
   value: string | number;
@@ -23,7 +23,30 @@ export const TariffSelect = ({
   onChange,
   error,
 }: SelectProps) => {
-  const { isOpen, containerRef, toggleOpen, close } = useTariffSelect();
+  const [isOpen, setIsOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const toggleOpen = () => setIsOpen((prev) => !prev);
+  const close = () => setIsOpen(false);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen]);
 
   const selectedLabel =
     options.find((opt) => opt.value === value)?.label || "выберите...";
