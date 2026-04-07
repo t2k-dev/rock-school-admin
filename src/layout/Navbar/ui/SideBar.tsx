@@ -49,7 +49,7 @@ const Sidebar = () => {
               }`}
             >
               <div className="w-5 h-5 flex items-center justify-center opacity-60">
-                <Icon />
+                <Icon size="20px" variantUnClick={active ? "main" : "muted"} />
               </div>
               <span className="text-[15px] font-medium">{link.name}</span>
             </Link>

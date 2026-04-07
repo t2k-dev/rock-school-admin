@@ -11,7 +11,7 @@ interface IconProps {
 
 const variantsIcon = {
   muted: "#94a3b8",
-  main: "#e2e7f6",
+  main: "#ffff",
 };
 
 export const BranchesIcon = ({

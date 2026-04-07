@@ -31,7 +31,7 @@ export const ProfileScreen = () => {
             <div className="p-10 rounded-[24px] flex items-center gap-20 bg-inner-bg">
               <div className="flex flex-col items-center gap-4 group cursor-pointer">
                 <div className="w-[140px] h-[140px] rounded-full flex items-center justify-center transition-all duration-300 bg-accent/20 text-text-muted">
-                  <TeacherIcon className="text-text-main" />
+                  <TeacherIcon />
                 </div>
                 <button
                   className="px-4 py-2 rounded-[10px] text-[13px] border-none cursor-pointer transition-colors duration-200 bg-accent/40 
