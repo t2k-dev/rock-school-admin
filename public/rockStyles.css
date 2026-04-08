@@ -12,12 +12,6 @@ h5 {
   font-family: "Segoe UI", sans-serif;
 }
 
-.avatar {
-  width: 120px;
-  height: 120px;
-  object-fit: cover;
-}
-
 /*Calendar*/
 .rbc-calendar{
   border-color: #aeb8d1 !important;

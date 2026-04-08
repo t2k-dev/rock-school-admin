@@ -36,7 +36,7 @@ const ScreenHeader = ({
 						children ? "md:basis-2/5 md:pr-4 md:shrink" : "flex-1",
 					].join(" ")}
 				>
-					<div className={`flex h-[100px] w-[100px] items-center justify-center rounded-full p-5`}>
+					<div className={`flex h-[100px] w-[100px] items-center justify-center `}>
 						{avatar}
 					</div>
 					<div className="min-w-0 flex-1 md:ml-4">

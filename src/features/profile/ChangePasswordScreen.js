@@ -1,15 +1,15 @@
-import React, { useState } from "react";
-import { useHistory } from "react-router-dom";
 import {
-  Lock,
+  AlertCircle,
   ArrowLeft,
+  CheckCircle,
+  Lock,
   ShieldCheck,
   X,
-  CheckCircle,
-  AlertCircle,
 } from "lucide-react";
-import { changePassword } from "../../services/apiAccountService";
+import { useState } from "react";
+import { useHistory } from "react-router-dom";
 import { Colors } from "../../constants/Colors";
+import { changePassword } from "../../services/apiAccountService";
 import { PasswordInput } from "./PasswordInp";
 
 export const ChangePasswordScreen = () => {
@@ -35,7 +35,7 @@ export const ChangePasswordScreen = () => {
     confirmPassword: false,
   });
 
-  const user = { email: "admin@rockschool.kz" };
+  const user = localStorage.getItem("user");
 
   const handlePasswordChange = (e) => {
     const { name, value } = e.target;

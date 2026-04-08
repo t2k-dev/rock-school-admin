@@ -21,7 +21,7 @@ export const ListItem = ({
 	return (
 		<HoverCard as={Link} to={to} className={cardClassName}>
 			<div>
-				<Avatar type={avatarType} style={{ width: "70px", height: "70px" }} />
+				<Avatar type={avatarType} size="70px" />
 			</div>
 			<div className={contentClassName}>{children}</div>
 		</HoverCard>
