@@ -17,7 +17,7 @@ export const Tabs = ({ tabs, defaultTabId, className = "" }: TabsProps) => {
 
   return (
     <div className={`w-full ${className}`}>
-      <div className="flex items-end px-10">
+      <div className="flex items-end px-7">
         {tabs.map((tab) => {
           const isActive = activeTabId === tab.id;
 
@@ -30,7 +30,7 @@ export const Tabs = ({ tabs, defaultTabId, className = "" }: TabsProps) => {
                 relative px-8 py-3 text-sm font-medium transition-all duration-200
                 ${
                   isActive
-                    ? "bg-card-bg text-text-main rounded-t-[20px] opacity-100 z-10"
+                    ? "bg-card-bg text-text-main rounded-t-[12px] opacity-100 z-10"
                     : "text-text-muted bg-main-bg hover:text-text-main opacity-60 hover:opacity-100"
                 }
               `}
@@ -49,7 +49,7 @@ export const Tabs = ({ tabs, defaultTabId, className = "" }: TabsProps) => {
         })}
       </div>
 
-      <div className="bg-card-bg rounded-2xl p-6 min-h-[300px]">
+      <div className="bg-card-bg rounded-xl p-6 min-h-[300px]">
         <div className="transition-opacity duration-300">
           {tabs.find((t) => t.id === activeTabId)?.content}
         </div>

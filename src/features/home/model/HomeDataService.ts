@@ -1,7 +1,6 @@
 import { isCancelledAttendanceStatus } from "../../attendances/attendanceHelper";
 
 export const HomeDataService = {
-  // Подготовка ивентов для календаря
   prepareCalendarEvents: (
     attendances: any[] | null,
     showCanceled: boolean,
