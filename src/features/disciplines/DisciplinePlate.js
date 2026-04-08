@@ -45,11 +45,10 @@ export const DisciplinePlate = ({
   const disciplineName = disciplineId ? getDisciplineName(disciplineId) : 'Не выбрано';
 
   return (
-    <div>
+    <div className="hover:opacity-90">
       {label && <label className="form-label mb-2">{label}</label>}
-      <div className="d-flex bg-inner-bg justify-content-center">
         <div
-          className="p-2 border border-primary rounded text-center"
+          className="p-2 rounded text-center d-flex bg-inner-bg justify-content-center"
           style={{
             width: sizeStyles.width,
             height: sizeStyles.height,
@@ -77,7 +76,6 @@ export const DisciplinePlate = ({
           </small>
         </div>
       </div>
-    </div>
   );
 };
 

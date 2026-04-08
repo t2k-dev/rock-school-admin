@@ -72,7 +72,7 @@ export const SubscriptionStudents = ({
             type="button"
             onClick={onAddStudent}
           >
-            + Добавить
+            + Добавить ученика
           </Button>
         </div>
       )}

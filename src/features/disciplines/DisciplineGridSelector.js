@@ -38,7 +38,7 @@ export const DisciplineGridSelector = ({
   return (
     <div className="flex flex-col gap-4">
       {label && <FormLabel as="label">{label}</FormLabel>}
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         {SELECTABLE_DISCIPLINES.map((discipline) => {
           const isSelected = isDisciplineSelected(discipline.id);
           return (
