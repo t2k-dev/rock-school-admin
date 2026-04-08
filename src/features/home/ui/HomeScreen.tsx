@@ -1,14 +1,14 @@
+import { format } from "date-fns";
 import React from "react";
 import { Link } from "react-router-dom";
-import { format } from "date-fns";
 
 import { CalendarDay } from "../../../components/calendar/CalendarDay";
+import { ColorLegend } from "../../../components/calendar/ColorLegend";
 import { EditIcon } from "../../../components/icons";
 import { Loading } from "../../../components/Loading";
-import { AttendanceModal } from "../../attendances/AttendanceModal/AttendanceModal";
 import { NoRecords } from "../../../components/NoRecords";
-import { ColorLegend } from "../../../components/calendar/ColorLegend";
 import { Button, Container, Tabs } from "../../../components/ui";
+import { AttendanceModal } from "../../attendances/AttendanceModal/AttendanceModal";
 
 import { HomeDataService } from "../model/HomeDataService";
 import { useHomeScreen } from "../model/useHomeScreen";

@@ -74,12 +74,11 @@ class Teachers extends React.Component {
     const inactiveTeachers = teachers?.filter((t) => !t.isActive);
 
     return (
-      <SectionWrapper>
-        <div className="mx-auto max-w-5xl">
+      <SectionWrapper className="mx-auto max-w-5xl">
           <SectionTitle>Преподаватели</SectionTitle>
 
           <Container className="flex flex-col gap-8">
-            <label className="flex flex-col gap-3 mb-6">
+            <label className="flex flex-col gap-3">
               <Input
                 placeholder="Поиск..."
                 value={searchText}
@@ -103,15 +102,15 @@ class Teachers extends React.Component {
                     {activeTeachers?.length || 0}
                   </span>
                 </div>
-                <div className="space-y-5">
+                <div className="space-y-5 mb-4">
                   {this.renderTeachers(activeTeachers)}
                 </div>
               </div>
 
               <div className="h-px bg-white/10" />
 
-              <div className="flex flex-col gap-4">
-                <div className="flex items-center justify-between gap-3">
+              <div className="flex flex-col gap-4 mt-4">
+                <div className="flex items-center justify-between gap-3 ">
                   <h3 className="m-0 text-[18px] font-semibold text-text-main">
                     Неактивные
                   </h3>
@@ -119,13 +118,12 @@ class Teachers extends React.Component {
                     {inactiveTeachers?.length || 0}
                   </span>
                 </div>
-                <div className="space-y-5">
+                <div className="space-y-5 mb-4">
                   {this.renderTeachers(inactiveTeachers)}
                 </div>
               </div>
             </div>
           </Container>
-        </div>
       </SectionWrapper>
     );
   }

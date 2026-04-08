@@ -89,10 +89,12 @@ export class BandScreen extends React.Component {
 
   handleRoleChange = async (index, roleId) => {
     const member = this.state.band.bandMembers[index];
+
+    console.log("Changing role for member:", member);
     try {
       await updateBandStudentRole(
         this.state.bandId,
-        member.bandStudentId,
+        member.bandMemberId,
         roleId,
       );
       await this.loadBandData();

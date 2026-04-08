@@ -1,15 +1,16 @@
 import { withRouter } from "react-router-dom";
 import { Loading } from "../../../../components/Loading";
 import {
-  attendanceLengths,
   attendanceCounts,
+  attendanceLengths,
   Instruments,
 } from "../model/constants";
-import { Select } from "../../../../components/ui/Select";
-import { Input } from "../../../../components/ui/Input";
-import { TariffDates } from "./TariffDates";
+
 import { DisciplineSelect } from "../../../../components/disciplines/DisciplineSelect";
+import { Input } from "../../../../components/ui/Input";
+import { Select } from "../../../../components/ui/Select";
 import { useTariffForm } from "../model/useTariffFrom";
+import { TariffDates } from "./TariffDates";
 
 const TariffForm = ({ history, type = "New" }) => {
   const {

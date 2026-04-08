@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
-import PropTypes from "prop-types";
-import { X, CreditCard, User, BookOpen, Banknote } from "lucide-react";
+import { Banknote, CreditCard, X } from "lucide-react";
+import { useEffect, useState } from "react";
 import { getDisciplineName } from "../../constants/disciplines";
 import { pay } from "../../services/apiSubscriptionService";
 import DateTimeHelper from "../../utils/DateTimeHelper";
@@ -22,7 +21,6 @@ const PaymentModal = ({
   const [errors, setErrors] = useState({});
   const [submitError, setSubmitError] = useState("");
 
-  // КРИТИЧЕСКИЙ ФИКС: обновление данных формы при смене подписки
   useEffect(() => {
     if (show && subscription) {
       setFormData({
@@ -69,7 +67,6 @@ const PaymentModal = ({
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-main-bg/60 backdrop-blur-sm">
       <div className="w-full max-w-[500px] bg-card-bg rounded-[32px] shadow-2xl border border-secondary/20 flex flex-col overflow-hidden text-text-main">
-        {/* Header */}
         <div className="px-8 py-6 flex items-center justify-between border-b border-secondary/10 bg-inner-bg/30">
           <div className="flex items-center gap-3">
             <CreditCard size={22} className="text-success" />

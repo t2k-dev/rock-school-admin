@@ -1,8 +1,9 @@
 import React from "react";
-import { Button, Col, Container, Form, InputGroup, Row } from "react-bootstrap";
 
 import { CalendarIcon } from "../../../components/icons";
+import { Button, FormLabel } from "../../../components/ui";
 import SubscriptionType from "../../../constants/SubscriptionType";
+import { SectionTitle, SectionWrapper } from "../../../layout";
 import { getStudent } from "../../../services/apiStudentService";
 import { addTrialSubscription } from "../../../services/apiSubscriptionService";
 import { getTariffByType } from "../../../services/apiTariffService";
@@ -195,15 +196,16 @@ export class TrialSubscriptionForm extends React.Component {
     }
 
     return (
-      <div className="min-h-screen bg-main-bg py-10 font-['Geologica'] antialiased text-text-main">
+      <SectionWrapper>
+        <SectionTitle className="text-center">
+          Пробный урок
+        </SectionTitle>
+
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="flex flex-col md:flex-row gap-8 justify-center items-start">
             <div className="hidden md:block md:w-1/4"></div>
 
             <div className="w-full md:w-1/2 bg-card-bg p-6 rounded-xl shadow-lg border border-secondary/20">
-              <h2 className="text-center text-2xl font-bold mb-6 text-text-main">
-                Пробный урок
-              </h2>
 
               <form onSubmit={(e) => e.preventDefault()}>
                 <div className="mb-6" style={{ background: "none" }}>
@@ -215,7 +217,7 @@ export class TrialSubscriptionForm extends React.Component {
                   </div>
                 </div>
 
-                <div className="mb-6 bg-inner-bg p-4 rounded-lg border border-secondary/20">
+                <div className="mb-6">
                   <SubscriptionStudents
                     students={students}
                     allowRemove={false}
@@ -224,18 +226,18 @@ export class TrialSubscriptionForm extends React.Component {
                 </div>
 
                 <div className="mb-6">
-                  <label
+                  <FormLabel
                     htmlFor="GenerteSchedule"
                     className="flex items-center gap-2 mb-2 text-text-muted"
                   >
                     <CalendarIcon color="var(--text-muted)" />
                     <span className="font-medium">Расписание</span>
-                  </label>
+                  </FormLabel>
 
                   <div className="flex flex-col sm:flex-row gap-2">
                     <select
                       id="GenerteSchedule"
-                      className="flex-1 bg-input-bg border border-secondary/20 rounded-lg px-3 py-2 text-text-main outline-none focus:border-accent transition-colors disabled:opacity-50"
+                      className="flex-1 bg-input-bg border border-secondary/20 rounded-lg px-2 py-2 text-text-main outline-none focus:border-accent transition-colors disabled:opacity-50"
                       value={selectedSlotId}
                       onChange={(e) =>
                         this.setState({ selectedSlotId: e.target.value })
@@ -246,14 +248,13 @@ export class TrialSubscriptionForm extends React.Component {
                       {availableSlotsList}
                     </select>
 
-                    <button
+                    <Button
                       type="button"
-                      className="bg-accent/70 hover:bg-accent text-white px-4 py-2 rounded-lg transition-colors border border-accent/40 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
                       onClick={(e) => this.generateAvailablePeriods(e)}
                       disabled={!disciplineId}
                     >
                       Доступные окна
-                    </button>
+                    </Button>
                   </div>
                 </div>
 
@@ -272,7 +273,7 @@ export class TrialSubscriptionForm extends React.Component {
             </div>
 
             <div className="w-full md:w-1/4">
-              <div className="bg-card-bg rounded-xl p-1 border border-accent/40 shadow-xl overflow-hidden">
+              <div className="rounded-xl p-1 overflow-hidden">
                 <TariffCard
                   title="Тариф"
                   description="Пробный урок"
@@ -298,7 +299,7 @@ export class TrialSubscriptionForm extends React.Component {
             onDisciplineChange={this.handleDisciplineChange}
           />
         </div>
-      </div>
+      </SectionWrapper>
     );
   }
 }

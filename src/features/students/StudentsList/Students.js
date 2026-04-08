@@ -64,13 +64,13 @@ class Students extends React.Component {
     }
 
     return (
-      <SectionWrapper>
-        <div className="mx-auto max-w-5xl">
+      <SectionWrapper className="mx-auto max-w-5xl">
           <SectionTitle>Ученики</SectionTitle>
 
           <Container className="flex flex-col gap-8">
+            
             {/* Search */}
-            <label className="mb-6 flex flex-col gap-3">
+            <label className="mb-4 flex flex-col gap-3">
               <Input
                 placeholder="Поиск..."
                 value={searchText}
@@ -95,7 +95,6 @@ class Students extends React.Component {
               <div className="space-y-5">{this.renderStudentsList()}</div>
             </div>
           </Container>
-        </div>
       </SectionWrapper>
     );
   }

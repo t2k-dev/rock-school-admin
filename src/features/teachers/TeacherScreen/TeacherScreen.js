@@ -324,7 +324,7 @@ class TeacherScreen extends React.Component {
         <SectionTitle>Преподаватель</SectionTitle>
           <ScreenHeader
             className="mb-4"
-            avatar={<Avatar style={{ width: "90px", height: "90px" }} />}
+            avatar={<Avatar type="teacher" size={90} />}
             title={
               <>
                 {teacher.firstName} {teacher.lastName}

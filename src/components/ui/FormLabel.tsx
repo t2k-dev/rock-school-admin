@@ -14,7 +14,7 @@ export function FormLabel({
 }: Props) {
   return (
     <Component
-      className={`text-text-main opacity-60 ${className}`.trim()}
+      className={`text-text-main mb-2 opacity-60 ${className}`.trim()}
       {...props}
     >
       {children}

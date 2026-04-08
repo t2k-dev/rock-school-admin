@@ -5,5 +5,7 @@ export { FormLabel } from "./FormLabel";
 export { FormWrapper } from "./FormWrapper";
 export { HoverCard } from "./HoverCard";
 export { Input } from "./Input";
-export { ToneBadge } from "./ToneBadge";
+export { RemoveItemButton } from "./RemoveItemButton";
 export { Tabs } from "./Tabs";
+export { ToneBadge } from "./ToneBadge";
+

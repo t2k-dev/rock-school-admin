@@ -1,11 +1,11 @@
 import axios from 'axios';
 
 const apiClient = axios.create({
-    baseURL: 'https://localhost:44358/api',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
+  baseURL: process.env.REACT_APP_API_BASE_URL || 'https://localhost:44358/api',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
 
 // Request interceptor to add auth token
 apiClient.interceptors.request.use(
@@ -27,8 +27,11 @@ apiClient.interceptors.response.use(
     return response;
   },
   (error) => {
-    if (error.response?.status === 401) {
-      // Token expired or invalid
+    const requestUrl = error.config?.url || '';
+    const isLoginRequest = requestUrl.includes('/Auth/login');
+    const hasAuthToken = Boolean(localStorage.getItem('authToken'));
+
+    if (error.response?.status === 401 && !isLoginRequest && hasAuthToken) {
       localStorage.removeItem('authToken');
       localStorage.removeItem('user');
       window.location.href = '/login';

@@ -15,7 +15,7 @@ export class SexControl extends React.Component {
     const isMale = this.props.value === 1;
     const isFemale = this.props.value === 2;
     return (
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col">
         <FormLabel>Пол</FormLabel>
         <div className="grid grid-cols-2 gap-3">
           <label className={`flex cursor-pointer items-center justify-center rounded-[14px] border px-4 py-3 text-[15px] transition ${

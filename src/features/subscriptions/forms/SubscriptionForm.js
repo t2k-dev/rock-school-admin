@@ -22,7 +22,6 @@ import { AvailableTeachersModal } from "../../attendances/AvailableTeachersModal
 import { DisciplinePlate } from "../../disciplines/DisciplinePlate";
 import { DisciplineSelectionModal } from "../../disciplines/DisciplineSelectionModal";
 import { AddStudentModal } from "../../students/AddStudentModal";
-import TariffCard from "../../tariffs/TariffCard";
 import { SubscriptionStudents } from "../SubscriptionStudents";
 
 export class SubscriptionForm extends React.Component {
@@ -415,6 +414,7 @@ export class SubscriptionForm extends React.Component {
 
         <FormWrapper>
           <form onSubmit={this.handleSave} className="flex flex-col gap-8">
+            
             <div className="flex flex-col gap-3">
               <FormLabel>Направление</FormLabel>
               <button
@@ -425,7 +425,7 @@ export class SubscriptionForm extends React.Component {
                     : undefined
                 }
                 disabled={basedOnSubscriptionId !== null}
-                className={`text-left transition ${basedOnSubscriptionId === null ? "cursor-pointer" : "cursor-default"}`}
+                className={`text-left transition p-0 ${basedOnSubscriptionId === null ? "cursor-pointer" : "cursor-default"}`}
                 style={{ background: "none", border: "none" }}
               >
                 <DisciplinePlate disciplineId={disciplineId} size="fill" />
@@ -484,17 +484,6 @@ export class SubscriptionForm extends React.Component {
                   </select>
                 </label>
               </div>
-
-              <TariffCard
-                title="Тариф"
-                description={
-                  selectedTariff
-                    ? `${selectedTariff.attendanceCount} уроков, ${getAttendanceLengthName(selectedTariff.attendanceLength)}`
-                    : "Урок"
-                }
-                amount={selectedTariff ? selectedTariff.amount : 0}
-                showIcon={false}
-              />
             </div>
 
             <div className="h-px bg-white/10" />
@@ -519,7 +508,6 @@ export class SubscriptionForm extends React.Component {
               </label>
 
               <Button
-                variant="ghost"
                 type="button"
                 onClick={this.showAvailableTeachersModal}
                 disabled={!disciplineId}

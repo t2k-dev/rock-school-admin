@@ -1,0 +1,12 @@
+stages:
+  - docker-build
+
+docker-build:
+  stage: docker-build
+  image: docker:24.0.5
+  script:
+    - docker info
+    - docker build --pull -t rockschool-front:$CI_COMMIT_SHORT_SHA -t rockschool-front:latest -f Dockerfile .
+  only:
+    - main
+    - master

@@ -1,10 +1,11 @@
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
+import type { FC, MouseEvent as ReactMouseEvent, SVGProps } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface InstrumentIcon {
   id: number;
   name: string;
-  icon: React.FC<React.SVGProps<SVGSVGElement>>;
+  icon: FC<SVGProps<SVGSVGElement>>;
 }
 
 interface Props {
@@ -36,7 +37,7 @@ export const DisciplineSelect = ({
     onChange(name, newValue);
   };
 
-  const deleteAll = (e: React.MouseEvent) => {
+  const deleteAll = (e: ReactMouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     onChange(name, []);
   };
@@ -93,15 +94,19 @@ export const DisciplineSelect = ({
         >
           <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-text-main">
             {selectedInstruments.length > 0 ? (
-              selectedInstruments.map((inst) => (
-                <div
-                  key={inst.id}
-                  className="flex items-center gap-2 whitespace-nowrap"
-                >
-                  <inst.icon className="w-6 h-6 text-white" />
-                  <span className="text-xl font-semibold">{inst.name}</span>
-                </div>
-              ))
+              selectedInstruments.map((inst) => {
+                const Icon = inst.icon;
+
+                return (
+                  <div
+                    key={inst.id}
+                    className="flex items-center gap-2 whitespace-nowrap"
+                  >
+                    <Icon className="h-6 w-6 text-white" />
+                    <span className="text-xl font-semibold">{inst.name}</span>
+                  </div>
+                );
+              })
             ) : (
               <span className="text-xl font-light text-text-main">
                 выберите...

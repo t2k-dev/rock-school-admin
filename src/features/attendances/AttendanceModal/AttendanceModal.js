@@ -1,6 +1,8 @@
 import React from "react";
+import { withRouter } from "react-router-dom";
 
 import { Button, FormLabel } from "../../../components/ui";
+import { CloseButton } from "../../../components/ui/Modals/CloseButton";
 import AttendanceType, { getAttendanceTypeName } from "../../../constants/AttendanceType";
 import { acceptTrial, declineTrial, missedTrial, updateAttendeeStatus } from "../../../services/apiAttendanceService";
 import { AttendanceStatusBadge } from "../AttendanceStatusBadge";
@@ -9,8 +11,7 @@ import { AttendanceHeaderInfo } from "./AttendanceHeaderInfo";
 import { AttendeesList } from "./AttendeesList";
 
 
-
-export class AttendanceModal extends React.Component {
+class AttendanceModalBase extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -112,8 +113,23 @@ export class AttendanceModal extends React.Component {
 
   handleAcceptTrial = async () => {
     try {
-      await acceptTrial(this.props.attendance.attendanceId, {});
-      this.handleClose();
+      const baseSubscription = this.props.attendance.attendees[0].subscription;
+      baseSubscription.teacher = this.props.attendance.teacher;
+
+      console.log("Accepting trial for subscription:", baseSubscription);
+
+      const request = {
+        subscriptionId : this.props.attendance.attendees[0].subscriptionId,
+      };
+
+      await acceptTrial(this.props.attendance.attendanceId, request);
+
+      this.props.history.push({
+        pathname: `/student/${baseSubscription.studentId}/subscriptionForm`,
+        state: {
+          baseSubscription,
+        },
+      });
     } catch (error) {
       console.error('Error accepting trial:', error);
     }
@@ -185,14 +201,7 @@ export class AttendanceModal extends React.Component {
               <AttendanceStatusBadge status={status} style={{ fontSize: "14px" }} />
             </div>
 
-            <button
-              type="button"
-              onClick={this.handleClose}
-              aria-label="Закрыть"
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-inner-bg text-[18px] text-text-main transition hover:border-white/20 hover:bg-white/[0.04]"
-            >
-              ×
-            </button>
+            <CloseButton onClick={this.handleClose} />
           </div>
 
           <div className="flex-1 overflow-y-auto px-6 py-5 sm:px-8">
@@ -288,3 +297,8 @@ export class AttendanceModal extends React.Component {
     );
   }
 }
+
+const AttendanceModal = withRouter(AttendanceModalBase);
+
+export { AttendanceModal };
+export default AttendanceModal;

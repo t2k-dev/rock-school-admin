@@ -345,7 +345,7 @@ class StudentScreen extends React.Component {
         <SectionTitle>Ученик</SectionTitle>
         <ScreenHeader
           className="mb-4"
-          avatar={<Avatar style={{ width: "90px", height: "90px" }} />}
+          avatar={<Avatar size="90px"/>}
           title={`${student.firstName} ${student.lastName}`}
           titleClassName="text-[24px]"
           onEdit={this.handleEditClick}

@@ -2,7 +2,7 @@ import apiClient from './apiClient';
 
 export const login = async (loginData) => {
   try {
-    const response = await apiClient.post('/Auth/login', {
+    const response = await apiClient.post('/Account/login', {
       login: loginData.login,
       password: loginData.password
     });
@@ -15,7 +15,7 @@ export const login = async (loginData) => {
 
 export const logout = async () => {
   try {
-    const response = await apiClient.post('/Auth/logout');
+    const response = await apiClient.post('/Account/logout');
     return response.data;
   } catch (error) {
     console.error('Logout error:', error);
