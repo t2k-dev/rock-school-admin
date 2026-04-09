@@ -1,6 +1,6 @@
 interface InputProps {
   label: string;
-  name: string;
+  name?: string;
   type?: "text" | "number" | "date";
   value: string | number;
   placeholder?: string;
