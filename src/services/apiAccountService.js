@@ -2,10 +2,11 @@ import apiClient from './apiClient';
 
 export const changePassword = async (passwordData) => {
   try {
-    const response = await apiClient.post('/account/changePassword', {
+    const response = await apiClient.post('/account/change-password', {
       email: passwordData.email,
       currentPassword: passwordData.currentPassword,
-      newPassword: passwordData.newPassword
+      newPassword: passwordData.newPassword,
+      confirmNewPassword: passwordData.newPassword
     });
     return response.data;
   } catch (error) {
