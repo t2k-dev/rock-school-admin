@@ -176,8 +176,8 @@ export class BandForm extends React.Component {
   };
 
   handleChange = (e) => {
-    const { id, value } = e.target;
-    this.setState({ [id]: value });
+    const { name, value } = e.target;
+    this.setState({ [name]: value });
   };
 
   handleSave = async (e) => {
@@ -240,7 +240,7 @@ export class BandForm extends React.Component {
             <label className="flex flex-col gap-3">
               <FormLabel>Название группы</FormLabel>
               <Input
-                id="name"
+                name="name"
                 value={name}
                 onChange={this.handleChange}
                 placeholder="Введите название группы"

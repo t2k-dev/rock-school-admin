@@ -1,12 +1,12 @@
 interface InputProps {
-  label: string;
+  label?: string;
   name?: string;
   type?: "text" | "number" | "date";
   value: string | number;
   placeholder?: string;
   error?: string;
   step?: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export const Input = ({

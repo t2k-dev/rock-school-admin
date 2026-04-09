@@ -118,9 +118,9 @@ class TeacherForm extends React.Component {
   };
 
   handleChange = (e) => {
-    const { id, value } = e.target;
+    const { name, value } = e.target;
     const teacher = { ...this.state.teacher };
-    teacher[id] = value;
+    teacher[name] = value;
     this.setState({ teacher });
   };
 
@@ -233,7 +233,7 @@ class TeacherForm extends React.Component {
               <label className="flex flex-col">
                 <FormLabel>Имя</FormLabel>
                 <Input
-                  id="firstName"
+                  name="firstName"
                   onChange={this.handleChange}
                   value={firstName}
                   placeholder="введите имя..."
@@ -244,11 +244,10 @@ class TeacherForm extends React.Component {
               <label className="flex flex-col">
                 <FormLabel>Фамилия</FormLabel>
                 <Input
-                  id="lastName"
+                  name="lastName"
                   onChange={this.handleChange}
                   value={lastName}
                   placeholder="введите фамилию..."
-                  autoComplete="off"
                 />
               </label>
             </div>
@@ -299,7 +298,7 @@ class TeacherForm extends React.Component {
               <label className="flex flex-col">
                 <FormLabel>Телефон</FormLabel>
                 <Input
-                  id="phone"
+                  name="phone"
                   type="tel"
                   onChange={this.handlePhoneChange}
                   value={phone}
@@ -311,7 +310,7 @@ class TeacherForm extends React.Component {
               <label className="flex flex-col">
                 <FormLabel>Email</FormLabel>
                 <Input
-                  id="email"
+                  name="email"
                   onChange={this.handleChange}
                   value={email}
                   placeholder="введите email..."
@@ -335,7 +334,7 @@ class TeacherForm extends React.Component {
               <label className="flex flex-col">
                 <FormLabel>Ученики от</FormLabel>
                 <Input
-                  id="ageLimit"
+                  name="ageLimit"
                   onChange={this.handleChange}
                   value={ageLimit}
                   placeholder="введите возраст..."

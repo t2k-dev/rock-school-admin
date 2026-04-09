@@ -7,21 +7,27 @@ import "react-datepicker/dist/react-datepicker.css";
 import { SexControl } from "../../components/SexControl";
 import { Button, FormLabel, FormWrapper, Input } from "../../components/ui";
 import { SectionTitle, SectionWrapper } from "../../layout";
-import { addStudent, getStudent, saveStudent } from "../../services/apiStudentService";
+import {
+  addStudent,
+  getStudent,
+  saveStudent,
+} from "../../services/apiStudentService";
 import { calculateDateFromAge } from "../../utils/dateTime";
 
 // Phone formatting helper
 const formatPhoneNumber = (value) => {
   if (!value) return value;
-  
+
   // Remove all non-digits
-  const phoneNumber = value.replace(/[^\d]/g, '');
-  
+  const phoneNumber = value.replace(/[^\d]/g, "");
+
   // Apply formatting: +7 XXX XXX XX XX
   if (phoneNumber.length <= 1) return phoneNumber;
   if (phoneNumber.length <= 4) return `+7 ${phoneNumber.slice(1)}`;
-  if (phoneNumber.length <= 7) return `+7 ${phoneNumber.slice(1, 4)} ${phoneNumber.slice(4)}`;
-  if (phoneNumber.length <= 9) return `+7 ${phoneNumber.slice(1, 4)} ${phoneNumber.slice(4, 7)} ${phoneNumber.slice(7)}`;
+  if (phoneNumber.length <= 7)
+    return `+7 ${phoneNumber.slice(1, 4)} ${phoneNumber.slice(4)}`;
+  if (phoneNumber.length <= 9)
+    return `+7 ${phoneNumber.slice(1, 4)} ${phoneNumber.slice(4, 7)} ${phoneNumber.slice(7)}`;
   return `+7 ${phoneNumber.slice(1, 4)} ${phoneNumber.slice(4, 7)} ${phoneNumber.slice(7, 9)} ${phoneNumber.slice(9, 11)}`;
 };
 
@@ -73,16 +79,16 @@ class StudentForm extends React.Component {
   getBirthDate(age) {
     // Get the current date
     const today = new Date();
-    
+
     // Get the current year
     const currentYear = today.getFullYear();
-    
+
     // Calculate the birth year
     const birthYear = currentYear - age;
-    
+
     // Create a new Date object for the birth date
     const birthDate = new Date(birthYear, today.getMonth(), today.getDate());
-    
+
     return birthDate;
   }
 
@@ -113,8 +119,8 @@ class StudentForm extends React.Component {
   };
 
   handleChange = (e) => {
-    const { id, value } = e.target;
-    this.setState({ [id]: value });
+    const { name, value } = e.target;
+    this.setState({ [name]: value });
   };
 
   handlePhoneChange = (e) => {
@@ -137,10 +143,10 @@ class StudentForm extends React.Component {
   };
 
   render() {
-    const { isNew, email, firstName, lastName, birthDate, phone, sex, age } = this.state;
+    const { isNew, email, firstName, lastName, birthDate, phone, sex, age } =
+      this.state;
     return (
       <SectionWrapper>
-        
         <SectionTitle className="text-center">
           {isNew ? "Новый ученик" : "Редактировать ученика"}
         </SectionTitle>
@@ -151,7 +157,7 @@ class StudentForm extends React.Component {
               <label className="flex flex-col gap-3">
                 <FormLabel>Имя</FormLabel>
                 <Input
-                  id="firstName"
+                  name="firstName"
                   onChange={this.handleChange}
                   value={firstName}
                   placeholder="введите имя..."
@@ -162,7 +168,7 @@ class StudentForm extends React.Component {
               <label className="flex flex-col gap-3">
                 <FormLabel>Фамилия</FormLabel>
                 <Input
-                  id="lastName"
+                  name="lastName"
                   onChange={this.handleChange}
                   value={lastName}
                   placeholder="введите фамилию..."
@@ -187,7 +193,11 @@ class StudentForm extends React.Component {
                     onChangeRaw={(e) => {
                       const rawValue = e.target.value;
                       try {
-                        const parsedDate = parse(rawValue, "dd.MM.yyyy", new Date());
+                        const parsedDate = parse(
+                          rawValue,
+                          "dd.MM.yyyy",
+                          new Date(),
+                        );
                         if (!isNaN(parsedDate)) {
                           this.setState({ birthDate: parsedDate });
                         }
@@ -216,7 +226,10 @@ class StudentForm extends React.Component {
                 </label>
               )}
 
-              <SexControl value={sex} onChange={this.handleSexChange}></SexControl>
+              <SexControl
+                value={sex}
+                onChange={this.handleSexChange}
+              ></SexControl>
             </div>
 
             <div className="h-px bg-white/10" />
