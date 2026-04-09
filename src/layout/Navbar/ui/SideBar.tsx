@@ -1,13 +1,20 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { NAV_LINKS } from "../model/constants";
 import { TeacherIcon } from "../../../components/icons";
+import { useAuth } from "../../../contexts/AuthContext";
+import { NAV_LINKS } from "../model/constants";
 
 const Sidebar = () => {
   const location = useLocation();
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const { logout } = useAuth();
 
   const isActive = (path) => location.pathname.startsWith(path);
+
+  const handleLogout = async () => {
+    setIsUserMenuOpen(false);
+    await logout();
+  };
 
   return (
     <aside
@@ -102,6 +109,7 @@ const Sidebar = () => {
               </Link>
               <div className="h-[1px] bg-white/5 my-1" />
               <button
+                onClick={handleLogout}
                 className="w-full text-left px-4 py-2 text-sm text-danger hover:bg-danger/10 bg-transparent"
                 style={{ border: "none" }}
               >

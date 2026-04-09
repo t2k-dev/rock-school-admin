@@ -13,9 +13,9 @@ export const login = async (loginData) => {
   }
 };
 
-export const logout = async () => {
+export const logout = async (userName) => {
   try {
-    const response = await apiClient.post('/Account/logout');
+    const response = await apiClient.post('/Account/logout', JSON.stringify(userName));
     return response.data;
   } catch (error) {
     console.error('Logout error:', error);

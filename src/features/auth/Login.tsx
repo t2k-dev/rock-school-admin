@@ -1,6 +1,7 @@
 import { LogIn } from "lucide-react";
 import React, { ChangeEvent, FormEvent, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
+import { Button } from "../../components/ui/Button";
 import { useAuth } from "../../contexts/AuthContext";
 import { login as loginAPI } from "../../services/apiAuthService";
 
@@ -103,7 +104,7 @@ export const Login: React.FC = () => {
 
         {error && <p className="text-danger -mt-4 text-[14px] m-0">{error}</p>}
 
-        <button
+        <Button
           type="submit"
           disabled={isLoading}
           className="flex items-center justify-center gap-3 rounded-[14px] bg-accent/20 px-6 py-3.5 text-[16px] font-semibold text-text-muted transition-all duration-200 hover:bg-accent hover:text-text-main border-none cursor-pointer"
@@ -116,7 +117,7 @@ export const Login: React.FC = () => {
               <span>Войти</span>
             </>
           )}
-        </button>
+        </Button>
 
         <div className="flex justify-center gap-1 text-[13px]">
           <span className="cursor-pointer text-accent hover:underline">
