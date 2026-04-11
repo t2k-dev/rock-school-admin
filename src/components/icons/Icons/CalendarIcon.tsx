@@ -1,26 +1,37 @@
-import { useState } from "react";
+import React, { useState } from "react";
 
-export function CalendarIcon({
+interface CalendarIconProps {
+  onIconClick?: (e: React.MouseEvent<HTMLSpanElement>) => void;
+  color?: string;
+  title?: string;
+  size?: string;
+  isClickable?: boolean;
+}
+
+export const CalendarIcon = ({
   onIconClick,
   color: initialColor = "#94a3b8",
   title = "Календарь",
   size = "20px",
   isClickable = false,
-}) {
+}: CalendarIconProps) => {
   const [isHovered, setIsHovered] = useState(false);
 
   const currentColor = isClickable && isHovered ? "#e2e7f6" : initialColor;
 
   return (
-    <span title={title}>
+    <span
+      title={title}
+      onClick={(e) => isClickable && onIconClick && onIconClick(e)}
+      onMouseEnter={() => isClickable && setIsHovered(true)}
+      onMouseLeave={() => isClickable && setIsHovered(false)}
+      className="inline-flex items-center"
+      style={{ cursor: isClickable ? "pointer" : "default" }}
+    >
       <svg
         style={{
-          cursor: isClickable ? "pointer" : "default",
           marginBottom: "2px",
         }}
-        onClick={(e) => isClickable && onIconClick && onIconClick(e)}
-        onMouseEnter={() => isClickable && setIsHovered(true)}
-        onMouseLeave={() => isClickable && setIsHovered(false)}
         width={size}
         height={size}
         viewBox="0 0 30 30"
@@ -33,4 +44,6 @@ export function CalendarIcon({
       </svg>
     </span>
   );
-}
+};
+
+export default CalendarIcon;

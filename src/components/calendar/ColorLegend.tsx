@@ -12,7 +12,7 @@ const legendOFColors: ColorLegend[] = [
   },
   {
     id: 2,
-    desc: "Пропущено",
+    desc: "Отмененно",
     color: "bg-secondary",
   },
   {
@@ -22,7 +22,7 @@ const legendOFColors: ColorLegend[] = [
   },
   {
     id: 4,
-    desc: "Отмененно",
+    desc: "Пропущено",
     color: "bg-pink",
   },
   {
@@ -37,7 +37,7 @@ export const ColorLegend = () => {
     <div className="flex gap-10">
       {legendOFColors.map((col) => (
         <div className="flex gap-3 items-center">
-          <div className={`w-3 h-3 rounded-full ${col.color}`} />
+          <div className={`w-3 h-3 rounded-[2px] ${col.color}`} />
           <span className="text-sm font-light">{col.desc}</span>
         </div>
       ))}

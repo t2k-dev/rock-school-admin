@@ -32,7 +32,6 @@
 }
 
 .calendarWeek :global(.rbc-today) {
-
   background-color: #22272e;
 }
 
@@ -41,5 +40,5 @@
 }
 
 .rbc-calendar {
-    background-color: #22272e !important
+  background-color: #22272e !important;
 }

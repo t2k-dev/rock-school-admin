@@ -1,11 +1,7 @@
 import { useState } from "react";
 import { Button, Card, Col, Row, Stack } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import {
-  CalendarIcon,
-  EditIcon,
-  GroupIcon,
-} from "../../components/icons";
+import { CalendarIcon, EditIcon, GroupIcon } from "../../components/icons";
 import { generateAttendances } from "../../services/apiBandService";
 
 export const BandScreenCard = ({ band, onActivateToggle, onEditSchedules }) => {

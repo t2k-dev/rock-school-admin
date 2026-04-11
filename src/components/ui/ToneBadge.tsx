@@ -11,7 +11,13 @@ const TONE_MAP = {
 
 const resolveToneColor = (tone) => TONE_MAP[tone] || tone || Colors.secondary;
 
-export const ToneBadge = ({ label, tone, className = "", style = {}, ...props }) => {
+export const ToneBadge = ({
+  label,
+  tone,
+  className = "",
+  style = {},
+  ...props
+}) => {
   const badgeColor = resolveToneColor(tone);
 
   return (

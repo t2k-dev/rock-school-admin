@@ -14,11 +14,16 @@ const localizer = momentLocalizer(moment);
 const EventComponent = ({ event }) => {
   return (
     <div className={styles.event}>
-      {event.disciplineId &&
+      {event.disciplineId && (
         <DisciplineIcon
           disciplineId={event.disciplineId}
-          color={event.attendanceType === AttendanceType.TRIAL_LESSON ? "black" : "white"}
-        />}
+          color={
+            event.attendanceType === AttendanceType.TRIAL_LESSON
+              ? "black"
+              : "white"
+          }
+        />
+      )}
       <span className={styles.eventTitle}>{event.title}</span>
     </div>
   );
@@ -44,7 +49,7 @@ export class CalendarWeek extends React.Component {
 
   render() {
     const { step = 60, slotDuration = 60 } = this.props; // Default durations in minutes
-    
+
     // Create a custom onSelectSlot handler that uses the specified duration
     const handleSelectSlot = (slotInfo) => {
       if (this.props.onSelectSlot) {
@@ -52,12 +57,12 @@ export class CalendarWeek extends React.Component {
         const customSlot = {
           ...slotInfo,
           start: slotInfo.start,
-          end: new Date(slotInfo.start.getTime() + slotDuration * 60 * 1000) // Add slotDuration minutes
+          end: new Date(slotInfo.start.getTime() + slotDuration * 60 * 1000), // Add slotDuration minutes
         };
         this.props.onSelectSlot(customSlot);
       }
     };
-    
+
     const messages = {
       next: "Вперед",
       previous: "Назад",
@@ -88,7 +93,9 @@ export class CalendarWeek extends React.Component {
           defaultDate={Date.now()}
           popup={false}
           selectable
-          onShowMore={(events, date) => this.setState({ showModal: true, events })}
+          onShowMore={(events, date) =>
+            this.setState({ showModal: true, events })
+          }
           onSelectSlot={handleSelectSlot}
           onSelectEvent={this.props.onSelectEvent}
           eventPropGetter={(event) => applyCalendarStyle(event)}

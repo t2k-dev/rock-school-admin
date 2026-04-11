@@ -8,4 +8,4 @@ export { Input } from "./Input";
 export { RemoveItemButton } from "./RemoveItemButton";
 export { Tabs } from "./Tabs";
 export { ToneBadge } from "./ToneBadge";
-
+export { Select } from "./Select";

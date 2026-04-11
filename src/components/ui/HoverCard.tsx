@@ -1,5 +1,16 @@
+import React, { ReactNode, MouseEvent, CSSProperties } from "react";
+
 import PropTypes from "prop-types";
 import { Colors } from "../../constants/Colors";
+
+interface HoverCardProps extends React.HTMLAttributes<HTMLElement> {
+  children: ReactNode;
+  onClick?: (e: MouseEvent<HTMLElement>) => void;
+  hoverTransform?: string;
+  transition?: string;
+  clickable?: boolean;
+  as?: React.ElementType;
+}
 
 export const HoverCard = ({
   children,
@@ -13,8 +24,7 @@ export const HoverCard = ({
   onMouseEnter,
   onMouseLeave,
   ...props
-}) => {
-
+}: HoverCardProps) => {
   const cardStyle = {
     cursor: clickable ? "pointer" : "default",
     transition,
