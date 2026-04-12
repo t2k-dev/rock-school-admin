@@ -12,11 +12,7 @@ import {
 } from "react-bootstrap";
 import "react-datepicker/dist/react-datepicker.css";
 
-import {
-  CalendarIcon,
-  CountIcon,
-  TimeIcon,
-} from "../../../components/icons";
+import { CalendarIcon, CountIcon, TimeIcon } from "../../../components/icons";
 import { Loading } from "../../../components/Loading";
 import { ScheduleEditorWithDelete } from "../../../components/schedule/ScheduleEditorWithDelete";
 import { getAttendanceLengthName } from "../../../constants/AttendanceLength";

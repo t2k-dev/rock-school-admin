@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 export function TimeIcon({
-  onIconClick,
+  onIconClick = () => {},
   color: initialColor = "#94a3b8",
   title = "Время",
   size = "18px",

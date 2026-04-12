@@ -6,15 +6,19 @@ export class DisciplinesDropDownControl extends React.Component {
     super(props);
   }
 
-  handleOnChange = (e) =>{
+  handleOnChange = (e) => {
     this.props.onChange(e);
-  }
+  };
 
   render() {
     return (
       <Form.Group className="mb-3" controlId="discipline">
         <Form.Label>Направление</Form.Label>
-        <Form.Select aria-label="Веберите..." value={this.props.value} onChange={this.handleOnChange}>
+        <Form.Select
+          aria-label="Веберите..."
+          value={this.props.value}
+          onChange={this.handleOnChange}
+        >
           <option>выберите...</option>
           <option value="1">Гитара</option>
           <option value="2">Электро гитара</option>

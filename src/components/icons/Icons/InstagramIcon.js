@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 export function InstagramIcon({
-  onIconClick,
+  onIconClick = () => {},
   color: initialColor = "#94a3b8",
   title = "Instagram",
   size = "20px",

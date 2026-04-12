@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 export function DoorIcon({
-  onIconClick,
+  onIconClick = () => {},
   color: initialColor = "#94a3b8",
   title = "Выход",
   size = "20px",

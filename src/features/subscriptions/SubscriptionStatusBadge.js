@@ -1,16 +1,17 @@
-import { Badge } from 'react-bootstrap';
+import { Badge } from "react-bootstrap";
 
-import SubscriptionStatus, { getSubscriptionStatusColor, getSubscriptionStatusName } from '../../constants/SubscriptionStatus';
+import SubscriptionStatus, {
+  getSubscriptionStatusColor,
+  getSubscriptionStatusName,
+} from "../../constants/SubscriptionStatus";
 
-
-export const SubscriptionStatusBadge = ({ 
-  status, 
-  pill = true, 
-  className = "", 
+export const SubscriptionStatusBadge = ({
+  status,
+  pill = true,
+  className = "",
   style = {},
-  size = "normal" 
+  size = "normal",
 }) => {
-
   const getStatusBadgeVariant = (status) => {
     switch (status) {
       case SubscriptionStatus.DRAFT:
@@ -45,8 +46,8 @@ export const SubscriptionStatusBadge = ({
   };
 
   return (
-    <Badge 
-      pill={pill} 
+    <Badge
+      pill={pill}
       bg={variant}
       className={className}
       style={finalStyle}

@@ -1,12 +1,20 @@
 import { useState } from "react";
 
+interface IconI {
+  onIconClick?: (e) => void;
+  color?: string;
+  title?: string;
+  size?: string;
+  isClickable?: boolean;
+}
+
 export function EditIcon({
   onIconClick,
   color: initialColor = "#94a3b8",
   title = "Редактировать",
   size = "20px",
   isClickable = true,
-}) {
+}: IconI) {
   const [isHovered, setIsHovered] = useState(false);
 
   const currentColor = isClickable && isHovered ? "#e2e7f6" : initialColor;
